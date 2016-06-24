@@ -21,25 +21,27 @@
 import {Component, PropTypes} from "react"
 import Form from "react-jsonschema-form"
 import {connect} from "react-redux"
+import {Link} from "react-router"
 
-import {loadTool, updateTool} from "../actions"
-import {schema, uiSchema} from "../schemas/tool"
+import {loadTool} from "../../actions"
+import {schema, uiSchema as originalUiSchema} from "../../schemas/tool"
 
 
-class ToolEdit extends Component {
-  static breadcrumbName = "Edit Tool"
+const uiSchema = {...originalUiSchema}
+for (let [propertyId, property] of Object.entries(schema.properties)) {
+  if (uiSchema[propertyId] == undefined) uiSchema[propertyId] = {}
+  uiSchema[propertyId]["ui:disabled"] = true
+}
+
+
+class ToolView extends Component {
   static propTypes = {
-    authentication: PropTypes.object.isRequired,
+    authentication: PropTypes.object,
     loadTool: PropTypes.func.isRequired,
     toolById: PropTypes.object.isRequired,
-    updateTool: PropTypes.func.isRequired,
   }
   componentWillMount() {
     this.props.loadTool(this.props.authentication, this.props.params.id)
-  }
-  onSubmit(form) {
-    const {authentication, params, updateTool} = this.props
-    updateTool(authentication, params.id, form.formData)
   }
   render() {
     const {authentication, loadTool, params, toolById} = this.props
@@ -50,10 +52,18 @@ class ToolEdit extends Component {
     return (
       <Form
         formData={tool}
-        onSubmit={this.onSubmit.bind(this)}
         schema={schema}
         uiSchema={uiSchema}
-      />
+      >
+        <div>
+          {authentication && Object.keys(authentication).length > 0 ? (
+            <Link className="btn btn-default" role="button" to={`/tools/${tool.id}/edit`}>Edit</Link>
+          ) : null}
+          {authentication && Object.keys(authentication).length > 0 ? (
+            <Link className="btn btn-danger" role="button" to={`/tools/${tool.id}/delete`}>Delete</Link>
+          ) : null}
+        </div>
+      </Form>
     )
   }
 }
@@ -65,6 +75,5 @@ export default connect(
   }),
   {
     loadTool,
-    updateTool,
   },
-)(ToolEdit)
+)(ToolView)

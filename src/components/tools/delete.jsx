@@ -21,10 +21,9 @@
 import {Component, PropTypes} from "react"
 import Form from "react-jsonschema-form"
 import {connect} from "react-redux"
-import {Link} from "react-router"
 
-import {loadTool} from "../actions"
-import {schema, uiSchema as originalUiSchema} from "../schemas/tool"
+import {deleteTool, loadTool} from "../../actions"
+import {schema, uiSchema as originalUiSchema} from "../../schemas/tool"
 
 
 const uiSchema = {...originalUiSchema}
@@ -34,14 +33,20 @@ for (let [propertyId, property] of Object.entries(schema.properties)) {
 }
 
 
-class Tool extends Component {
+class ToolDelete extends Component {
+  static breadcrumbName = "Delete Tool"
   static propTypes = {
     authentication: PropTypes.object,
+    deleteTool: PropTypes.func.isRequired,
     loadTool: PropTypes.func.isRequired,
     toolById: PropTypes.object.isRequired,
   }
   componentWillMount() {
     this.props.loadTool(this.props.authentication, this.props.params.id)
+  }
+  onSubmit(form) {
+    const {authentication, deleteTool, params} = this.props
+    deleteTool(authentication, params.id)
   }
   render() {
     const {authentication, loadTool, params, toolById} = this.props
@@ -52,16 +57,12 @@ class Tool extends Component {
     return (
       <Form
         formData={tool}
+        onSubmit={this.onSubmit.bind(this)}
         schema={schema}
         uiSchema={uiSchema}
       >
         <div>
-          {authentication && Object.keys(authentication).length > 0 ? (
-            <Link className="btn btn-default" role="button" to={`/tools/${tool.id}/edit`}>Edit</Link>
-          ) : null}
-          {authentication && Object.keys(authentication).length > 0 ? (
-            <Link className="btn btn-danger" role="button" to={`/tools/${tool.id}/delete`}>Delete</Link>
-          ) : null}
+          <button className="btn btn-danger" type="submit">Delete</button>
         </div>
       </Form>
     )
@@ -74,6 +75,7 @@ export default connect(
     toolById: state.toolById,
   }),
   {
+    deleteTool,
     loadTool,
   },
-)(Tool)
+)(ToolDelete)

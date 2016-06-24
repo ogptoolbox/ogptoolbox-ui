@@ -22,11 +22,11 @@ import {Component, PropTypes} from "react"
 import {connect} from "react-redux"
 import {Link} from "react-router"
 
-import {loadTools} from "../actions"
-import ToolLine from "./tool-line"
+import {loadTools} from "../../actions"
+import ToolLine from "./line"
 
 
-class ToolsIndex extends Component {
+class ToolsList extends Component {
   static propTypes = {
     authentication: PropTypes.object,
     loadTools: PropTypes.func.isRequired,
@@ -57,4 +57,4 @@ export default connect(
   {
     loadTools,
   },
-)(ToolsIndex)
+)(ToolsList)

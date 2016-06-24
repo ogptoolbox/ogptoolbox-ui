@@ -22,8 +22,8 @@ import {Component, PropTypes} from "react"
 import {connect} from "react-redux"
 import Form from "react-jsonschema-form"
 
-import {createTool} from "../actions"
-import {schema, uiSchema} from "../schemas/tool"
+import {createTool} from "../../actions"
+import {schema, uiSchema} from "../../schemas/tool"
 
 
 class ToolNew extends Component {

@@ -28,12 +28,12 @@ import Profile from "./components/profile"
 import SignIn from "./components/sign-in"
 import SignOut from "./components/sign-out"
 import SignUp from "./components/sign-up"
-import Tool from "./components/tool"
-import ToolDelete from "./components/tool-delete"
-import ToolEdit from "./components/tool-edit"
-import ToolNew from "./components/tool-new"
-import Tools from "./components/tools"
-import ToolsIndex from "./components/tools-index"
+import ToolDelete from "./components/tools/delete"
+import ToolEdit from "./components/tools/edit"
+import Tools from "./components/tools/index"
+import ToolsList from "./components/tools/list"
+import ToolNew from "./components/tools/new"
+import ToolView from "./components/tools/view"
 
 
 export default (
@@ -43,9 +43,9 @@ export default (
     <Route component={SignOut} path="/sign_out" />
     <Route component={SignUp} path="/sign_up" />
     <Route component={Tools} path="tools">
-      <IndexRoute component={ToolsIndex} />
+      <IndexRoute component={ToolsList} />
       <Route component={ToolNew} path="new" />
-      <Route component={Tool} path=":id" />
+      <Route component={ToolView} path=":id" />
       <Route component={ToolDelete} path=":id/delete" />
       <Route component={ToolEdit} path=":id/edit" />
     </Route>

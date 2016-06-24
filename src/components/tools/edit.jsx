@@ -22,31 +22,24 @@ import {Component, PropTypes} from "react"
 import Form from "react-jsonschema-form"
 import {connect} from "react-redux"
 
-import {deleteTool, loadTool} from "../actions"
-import {schema, uiSchema as originalUiSchema} from "../schemas/tool"
+import {loadTool, updateTool} from "../../actions"
+import {schema, uiSchema} from "../../schemas/tool"
 
 
-const uiSchema = {...originalUiSchema}
-for (let [propertyId, property] of Object.entries(schema.properties)) {
-  if (uiSchema[propertyId] == undefined) uiSchema[propertyId] = {}
-  uiSchema[propertyId]["ui:disabled"] = true
-}
-
-
-class ToolDelete extends Component {
-  static breadcrumbName = "Delete Tool"
+class ToolEdit extends Component {
+  static breadcrumbName = "Edit Tool"
   static propTypes = {
-    authentication: PropTypes.object,
-    deleteTool: PropTypes.func.isRequired,
+    authentication: PropTypes.object.isRequired,
     loadTool: PropTypes.func.isRequired,
     toolById: PropTypes.object.isRequired,
+    updateTool: PropTypes.func.isRequired,
   }
   componentWillMount() {
     this.props.loadTool(this.props.authentication, this.props.params.id)
   }
   onSubmit(form) {
-    const {authentication, deleteTool, params} = this.props
-    deleteTool(authentication, params.id)
+    const {authentication, params, updateTool} = this.props
+    updateTool(authentication, params.id, form.formData)
   }
   render() {
     const {authentication, loadTool, params, toolById} = this.props
@@ -60,11 +53,7 @@ class ToolDelete extends Component {
         onSubmit={this.onSubmit.bind(this)}
         schema={schema}
         uiSchema={uiSchema}
-      >
-        <div>
-          <button className="btn btn-danger" type="submit">Delete</button>
-        </div>
-      </Form>
+      />
     )
   }
 }
@@ -75,7 +64,7 @@ export default connect(
     toolById: state.toolById,
   }),
   {
-    deleteTool,
     loadTool,
+    updateTool,
   },
-)(ToolDelete)
+)(ToolEdit)
