@@ -18,23 +18,23 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import {routerReducer} from "react-router-redux"
-import {combineReducers} from "redux"
-import {reducer as formReducer} from "redux-form"
-
-import {projectByIdReducer, projectIdsReducer} from "./projects"
-import {toolByIdReducer, toolIdsReducer} from "./tools"
-import {authenticationReducer} from "./user"
+import {Component, PropTypes} from "react"
+import {Link} from "react-router"
 
 
-// Updates the data for different actions.
-export default combineReducers({
-  authentication: authenticationReducer,
-  // ballotById: ballotByIdReducer,
-  form: formReducer,
-  projectById: projectByIdReducer,
-  projectIds: projectIdsReducer,
-  routing: routerReducer,
-  toolById: toolByIdReducer,
-  toolIds: toolIdsReducer,
-})
+export default class ProjectLine extends Component {
+  static propTypes = {
+    project: PropTypes.object.isRequired,
+  }
+  render() {
+    const {project} = this.props
+    return (
+      <div class="list-group">
+        <a href={`/projects/${project.id}`} class="list-group-item active">
+          <h4 class="list-group-item-heading">{project.name}</h4>
+          <p class="list-group-item-text">{project.description}</p>
+        </a>
+      </div>
+    )
+  }
+}

@@ -25,6 +25,12 @@ import App from "./components/app"
 import Home from "./components/home"
 import NotFound from "./components/not-found"
 import Profile from "./components/profile"
+import ProjectDelete from "./components/projects/delete"
+import ProjectEdit from "./components/projects/edit"
+import Projects from "./components/projects/index"
+import ProjectsList from "./components/projects/list"
+import ProjectNew from "./components/projects/new"
+import ProjectView from "./components/projects/view"
 import SignIn from "./components/sign-in"
 import SignOut from "./components/sign-out"
 import SignUp from "./components/sign-up"
@@ -39,9 +45,16 @@ import ToolView from "./components/tools/view"
 export default (
   <Route component={App} path="/">
     <IndexRoute component={Home} />
-    <Route component={SignIn} path="/sign_in" />
-    <Route component={SignOut} path="/sign_out" />
-    <Route component={SignUp} path="/sign_up" />
+    <Route component={Projects} path="projects">
+      <IndexRoute component={ProjectsList} />
+      <Route component={ProjectNew} path="new" />
+      <Route component={ProjectView} path=":id" />
+      <Route component={ProjectDelete} path=":id/delete" />
+      <Route component={ProjectEdit} path=":id/edit" />
+    </Route>
+    <Route component={SignIn} path="sign_in" />
+    <Route component={SignOut} path="sign_out" />
+    <Route component={SignUp} path="sign_up" />
     <Route component={Tools} path="tools">
       <IndexRoute component={ToolsList} />
       <Route component={ToolNew} path="new" />
