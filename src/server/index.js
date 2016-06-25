@@ -47,6 +47,7 @@ apiRouter.post("/sign_out", function(req, res) {
 })
 
 app.use(favicon(path.resolve(__dirname, "../../public/favicon.ico")))
+app.use(express.static("public"))
 app.use("/api", apiRouter)
 app.use(cookieParser())
 app.use(session({
