@@ -52,6 +52,10 @@ module.exports = {
         loader: "babel",
         test: /\.(js|jsx)$/,
       },
+      {
+        loader: "node",
+        test: /\.node$/,
+      },
     ],
   },
   resolve: {
