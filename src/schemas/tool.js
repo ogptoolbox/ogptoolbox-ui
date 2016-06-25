@@ -80,11 +80,6 @@ export const schema = {
     "authorOrigin": {
       "type": "string",
       "title": "Pays où est domicilié l'auteur de l'outil",
-      "enum": [
-        "France",
-        "USA",
-        "UK"
-      ]
     },
     "authorEmail": {
       "type": "string",

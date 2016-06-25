@@ -56,6 +56,10 @@ export const schema = {
       "type": "string",
       "title": "Adresse e-mail de l'acteur du projet"
     },
+    "actorSize": {
+      "type": "integer",
+      "title": "Nombre de personnes ayant contribué au projet"
+    },
     "location": {
       "type": "string",
       "title": "Lieu du projet (pays, région, etc)",
