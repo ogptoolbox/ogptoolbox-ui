@@ -125,14 +125,14 @@ export const schema = {
         "type": "string"
       }
     },
-    "technology": {
+    "technologies": {
       "type": "array",
       "title": "Technologies informatiques utilisées pour faire fonctionner l'outil",
       "items": {
         "type": "string"
       }
     },
-    "licence": {
+    "license": {
       "type": "string",
       "title": "Licence sous laquelle est distribuée l'outil"
     },
@@ -165,11 +165,8 @@ export const schema = {
       "title": "Site web pour rapporter les bugs de l'outil"
     },
     "stackexchangeTag": {
-      "type": "array",
-      "title": "Tag(s) utilisé(s) sur Stack Exchange",
-      "items": {
-        "type": "string"
-      }
+      "type": "string",
+      "title": "Tag utilisé sur Stack Exchange",
     },
     "githubStars": {
       "type": "number",
