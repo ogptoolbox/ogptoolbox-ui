@@ -40,7 +40,9 @@ class ToolsList extends Component {
     return (
       <section>
         <h1>Tools</h1>
-        {tools.map(tool => <ToolLine key={tool.id} tool={tool} />)}
+        <div className="list-group">
+          {tools.map(tool => <ToolLine key={tool.id} tool={tool} />)}
+        </div>
         {authentication && Object.keys(authentication).length > 0 ? (
           <Link className="btn btn-default" role="button" to="/tools/new">New Tool</Link>
         ) : null}
