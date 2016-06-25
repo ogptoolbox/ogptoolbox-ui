@@ -57,13 +57,11 @@ export function toolIdsReducer(state = null, action) {
   case actions.LOADING_TOOL.SUCCESS:
   case actions.UPDATING_TOOL.SUCCESS:
     const {tool} = action
+    // Optimistic optimizations
     if (tool.deleted) {
-      // Optimistic optimization
       if (state !== null) state = state.filter(id => id !== tool.id)
-    } else {
-      // Optimistic optimization
-      if (state === null) state = [tool.id]
-      else if (!state.includes(tool.id)) state = [tool.id, ...state]
+    } else if (state !== null && !state.includes(tool.id)) {
+      state = [tool.id, ...state]
     }
     return state
   case actions.LOADING_TOOLS.SUCCESS:

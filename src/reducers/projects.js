@@ -57,13 +57,11 @@ export function projectIdsReducer(state = null, action) {
   case actions.LOADING_PROJECT.SUCCESS:
   case actions.UPDATING_PROJECT.SUCCESS:
     const {project} = action
+    // Optimistic optimizations
     if (project.deleted) {
-      // Optimistic optimization
       if (state !== null) state = state.filter(id => id !== project.id)
-    } else {
-      // Optimistic optimization
-      if (state === null) state = [project.id]
-      else if (!state.includes(project.id)) state = [project.id, ...state]
+    } else if (state !== null && !state.includes(project.id)) {
+      state = [project.id, ...state]
     }
     return state
   case actions.LOADING_PROJECTS.SUCCESS:
