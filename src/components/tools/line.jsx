@@ -29,10 +29,10 @@ export default class ToolLine extends Component {
   render() {
     const {tool} = this.props
     return (
-      <a href={`/tools/${tool.id}`} className="list-group-item">
+      <Link className="list-group-item" to={`/tools/${tool.id}`}>
         <h4 className="list-group-item-heading">{tool.name}</h4>
         <p className="list-group-item-text">{tool.description}</p>
-      </a>
+      </Link>
     )
   }
 }

@@ -29,10 +29,10 @@ export default class ProjectLine extends Component {
   render() {
     const {project} = this.props
     return (
-      <a href={`/projects/${project.id}`} className="list-group-item">
+      <Link className="list-group-item" to={`/projects/${project.id}`}>
         <h4 className="list-group-item-heading">{project.name}</h4>
         <p className="list-group-item-text">{project.description}</p>
-      </a>
+      </Link>
     )
   }
 }
