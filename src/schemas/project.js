@@ -130,6 +130,20 @@ export const schema = {
       "minimum": 1,
       "maximum": 5,
     },
+    "tools": {
+      "type": "array",
+      "title": "Outils utilisés par le projet",
+      "items": {
+        "type": "string"
+      }
+    },
+    "methods": {
+      "type": "array",
+      "title": "Méthodes utilisées pour le projet",
+      "items": {
+        "type": "string"
+      }
+    }
   },
 }
 
