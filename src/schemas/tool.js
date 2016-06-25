@@ -24,7 +24,7 @@ export const schema = {
   "required": [
     "name",
     // "description",
-    // "category",
+    // "categories",
     // "features",
     // "format",
     // "pricingModel",
@@ -40,7 +40,7 @@ export const schema = {
       "type": "string",
       "title": "Description"
     },
-    "category": {
+    "categories": {
       "type": "array",
       "title": "Catégorie(s) de l'outil",
       "items": {
@@ -92,7 +92,7 @@ export const schema = {
     },
     "authorSize": {
       "type": "integer",
-      "title": "Nombre de développeurs ou taille estimée de la communauté de développeurs de l'outil"  
+      "title": "Nombre de développeurs ou taille estimée de la communauté de développeurs de l'outil"
     },
     "format": {
       "type": "array",
@@ -106,9 +106,9 @@ export const schema = {
         ]
       }
     },
-    "language": {
+    "languages": {
       "type": "array",
-      "title": "Langue dans laquelle est traduit l'outil",
+      "title": "Langues dans lesquelles est traduit l'outil",
       "items": {
         "type": "string",
         "enum": [
@@ -180,7 +180,7 @@ export const schema = {
       "title": "Modèle de tarification",
       "items": {
         "type": "string"
-      }      
+      }
     },
     "userSize": {
       "type": "integer",
@@ -234,13 +234,17 @@ export const schema = {
       "type": "boolean",
       "title": "API proposée"
     },
-    "scoreInstallation": {
+    "easeOfInstallation": {
       "type": "integer",
-      "title": "Facilité d'installation (note sur 5)"  
+      "title": "Facilité d'installation (note sur 5)",
+      "minimum": 1,
+      "maximum": 5,
     },
-    "scoreUse": {
+    "easeOfUse": {
       "type": "integer",
-      "title": "Facilité d'utilisation (note sur 5)"  
+      "title": "Facilité d'utilisation (note sur 5)",
+      "minimum": 1,
+      "maximum": 5,
     },
     "helpURL": {
       "type": "string",

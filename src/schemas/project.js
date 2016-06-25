@@ -23,13 +23,6 @@ export const schema = {
   "type": "object",
   "required": [
     "name",
-    // "description",
-    // "category",
-    // "features",
-    // "format",
-    // "pricingModel",
-    // "hostingType",
-    // "scoreUse"
   ],
   "properties": {
     "name": {
@@ -40,228 +33,104 @@ export const schema = {
       "type": "string",
       "title": "Description"
     },
-    "category": {
+    "url": {
+      "type": "string",
+      "title": "Site web du projet (à partir duquel on peut directement l'utiliser ou le télécharger)"
+    },
+    "screenshots": {
+      "type": "string",
+      "title": "Capture(s) d'écran illustrant les principales fonctionnalités du projet"
+    },
+    "actorName": {
+      "type": "string",
+      "title": "Nom officiel, commercial ou commun de l'acteur du projet"
+    },
+    "actorStatus": {
       "type": "array",
-      "title": "Catégorie(s) du projet",
+      "title": "Statut juridique de l'acteur du projet",
+      "items": {
+        "type": "string"
+      }
+    },
+    "actorEmail": {
+      "type": "string",
+      "title": "Adresse e-mail de l'acteur du projet"
+    },
+    "location": {
+      "type": "string",
+      "title": "Lieu du projet (pays, région, etc)",
+    },
+    "scale": {
+      "type": "array",
+      "title": "Échelle du projet ",
+      "items": {
+        "type": "string",
+        "enum": [
+           "Locale",
+           "Nationale",
+           "Internationale",
+        ]
+      }
+    },
+    "usersTypes": {
+      "type": "array",
+      "title": "Types d'utilisateurs ",
+      "items": {
+        "type": "string",
+        "enum": [
+           "Administrations",
+           "Associations",
+           "Citoyens",
+           "Élus",
+           "Organisations non gouvernementales (ONG)",
+        ]
+      }
+    },
+    "usersCount": {
+      "type": "string",
+      "title": "Nombre d'utilisateurs ",
+      "enum": [
+        "",
+        "1 - 10",
+        "11 - 100",
+        "101 - 1 000",
+        "1 001 - 10 000",
+        "10 001 - 100 000",
+        "100 001 - 1 000 000",
+        "> 1 000 000",
+      ],
+    },
+    "categories": {
+      "type": "array",
+      "title": "Besoins et usages du projet",
       "items": {
         "type": "string"
       }
     },
     "features": {
       "type": "array",
-      "title": "Fonctionnalité(s) du projet",
+      "title": "Fonctionnalité(s) utilisées par le projet",
       "items": {
         "type": "string"
       }
     },
-    "url": {
-      "type": "string",
-      "title": "Site web du projet (à partir duquel on peut directement l'utiliser ou le télécharger)"
+    "customDevelopment": {
+      "type": "boolean",
+      "title": "Développement spécifique"
     },
-    "urlDemo": {
-      "type": "string",
-      "title": "Site web de démo du projet (à partir duquel on peut le tester gratuitement)"
-    },
-    "screenshots": {
-      "type": "string",
-      "title": "Capture(s) d'écran illustrant les principales fonctionnalités du projet"
-    },
-    "authorName": {
-      "type": "string",
-      "title": "Nom officiel, commercial ou commun de l'auteur du projet"
-    },
-    "authorStatus": {
-      "type": "array",
-      "title": "Statut juridique de l'auteur du projet",
-      "items": {
-        "type": "string"
-      }
-    },
-    "authorOrigin": {
-      "type": "string",
-      "title": "Pays où est domicilié l'auteur du projet",
-      "enum": [
-        "France",
-        "USA",
-        "UK"
-      ]
-    },
-    "authorEmail": {
-      "type": "string",
-      "title": "Adresse e-mail de l'auteur du projet"
-    },
-    "authorSize": {
+    "easeOfUse": {
       "type": "integer",
-      "title": "Nombre de développeurs ou taille estimée de la communauté de développeurs du projet"  
+      "title": "Facilité de prise en main du projet (note sur 5)",
+      "minimum": 1,
+      "maximum": 5,
     },
-    "format": {
-      "type": "array",
-      "title": "Forme sous laquelle est disponible le projet",
-      "items": {
-        "type": "string",
-        "enum": [
-           "Web",
-           "Appli mobile",
-           "Desktop"
-        ]
-      }
-    },
-    "language": {
-      "type": "array",
-      "title": "Langue dans laquelle est traduit le projet",
-      "items": {
-        "type": "string",
-        "enum": [
-           "Français",
-           "Anglais",
-           "Espagnol"
-        ]
-      }
-    },
-    "programmingLanguage": {
-      "type": "array",
-      "title": "Principal langage de programmation du code source du projet",
-      "items": {
-        "type": "string"
-      }
-    },
-    "technology": {
-      "type": "array",
-      "title": "Technologies informatiques utilisées pour faire fonctionner le projet",
-      "items": {
-        "type": "string"
-      }
-    },
-    "licence": {
-      "type": "string",
-      "title": "Licence sous laquelle est distribuée le projet"
-    },
-    "openSource": {
-      "type": "boolean",
-      "title": "Licence libre"
-    },
-    "sourceCode": {
-      "type": "string",
-      "title": "Site web où le code source du projet est directement accessible (repository)"
-    },
-    "responsive": {
-      "type": "boolean",
-      "title": "Site web adaptatif"
-    },
-    "android": {
-      "type": "boolean",
-      "title": "Application Android"
-    },
-    "iOS": {
-      "type": "boolean",
-      "title": "Application Android"
-    },
-    "windowsphone": {
-      "type": "boolean",
-      "title": "Application Windows Phone / Windows 10 Mobile"
-    },
-    "bugtrackerURL": {
-      "type": "string",
-      "title": "Site web pour rapporter les bugs du projet"
-    },
-    "stackexchangeTag": {
-      "type": "array",
-      "title": "Tag(s) utilisé(s) sur Stack Exchange",
-      "items": {
-        "type": "string"
-      }
-    },
-    "githubStars": {
-      "type": "number",
-      "title": "Nombre d'étoiles sur Git Hub"
-    },
-    "pricingModel": {
-      "type": "array",
-      "title": "Modèle de tarification",
-      "items": {
-        "type": "string"
-      }      
-    },
-    "userSize": {
+    "satisfactionLevel": {
       "type": "integer",
-      "title": "Nombre estimé d'utilisateurs"
+      "title": "Niveau de satisfaction (note sur 5)",
+      "minimum": 1,
+      "maximum": 5,
     },
-    "userInteraction": {
-      "type": "boolean",
-      "title": "Interaction entre utilisateurs (possibilité d'utiliser le projet à plusieurs utilisateurs en même temps)"
-    },
-    "moderationModel": {
-      "type": "array",
-      "title": "Modèle de modération (niveau de contrôle que possède le porteur de projet sur les actions des utilisateurs : centralisé, communautaire...)",
-      "items": {
-        "type": "string"
-      }
-    },
-    "moderationSystem": {
-      "type": "array",
-      "title": "Système de modération (moment où intervient le contrôle sur les actions : a priori, a posteriori)",
-      "items": {
-        "type": "string"
-      }
-    },
-    "hostingType": {
-      "type": "array",
-      "title": "Type d'hébergement (cloud, auto-hébergé...)",
-      "items": {
-        "type": "string"
-      }
-    },
-    "hostingSelf": {
-      "type": "boolean",
-      "title": "Possibilité d'héberger le projet sur son propre serveur"
-    },
-    "hostingLocation": {
-      "type": "array",
-      "title": "Localisation géographique des serveurs du projet (dans le cas d'un service web)",
-      "items": {
-        "type": "string"
-      }
-    },
-    "opendata": {
-      "type": "boolean",
-      "title": "Open Data"
-    },
-    "dataPrivacy": {
-      "type": "string",
-      "title": "Accès aux données personnelles"
-    },
-    "API": {
-      "type": "boolean",
-      "title": "API proposée"
-    },
-    "scoreInstallation": {
-      "type": "integer",
-      "title": "Facilité d'installation (note sur 5)"  
-    },
-    "scoreUse": {
-      "type": "integer",
-      "title": "Facilité d'utilisation (note sur 5)"  
-    },
-    "helpURL": {
-      "type": "string",
-      "title": "Site web d'aide à la prise en main du projet (guide, tutorial, vidéo...)"
-    },
-    "support": {
-      "type": "boolean",
-      "title": "Support technique disponible"
-    },
-    "accessibility": {
-      "type": "boolean",
-      "title": "Accessibilité handicap"
-    },
-    "project": {
-      "type": "array",
-      "title": "Projet(s) ayant exployé le projet (cas d'usage)",
-      "items": {
-        "type": "string"
-      }
-    }
-  }
+  },
 }
 
 export const uiSchema = {
