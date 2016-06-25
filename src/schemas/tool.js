@@ -149,7 +149,7 @@ export const schema = {
     },
     "iOS": {
       "type": "boolean",
-      "title": "Application Android"
+      "title": "Application iOS"
     },
     "windowsphone": {
       "type": "boolean",
