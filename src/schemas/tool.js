@@ -255,9 +255,16 @@ export const schema = {
       "type": "boolean",
       "title": "Accessibilité handicap"
     },
-    "project": {
+    "projects": {
       "type": "array",
-      "title": "Projet(s) ayant exployé l'outil (cas d'usage)",
+      "title": "Projets ayant déployé l'outil (cas d'usage)",
+      "items": {
+        "type": "string"
+      }
+    },
+    "methods": {
+      "type": "array",
+      "title": "Méthodes en rapport avec l'outil",
       "items": {
         "type": "string"
       }
