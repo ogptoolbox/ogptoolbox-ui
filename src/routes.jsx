@@ -25,6 +25,12 @@ import App from "./components/app"
 import Home from "./components/home"
 import NotFound from "./components/not-found"
 import Profile from "./components/profile"
+import MethodDelete from "./components/methods/delete"
+import MethodEdit from "./components/methods/edit"
+import Methods from "./components/methods/index"
+import MethodsList from "./components/methods/list"
+import MethodNew from "./components/methods/new"
+import MethodView from "./components/methods/view"
 import ProjectDelete from "./components/projects/delete"
 import ProjectEdit from "./components/projects/edit"
 import Projects from "./components/projects/index"
@@ -45,6 +51,13 @@ import ToolView from "./components/tools/view"
 export default (
   <Route component={App} path="/">
     <IndexRoute component={Home} />
+    <Route component={Methods} path="methods">
+      <IndexRoute component={MethodsList} />
+      <Route component={MethodNew} path="new" />
+      <Route component={MethodView} path=":id" />
+      <Route component={MethodDelete} path=":id/delete" />
+      <Route component={MethodEdit} path=":id/edit" />
+    </Route>
     <Route component={Projects} path="projects">
       <IndexRoute component={ProjectsList} />
       <Route component={ProjectNew} path="new" />

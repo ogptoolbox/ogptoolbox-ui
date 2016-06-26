@@ -69,6 +69,7 @@ export default class App extends Component {
             <div className="collapse navbar-collapse" id="top-navbar-collapse">
               <ul className="nav navbar-nav">
                 <li><Link to="/about">About</Link></li>
+                <li><Link to="/methods">Methods</Link></li>
                 <li><Link to="/projects">Projects</Link></li>
                 <li><Link to="/tools">Tools</Link></li>
               </ul>

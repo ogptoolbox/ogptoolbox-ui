@@ -18,26 +18,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import {routerReducer} from "react-router-redux"
-import {combineReducers} from "redux"
-import {reducer as formReducer} from "redux-form"
-
-import {methodByIdReducer, methodIdsReducer} from "./methods"
-import {projectByIdReducer, projectIdsReducer} from "./projects"
-import {toolByIdReducer, toolIdsReducer} from "./tools"
-import {authenticationReducer} from "./user"
+import {Component} from "react"
 
 
-// Updates the data for different actions.
-export default combineReducers({
-  authentication: authenticationReducer,
-  // ballotById: ballotByIdReducer,
-  form: formReducer,
-  methodById: methodByIdReducer,
-  methodIds: methodIdsReducer,
-  projectById: projectByIdReducer,
-  projectIds: projectIdsReducer,
-  routing: routerReducer,
-  toolById: toolByIdReducer,
-  toolIds: toolIdsReducer,
-})
+export default class Methods extends Component {
+  static breadcrumbName = "Methods"
+  render() {
+    return (
+      <section>
+        {this.props.children}
+      </section>
+    )
+  }
+}

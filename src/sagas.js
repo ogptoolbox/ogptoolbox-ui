@@ -27,6 +27,30 @@ import * as actions from "./actions"
 import {fetchApiJson, fetchUiJson} from "./fetchers"
 
 
+function* createMethod(authentication, values) {
+  yield put(actions.creatingMethod.request(authentication, values))
+  try {
+    const method = yield call(
+      fetchApiJson,
+      "methods",
+      {
+        body: JSON.stringify(values),
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          "OGPToolbox-API-Key": authentication.apiKey,
+        },
+        method: "post",
+      },
+    )
+    yield put(actions.creatingMethod.success(method))
+    browserHistory.push(`/methods/${method.id}`)
+  } catch (error) {
+    yield put(actions.creatingMethod.failure(authentication, values, error))
+  }
+}
+
+
 function* createProject(authentication, values) {
   yield put(actions.creatingProject.request(authentication, values))
   try {
@@ -71,6 +95,29 @@ function* createTool(authentication, values) {
     browserHistory.push(`/tools/${tool.id}`)
   } catch (error) {
     yield put(actions.creatingTool.failure(authentication, values, error))
+  }
+}
+
+
+function* deleteMethod(authentication, id) {
+  yield put(actions.deletingMethod.request(authentication, id))
+  try {
+    const method = yield call(
+      fetchApiJson,
+      `methods/${id}`,
+      {
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          "OGPToolbox-API-Key": authentication.apiKey,
+        },
+        method: "delete",
+      },
+    )
+    yield put(actions.deletingMethod.success(method))
+    browserHistory.push("/methods")
+  } catch (error) {
+    yield put(actions.deletingMethod.failure(authentication, id, error))
   }
 }
 
@@ -121,6 +168,52 @@ function* deleteTool(authentication, id) {
 }
 
 
+export function* fetchMethod(authentication, id) {
+  yield put(actions.loadingMethod.request(authentication, id))
+  const authenticationHeaders = authentication && authentication.apiKey ?
+    {"OGPToolbox-API-Key": authentication.apiKey} :
+    {}
+  try {
+    const method = yield call(
+      fetchApiJson,
+      `methods/${id}`,
+      {
+        headers: {
+          "Accept": "application/json",
+          ...authenticationHeaders,
+        },
+      },
+    )
+    yield put(actions.loadingMethod.success(method))
+  } catch (error) {
+    yield put(actions.loadingMethod.failure(authentication, id, error))
+  }
+}
+
+
+export function* fetchMethods(authentication) {
+  yield put(actions.loadingMethods.request(authentication))
+  const authenticationHeaders = authentication && authentication.apiKey ?
+    {"OGPToolbox-API-Key": authentication.apiKey} :
+    {}
+  try {
+    const methods = yield call(
+      fetchApiJson,
+      "methods",
+      {
+        headers: {
+          "Accept": "application/json",
+          ...authenticationHeaders,
+        },
+      },
+    )
+    yield put(actions.loadingMethods.success(methods))
+  } catch (error) {
+    yield put(actions.loadingMethods.failure(authentication, error))
+  }
+}
+
+
 export function* fetchProject(authentication, id) {
   yield put(actions.loadingProject.request(authentication, id))
   const authenticationHeaders = authentication && authentication.apiKey ?
@@ -140,29 +233,6 @@ export function* fetchProject(authentication, id) {
     yield put(actions.loadingProject.success(project))
   } catch (error) {
     yield put(actions.loadingProject.failure(authentication, id, error))
-  }
-}
-
-
-export function* fetchTool(authentication, id) {
-  yield put(actions.loadingTool.request(authentication, id))
-  const authenticationHeaders = authentication && authentication.apiKey ?
-    {"OGPToolbox-API-Key": authentication.apiKey} :
-    {}
-  try {
-    const tool = yield call(
-      fetchApiJson,
-      `tools/${id}`,
-      {
-        headers: {
-          "Accept": "application/json",
-          ...authenticationHeaders,
-        },
-      },
-    )
-    yield put(actions.loadingTool.success(tool))
-  } catch (error) {
-    yield put(actions.loadingTool.failure(authentication, id, error))
   }
 }
 
@@ -190,6 +260,29 @@ export function* fetchProjects(authentication) {
 }
 
 
+export function* fetchTool(authentication, id) {
+  yield put(actions.loadingTool.request(authentication, id))
+  const authenticationHeaders = authentication && authentication.apiKey ?
+    {"OGPToolbox-API-Key": authentication.apiKey} :
+    {}
+  try {
+    const tool = yield call(
+      fetchApiJson,
+      `tools/${id}`,
+      {
+        headers: {
+          "Accept": "application/json",
+          ...authenticationHeaders,
+        },
+      },
+    )
+    yield put(actions.loadingTool.success(tool))
+  } catch (error) {
+    yield put(actions.loadingTool.failure(authentication, id, error))
+  }
+}
+
+
 export function* fetchTools(authentication) {
   yield put(actions.loadingTools.request(authentication))
   const authenticationHeaders = authentication && authentication.apiKey ?
@@ -213,20 +306,31 @@ export function* fetchTools(authentication) {
 }
 
 
+function getMethod(state, id) {
+  // return state.methodById && state.methodById[id]
+  return state.methodById[id]
+}
+
+
+function getMethodIds(state) {
+  return state.methodIds
+}
+
+
 function getProject(state, id) {
   // return state.projectById && state.projectById[id]
   return state.projectById[id]
 }
 
 
-function getTool(state, id) {
-  // return state.toolById && state.toolById[id]
-  return state.toolById[id]
+function getProjectIds(state) {
+  return state.projectIds
 }
 
 
-function getProjectIds(state) {
-  return state.projectIds
+function getTool(state, id) {
+  // return state.toolById && state.toolById[id]
+  return state.toolById[id]
 }
 
 
@@ -242,21 +346,33 @@ function* loadAuthenticationCookie() {
 }
 
 
+function* loadMethod(authentication, id) {
+  const method = yield select(getMethod, id)
+  if (!method) yield call(fetchMethod, authentication, id)
+}
+
+
+function* loadMethods(authentication) {
+  const methodIds = yield select(getMethodIds)
+  if (methodIds === null) yield call(fetchMethods, authentication)
+}
+
+
 function* loadProject(authentication, id) {
   const project = yield select(getProject, id)
   if (!project) yield call(fetchProject, authentication, id)
 }
 
 
-function* loadTool(authentication, id) {
-  const tool = yield select(getTool, id)
-  if (!tool) yield call(fetchTool, authentication, id)
-}
-
-
 function* loadProjects(authentication) {
   const projectIds = yield select(getProjectIds)
   if (projectIds === null) yield call(fetchProjects, authentication)
+}
+
+
+function* loadTool(authentication, id) {
+  const tool = yield select(getTool, id)
+  if (!tool) yield call(fetchTool, authentication, id)
 }
 
 
@@ -340,6 +456,34 @@ function* signUp(values, resolve, reject) {
 }
 
 
+function* updateMethod(authentication, id, values) {
+  values = {...values}
+  for (let key in values) {
+    if (values[key] === null || values[key] === undefined) delete values[key]
+  }
+  yield put(actions.updatingMethod.request(authentication, id, values))
+  try {
+    const method = yield call(
+      fetchApiJson,
+      `methods/${id}`,
+      {
+        body: JSON.stringify(values),
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          "OGPToolbox-API-Key": authentication.apiKey,
+        },
+        method: "put",
+      },
+    )
+    yield put(actions.updatingMethod.success(method))
+    browserHistory.push(`/methods/${method.id}`)
+  } catch (error) {
+    yield put(actions.updatingMethod.failure(authentication, id, values, error))
+  }
+}
+
+
 function* updateProject(authentication, id, values) {
   values = {...values}
   for (let key in values) {
@@ -396,6 +540,16 @@ function* updateTool(authentication, id, values) {
 }
 
 
+function* watchCreateMethod() {
+  let action = yield take(actions.CREATE_METHOD)
+  while (action !== END) {
+    const {authentication, values} = action
+    yield fork(createMethod, authentication, values)
+    action = yield take(actions.CREATE_METHOD)
+  }
+}
+
+
 function* watchCreateProject() {
   let action = yield take(actions.CREATE_PROJECT)
   while (action !== END) {
@@ -412,6 +566,16 @@ function* watchCreateTool() {
     const {authentication, values} = action
     yield fork(createTool, authentication, values)
     action = yield take(actions.CREATE_TOOL)
+  }
+}
+
+
+function* watchDeleteMethod() {
+  let action = yield take(actions.DELETE_METHOD)
+  while (action !== END) {
+    const {authentication, id} = action
+    yield fork(deleteMethod, authentication, id)
+    action = yield take(actions.DELETE_METHOD)
   }
 }
 
@@ -445,6 +609,26 @@ function* watchLoadAuthenticationCookie() {
 }
 
 
+function* watchLoadMethod() {
+  let action = yield take(actions.LOAD_METHOD)
+  while (action !== END) {
+    const {authentication, id} = action
+    yield fork(loadMethod, authentication, id)
+    action = yield take(actions.LOAD_METHOD)
+  }
+}
+
+
+function* watchLoadMethods() {
+  let action = yield take(actions.LOAD_METHODS)
+  while (action !== END) {
+    const {authentication} = action
+    yield fork(loadMethods, authentication)
+    action = yield take(actions.LOAD_METHODS)
+  }
+}
+
+
 function* watchLoadProject() {
   let action = yield take(actions.LOAD_PROJECT)
   while (action !== END) {
@@ -455,22 +639,22 @@ function* watchLoadProject() {
 }
 
 
-function* watchLoadTool() {
-  let action = yield take(actions.LOAD_TOOL)
-  while (action !== END) {
-    const {authentication, id} = action
-    yield fork(loadTool, authentication, id)
-    action = yield take(actions.LOAD_TOOL)
-  }
-}
-
-
 function* watchLoadProjects() {
   let action = yield take(actions.LOAD_PROJECTS)
   while (action !== END) {
     const {authentication} = action
     yield fork(loadProjects, authentication)
     action = yield take(actions.LOAD_PROJECTS)
+  }
+}
+
+
+function* watchLoadTool() {
+  let action = yield take(actions.LOAD_TOOL)
+  while (action !== END) {
+    const {authentication, id} = action
+    yield fork(loadTool, authentication, id)
+    action = yield take(actions.LOAD_TOOL)
   }
 }
 
@@ -515,6 +699,16 @@ function* watchSignUp() {
 }
 
 
+function* watchUpdateMethod() {
+  let action = yield take(actions.UPDATE_METHOD)
+  while (action !== END) {
+    const {authentication, id, values} = action
+    yield fork(updateMethod, authentication, id, values)
+    action = yield take(actions.UPDATE_METHOD)
+  }
+}
+
+
 function* watchUpdateProject() {
   let action = yield take(actions.UPDATE_PROJECT)
   while (action !== END) {
@@ -537,18 +731,23 @@ function* watchUpdateTool() {
 
 export default function* root() {
   yield [
+    call(watchCreateMethod),
     call(watchCreateProject),
     call(watchCreateTool),
+    call(watchDeleteMethod),
     call(watchDeleteProject),
     call(watchDeleteTool),
     call(watchLoadAuthenticationCookie),
+    call(watchLoadMethod),
+    call(watchLoadMethods),
     call(watchLoadProject),
-    call(watchLoadTool),
     call(watchLoadProjects),
+    call(watchLoadTool),
     call(watchLoadTools),
     call(watchSignIn),
     call(watchSignOut),
     call(watchSignUp),
+    call(watchUpdateMethod),
     call(watchUpdateProject),
     call(watchUpdateTool),
   ]
