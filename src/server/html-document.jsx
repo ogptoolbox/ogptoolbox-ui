@@ -39,6 +39,7 @@ class HtmlDocument extends Component {
           <meta content="width=device-width, initial-scale=1.0, user-scalable=no" name="viewport" />
           <title>{DocumentTitle.rewind()}</title>
           <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css" />
+          <link rel="stylesheet" href="/languages.min.css" />
           {cssUrls && cssUrls.map((href, key) => <link href={href} key={key} rel="stylesheet" type="text/css" />)}
         </head>
         <body style={{paddingTop: "70px"}}>

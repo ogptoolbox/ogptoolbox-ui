@@ -22,6 +22,7 @@ import {routerReducer} from "react-router-redux"
 import {combineReducers} from "redux"
 import {reducer as formReducer} from "redux-form"
 
+import {languageReducer} from "./languages"
 import {methodByIdReducer, methodIdsReducer} from "./methods"
 import {projectByIdReducer, projectIdsReducer} from "./projects"
 import {toolByIdReducer, toolIdsReducer} from "./tools"
@@ -33,6 +34,7 @@ export default combineReducers({
   authentication: authenticationReducer,
   // ballotById: ballotByIdReducer,
   form: formReducer,
+  language: languageReducer,
   methodById: methodByIdReducer,
   methodIds: methodIdsReducer,
   projectById: projectByIdReducer,

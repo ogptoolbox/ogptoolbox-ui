@@ -26,7 +26,7 @@ import {syncHistoryWithStore} from "react-router-redux"
 import {END} from "redux-saga"
 
 import configureStore from "../store"
-import routes from "../routes"
+import Routes from "../routes"
 import rootSaga from "../sagas"
 import HtmlDocument from "./html-document"
 
@@ -35,6 +35,7 @@ export default function handleRender(req, res, next) {
   const memoryHistory = createMemoryHistory(req.url)
   const store = configureStore(memoryHistory)
   const history = syncHistoryWithStore(memoryHistory, store)
+  const routes = Routes(store)
 
   match({history, routes, location: req.url}, (error, redirectLocation, renderProps) => {
     if (error) {

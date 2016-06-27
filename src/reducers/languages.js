@@ -18,30 +18,15 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import "babel-polyfill"
-
-import ReactDOM from "react-dom"
-import {Provider} from "react-redux"
-import {browserHistory, Router} from "react-router"
-import {syncHistoryWithStore} from "react-router-redux"
-
-import configureStore from "./store"
-import Routes from "./routes"
-import rootSaga from "./sagas"
+import * as actions from "../actions"
 
 
-const store = configureStore(browserHistory, window.__INITIAL_STATE__)
-
-// Create an enhanced history that syncs navigation events with the store
-const history = syncHistoryWithStore(browserHistory, store)
-
-store.runSaga(rootSaga)
-
-ReactDOM.render(
-  <Provider store={store}>
-    <Router history={history}>
-      {Routes(store)}
-    </Router>
-  </Provider>,
-  document.getElementById("app-mount-node"),
-)
+export function languageReducer(state = null, action) {
+  switch (action.type) {
+  case actions.SET_LANGUAGE:
+    const {language} = action
+    return language
+  default:
+    return state
+  }
+}

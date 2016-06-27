@@ -18,8 +18,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import {IndexRoute, Route} from "react-router"
+import {IndexRedirect, IndexRoute, Redirect, Route} from "react-router"
 
+import {setLanguage} from "./actions"
 // import About from "./components/about"
 import App from "./components/app"
 import Home from "./components/home"
@@ -48,8 +49,8 @@ import ToolNew from "./components/tools/new"
 import ToolView from "./components/tools/view"
 
 
-export default (
-  <Route component={App} path="/">
+const i18nRoutes = (
+  <Route component={App}>
     <IndexRoute component={Home} />
     <Route component={Methods} path="methods">
       <IndexRoute component={MethodsList} />
@@ -78,3 +79,15 @@ export default (
     <Route component={NotFound} isNotFound path="*" />
   </Route>
 )
+
+
+export default function (store) {
+  return (
+    <Route path="/">
+      <IndexRedirect to="en/" />
+      <Route path="en" onEnter={() => store.dispatch(setLanguage("en"))}>{i18nRoutes}</Route>
+      <Route path="fr" onEnter={() => store.dispatch(setLanguage("fr"))}>{i18nRoutes}</Route>
+      <Redirect from="**" to="en/:splat" />
+    </Route>
+  )
+}

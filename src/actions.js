@@ -56,6 +56,7 @@ export const LOADING_TOOL = createRequestTypes("LOADING_TOOL")
 export const LOADING_METHODS = createRequestTypes("LOADING_METHODS")
 export const LOADING_PROJECTS = createRequestTypes("LOADING_PROJECTS")
 export const LOADING_TOOLS = createRequestTypes("LOADING_TOOLS")
+export const SET_LANGUAGE = "SET_LANGUAGE"
 export const SIGN_IN = "SIGN_IN"
 export const SIGN_OUT = "SIGN_OUT"
 export const SIGN_UP = "SIGN_UP"
@@ -202,6 +203,7 @@ export const loadProject = (authentication, id) => action(LOAD_PROJECT, {authent
 export const loadProjects = (authentication) => action(LOAD_PROJECTS, {authentication})
 export const loadTool = (authentication, id) => action(LOAD_TOOL, {authentication, id})
 export const loadTools = (authentication) => action(LOAD_TOOLS, {authentication})
+export const setLanguage = (language) => action(SET_LANGUAGE, {language})
 export const signIn = (values, resolve, reject) => action(SIGN_IN, {values, resolve, reject})
 export const signOut = (resolve, reject) => action(SIGN_OUT, {resolve, reject})
 export const signUp = (values, resolve, reject) => action(SIGN_UP, {values, resolve, reject})
