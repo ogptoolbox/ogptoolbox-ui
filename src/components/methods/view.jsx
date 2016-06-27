@@ -37,6 +37,7 @@ for (let [propertyId, property] of Object.entries(schema.properties)) {
 class MethodView extends Component {
   static propTypes = {
     authentication: PropTypes.object,
+    language: PropTypes.string.isRequired,
     loadMethod: PropTypes.func.isRequired,
     methodById: PropTypes.object.isRequired,
   }
@@ -44,7 +45,7 @@ class MethodView extends Component {
     this.props.loadMethod(this.props.authentication, this.props.params.id)
   }
   render() {
-    const {authentication, loadMethod, params, methodById} = this.props
+    const {authentication, language, loadMethod, params, methodById} = this.props
     const method = methodById[params.id]
     if (!method) return (
       <p>Loading {params.id}...</p>
@@ -57,10 +58,10 @@ class MethodView extends Component {
       >
         <div>
           {authentication && Object.keys(authentication).length > 0 ? (
-            <Link className="btn btn-default" role="button" to={`/methods/${method.id}/edit`}>Edit</Link>
+            <Link className="btn btn-default" role="button" to={`/${language}/methods/${method.id}/edit`}>Edit</Link>
           ) : null}
           {authentication && Object.keys(authentication).length > 0 ? (
-            <Link className="btn btn-danger" role="button" to={`/methods/${method.id}/delete`}>Delete</Link>
+            <Link className="btn btn-danger" role="button" to={`/${language}/methods/${method.id}/delete`}>Delete</Link>
           ) : null}
         </div>
       </Form>
@@ -71,6 +72,7 @@ class MethodView extends Component {
 export default connect(
   state => ({
     authentication: state.authentication,
+    language: state.language,
     methodById: state.methodById,
   }),
   {

@@ -37,6 +37,7 @@ for (let [propertyId, property] of Object.entries(schema.properties)) {
 class ToolView extends Component {
   static propTypes = {
     authentication: PropTypes.object,
+    language: PropTypes.string.isRequired,
     loadTool: PropTypes.func.isRequired,
     toolById: PropTypes.object.isRequired,
   }
@@ -44,7 +45,7 @@ class ToolView extends Component {
     this.props.loadTool(this.props.authentication, this.props.params.id)
   }
   render() {
-    const {authentication, loadTool, params, toolById} = this.props
+    const {authentication, language, loadTool, params, toolById} = this.props
     const tool = toolById[params.id]
     if (!tool) return (
       <p>Loading {params.id}...</p>
@@ -57,10 +58,10 @@ class ToolView extends Component {
       >
         <div>
           {authentication && Object.keys(authentication).length > 0 ? (
-            <Link className="btn btn-default" role="button" to={`/tools/${tool.id}/edit`}>Edit</Link>
+            <Link className="btn btn-default" role="button" to={`/${language}/tools/${tool.id}/edit`}>Edit</Link>
           ) : null}
           {authentication && Object.keys(authentication).length > 0 ? (
-            <Link className="btn btn-danger" role="button" to={`/tools/${tool.id}/delete`}>Delete</Link>
+            <Link className="btn btn-danger" role="button" to={`/${language}/tools/${tool.id}/delete`}>Delete</Link>
           ) : null}
         </div>
       </Form>
@@ -71,6 +72,7 @@ class ToolView extends Component {
 export default connect(
   state => ({
     authentication: state.authentication,
+    language: state.language,
     toolById: state.toolById,
   }),
   {

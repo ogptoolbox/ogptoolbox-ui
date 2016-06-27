@@ -19,20 +19,28 @@
 
 
 import {Component, PropTypes} from "react"
+import {connect} from "react-redux"
 import {Link} from "react-router"
 
 
-export default class ProjectLine extends Component {
+class ProjectLine extends Component {
   static propTypes = {
+    language: PropTypes.string.isRequired,
     project: PropTypes.object.isRequired,
   }
   render() {
-    const {project} = this.props
+    const {language, project} = this.props
     return (
-      <Link className="list-group-item" to={`/projects/${project.id}`}>
+      <Link className="list-group-item" to={`/${language}/projects/${project.id}`}>
         <h4 className="list-group-item-heading">{project.name}</h4>
         <p className="list-group-item-text">{project.description}</p>
       </Link>
     )
   }
 }
+
+export default connect(
+  state => ({
+    language: state.language,
+  }),
+)(ProjectLine)

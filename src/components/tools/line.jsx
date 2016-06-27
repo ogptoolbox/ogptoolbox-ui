@@ -19,20 +19,28 @@
 
 
 import {Component, PropTypes} from "react"
+import {connect} from "react-redux"
 import {Link} from "react-router"
 
 
-export default class ToolLine extends Component {
+class ToolLine extends Component {
   static propTypes = {
+    language: PropTypes.string.isRequired,
     tool: PropTypes.object.isRequired,
   }
   render() {
-    const {tool} = this.props
+    const {language, tool} = this.props
     return (
-      <Link className="list-group-item" to={`/tools/${tool.id}`}>
+      <Link className="list-group-item" to={`/${language}/tools/${tool.id}`}>
         <h4 className="list-group-item-heading">{tool.name}</h4>
         <p className="list-group-item-text">{tool.description}</p>
       </Link>
     )
   }
 }
+
+export default connect(
+  state => ({
+    language: state.language,
+  }),
+)(ToolLine)

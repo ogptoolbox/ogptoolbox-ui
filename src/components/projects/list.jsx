@@ -29,6 +29,7 @@ import ProjectLine from "./line"
 class ProjectsList extends Component {
   static propTypes = {
     authentication: PropTypes.object,
+    language: PropTypes.string.isRequired,
     loadProjects: PropTypes.func.isRequired,
     projects: PropTypes.arrayOf(PropTypes.object),
   }
@@ -36,13 +37,13 @@ class ProjectsList extends Component {
     this.props.loadProjects(this.props.authentication)
   }
   render() {
-    const {authentication, loadProjects, projects} = this.props
+    const {authentication, language, loadProjects, projects} = this.props
     return (
       <section>
         <h1>Projects</h1>
         {projects.map(project => <ProjectLine key={project.id} project={project} />)}
         {authentication && Object.keys(authentication).length > 0 ? (
-          <Link className="btn btn-default" role="button" to="/projects/new">New Project</Link>
+          <Link className="btn btn-default" role="button" to={`/${language}/projects/new`}>New Project</Link>
         ) : null}
       </section>
     )
@@ -52,6 +53,7 @@ class ProjectsList extends Component {
 export default connect(
   state => ({
     authentication: state.authentication,
+    language: state.language,
     projects: state.projectIds ? state.projectIds.map(projectId => state.projectById[projectId]) : [],
   }),
   {

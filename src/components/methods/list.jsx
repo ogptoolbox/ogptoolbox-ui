@@ -29,6 +29,7 @@ import MethodLine from "./line"
 class MethodsList extends Component {
   static propTypes = {
     authentication: PropTypes.object,
+    language: PropTypes.string.isRequired,
     loadMethods: PropTypes.func.isRequired,
     methods: PropTypes.arrayOf(PropTypes.object),
   }
@@ -36,13 +37,13 @@ class MethodsList extends Component {
     this.props.loadMethods(this.props.authentication)
   }
   render() {
-    const {authentication, loadMethods, methods} = this.props
+    const {authentication, language, loadMethods, methods} = this.props
     return (
       <section>
         <h1>Methods</h1>
         {methods.map(method => <MethodLine key={method.id} method={method} />)}
         {authentication && Object.keys(authentication).length > 0 ? (
-          <Link className="btn btn-default" role="button" to="/methods/new">New Method</Link>
+          <Link className="btn btn-default" role="button" to={`/${language}/methods/new`}>New Method</Link>
         ) : null}
       </section>
     )
@@ -52,6 +53,7 @@ class MethodsList extends Component {
 export default connect(
   state => ({
     authentication: state.authentication,
+    language: state.language,
     methods: state.methodIds ? state.methodIds.map(methodId => state.methodById[methodId]) : [],
   }),
   {

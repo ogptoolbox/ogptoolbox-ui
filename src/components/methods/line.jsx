@@ -19,20 +19,28 @@
 
 
 import {Component, PropTypes} from "react"
+import {connect} from "react-redux"
 import {Link} from "react-router"
 
 
-export default class MethodLine extends Component {
+class MethodLine extends Component {
   static propTypes = {
+    language: PropTypes.string.isRequired,
     method: PropTypes.object.isRequired,
   }
   render() {
-    const {method} = this.props
+    const {language, method} = this.props
     return (
-      <Link className="list-group-item" to={`/methods/${method.id}`}>
+      <Link className="list-group-item" to={`/${language}/methods/${method.id}`}>
         <h4 className="list-group-item-heading">{method.name}</h4>
         <p className="list-group-item-text">{method.description}</p>
       </Link>
     )
   }
 }
+
+export default connect(
+  state => ({
+    language: state.language,
+  }),
+)(MethodLine)

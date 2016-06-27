@@ -37,6 +37,7 @@ for (let [propertyId, property] of Object.entries(schema.properties)) {
 class ProjectView extends Component {
   static propTypes = {
     authentication: PropTypes.object,
+    language: PropTypes.string.isRequired,
     loadProject: PropTypes.func.isRequired,
     projectById: PropTypes.object.isRequired,
   }
@@ -44,7 +45,7 @@ class ProjectView extends Component {
     this.props.loadProject(this.props.authentication, this.props.params.id)
   }
   render() {
-    const {authentication, loadProject, params, projectById} = this.props
+    const {authentication, language, loadProject, params, projectById} = this.props
     const project = projectById[params.id]
     if (!project) return (
       <p>Loading {params.id}...</p>
@@ -57,10 +58,10 @@ class ProjectView extends Component {
       >
         <div>
           {authentication && Object.keys(authentication).length > 0 ? (
-            <Link className="btn btn-default" role="button" to={`/projects/${project.id}/edit`}>Edit</Link>
+            <Link className="btn btn-default" role="button" to={`/${language}/projects/${project.id}/edit`}>Edit</Link>
           ) : null}
           {authentication && Object.keys(authentication).length > 0 ? (
-            <Link className="btn btn-danger" role="button" to={`/projects/${project.id}/delete`}>Delete</Link>
+            <Link className="btn btn-danger" role="button" to={`/${language}/projects/${project.id}/delete`}>Delete</Link>
           ) : null}
         </div>
       </Form>
@@ -71,6 +72,7 @@ class ProjectView extends Component {
 export default connect(
   state => ({
     authentication: state.authentication,
+    language: state.language,
     projectById: state.projectById,
   }),
   {

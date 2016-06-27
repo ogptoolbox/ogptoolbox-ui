@@ -29,6 +29,7 @@ import ToolLine from "./line"
 class ToolsList extends Component {
   static propTypes = {
     authentication: PropTypes.object,
+    language: PropTypes.string.isRequired,
     loadTools: PropTypes.func.isRequired,
     tools: PropTypes.arrayOf(PropTypes.object),
   }
@@ -36,7 +37,7 @@ class ToolsList extends Component {
     this.props.loadTools(this.props.authentication)
   }
   render() {
-    const {authentication, loadTools, tools} = this.props
+    const {authentication, language, loadTools, tools} = this.props
     return (
       <section>
         <h1>Tools</h1>
@@ -44,7 +45,7 @@ class ToolsList extends Component {
           {tools.map(tool => <ToolLine key={tool.id} tool={tool} />)}
         </div>
         {authentication && Object.keys(authentication).length > 0 ? (
-          <Link className="btn btn-default" role="button" to="/tools/new">New Tool</Link>
+          <Link className="btn btn-default" role="button" to={`/${language}/tools/new`}>New Tool</Link>
         ) : null}
       </section>
     )
@@ -54,6 +55,7 @@ class ToolsList extends Component {
 export default connect(
   state => ({
     authentication: state.authentication,
+    language: state.language,
     tools: state.toolIds ? state.toolIds.map(toolId => state.toolById[toolId]) : [],
   }),
   {
