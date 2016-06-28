@@ -43,8 +43,9 @@ function* createMethod(authentication, values) {
         method: "post",
       },
     )
+    const language = yield select(getLanguage)
     yield put(actions.creatingMethod.success(method))
-    browserHistory.push(`/methods/${method.id}`)
+    browserHistory.push(`/${language}/methods/${method.id}`)
   } catch (error) {
     yield put(actions.creatingMethod.failure(authentication, values, error))
   }
@@ -67,8 +68,9 @@ function* createProject(authentication, values) {
         method: "post",
       },
     )
+    const language = yield select(getLanguage)
     yield put(actions.creatingProject.success(project))
-    browserHistory.push(`/projects/${project.id}`)
+    browserHistory.push(`/${language}/projects/${project.id}`)
   } catch (error) {
     yield put(actions.creatingProject.failure(authentication, values, error))
   }
@@ -91,8 +93,9 @@ function* createTool(authentication, values) {
         method: "post",
       },
     )
+    const language = yield select(getLanguage)
     yield put(actions.creatingTool.success(tool))
-    browserHistory.push(`/tools/${tool.id}`)
+    browserHistory.push(`/${language}/tools/${tool.id}`)
   } catch (error) {
     yield put(actions.creatingTool.failure(authentication, values, error))
   }
@@ -114,8 +117,9 @@ function* deleteMethod(authentication, id) {
         method: "delete",
       },
     )
+    const language = yield select(getLanguage)
     yield put(actions.deletingMethod.success(method))
-    browserHistory.push("/methods")
+    browserHistory.push(`/${language}/methods`)
   } catch (error) {
     yield put(actions.deletingMethod.failure(authentication, id, error))
   }
@@ -137,8 +141,9 @@ function* deleteProject(authentication, id) {
         method: "delete",
       },
     )
+    const language = yield select(getLanguage)
     yield put(actions.deletingProject.success(project))
-    browserHistory.push("/projects")
+    browserHistory.push(`/${language}/projects`)
   } catch (error) {
     yield put(actions.deletingProject.failure(authentication, id, error))
   }
@@ -160,8 +165,9 @@ function* deleteTool(authentication, id) {
         method: "delete",
       },
     )
+    const language = yield select(getLanguage)
     yield put(actions.deletingTool.success(tool))
-    browserHistory.push("/tools")
+    browserHistory.push(`/${language}/tools`)
   } catch (error) {
     yield put(actions.deletingTool.failure(authentication, id, error))
   }
@@ -306,6 +312,11 @@ export function* fetchTools(authentication) {
 }
 
 
+function getLanguage(state) {
+  return state.language
+}
+
+
 function getMethod(state, id) {
   // return state.methodById && state.methodById[id]
   return state.methodById[id]
@@ -393,10 +404,11 @@ function* signIn(values, resolve, reject) {
       },
       method: "post",
     })
+    const language = yield select(getLanguage)
     yield put(actions.signingIn.success(authentication))
     cookie.save("ogptoolbox-editor.authentication", JSON.stringify(authentication))
     resolve()
-    browserHistory.push("/")  // TODO
+    browserHistory.push(`/${language}/`)  // TODO
   } catch (error) {
     yield put(actions.signingIn.failure(values, error))
     if (error.code && error.code >= 400 && error.code < 500) {
@@ -419,10 +431,11 @@ function* signOut(resolve, reject) {
       },
       method: "post",
     })
+    const language = yield select(getLanguage)
     yield put(actions.signingOut.success())
     cookie.remove("ogptoolbox-editor.authentication")
     resolve()
-    browserHistory.push("/")  // TODO
+    browserHistory.push(`/${language}/`)  // TODO
   } catch (error) {
     yield put(actions.signingOut.failure(error))
     reject({})
@@ -441,10 +454,11 @@ function* signUp(values, resolve, reject) {
       },
       method: "post",
     })
+    const language = yield select(getLanguage)
     yield put(actions.signingUp.success(authentication))
     cookie.save("ogptoolbox-editor.authentication", JSON.stringify(authentication))
     resolve()
-    browserHistory.push("/")  // TODO
+    browserHistory.push(`/${language}/`)  // TODO
   } catch (error) {
     yield put(actions.signingUp.failure(values, error))
     if (error.code && error.code >= 400 && error.code < 500) {
@@ -476,8 +490,9 @@ function* updateMethod(authentication, id, values) {
         method: "put",
       },
     )
+    const language = yield select(getLanguage)
     yield put(actions.updatingMethod.success(method))
-    browserHistory.push(`/methods/${method.id}`)
+    browserHistory.push(`/${language}/methods/${method.id}`)
   } catch (error) {
     yield put(actions.updatingMethod.failure(authentication, id, values, error))
   }
@@ -504,8 +519,9 @@ function* updateProject(authentication, id, values) {
         method: "put",
       },
     )
+    const language = yield select(getLanguage)
     yield put(actions.updatingProject.success(project))
-    browserHistory.push(`/projects/${project.id}`)
+    browserHistory.push(`/${language}/projects/${project.id}`)
   } catch (error) {
     yield put(actions.updatingProject.failure(authentication, id, values, error))
   }
@@ -532,8 +548,9 @@ function* updateTool(authentication, id, values) {
         method: "put",
       },
     )
+    const language = yield select(getLanguage)
     yield put(actions.updatingTool.success(tool))
-    browserHistory.push(`/tools/${tool.id}`)
+    browserHistory.push(`/${language}/tools/${tool.id}`)
   } catch (error) {
     yield put(actions.updatingTool.failure(authentication, id, values, error))
   }
