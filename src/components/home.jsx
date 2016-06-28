@@ -24,21 +24,25 @@ import {Component} from "react"
 export default class Home extends Component {
   render() {
     return (
-      <p>
-      France will host the Open Government Partnership 2016 Global Summit in Paris on December 7, 8 and 9.
-      </p>
-      <p>
-      As announced at the Global Summit launch event on April 20, a hackathon on civic technology and the practical implementation of open government principles and national commitments will take place during the Global Summit. The goal of this hackathon is to come up with an open government toolbox for the OGP, governments and civil society.
-      </p>
-      <p>
-      Open data portals, public consultation platforms, tools for monitoring and co-creating the law, discussion forums, civic technology, and online platforms to monitor the implementation of national action plans: these are examples of software tools and online services used by governments and civil society around the world, which could be referenced, shared and reused.
-      </p>
-      <p>
-      This toolbox will be based on a software catalogue, including examples of uses and practices to help choose among available solutions. It aims at facilitating the implementation of national commitments made by governments in their national action plans and encouraging cooperation, experience and resources sharing between OGP members.
-      </p>
-      <p>
-      Until December, sprints and workshops will be organized for public officials, civil society representatives, companies, start-ups and members of the civic tech ecosystem to meet and work on the toolbox. The toolbox will be presented at the end of the hackathon during the OGP 2016 Global Summit, on December 8 and 9
-      </p>
+      <section>
+        <h1>Welcome to the OGPToolbox editor</h1>
+        <p>
+          France will host the <strong>Open Government Partnership 2016 Global Summit in Paris on December 7, 8 and 9</strong>.
+        </p>
+        <p>
+          As announced at the Global Summit launch event on April 20, a <strong>hackathon on civic technology</strong> and the practical implementation of open government principles and national commitments will take place during the Global Summit. The goal of this hackathon is to come up with an open government toolbox for the OGP, governments and civil society.
+        </p>
+        <p>
+          Open data portals, public consultation platforms, tools for monitoring and co-creating the law, discussion forums, civic technology, and online platforms to monitor the implementation of national action plans: these are examples of software tools and online services used by governments and civil society around the world, which could be referenced, shared and reused.
+        </p>
+        <p>
+          <strong>This toolbox will be based on a software catalogue, including examples of uses and practices to help choose among available solutions.</strong> It aims at facilitating the implementation of national commitments made by governments in their national action plans and encouraging cooperation, experience and resources sharing between OGP members.
+        </p>
+        <p>
+          Until December, sprints and workshops will be organized for public officials, civil society representatives, companies, start-ups and members of the civic tech ecosystem to meet and work on the toolbox. The toolbox will be presented at the end of the hackathon during the OGP 2016 Global Summit, on December 8 and 9
+        </p>
+        <hr />
+      </section>
     )
   }
 }
