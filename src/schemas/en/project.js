@@ -18,7 +18,11 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import {categorySchema, featuresSchema as featuresSchemaOriginal, featuresUiSchema} from "./fields"
+import {
+  categorySchema,
+  featuresSchema as featuresSchemaOriginal, featuresUiSchema,
+  usersTypesSchema, usersTypesUiSchema,
+} from "./fields"
 
 
 const featuresSchema = {
@@ -84,23 +88,10 @@ export const schema = {
            "Local",
            "National",
            "International",
-        ]
-      }
+        ],
+      },
     },
-    "usersTypes": {
-      "type": "array",
-      "title": "User type",
-      "items": {
-        "type": "string",
-        "enum": [
-           "Administrations",
-           "Associations",
-           "Citizens",
-           "Representatives",
-           "Non-governmental organizations (NGOs)",
-        ]
-      }
-    },
+    "usersTypes": usersTypesSchema,
     "usersCount": {
       "type": "string",
       "title": "Number of users",
@@ -143,8 +134,8 @@ export const schema = {
       "title": "Method(s) used by the project",
       "items": {
         "type": "string"
-      }
-    }
+      },
+    },
   },
 }
 
@@ -153,4 +144,5 @@ export const uiSchema = {
   //   "ui:widget": "textarea",
   // },
   "features": featuresUiSchema,
+  "usersTypes": usersTypesUiSchema,
 }

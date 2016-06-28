@@ -98,11 +98,17 @@ export const schema = {
       "items": {
         "type": "string",
         "enum": [
+           "fr",
+           "en",
+           "es",
+        ],
+        "enumNames": [
            "French",
            "English",
-           "Spanish"
-        ]
-      }
+           "Spanish",
+        ],
+      },
+      "uniqueItems": true,
     },
     "programmingLanguage": {
       "type": "array",
@@ -263,4 +269,7 @@ export const uiSchema = {
   //   "ui:widget": "textarea",
   // },
   "features": featuresUiSchema,
+  "languages": {
+    "ui:widget": "checkboxes",
+  },
 }

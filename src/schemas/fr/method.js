@@ -18,7 +18,10 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import {categorySchema} from "./fields"
+import {
+  categorySchema,
+  usersTypesSchema, usersTypesUiSchema,
+} from "./fields"
 
 
 export const schema = {
@@ -45,15 +48,15 @@ export const schema = {
       "type": "string",
       "title": "Capture(s) d'écran illustrant la méthode"
     },
-    "valueProposition": {
+    "valueProposition_fr": {
       "type": "string",
       "title": "Proposition de valeur de la méthode",
     },
-    "methodologicalStepByStep": {
+    "methodologicalStepByStep_fr": {
       "type": "string",
       "title": "Pas à pas méthodologique",
     },
-    "usageConditions": {
+    "usageConditions_fr": {
       "type": "string",
       "title": "Conditions d'utilisation",
     },
@@ -80,20 +83,7 @@ export const schema = {
       "type": "string",
       "title": "Lieu d'origine de la méthode'",
     },
-    "usersTypes": {
-      "type": "array",
-      "title": "Types d'utilisateurs ",
-      "items": {
-        "type": "string",
-        "enum": [
-           "Administrations",
-           "Associations",
-           "Citoyens",
-           "Élus",
-           "Organisations non gouvernementales (ONG)",
-        ]
-      }
-    },
+    "usersTypes": usersTypesSchema,
     "usersCount": {
       "type": "string",
       "title": "Nombre d'utilisateurs ",
@@ -138,4 +128,5 @@ export const uiSchema = {
   // description_fr: {
   //   "ui:widget": "textarea",
   // },
+  "usersTypes": usersTypesUiSchema,
 }

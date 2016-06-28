@@ -98,11 +98,17 @@ export const schema = {
       "items": {
         "type": "string",
         "enum": [
+           "fr",
+           "en",
+           "es",
+        ],
+        "enumNames": [
            "Français",
            "Anglais",
            "Espagnol"
-        ]
-      }
+        ],
+      },
+      "uniqueItems": true,
     },
     "programmingLanguage": {
       "type": "array",
@@ -113,7 +119,7 @@ export const schema = {
     },
     "technologies": {
       "type": "array",
-      "title": "Technologies informatiques utilisées pour faire fonctionner l'outil",
+      "title": "Technologies informatiques utilisées pour l'outil",
       "items": {
         "type": "string"
       }
@@ -263,4 +269,7 @@ export const uiSchema = {
   //   "ui:widget": "textarea",
   // },
   "features": featuresUiSchema,
+  "languages": {
+    "ui:widget": "checkboxes",
+  },
 }

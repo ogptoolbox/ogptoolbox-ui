@@ -106,3 +106,31 @@ export const featuresSchema = {
 export const featuresUiSchema = {
   "ui:widget": "checkboxes",
 }
+
+
+export const usersTypesSchema = {
+  "type": "array",
+  "title": "Types d'utilisateurs ",
+  "items": {
+    "type": "string",
+    "enum": [
+      "Administrations",
+      "Associations",
+      "Citizens",
+      "Representatives",
+      "Non-governmental organizations (NGOs)",
+    ],
+    "enumNames": [
+      "Administrations",
+      "Associations",
+      "Citoyens",
+      "Élus",
+      "Organisations non gouvernementales (ONG)",
+    ],
+  },
+  "uniqueItems": true,
+}
+
+export const usersTypesUiSchema = {
+  "ui:widget": "checkboxes",
+}
