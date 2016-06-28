@@ -23,7 +23,6 @@ import {connect} from "react-redux"
 import Form from "react-jsonschema-form"
 
 import {createTool} from "../../actions"
-import {schema, uiSchema} from "../../schemas/tool"
 
 
 class ToolNew extends Component {
@@ -31,12 +30,17 @@ class ToolNew extends Component {
   static propTypes = {
     authentication: PropTypes.object.isRequired,
     createTool: PropTypes.func.isRequired,
+    language: PropTypes.string.isRequired,
   }
   onSubmit(form) {
     const {authentication, createTool} = this.props
     createTool(authentication, form.formData)
   }
   render() {
+    const {language} = this.props
+    const schemaModule = require(`../../schemas/${language}/tool`)
+    const schema = schemaModule.schema
+    const uiSchema = schemaModule.uiSchema
     return (
       <Form
         onSubmit={this.onSubmit.bind(this)}
@@ -48,7 +52,10 @@ class ToolNew extends Component {
 }
 
 export default connect(
-  state => ({authentication: state.authentication}),
+  state => ({
+    authentication: state.authentication,
+    language: state.language,
+  }),
   {
     createTool,
   },

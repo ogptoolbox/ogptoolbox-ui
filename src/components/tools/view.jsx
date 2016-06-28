@@ -24,14 +24,6 @@ import {connect} from "react-redux"
 import {Link} from "react-router"
 
 import {loadTool} from "../../actions"
-import {schema, uiSchema as originalUiSchema} from "../../schemas/tool"
-
-
-const uiSchema = {...originalUiSchema}
-for (let [propertyId, property] of Object.entries(schema.properties)) {
-  if (uiSchema[propertyId] == undefined) uiSchema[propertyId] = {}
-  uiSchema[propertyId]["ui:disabled"] = true
-}
 
 
 class ToolView extends Component {
@@ -46,6 +38,13 @@ class ToolView extends Component {
   }
   render() {
     const {authentication, language, loadTool, params, toolById} = this.props
+    const schemaModule = require(`../../schemas/${language}/tool`)
+    const schema = schemaModule.schema
+    const uiSchema = {...schemaModule.uiSchema}
+    for (let [propertyId, property] of Object.entries(schema.properties)) {
+      if (uiSchema[propertyId] == undefined) uiSchema[propertyId] = {}
+      uiSchema[propertyId]["ui:disabled"] = true
+    }
     const tool = toolById[params.id]
     if (!tool) return (
       <p>Loading {params.id}...</p>

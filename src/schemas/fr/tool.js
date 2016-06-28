@@ -1,4 +1,4 @@
-/ OGPToolbox-Editor -- Web editor for OGP toolbox
+// OGPToolbox-Editor -- Web editor for OGP toolbox
 // By: Emmanuel Raviart <emmanuel.raviart@data.gouv.fr>
 //
 // Copyright (C) 2016 Etalab
@@ -18,198 +18,191 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-export const schema =
-  "title": "Tool",
+export const schema = {
+  "title": "Outil",
   "type": "object",
   "required": [
     "name",
-    // "description",
-    // "categories",
-    // "features",
-    // "format",
-    // "pricingModel",
-    // "hostingType",
-    // "scoreUse"
   ],
   "properties": {
     "name": {
       "type": "string",
-      "title": "Tool official, commercial or common name"
+      "title": "Nom officiel, commercial ou commun de l'outil"
     },
-    "description": {
+    "description_fr": {
       "type": "string",
       "title": "Description"
     },
     "categories": {
       "type": "array",
-      "title": "Tool category",
+      "title": "Catégorie(s) de l'outil",
       "items": {
         "type": "string"
       }
     },
     "features": {
       "type": "array",
-      "title": "Tool functionality(ies)",
+      "title": "Fonctionnalité(s) de l'outil",
       "items": {
         "type": "string"
       }
     },
     "url": {
       "type": "string",
-      "title": "Tool website (user interface or download link)"
+      "title": "Site web de l'outil (à partir duquel on peut directement l'utiliser ou le télécharger)"
     },
     "urlDemo": {
       "type": "string",
-      "title": "Tool demo website (free test link)"
+      "title": "Site web de démo de l'outil (à partir duquel on peut le tester gratuitement)"
     },
     "screenshots": {
       "type": "string",
-      "title": "Screenshot(s) illustrating the main functionality(ies) of the tool"
+      "title": "Capture(s) d'écran illustrant les principales fonctionnalités de l'outil"
     },
     "authorName": {
       "type": "string",
-      "title": "Tool author official, commercial or common name"
+      "title": "Nom officiel, commercial ou commun de l'auteur de l'outil"
     },
     "authorStatus": {
       "type": "array",
-      "title": "Tool author legal status",
+      "title": "Statut juridique de l'auteur de l'outil",
       "items": {
         "type": "string"
       }
     },
     "authorOrigin": {
       "type": "string",
-      "title": "Tool author origin (country)",
+      "title": "Pays où est domicilié l'auteur de l'outil",
     },
     "authorEmail": {
       "type": "string",
-      "title": "Tool author e-mail adress"
+      "title": "Adresse e-mail de l'auteur de l'outil"
     },
     "authorSize": {
       "type": "integer",
-      "title": "Number of developers or estimated size of the tool's developers community"
+      "title": "Nombre de développeurs ou taille estimée de la communauté de développeurs de l'outil"
     },
     "format": {
       "type": "array",
-      "title": "Available format(s) of the tool",
+      "title": "Forme sous laquelle est disponible l'outil",
       "items": {
         "type": "string",
         "enum": [
            "Web",
-           "Mobile app",
+           "Appli mobile",
            "Desktop"
         ]
       }
     },
     "languages": {
       "type": "array",
-      "title": "Tool available language(s)",
+      "title": "Langues dans lesquelles est traduit l'outil",
       "items": {
         "type": "string",
         "enum": [
-           "French",
-           "English",
-           "Spanish"
+           "Français",
+           "Anglais",
+           "Espagnol"
         ]
       }
     },
     "programmingLanguage": {
       "type": "array",
-      "title": "Tool source code main programming language",
+      "title": "Principal langage de programmation du code source de l'outil",
       "items": {
         "type": "string"
       }
     },
     "technologies": {
       "type": "array",
-      "title": "Tool computer technologies",
+      "title": "Technologies informatiques utilisées pour faire fonctionner l'outil",
       "items": {
         "type": "string"
       }
     },
     "license": {
       "type": "string",
-      "title": "Tool license"
+      "title": "Licence sous laquelle est distribuée l'outil"
     },
     "openSource": {
       "type": "boolean",
-      "title": "Free license"
+      "title": "Licence libre"
     },
     "sourceCode": {
       "type": "string",
-      "title": "Source code website (repository)"
+      "title": "Site web où le code source de l'outil est directement accessible (repository)"
     },
     "responsive": {
       "type": "boolean",
-      "title": "Responsive website"
+      "title": "Site web adaptatif"
     },
     "android": {
       "type": "boolean",
-      "title": "Android application"
+      "title": "Application Android"
     },
     "iOS": {
       "type": "boolean",
-      "title": "iOS application"
+      "title": "Application iOS"
     },
     "windowsphone": {
       "type": "boolean",
-      "title": "Windows Phone / Windows 10 Mobile application"
+      "title": "Application Windows Phone / Windows 10 Mobile"
     },
     "bugtrackerURL": {
       "type": "string",
-      "title": "Bugtracker website"
+      "title": "Site web pour rapporter les bugs de l'outil"
     },
     "stackexchangeTag": {
       "type": "string",
-      "title": "Stack Exchange tag",
+      "title": "Tag utilisé sur Stack Exchange",
     },
     "githubStars": {
       "type": "number",
-      "title": "Number of Git Hub stars"
+      "title": "Nombre d'étoiles sur Git Hub"
     },
     "pricingModel": {
       "type": "array",
-      "title": "Pricing model",
+      "title": "Modèle de tarification",
       "items": {
         "type": "string"
       }
     },
     "userSize": {
       "type": "integer",
-      "title": "Estimated number of users"
+      "title": "Nombre estimé d'utilisateurs"
     },
     "userInteraction": {
       "type": "boolean",
-      "title": "User interaction (can the tool be used by several users at the same time?)"
-
+      "title": "Interaction entre utilisateurs (possibilité d'utiliser l'outil à plusieurs utilisateurs en même temps)"
+    },
     "moderationModel": {
       "type": "array",
-      "title": "Moderation model (level of control over users' actions : centralized, distributed...)",
+      "title": "Modèle de modération (niveau de contrôle que possède le porteur de projet sur les actions des utilisateurs : centralisé, communautaire...)",
       "items": {
         "type": "string"
       }
     },
     "moderationSystem": {
       "type": "array",
-      "title": "Moderation system (moment when actions are controlled : a priori, a posteriori)",
+      "title": "Système de modération (moment où intervient le contrôle sur les actions : a priori, a posteriori)",
       "items": {
         "type": "string"
       }
     },
     "hostingType": {
       "type": "array",
-      "title": "Hosting type (cloud, self-hosted...)",
+      "title": "Type d'hébergement (cloud, auto-hébergé...)",
       "items": {
         "type": "string"
       }
     },
     "hostingSelf": {
       "type": "boolean",
-      "title": "Possibility of self-hosting the tool"
+      "title": "Possibilité d'héberger l'outil sur son propre serveur"
     },
     "hostingLocation": {
       "type": "array",
-      "title": "Tool hosting geographical location (if web service)",
+      "title": "Localisation géographique des serveurs de l'outil (dans le cas d'un service web)",
       "items": {
         "type": "string"
       }
@@ -220,46 +213,46 @@ export const schema =
     },
     "dataPrivacy": {
       "type": "string",
-      "title": "Access to personal data"
+      "title": "Accès aux données personnelles"
     },
     "API": {
       "type": "boolean",
-      "title": "API"
+      "title": "API proposée"
     },
     "easeOfInstallation": {
       "type": "integer",
-      "title": "Ease of installation (1 to 5 rating scale)",
+      "title": "Facilité d'installation (note sur 5)",
       "minimum": 1,
       "maximum": 5,
     },
     "easeOfUse": {
       "type": "integer",
-      "title": "Ease of use (1 to 5 rating scale)",
+      "title": "Facilité d'utilisation (note sur 5)",
       "minimum": 1,
       "maximum": 5,
     },
     "helpURL": {
       "type": "string",
-      "title": "Assistance website (guide, tutorial, video...)"
+      "title": "Site web d'aide à la prise en main de l'outil (guide, tutorial, vidéo...)"
     },
     "support": {
       "type": "boolean",
-      "title": "Technical support availability"
+      "title": "Support technique disponible"
     },
     "accessibility": {
       "type": "boolean",
-      "title": "Handicap accessibility"
+      "title": "Accessibilité handicap"
     },
     "projects": {
       "type": "array",
-      "title": "Project(s) having deployed the tool (use cases)",
+      "title": "Projets ayant déployé l'outil (cas d'usage)",
       "items": {
         "type": "string"
       }
     },
     "methods": {
       "type": "array",
-      "title": "Method(s) linked to the tool",
+      "title": "Méthodes en rapport avec l'outil",
       "items": {
         "type": "string"
       }
@@ -268,7 +261,7 @@ export const schema =
 }
 
 export const uiSchema = {
-  // description: {
+  // description_fr: {
   //   "ui:widget": "textarea",
   // },
 }

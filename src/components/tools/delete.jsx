@@ -23,14 +23,6 @@ import Form from "react-jsonschema-form"
 import {connect} from "react-redux"
 
 import {deleteTool, loadTool} from "../../actions"
-import {schema, uiSchema as originalUiSchema} from "../../schemas/tool"
-
-
-const uiSchema = {...originalUiSchema}
-for (let [propertyId, property] of Object.entries(schema.properties)) {
-  if (uiSchema[propertyId] == undefined) uiSchema[propertyId] = {}
-  uiSchema[propertyId]["ui:disabled"] = true
-}
 
 
 class ToolDelete extends Component {
@@ -38,6 +30,7 @@ class ToolDelete extends Component {
   static propTypes = {
     authentication: PropTypes.object,
     deleteTool: PropTypes.func.isRequired,
+    language: PropTypes.string.isRequired,
     loadTool: PropTypes.func.isRequired,
     toolById: PropTypes.object.isRequired,
   }
@@ -49,7 +42,14 @@ class ToolDelete extends Component {
     deleteTool(authentication, params.id)
   }
   render() {
-    const {authentication, loadTool, params, toolById} = this.props
+    const {authentication, language, loadTool, params, toolById} = this.props
+    const schemaModule = require(`../../schemas/${language}/tool`)
+    const schema = schemaModule.schema
+    const uiSchema = {...schemaModule.uiSchema}
+    for (let [propertyId, property] of Object.entries(schema.properties)) {
+      if (uiSchema[propertyId] == undefined) uiSchema[propertyId] = {}
+      uiSchema[propertyId]["ui:disabled"] = true
+    }
     const tool = toolById[params.id]
     if (!tool) return (
       <p>Loading {params.id}...</p>
@@ -72,6 +72,7 @@ class ToolDelete extends Component {
 export default connect(
   state => ({
     authentication: state.authentication,
+    language: state.language,
     toolById: state.toolById,
   }),
   {

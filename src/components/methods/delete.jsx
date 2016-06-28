@@ -23,14 +23,6 @@ import Form from "react-jsonschema-form"
 import {connect} from "react-redux"
 
 import {deleteMethod, loadMethod} from "../../actions"
-import {schema, uiSchema as originalUiSchema} from "../../schemas/method"
-
-
-const uiSchema = {...originalUiSchema}
-for (let [propertyId, property] of Object.entries(schema.properties)) {
-  if (uiSchema[propertyId] == undefined) uiSchema[propertyId] = {}
-  uiSchema[propertyId]["ui:disabled"] = true
-}
 
 
 class MethodDelete extends Component {
@@ -38,6 +30,7 @@ class MethodDelete extends Component {
   static propTypes = {
     authentication: PropTypes.object,
     deleteMethod: PropTypes.func.isRequired,
+    language: PropTypes.string.isRequired,
     loadMethod: PropTypes.func.isRequired,
     methodById: PropTypes.object.isRequired,
   }
@@ -49,7 +42,14 @@ class MethodDelete extends Component {
     deleteMethod(authentication, params.id)
   }
   render() {
-    const {authentication, loadMethod, params, methodById} = this.props
+    const {authentication, language, loadMethod, params, methodById} = this.props
+    const schemaModule = require(`../../schemas/${language}/method`)
+    const schema = schemaModule.schema
+    const uiSchema = {...schemaModule.uiSchema}
+    for (let [propertyId, property] of Object.entries(schema.properties)) {
+      if (uiSchema[propertyId] == undefined) uiSchema[propertyId] = {}
+      uiSchema[propertyId]["ui:disabled"] = true
+    }
     const method = methodById[params.id]
     if (!method) return (
       <p>Loading {params.id}...</p>
@@ -72,6 +72,7 @@ class MethodDelete extends Component {
 export default connect(
   state => ({
     authentication: state.authentication,
+    language: state.language,
     methodById: state.methodById,
   }),
   {

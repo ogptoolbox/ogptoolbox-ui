@@ -19,7 +19,7 @@
 
 
 export const schema = {
-  "title": "Project",
+  "title": "Projet",
   "type": "object",
   "required": [
     "name",
@@ -27,72 +27,72 @@ export const schema = {
   "properties": {
     "name": {
       "type": "string",
-      "title": "Project official, commercial or common name"
+      "title": "Nom officiel, commercial ou commun du projet"
     },
-    "description": {
+    "description_fr": {
       "type": "string",
       "title": "Description"
     },
     "url": {
       "type": "string",
-      "title": "Project website (user interface or download link)"
+      "title": "Site web du projet (à partir duquel on peut directement l'utiliser ou le télécharger)"
     },
     "screenshots": {
       "type": "string",
-      "title": "Screenshot(s) illustrating the main functionality(ies) of the project"
+      "title": "Capture(s) d'écran illustrant les principales fonctionnalités du projet"
     },
     "actorName": {
       "type": "string",
-      "title": "Project author official, commercial or common name"
+      "title": "Nom officiel, commercial ou commun de l'acteur du projet"
     },
     "actorStatus": {
       "type": "array",
-      "title": "Project author legal status"
+      "title": "Statut juridique de l'acteur du projet",
       "items": {
         "type": "string"
       }
     },
     "actorEmail": {
       "type": "string",
-      "title": "Project author e-mail adress"
+      "title": "Adresse e-mail de l'acteur du projet"
     },
     "actorSize": {
       "type": "integer",
-      "title": "Number of people contributing to the project"
+      "title": "Nombre de personnes ayant contribué au projet"
     },
     "location": {
       "type": "string",
-      "title": "Project location (country, region, etc)",
+      "title": "Lieu du projet (pays, région, etc)",
     },
     "scale": {
       "type": "array",
-      "title": "Project scale",
+      "title": "Échelle du projet ",
       "items": {
         "type": "string",
         "enum": [
-           "Local",
-           "National",
-           "International",
+           "Locale",
+           "Nationale",
+           "Internationale",
         ]
       }
     },
     "usersTypes": {
       "type": "array",
-      "title": "User type",
+      "title": "Types d'utilisateurs ",
       "items": {
         "type": "string",
         "enum": [
            "Administrations",
            "Associations",
-           "Citizens",
-           "Representatives",
-           "Non-governmental organizations (NGOs)",
+           "Citoyens",
+           "Élus",
+           "Organisations non gouvernementales (ONG)",
         ]
       }
     },
     "usersCount": {
       "type": "string",
-      "title": "Number of users",
+      "title": "Nombre d'utilisateurs ",
       "enum": [
         "",
         "1 - 10",
@@ -106,44 +106,44 @@ export const schema = {
     },
     "categories": {
       "type": "array",
-      "title": "Project need(s) and usage(s)",
+      "title": "Besoins et usages du projet",
       "items": {
         "type": "string"
       }
     },
     "features": {
       "type": "array",
-      "title": "Fonctionality(ies) used by the project",
+      "title": "Fonctionnalité(s) utilisées par le projet",
       "items": {
         "type": "string"
       }
     },
     "customDevelopment": {
       "type": "boolean",
-      "title": "Custom development"
+      "title": "Développement spécifique"
     },
     "easeOfUse": {
       "type": "integer",
-      "title": "Project ease of use (1 to 5 rating scale)",
+      "title": "Facilité de prise en main du projet (note sur 5)",
       "minimum": 1,
       "maximum": 5,
     },
     "satisfactionLevel": {
       "type": "integer",
-      "title": "Project satisfaction level (1 to 5 rating scale)",
+      "title": "Niveau de satisfaction (note sur 5)",
       "minimum": 1,
       "maximum": 5,
     },
     "tools": {
       "type": "array",
-      "title": "Tool(s) used by the project",
+      "title": "Outils utilisés par le projet",
       "items": {
         "type": "string"
       }
     },
     "methods": {
       "type": "array",
-      "title": "Method(s) used by the project",
+      "title": "Méthodes utilisées pour le projet",
       "items": {
         "type": "string"
       }
@@ -152,7 +152,7 @@ export const schema = {
 }
 
 export const uiSchema = {
-  // description: {
+  // description_fr: {
   //   "ui:widget": "textarea",
   // },
 }

@@ -87,7 +87,7 @@ export default function (store) {
       <IndexRedirect to="en/" />
       <Route path="en" onEnter={() => store.dispatch(setLanguage("en"))}>{i18nRoutes}</Route>
       <Route path="fr" onEnter={() => store.dispatch(setLanguage("fr"))}>{i18nRoutes}</Route>
-      <Redirect from="**" to="en/:splat" />
+      <Redirect from="*" to="en/*" />
     </Route>
   )
 }

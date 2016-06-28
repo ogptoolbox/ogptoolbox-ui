@@ -33,7 +33,7 @@ class ProjectLine extends Component {
     return (
       <Link className="list-group-item" to={`/${language}/projects/${project.id}`}>
         <h4 className="list-group-item-heading">{project.name}</h4>
-        <p className="list-group-item-text">{project.description}</p>
+        <p className="list-group-item-text">{project[`description_${language}`]}</p>
       </Link>
     )
   }

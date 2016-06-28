@@ -23,13 +23,13 @@ import Form from "react-jsonschema-form"
 import {connect} from "react-redux"
 
 import {loadMethod, updateMethod} from "../../actions"
-import {schema, uiSchema} from "../../schemas/method"
 
 
 class MethodEdit extends Component {
   static breadcrumbName = "Edit Method"
   static propTypes = {
     authentication: PropTypes.object.isRequired,
+    language: PropTypes.string.isRequired,
     loadMethod: PropTypes.func.isRequired,
     methodById: PropTypes.object.isRequired,
     updateMethod: PropTypes.func.isRequired,
@@ -42,7 +42,10 @@ class MethodEdit extends Component {
     updateMethod(authentication, params.id, form.formData)
   }
   render() {
-    const {authentication, loadMethod, params, methodById} = this.props
+    const {authentication, language, loadMethod, params, methodById} = this.props
+    const schemaModule = require(`../../schemas/${language}/method`)
+    const schema = schemaModule.schema
+    const uiSchema = schemaModule.uiSchema
     const method = methodById[params.id]
     if (!method) return (
       <p>Loading {params.id}...</p>
@@ -61,6 +64,7 @@ class MethodEdit extends Component {
 export default connect(
   state => ({
     authentication: state.authentication,
+    language: state.language,
     methodById: state.methodById,
   }),
   {

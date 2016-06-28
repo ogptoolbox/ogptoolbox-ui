@@ -23,7 +23,6 @@ import {connect} from "react-redux"
 import Form from "react-jsonschema-form"
 
 import {createMethod} from "../../actions"
-import {schema, uiSchema} from "../../schemas/method"
 
 
 class MethodNew extends Component {
@@ -31,12 +30,17 @@ class MethodNew extends Component {
   static propTypes = {
     authentication: PropTypes.object.isRequired,
     createMethod: PropTypes.func.isRequired,
+    language: PropTypes.string.isRequired,
   }
   onSubmit(form) {
     const {authentication, createMethod} = this.props
     createMethod(authentication, form.formData)
   }
   render() {
+    const {language} = this.props
+    const schemaModule = require(`../../schemas/${language}/method`)
+    const schema = schemaModule.schema
+    const uiSchema = schemaModule.uiSchema
     return (
       <Form
         onSubmit={this.onSubmit.bind(this)}
@@ -48,7 +52,10 @@ class MethodNew extends Component {
 }
 
 export default connect(
-  state => ({authentication: state.authentication}),
+  state => ({
+    authentication: state.authentication,
+    language: state.language,
+  }),
   {
     createMethod,
   },

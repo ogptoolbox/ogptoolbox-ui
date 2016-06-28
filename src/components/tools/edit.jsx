@@ -23,13 +23,13 @@ import Form from "react-jsonschema-form"
 import {connect} from "react-redux"
 
 import {loadTool, updateTool} from "../../actions"
-import {schema, uiSchema} from "../../schemas/tool"
 
 
 class ToolEdit extends Component {
   static breadcrumbName = "Edit Tool"
   static propTypes = {
     authentication: PropTypes.object.isRequired,
+    language: PropTypes.string.isRequired,
     loadTool: PropTypes.func.isRequired,
     toolById: PropTypes.object.isRequired,
     updateTool: PropTypes.func.isRequired,
@@ -42,7 +42,10 @@ class ToolEdit extends Component {
     updateTool(authentication, params.id, form.formData)
   }
   render() {
-    const {authentication, loadTool, params, toolById} = this.props
+    const {authentication, language, loadTool, params, toolById} = this.props
+    const schemaModule = require(`../../schemas/${language}/tool`)
+    const schema = schemaModule.schema
+    const uiSchema = schemaModule.uiSchema
     const tool = toolById[params.id]
     if (!tool) return (
       <p>Loading {params.id}...</p>
@@ -61,6 +64,7 @@ class ToolEdit extends Component {
 export default connect(
   state => ({
     authentication: state.authentication,
+    language: state.language,
     toolById: state.toolById,
   }),
   {

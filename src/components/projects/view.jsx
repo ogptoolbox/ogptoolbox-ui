@@ -24,14 +24,6 @@ import {connect} from "react-redux"
 import {Link} from "react-router"
 
 import {loadProject} from "../../actions"
-import {schema, uiSchema as originalUiSchema} from "../../schemas/project"
-
-
-const uiSchema = {...originalUiSchema}
-for (let [propertyId, property] of Object.entries(schema.properties)) {
-  if (uiSchema[propertyId] == undefined) uiSchema[propertyId] = {}
-  uiSchema[propertyId]["ui:disabled"] = true
-}
 
 
 class ProjectView extends Component {
@@ -46,6 +38,13 @@ class ProjectView extends Component {
   }
   render() {
     const {authentication, language, loadProject, params, projectById} = this.props
+    const schemaModule = require(`../../schemas/${language}/project`)
+    const schema = schemaModule.schema
+    const uiSchema = {...schemaModule.uiSchema}
+    for (let [propertyId, property] of Object.entries(schema.properties)) {
+      if (uiSchema[propertyId] == undefined) uiSchema[propertyId] = {}
+      uiSchema[propertyId]["ui:disabled"] = true
+    }
     const project = projectById[params.id]
     if (!project) return (
       <p>Loading {params.id}...</p>

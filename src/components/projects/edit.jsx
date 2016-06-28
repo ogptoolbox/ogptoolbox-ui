@@ -23,13 +23,13 @@ import Form from "react-jsonschema-form"
 import {connect} from "react-redux"
 
 import {loadProject, updateProject} from "../../actions"
-import {schema, uiSchema} from "../../schemas/project"
 
 
 class ProjectEdit extends Component {
   static breadcrumbName = "Edit Project"
   static propTypes = {
     authentication: PropTypes.object.isRequired,
+    language: PropTypes.string.isRequired,
     loadProject: PropTypes.func.isRequired,
     projectById: PropTypes.object.isRequired,
     updateProject: PropTypes.func.isRequired,
@@ -42,7 +42,10 @@ class ProjectEdit extends Component {
     updateProject(authentication, params.id, form.formData)
   }
   render() {
-    const {authentication, loadProject, params, projectById} = this.props
+    const {authentication, language, loadProject, params, projectById} = this.props
+    const schemaModule = require(`../../schemas/${language}/project`)
+    const schema = schemaModule.schema
+    const uiSchema = schemaModule.uiSchema
     const project = projectById[params.id]
     if (!project) return (
       <p>Loading {params.id}...</p>
@@ -61,6 +64,7 @@ class ProjectEdit extends Component {
 export default connect(
   state => ({
     authentication: state.authentication,
+    language: state.language,
     projectById: state.projectById,
   }),
   {

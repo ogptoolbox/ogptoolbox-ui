@@ -33,7 +33,7 @@ class MethodLine extends Component {
     return (
       <Link className="list-group-item" to={`/${language}/methods/${method.id}`}>
         <h4 className="list-group-item-heading">{method.name}</h4>
-        <p className="list-group-item-text">{method.description}</p>
+        <p className="list-group-item-text">{method[`description_${language}`]}</p>
       </Link>
     )
   }

@@ -29,7 +29,7 @@ export const schema = {
       "type": "string",
       "title": "Nom de la méthode"
     },
-    "description": {
+    "description_fr": {
       "type": "string",
       "title": "Description"
     },
@@ -138,7 +138,7 @@ export const schema = {
 }
 
 export const uiSchema = {
-  // description: {
+  // description_fr: {
   //   "ui:widget": "textarea",
   // },
 }

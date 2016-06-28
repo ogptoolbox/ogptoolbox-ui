@@ -19,7 +19,7 @@
 
 
 export const schema = {
-  "title": "Method",
+  "title": "Project",
   "type": "object",
   "required": [
     "name",
@@ -27,61 +27,54 @@ export const schema = {
   "properties": {
     "name": {
       "type": "string",
-      "title": "Method name"
+      "title": "Project official, commercial or common name"
     },
-    "description": {
+    "description_en": {
       "type": "string",
       "title": "Description"
     },
-    "categories": {
-      "type": "array",
-      "title": "Method need(s) and usage(s)",
-      "items": {
-        "type": "string"
-      }
-    },
     "url": {
       "type": "string",
-      "title": "Reference website(s)"
+      "title": "Project website (user interface or download link)"
     },
     "screenshots": {
       "type": "string",
-      "title": "Screenshot(s) illustrating the method"
-    },
-    "valueProposition": {
-      "type": "string",
-      "title": "Method value proposition",
-    },
-    "methodologicalStepByStep": {
-      "type": "string",
-      "title": "Methodological step by step",
-    },
-    "usageConditions": {
-      "type": "string",
-      "title": "Usage conditions",
+      "title": "Screenshot(s) illustrating the main functionality(ies) of the project"
     },
     "actorName": {
       "type": "string",
-      "title": "Method reference actor",
+      "title": "Project author official, commercial or common name"
     },
     "actorStatus": {
       "type": "array",
-      "title": "Method reference actor legal status",
+      "title": "Project author legal status",
       "items": {
-        "type": "string"
-      }
+        "type": "string",
+      },
     },
     "actorEmail": {
       "type": "string",
-      "title": "Method reference actor e-mail adress"
+      "title": "Project author e-mail adress"
     },
     "actorSize": {
       "type": "integer",
-      "title": "Number of people contributing to the method"
+      "title": "Number of people contributing to the project"
     },
     "location": {
       "type": "string",
-      "title": "Method origin (country)",
+      "title": "Project location (country, region, etc)",
+    },
+    "scale": {
+      "type": "array",
+      "title": "Project scale",
+      "items": {
+        "type": "string",
+        "enum": [
+           "Local",
+           "National",
+           "International",
+        ]
+      }
     },
     "usersTypes": {
       "type": "array",
@@ -105,31 +98,52 @@ export const schema = {
         "1 - 10",
         "11 - 100",
         "101 - 1 000",
-        "> 1 000",
+        "1 001 - 10 000",
+        "10 001 - 100 000",
+        "100 001 - 1 000 000",
+        "> 1 000 000",
       ],
+    },
+    "categories": {
+      "type": "array",
+      "title": "Project need(s) and usage(s)",
+      "items": {
+        "type": "string"
+      }
+    },
+    "features": {
+      "type": "array",
+      "title": "Fonctionality(ies) used by the project",
+      "items": {
+        "type": "string"
+      }
+    },
+    "customDevelopment": {
+      "type": "boolean",
+      "title": "Custom development"
     },
     "easeOfUse": {
       "type": "integer",
-      "title": "Method ease of use (1 to 5 rating scale)",
+      "title": "Project ease of use (1 to 5 rating scale)",
       "minimum": 1,
       "maximum": 5,
     },
     "satisfactionLevel": {
       "type": "integer",
-      "title": "Satisfaction level (1 to 5 rating level)",
+      "title": "Project satisfaction level (1 to 5 rating scale)",
       "minimum": 1,
       "maximum": 5,
     },
     "tools": {
       "type": "array",
-      "title": "Tool(s) used by the method",
+      "title": "Tool(s) used by the project",
       "items": {
         "type": "string"
       }
     },
-    "projects": {
+    "methods": {
       "type": "array",
-      "title": "Project(s) having used the method",
+      "title": "Method(s) used by the project",
       "items": {
         "type": "string"
       }
@@ -138,7 +152,7 @@ export const schema = {
 }
 
 export const uiSchema = {
-  // description: {
+  // description_en: {
   //   "ui:widget": "textarea",
   // },
 }

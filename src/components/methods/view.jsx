@@ -24,14 +24,6 @@ import {connect} from "react-redux"
 import {Link} from "react-router"
 
 import {loadMethod} from "../../actions"
-import {schema, uiSchema as originalUiSchema} from "../../schemas/method"
-
-
-const uiSchema = {...originalUiSchema}
-for (let [propertyId, property] of Object.entries(schema.properties)) {
-  if (uiSchema[propertyId] == undefined) uiSchema[propertyId] = {}
-  uiSchema[propertyId]["ui:disabled"] = true
-}
 
 
 class MethodView extends Component {
@@ -46,6 +38,13 @@ class MethodView extends Component {
   }
   render() {
     const {authentication, language, loadMethod, params, methodById} = this.props
+    const schemaModule = require(`../../schemas/${language}/method`)
+    const schema = schemaModule.schema
+    const uiSchema = {...schemaModule.uiSchema}
+    for (let [propertyId, property] of Object.entries(schema.properties)) {
+      if (uiSchema[propertyId] == undefined) uiSchema[propertyId] = {}
+      uiSchema[propertyId]["ui:disabled"] = true
+    }
     const method = methodById[params.id]
     if (!method) return (
       <p>Loading {params.id}...</p>

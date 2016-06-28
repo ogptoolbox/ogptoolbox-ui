@@ -33,7 +33,7 @@ class ToolLine extends Component {
     return (
       <Link className="list-group-item" to={`/${language}/tools/${tool.id}`}>
         <h4 className="list-group-item-heading">{tool.name}</h4>
-        <p className="list-group-item-text">{tool.description}</p>
+        <p className="list-group-item-text">{tool[`description_${language}`]}</p>
       </Link>
     )
   }

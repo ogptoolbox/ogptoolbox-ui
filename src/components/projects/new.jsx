@@ -23,7 +23,6 @@ import {connect} from "react-redux"
 import Form from "react-jsonschema-form"
 
 import {createProject} from "../../actions"
-import {schema, uiSchema} from "../../schemas/project"
 
 
 class ProjectNew extends Component {
@@ -31,12 +30,17 @@ class ProjectNew extends Component {
   static propTypes = {
     authentication: PropTypes.object.isRequired,
     createProject: PropTypes.func.isRequired,
+    language: PropTypes.string.isRequired,
   }
   onSubmit(form) {
     const {authentication, createProject} = this.props
     createProject(authentication, form.formData)
   }
   render() {
+    const {language} = this.props
+    const schemaModule = require(`../../schemas/${language}/project`)
+    const schema = schemaModule.schema
+    const uiSchema = schemaModule.uiSchema
     return (
       <Form
         onSubmit={this.onSubmit.bind(this)}
@@ -48,7 +52,10 @@ class ProjectNew extends Component {
 }
 
 export default connect(
-  state => ({authentication: state.authentication}),
+  state => ({
+    authentication: state.authentication,
+    language: state.language,
+  }),
   {
     createProject,
   },
