@@ -43,6 +43,7 @@ class ToolView extends Component {
     const uiSchema = {...schemaModule.uiSchema}
     for (let [propertyId, property] of Object.entries(schema.properties)) {
       if (uiSchema[propertyId] == undefined) uiSchema[propertyId] = {}
+      else uiSchema[propertyId] = {...uiSchema[propertyId]}
       uiSchema[propertyId]["ui:disabled"] = true
     }
     const tool = toolById[params.id]

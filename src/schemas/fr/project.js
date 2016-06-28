@@ -18,6 +18,15 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import {categorySchema, featuresSchema as featuresSchemaOriginal, featuresUiSchema} from "./fields"
+
+
+const featuresSchema = {
+  ...featuresSchemaOriginal,
+  "title": "Fonctionnalités utilisées par le projet",
+}
+
+
 export const schema = {
   "title": "Projet",
   "type": "object",
@@ -33,6 +42,8 @@ export const schema = {
       "type": "string",
       "title": "Description"
     },
+    "category": categorySchema,
+    "features": featuresSchema,
     "url": {
       "type": "string",
       "title": "Site web du projet (à partir duquel on peut directement l'utiliser ou le télécharger)"
@@ -104,20 +115,6 @@ export const schema = {
         "> 1 000 000",
       ],
     },
-    "categories": {
-      "type": "array",
-      "title": "Besoins et usages du projet",
-      "items": {
-        "type": "string"
-      }
-    },
-    "features": {
-      "type": "array",
-      "title": "Fonctionnalité(s) utilisées par le projet",
-      "items": {
-        "type": "string"
-      }
-    },
     "customDevelopment": {
       "type": "boolean",
       "title": "Développement spécifique"
@@ -155,4 +152,5 @@ export const uiSchema = {
   // description_fr: {
   //   "ui:widget": "textarea",
   // },
+  "features": featuresUiSchema,
 }

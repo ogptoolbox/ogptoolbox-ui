@@ -18,6 +18,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import {categorySchema} from "./fields"
+
+
 export const schema = {
   "title": "Method",
   "type": "object",
@@ -33,13 +36,7 @@ export const schema = {
       "type": "string",
       "title": "Description"
     },
-    "categories": {
-      "type": "array",
-      "title": "Method need(s) and usage(s)",
-      "items": {
-        "type": "string"
-      }
-    },
+    "category": categorySchema,
     "url": {
       "type": "string",
       "title": "Reference website(s)"
