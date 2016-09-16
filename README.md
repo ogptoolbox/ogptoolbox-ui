@@ -1,25 +1,29 @@
 # OGPToolbox-Editor
 
-## Start
+Web user interface to bring out shared positions from argumented statements
 
-The first time only:
+## Development
 
-    npm install
+Start the hot-reloading webpack dev server:
 
-To launch the web server:
+    npm start
 
-    npm run dev
+Navigate to <http://localhost:3001>.
 
-Then open http://localhost:3021/
+Any changes you make to your files (.elm, .js, .css, etc.) will trigger
+a hot reload.
 
-## Production build
+## Production
 
-    npm run clean
+When you're ready to deploy:
+
     npm run build
 
-Serve the contents of the `public` dir
-(for example using [http-server](https://www.npmjs.com/package/http-server))):
+This will create a `dist` folder:
 
-    http-server public
+    .
+    ├── dist
+    │   ├── index.html 
+    │   ├── 5df766af1ced8ff1fe0a.css
+    │   └── 5df766af1ced8ff1fe0a.js
 
-Open `http://localhost:8080` in your browser.

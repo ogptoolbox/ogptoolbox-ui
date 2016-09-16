@@ -1,0 +1,29 @@
+
+/* Note: You can write Sass in this file. */
+
+body {
+  // font-size: 16px;
+  padding-top: 70px;
+}
+
+.statement-line {
+  display: table;
+}
+
+.statement-line-body {
+  display: table-cell;
+  padding-left: 8px;
+}
+
+// .statement-line-body > .statement-line-title {
+//   margin-top: 0px
+// }
+
+.statement-line-panel {
+  display: table-cell;
+  padding-right: 8px;
+}
+
+.statement-line-panel > .btn-group-vertical {
+  vertical-align: top !important;
+}
