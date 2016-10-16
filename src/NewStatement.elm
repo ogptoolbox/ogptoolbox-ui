@@ -33,8 +33,6 @@ type Msg
     | KindChanged String
     | LanguageCodeChanged String
     | NameInput String
-    | Rated DataIdBody
-    | RateError Http.Error
     | Submit
 
 
@@ -42,20 +40,7 @@ update : Msg -> Maybe Authenticator.Model.Authentication -> Model -> ( Model, Cm
 update msg authenticationMaybe model =
     case msg of
         Created body ->
-            let
-                data = body.data
-                cmd =
-                    case authenticationMaybe of
-                        Just authentication ->
-                            Task.perform
-                                RateError
-                                Rated
-                                (newTaskRateStatement authentication 1 data.id)
-
-                        Nothing ->
-                            Cmd.none
-            in
-                (model, cmd, Just data)
+            (model, Cmd.none, Just body.data)
 
         CreateError err ->
             let
@@ -71,15 +56,6 @@ update msg authenticationMaybe model =
 
         NameInput name ->
             ({ model | name = name }, Cmd.none, Nothing)
-
-        Rated body ->
-            (model, Cmd.none, Just body.data)
-
-        RateError err ->
-            let
-                _ = Debug.log "New Statement Rate Error" err
-            in
-                (model, Cmd.none, Nothing)
 
         Submit ->
             let

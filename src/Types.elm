@@ -1,8 +1,8 @@
 module Types exposing (..)
 
 import Dict exposing (Dict)
-import Json.Decode exposing ((:=), andThen, bool, Decoder, dict, fail, int, list, map, maybe, null, oneOf, string,
-    succeed)
+import Json.Decode exposing ((:=), andThen, bool, customDecoder, Decoder, dict, fail, int, list, map, maybe, null,
+    oneOf, string, succeed)
 import Json.Decode.Extra as Json exposing ((|:))
 
 
@@ -12,9 +12,17 @@ type alias Abuse =
 
 
 type alias Argument =
-    { claimId : String
+    { argumentType: ArgumentType
+    , claimId : String
     , groundId : String
     }
+
+
+type ArgumentType
+    = Because
+    | But
+    | Comment
+    | Example
 
 
 type alias Ballot =
@@ -91,7 +99,8 @@ type StatementCustom
 
 
 type alias StatementForm =
-    { claimId : String
+    { argumentType: String
+    , claimId : String
     , errors : FormErrors
     , groundId : String
     , kind : String
@@ -120,6 +129,22 @@ type alias UserBody =
     }
 
 
+convertArgumentTypeToString : ArgumentType -> String
+convertArgumentTypeToString argumentType = 
+    case argumentType of
+        Because ->
+            "because"
+
+        But ->
+            "but"
+
+        Comment ->
+            "comment"
+
+        Example ->
+            "example"
+
+
 convertStatementCustomToKind : StatementCustom -> String
 convertStatementCustomToKind statementCustom =
     case statementCustom of
@@ -146,7 +171,22 @@ convertStatementFormToCustom form =
 
         "Argument" ->
             ArgumentCustom
-                { claimId = form.claimId
+                { argumentType = case form.argumentType of
+                    "because" ->
+                        Because
+
+                    "but" ->
+                        But
+
+                    "comment" ->
+                        Comment
+
+                    "example" ->
+                        Example
+
+                    _ ->
+                        Comment
+                , claimId = form.claimId
                 , groundId = form.groundId
                 }
 
@@ -168,6 +208,26 @@ convertStatementFormToCustom form =
                 { languageCode = "en"
                 , name = "Unknown kind: " ++ form.kind
                 }
+
+
+decodeArgumentType : Decoder ArgumentType
+decodeArgumentType = customDecoder string (\argumentType ->
+    case argumentType of
+        "because" ->
+            Ok Because
+
+        "but" ->
+            Ok But
+
+        "comment" ->
+            Ok Comment
+
+        "example" ->
+            Ok Example
+
+        _ ->
+            Err ("Unkown argument type: " ++ argumentType)
+    )
 
 
 decodeBallot : Decoder Ballot
@@ -235,6 +295,7 @@ decodeStatementFromType statementType =
 
         "Argument" ->
             succeed Argument
+                |: ("argumentType" := decodeArgumentType)
                 |: ("claimId" := string)
                 |: ("groundId" := string)
             `andThen` \argument -> succeed (ArgumentCustom argument)
@@ -272,7 +333,8 @@ decodeUserBody =
 
 initStatementForm : StatementForm
 initStatementForm =
-    { claimId = ""
+    { argumentType = ""
+    , claimId = ""
     , errors = Dict.empty
     , groundId = ""
     , kind = "PlainStatement"

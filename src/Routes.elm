@@ -58,7 +58,7 @@ routerConfig =
 
 statementIdParser : Parser String
 statementIdParser =
-    Combine.regex "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+    Combine.regex "[0-9]+"
 
 
 urlParser : Navigation.Parser ( Route, Hop.Types.Location )

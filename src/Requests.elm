@@ -5,8 +5,8 @@ import Authenticator.Model
 import Dict exposing (Dict)
 import Http
 import Json.Encode
-import Types exposing (Ballot, convertStatementCustomToKind, DataId, DataIdBody, DataIdsBody, decodeDataIdBody,
-    decodeDataIdsBody, ModelFragment, Statement, StatementCustom(..))
+import Types exposing (Ballot, convertArgumentTypeToString, convertStatementCustomToKind, DataId, DataIdBody,
+    DataIdsBody, decodeDataIdBody, decodeDataIdsBody, ModelFragment, Statement, StatementCustom(..))
 import Task exposing (Task)
 
 
@@ -21,7 +21,8 @@ newTaskCreateStatement authentication statementCustom =
                     ]
 
                 ArgumentCustom argument ->
-                    [ ("claimId", Json.Encode.string argument.claimId)
+                    [ ("argumentType", Json.Encode.string (convertArgumentTypeToString argument.argumentType))
+                    , ("claimId", Json.Encode.string argument.claimId)
                     , ("groundId", Json.Encode.string argument.groundId)
                     ]
 

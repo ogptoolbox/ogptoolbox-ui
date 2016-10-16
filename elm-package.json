@@ -1,7 +1,7 @@
 {
     "version": "1.0.0",
     "summary": "Web user interface to bring out shared positions from argumented statements",
-    "repository": "https://git.framasoft.org/etalab/ogptoolbox-editor.git",
+    "repository": "https://github.com/etalab/ogptoolbox-ui.git",
     "license": "AGPL-3.0+",
     "source-directories": [
         "src"

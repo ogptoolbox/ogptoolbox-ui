@@ -191,7 +191,7 @@ view model =
                             , input
                                 [ class "form-control"
                                 , id "password"
-                                , placeholder "John Doe"
+                                , placeholder "Your secret password"
                                 , type' "password"
                                 , value model.password
                                 , onInput PasswordInput

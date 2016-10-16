@@ -24,7 +24,7 @@ var commonConfig = {
     noParse: /\.elm$/,
     loaders: [
       {
-        test: /\.(eot|ttf|woff|woff2|svg)$/,
+        test: /\.(eot|ttf|woff|woff2|png|svg)$/,
         loader: 'file-loader'
       }
     ]
@@ -44,8 +44,9 @@ if (TARGET_ENV === 'development') {
   console.log( 'Serving locally...');
   module.exports = merge(commonConfig, {
     entry: [
-      'webpack-dev-server/client?http://localhost:3001',
-      'bootstrap-loader',
+      'webpack-dev-server/client?http://localhost:3011',
+      'expose?$!expose?jQuery!jquery',
+      'bootstrap-webpack!./bootstrap.config.js',
       path.join(__dirname, 'static/index.js')
     ],
     devServer: {
@@ -60,8 +61,8 @@ if (TARGET_ENV === 'development') {
           loader: 'elm-hot!elm-webpack?verbose=true&warn=true'
         },
         {
-          test: /\.(css|scss)$/, 
-          loaders: ['style', 'css', 'postcss', 'sass']
+          test: /\.(css|less)$/, 
+          loaders: ['style', 'css', 'postcss', 'less']
         }
       ]
     }
@@ -84,9 +85,9 @@ if (TARGET_ENV === 'production') {
           loader: 'elm-webpack'
         },
         {
-          test: /\.(css|scss)$/,
+          test: /\.(css|less)$/,
           loader: ExtractTextPlugin.extract('style-loader', [
-            'css', 'postcss', 'sass'
+            'css', 'postcss', 'less'
           ])
         }
       ]

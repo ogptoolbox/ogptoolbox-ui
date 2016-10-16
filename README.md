@@ -1,6 +1,6 @@
-# OGPToolbox-Editor
+# OGPToolbox-UI
 
-Web user interface to bring out shared positions from argumented statements
+Web user interface for OGP toolbox
 
 ## Development
 
@@ -8,7 +8,7 @@ Start the hot-reloading webpack dev server:
 
     npm start
 
-Navigate to <http://localhost:3001>.
+Navigate to <http://localhost:3011>.
 
 Any changes you make to your files (.elm, .js, .css, etc.) will trigger
 a hot reload.

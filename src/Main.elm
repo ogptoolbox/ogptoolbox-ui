@@ -3,6 +3,7 @@ module Main exposing (..)
 import Authenticator.Model
 import Authenticator.Update
 import Authenticator.View
+-- import Cards
 import Hop.Types
 import Html exposing (..)
 import Html.App
@@ -31,6 +32,7 @@ main =
 type alias Model =
     { authenticationMaybe : Maybe Authenticator.Model.Authentication
     , authenticatorModel : Authenticator.Model.Model
+    -- , cardsModel : Cards.Model
     , location : Hop.Types.Location
     , page : String
     , route : Route
@@ -42,6 +44,7 @@ init : ( Route, Hop.Types.Location ) -> ( Model, Cmd Msg )
 init ( route, location ) =
     { authenticationMaybe = Nothing
     , authenticatorModel = Authenticator.Model.init
+    -- , cardsModel = Cards.init
     , location = location
     , page = "reference"
     , route = route
@@ -68,10 +71,12 @@ urlUpdate (route, location) model =
             AuthenticatorRoute _ ->
                 (model', Cmd.none)
 
-            -- Documentation ->
-            --   Cmd.map Docs (Documentation.load "index")
-            -- DocumentationPage page ->
-            --   Cmd.map Docs (Documentation.load page)
+            -- CardsRoute childRoute ->
+            --     let
+            --         -- Cmd.map translateCardsMsg Cards.load
+            --         (cardsModel, childEffect) = Cards.urlUpdate (childRoute, location) model'.cardsModel
+            --     in
+            --         ({ model' | cardsModel = cardsModel }, Cmd.map translateCardsMsg childEffect)
 
             HomeRoute ->
                 (model', Cmd.none)
@@ -92,8 +97,16 @@ urlUpdate (route, location) model =
 
 type Msg
     = AuthenticatorMsg Authenticator.Update.Msg
+    -- | CardsMsg Cards.InternalMsg
     | Navigate String
     | StatementsMsg Statements.InternalMsg
+
+
+-- cardsMsgTranslation : Cards.MsgTranslation Msg
+-- cardsMsgTranslation =
+--     { onInternalMsg = CardsMsg
+--     , onNavigate = Navigate
+--     }
 
 
 statementsMsgTranslation : Statements.MsgTranslation Msg
@@ -101,6 +114,10 @@ statementsMsgTranslation =
     { onInternalMsg = StatementsMsg
     , onNavigate = Navigate
     }
+
+
+-- translateCardsMsg : Cards.MsgTranslator Msg
+-- translateCardsMsg = Cards.translateMsg cardsMsgTranslation
 
 
 translateStatementsMsg : Statements.MsgTranslator Msg
@@ -126,6 +143,11 @@ update msg model =
                 model' = { model
                     | authenticationMaybe = authenticatorModel.authenticationMaybe
                     , authenticatorModel = authenticatorModel
+                    -- , cardsModel = if changed
+                    --     then
+                    --         Cards.init
+                    --     else
+                    --         model.cardsModel
                     , statementsModel = if changed
                         then
                             Statements.init
@@ -139,6 +161,13 @@ update msg model =
                         (model', Cmd.none)
             in
                 model'' ! [Cmd.map AuthenticatorMsg childEffect, effect'']
+
+        -- CardsMsg childMsg ->
+        --     let
+        --         ( cardsModel, childEffect ) =
+        --             Cards.update childMsg model.authenticationMaybe model.cardsModel
+        --     in
+        --         ( { model | cardsModel = cardsModel }, Cmd.map translateCardsMsg childEffect )
 
         StatementsMsg childMsg ->
             let
@@ -190,7 +219,7 @@ view model =
                                 , span [ class "icon-bar" ] []
                                 , span [ class "icon-bar" ] []
                                 ]
-                            , aForPath Navigate "/" [ class "navbar-brand"] [ text "OGPToolbox-Editor" ]
+                            , aForPath Navigate "/" [ class "navbar-brand"] [ text "OGPToolbox-UI" ]
                             ]
                         , div
                             [ class "collapse navbar-collapse"
@@ -198,6 +227,7 @@ view model =
                             ]
                             [ ul [ class "nav navbar-nav" ]
                                 [ li [] [ aForPath Navigate "/about" [] [ text "About" ] ]
+                                , li [] [ aForPath Navigate "/cards" [] [ text "Cards" ] ]
                                 , li [] [ aForPath Navigate "/statements" [] [ text "Statements" ] ]
                                 ]
                             , ul [ class "nav navbar-nav navbar-right" ]
@@ -220,17 +250,20 @@ viewContent model =
             p
                 []
                 [ img [ src "./img/elm.png" ] []
-                , text "About OGPToolbox-Editor"
+                , text "About OGPToolbox-UI"
                 ]
 
         AuthenticatorRoute subRoute ->
             Html.App.map AuthenticatorMsg (Authenticator.View.view subRoute model.authenticatorModel)
 
+        -- CardsRoute nestedRoute ->
+        --     Html.App.map translateCardsMsg (Cards.view model.authenticationMaybe model.cardsModel)
+
         HomeRoute ->
             p
                 []
                 [ img [ src "./img/elm.png" ] []
-                , text "Hello OGPToolbox-Editor user"
+                , text "Hello OGPToolbox-UI user"
                 ]
 
         NotFoundRoute ->

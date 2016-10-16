@@ -11,7 +11,7 @@ import NewGroundArgument
 import Requests exposing (newTaskDeleteStatementRating, newTaskFlagAbuse, newTaskRateStatement, updateFromDataId)
 import Routes exposing (makeUrl)
 import Task
-import Types exposing (Ballot, DataIdBody, Statement, StatementCustom(..))
+import Types exposing (Ballot, convertArgumentTypeToString, DataIdBody, Statement, StatementCustom(..))
 import Views exposing (aForPath, viewStatementLine, viewStatementLineBody, viewStatementLinePanel)
 
 
@@ -268,6 +268,11 @@ view authenticationMaybe model =
                                                                     ForSelf (RatingChanged ratingMaybe statementId))
                                                                 (\statementId -> ForSelf (FlagAbuse statementId))
                                                                 model
+                                                            , div
+                                                                [ class "statement-line-argument-type" ]
+                                                                [ text
+                                                                    (convertArgumentTypeToString argument.argumentType)
+                                                                ]
                                                             , viewStatementLineBody
                                                                 authenticationMaybe
                                                                 argument.groundId

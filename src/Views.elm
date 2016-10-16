@@ -1,4 +1,4 @@
-module Views exposing (aForPath, viewKind, viewLanguageCode, viewName, viewNotFound, viewOption, viewRating,
+module Views exposing (aForPath, viewArgumentType, viewKind, viewLanguageCode, viewName, viewNotFound, viewOption,
     viewStatementLine, viewStatementLineBody, viewStatementLinePanel)
 
 import Authenticator.Model
@@ -11,7 +11,20 @@ import Html.Attributes.Aria exposing (ariaDescribedby, ariaHidden, ariaLabel, ar
 import Html.Events exposing (on, onClick, onInput, onWithOptions, targetValue)
 import Routes exposing (makeUrl)
 import String
-import Types exposing (Ballot, ModelFragment, Statement, StatementCustom(..))
+import Types exposing (Ballot, convertArgumentTypeToString, ModelFragment, Statement, StatementCustom(..))
+
+
+argumentTypeLabelCouples : List (String, String)
+argumentTypeLabelCouples =
+    [ ("because", "Because")
+    , ("but", "But")
+    , ("comment", "Comment")
+    , ("example", "Example")
+    ]
+
+
+argumentTypes : List String
+argumentTypes = List.map (\(item, label) -> item) argumentTypeLabelCouples
 
 
 kindLabelCouples : List (String, String)
@@ -36,18 +49,6 @@ languageCodes : List String
 languageCodes = List.map (\(item, label) -> item) languageCodeLabelCouples
 
 
-ratingLabelCouples : List (Int, String)
-ratingLabelCouples =
-    [ (1, "Because")
-    , (0, "However")
-    , (-1, "But")
-    ]
-
-
-ratings : List Int
-ratings = List.map (\(item, label) -> item) ratingLabelCouples
-
-
 aForPath : (String -> msg) -> String -> List (Attribute msg) -> List (Html msg) -> Html msg
 aForPath navigate path attributes children =
     a
@@ -61,6 +62,14 @@ aForPath navigate path attributes children =
             ++ attributes
         )
         children
+
+
+decodeArgumentType : String -> Json.Decode.Decoder String
+decodeArgumentType value =
+    if List.member value argumentTypes then
+        Json.Decode.succeed value
+    else
+        Json.Decode.fail ("Unknown argument type: " ++ value)
 
 
 decodeKind : String -> Json.Decode.Decoder String
@@ -79,17 +88,17 @@ decodeLanguageCode value =
         Json.Decode.fail ("Unknown language: " ++ value)
 
 
-decodeRating : Int -> Json.Decode.Decoder Int
-decodeRating value =
-    if List.member value ratings then
-        Json.Decode.succeed value
-    else
-        Json.Decode.fail ("Unknown rating: " ++ toString value)
+-- decodeRating : Int -> Json.Decode.Decoder Int
+-- decodeRating value =
+--     if List.member value ratings then
+--         Json.Decode.succeed value
+--     else
+--         Json.Decode.fail ("Unknown rating: " ++ toString value)
 
 
-decodeRatingTargetValue : Json.Decode.Decoder Int
-decodeRatingTargetValue =
-    Json.Decode.customDecoder targetValue (Json.Decode.decodeString Json.Decode.int) `Json.Decode.andThen` decodeRating
+-- decodeRatingTargetValue : Json.Decode.Decoder Int
+-- decodeRatingTargetValue =
+--     Json.Decode.customDecoder targetValue (Json.Decode.decodeString Json.Decode.int) `Json.Decode.andThen` decodeRating
 
 
 hasBallotRating : Int -> Maybe Ballot -> Bool
@@ -99,6 +108,37 @@ hasBallotRating rating ballotMaybe =
             ballot.rating == rating
         Nothing ->
             False
+
+
+viewArgumentType : String -> Maybe String -> (String -> msg) -> Html msg
+viewArgumentType argumentType errorMaybe argumentTypeChanged =
+    let
+        ( errorClass, errorAttributes, errorBlock ) = case errorMaybe of
+            Just error ->
+                ( " has-error"
+                , [ ariaDescribedby "argument-type-error" ]
+                , [ span
+                    [ class "help-block"
+                    , id "argument-type-error"
+                    ]
+                    [ text error ] ]
+                )
+            Nothing ->
+                ("", [] , [])
+    in
+        div [ class ("form-group" ++ errorClass) ]
+            ( [ label [ class "control-label", for "argument-type" ] [ text "Argument Type" ]
+            , select
+                ( [ class "form-control"
+                , id "argument-type"
+                , on "change" (Json.Decode.map argumentTypeChanged
+                    (targetValue `Json.Decode.andThen` decodeArgumentType))
+                ] ++ errorAttributes )
+                ( List.map
+                    (viewOption argumentType)
+                    ([("", "")] ++ argumentTypeLabelCouples)
+                )
+            ] ++ errorBlock )
 
 
 viewKind : String -> Maybe String -> (String -> msg) -> Html msg
@@ -201,36 +241,6 @@ viewNotFound =
         ]
 
 
-viewRating : Int -> Maybe String -> (Int -> msg) -> Html msg
-viewRating rating errorMaybe ratingChanged =
-    let
-        ( errorClass, errorAttributes, errorBlock ) = case errorMaybe of
-            Just error ->
-                ( " has-error"
-                , [ ariaDescribedby "rating-error" ]
-                , [ span
-                    [ class "help-block"
-                    , id "rating-error"
-                    ]
-                    [ text error ] ]
-                )
-            Nothing ->
-                ("", [] , [])
-    in
-        div [ class ("form-group" ++ errorClass) ]
-            ( [ label [ class "control-label", for "rating" ] [ text "Rating" ]
-            , select
-                ( [ class "form-control"
-                , id "rating"
-                , on "change" (Json.Decode.map ratingChanged decodeRatingTargetValue)
-                ] ++ errorAttributes )
-                ( List.map
-                    (viewOption rating)
-                    ratingLabelCouples
-                )
-            ] ++ errorBlock )
-
-
 viewOption : a -> (a, String) -> Html msg
 viewOption selectedItem (item, label) =
     let
@@ -307,6 +317,7 @@ viewStatementLineBody authenticationMaybe statementId link navigate model =
                                             text content
                                     , text " for "
                                     ]
+                                , text (convertArgumentTypeToString argument.argumentType)
                                 , dl
                                     []
                                     [ dt [] [ text "Claim:"]
