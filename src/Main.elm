@@ -1,14 +1,16 @@
 module Main exposing (..)
 
+import About
 import Authenticator.Model
 import Authenticator.Update
 import Authenticator.View
 -- import Cards
+import Home
 import Hop.Types
-import Html exposing (..)
+import Html exposing (a, button, div, form, header, Html, img, input, li, nav, p, span, text, ul)
 import Html.App
-import Html.Attributes exposing (..)
-import Html.Attributes.Aria exposing (..)
+import Html.Attributes exposing (attribute, class, href, id, placeholder, src, type')
+-- import Html.Attributes.Aria exposing (..)
 import Navigation
 import Routes exposing (makeUrl, Route(..), urlParser)
 import Statements
@@ -30,9 +32,11 @@ main =
 
 
 type alias Model =
-    { authenticationMaybe : Maybe Authenticator.Model.Authentication
+    { aboutModel : About.Model
+    , authenticationMaybe : Maybe Authenticator.Model.Authentication
     , authenticatorModel : Authenticator.Model.Model
     -- , cardsModel : Cards.Model
+    , homeModel : Home.Model
     , location : Hop.Types.Location
     , page : String
     , route : Route
@@ -42,9 +46,11 @@ type alias Model =
 
 init : ( Route, Hop.Types.Location ) -> ( Model, Cmd Msg )
 init ( route, location ) =
-    { authenticationMaybe = Nothing
+    { aboutModel = About.init
+    , authenticationMaybe = Nothing
     , authenticatorModel = Authenticator.Model.init
     -- , cardsModel = Cards.init
+    , homeModel = Home.init
     , location = location
     , page = "reference"
     , route = route
@@ -96,10 +102,19 @@ urlUpdate (route, location) model =
 
 
 type Msg
-    = AuthenticatorMsg Authenticator.Update.Msg
+    = AboutMsg About.InternalMsg
+    | AuthenticatorMsg Authenticator.Update.Msg
     -- | CardsMsg Cards.InternalMsg
+    | HomeMsg Home.InternalMsg
     | Navigate String
     | StatementsMsg Statements.InternalMsg
+
+
+aboutMsgTranslation : About.MsgTranslation Msg
+aboutMsgTranslation =
+    { onInternalMsg = AboutMsg
+    , onNavigate = Navigate
+    }
 
 
 -- cardsMsgTranslation : Cards.MsgTranslation Msg
@@ -109,6 +124,13 @@ type Msg
 --     }
 
 
+homeMsgTranslation : Home.MsgTranslation Msg
+homeMsgTranslation =
+    { onInternalMsg = HomeMsg
+    , onNavigate = Navigate
+    }
+
+
 statementsMsgTranslation : Statements.MsgTranslation Msg
 statementsMsgTranslation =
     { onInternalMsg = StatementsMsg
@@ -116,8 +138,16 @@ statementsMsgTranslation =
     }
 
 
+translateAboutMsg : About.MsgTranslator Msg
+translateAboutMsg = About.translateMsg aboutMsgTranslation
+
+
 -- translateCardsMsg : Cards.MsgTranslator Msg
 -- translateCardsMsg = Cards.translateMsg cardsMsgTranslation
+
+
+translateHomeMsg : Home.MsgTranslator Msg
+translateHomeMsg = Home.translateMsg homeMsgTranslation
 
 
 translateStatementsMsg : Statements.MsgTranslator Msg
@@ -127,6 +157,13 @@ translateStatementsMsg = Statements.translateMsg statementsMsgTranslation
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        AboutMsg childMsg ->
+            let
+                ( aboutModel, childEffect ) =
+                    About.update childMsg model.authenticationMaybe model.aboutModel
+            in
+                ( { model | aboutModel = aboutModel }, Cmd.map translateAboutMsg childEffect )
+
         Navigate path ->
             let
                 command =
@@ -169,6 +206,13 @@ update msg model =
         --     in
         --         ( { model | cardsModel = cardsModel }, Cmd.map translateCardsMsg childEffect )
 
+        HomeMsg childMsg ->
+            let
+                ( homeModel, childEffect ) =
+                    Home.update childMsg model.authenticationMaybe model.homeModel
+            in
+                ( { model | homeModel = homeModel }, Cmd.map translateHomeMsg childEffect )
+
         StatementsMsg childMsg ->
             let
                 ( statementsModel, childEffect ) =
@@ -199,41 +243,67 @@ view model =
             Nothing ->
                 li [] [ aForPath Navigate "/sign_up" [] [ text "Sign Up" ] ]
     in
-        div
-            [ class "container-fluid" ]
+        div []
             (
-                [ nav [class "navbar navbar-fixed-top navbar-inverse"]
-                    [ div
-                        [ class "container-fluid" ]
-                        [ div
-                            [ class "navbar-header" ]
-                            [ button
-                                [ ariaExpanded "false"
-                                , class "navbar-toggle collapsed"
-                                , attribute "data-target" "#navbar-collapse"
-                                , attribute "data-toggle" "collapse"
-                                , type' "button"
-                                ]
-                                [ span [ class "sr-only" ] [ text "Toggle navigation" ]
-                                , span [ class "icon-bar" ] []
-                                , span [ class "icon-bar" ] []
-                                , span [ class "icon-bar" ] []
-                                ]
-                            , aForPath Navigate "/" [ class "navbar-brand"] [ text "OGPToolbox-UI" ]
-                            ]
-                        , div
-                            [ class "collapse navbar-collapse"
-                            , id "navbar-collapse"
-                            ]
-                            [ ul [ class "nav navbar-nav" ]
-                                [ li [] [ aForPath Navigate "/about" [] [ text "About" ] ]
-                                , li [] [ aForPath Navigate "/cards" [] [ text "Cards" ] ]
-                                , li [] [ aForPath Navigate "/statements" [] [ text "Statements" ] ]
+                [ header []
+                    [ nav [ class "navbar navbar-default navbar-fixed-top", attribute "role" "navigation" ]
+                        [ div [ class "container" ]
+                            [ div [ class "navbar-header" ]
+                                [ button [ attribute "aria-controls" "navbar", attribute "aria-expanded" "false", class "navbar-toggle collapsed", attribute "data-target" "#navbar", attribute "data-toggle" "collapse", type' "button" ]
+                                    [ span [ class "sr-only" ]
+                                        [ text "Toggle navigation" ]
+                                    , span [ class "icon-bar" ]
+                                        []
+                                    , span [ class "icon-bar" ]
+                                        []
+                                    , span [ class "icon-bar" ]
+                                        []
+                                    ]
+                                , a [ class "navbar-brand", href "#" ]
+                                    [ text "OGPtoolbox" ]
+                                , p [ class "navbar-text" ]
+                                    [ text "tools and use cases for open government" ]
                                 ]
                             , ul [ class "nav navbar-nav navbar-right" ]
                                 [ profileNavItem
                                 , signInOrOutNavItem
                                 , signUpNavItem
+                                , button [ class "btn btn-default btn-action", type' "button" ]
+                                    [ text "Add new" ]
+                                ]
+                            ]
+                        ]
+                    , nav [ class "navbar navbar-inverse" ]
+                        [ div [ class "container" ]
+                            [ div [ class "navbar-header" ]
+                                [ button [ attribute "aria-expanded" "false", class "navbar-toggle collapsed", attribute "data-target" "#bs-example-navbar-collapse-1", attribute "data-toggle" "collapse", type' "button" ]
+                                    [ span [ class "sr-only" ]
+                                        [ text "Toggle navigation" ]
+                                    , span [ class "icon-bar" ]
+                                        []
+                                    , span [ class "icon-bar" ]
+                                        []
+                                    , span [ class "icon-bar" ]
+                                        []
+                                    ]
+                                ]
+                            , div [ class "collapse navbar-collapse", id "bs-example-navbar-collapse-1" ]
+                                [ ul [ class "nav navbar-nav" ]
+                                    [ li [] [ aForPath Navigate "/" [] [ text "Home" ] ]
+                                    , li [] [ aForPath Navigate "/about" [] [ text "About" ] ]
+                                    , li [] [ aForPath Navigate "/tools" [] [ text "Tools" ] ]
+                                    , li [] [ aForPath Navigate "/examples" [] [ text "Examples" ] ]
+                                    , li [] [ aForPath Navigate "/organizations" [] [ text "Organizations" ] ]
+                                    , li [] [ aForPath Navigate "/help" [] [ text "Help" ] ]
+                                    ]
+                                , form [ class "navbar-form navbar-right" ]
+                                    [ div [ class "form-group search-bar" ]
+                                        [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-search" ]
+                                            []
+                                        , input [ class "form-control", placeholder "Search for a tool, example or organization", type' "text" ]
+                                            []
+                                        ]
+                                    ]
                                 ]
                             ]
                         ]
@@ -247,11 +317,7 @@ viewContent : Model -> Html Msg
 viewContent model =
     case model.route of
         AboutRoute ->
-            p
-                []
-                [ img [ src "./img/elm.png" ] []
-                , text "About OGPToolbox-UI"
-                ]
+            Html.App.map translateAboutMsg (About.view model.authenticationMaybe model.aboutModel)
 
         AuthenticatorRoute subRoute ->
             Html.App.map AuthenticatorMsg (Authenticator.View.view subRoute model.authenticatorModel)
@@ -260,11 +326,7 @@ viewContent model =
         --     Html.App.map translateCardsMsg (Cards.view model.authenticationMaybe model.cardsModel)
 
         HomeRoute ->
-            p
-                []
-                [ img [ src "./img/elm.png" ] []
-                , text "Hello OGPToolbox-UI user"
-                ]
+            Html.App.map translateHomeMsg (Home.view model.authenticationMaybe model.homeModel)
 
         NotFoundRoute ->
             viewNotFound
