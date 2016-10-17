@@ -5,6 +5,7 @@ import Authenticator.Model
 import Authenticator.Update
 import Authenticator.View
 -- import Cards
+import Examples
 import Home
 import Hop.Types
 import Html exposing (a, button, div, form, header, Html, img, input, li, nav, p, span, text, ul)
@@ -36,6 +37,7 @@ type alias Model =
     , authenticationMaybe : Maybe Authenticator.Model.Authentication
     , authenticatorModel : Authenticator.Model.Model
     -- , cardsModel : Cards.Model
+    , examplesModel : Examples.Model
     , homeModel : Home.Model
     , location : Hop.Types.Location
     , page : String
@@ -50,6 +52,7 @@ init ( route, location ) =
     , authenticationMaybe = Nothing
     , authenticatorModel = Authenticator.Model.init
     -- , cardsModel = Cards.init
+    , examplesModel = Examples.init
     , homeModel = Home.init
     , location = location
     , page = "reference"
@@ -84,6 +87,9 @@ urlUpdate (route, location) model =
             --     in
             --         ({ model' | cardsModel = cardsModel }, Cmd.map translateCardsMsg childEffect)
 
+            ExamplesRoute ->
+                (model', Cmd.none)
+
             HomeRoute ->
                 (model', Cmd.none)
 
@@ -105,6 +111,7 @@ type Msg
     = AboutMsg About.InternalMsg
     | AuthenticatorMsg Authenticator.Update.Msg
     -- | CardsMsg Cards.InternalMsg
+    | ExamplesMsg Examples.InternalMsg
     | HomeMsg Home.InternalMsg
     | Navigate String
     | StatementsMsg Statements.InternalMsg
@@ -122,6 +129,13 @@ aboutMsgTranslation =
 --     { onInternalMsg = CardsMsg
 --     , onNavigate = Navigate
 --     }
+
+
+examplesMsgTranslation : Examples.MsgTranslation Msg
+examplesMsgTranslation =
+    { onInternalMsg = ExamplesMsg
+    , onNavigate = Navigate
+    }
 
 
 homeMsgTranslation : Home.MsgTranslation Msg
@@ -144,6 +158,10 @@ translateAboutMsg = About.translateMsg aboutMsgTranslation
 
 -- translateCardsMsg : Cards.MsgTranslator Msg
 -- translateCardsMsg = Cards.translateMsg cardsMsgTranslation
+
+
+translateExamplesMsg : Examples.MsgTranslator Msg
+translateExamplesMsg = Examples.translateMsg examplesMsgTranslation
 
 
 translateHomeMsg : Home.MsgTranslator Msg
@@ -205,6 +223,13 @@ update msg model =
         --             Cards.update childMsg model.authenticationMaybe model.cardsModel
         --     in
         --         ( { model | cardsModel = cardsModel }, Cmd.map translateCardsMsg childEffect )
+
+        ExamplesMsg childMsg ->
+            let
+                ( examplesModel, childEffect ) =
+                    Examples.update childMsg model.authenticationMaybe model.examplesModel
+            in
+                ( { model | examplesModel = examplesModel }, Cmd.map translateExamplesMsg childEffect )
 
         HomeMsg childMsg ->
             let
@@ -324,6 +349,9 @@ viewContent model =
 
         -- CardsRoute nestedRoute ->
         --     Html.App.map translateCardsMsg (Cards.view model.authenticationMaybe model.cardsModel)
+
+        ExamplesRoute ->
+            Html.App.map translateExamplesMsg (Examples.view model.authenticationMaybe model.examplesModel)
 
         HomeRoute ->
             Html.App.map translateHomeMsg (Home.view model.authenticationMaybe model.homeModel)

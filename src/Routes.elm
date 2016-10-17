@@ -11,6 +11,7 @@ import Navigation
 type Route
     = AboutRoute
     | AuthenticatorRoute Authenticator.Model.Route
+    | ExamplesRoute
     | HomeRoute
     | NotFoundRoute
     | StatementsRoute StatementsNestedRoute
@@ -33,6 +34,7 @@ matchers =
     , match1 (AuthenticatorRoute Authenticator.Model.SignInRoute) "/sign_in"
     , match1 (AuthenticatorRoute Authenticator.Model.SignOutRoute) "/sign_out"
     , match1 (AuthenticatorRoute Authenticator.Model.SignUpRoute) "/sign_up"
+    , match1 ExamplesRoute "/examples"
     , nested1 StatementsRoute "/statements"
         [ match1 StatementsIndexRoute ""
         , match2 StatementRoute "/" statementIdParser
