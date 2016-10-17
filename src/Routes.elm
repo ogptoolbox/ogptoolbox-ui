@@ -12,6 +12,7 @@ type Route
     = AboutRoute
     | AuthenticatorRoute Authenticator.Model.Route
     | ExamplesRoute
+    | HelpRoute
     | HomeRoute
     | NotFoundRoute
     | StatementsRoute StatementsNestedRoute
@@ -35,6 +36,7 @@ matchers =
     , match1 (AuthenticatorRoute Authenticator.Model.SignOutRoute) "/sign_out"
     , match1 (AuthenticatorRoute Authenticator.Model.SignUpRoute) "/sign_up"
     , match1 ExamplesRoute "/examples"
+    , match1 HelpRoute "/help"
     , nested1 StatementsRoute "/statements"
         [ match1 StatementsIndexRoute ""
         , match2 StatementRoute "/" statementIdParser

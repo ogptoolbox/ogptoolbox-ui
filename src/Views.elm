@@ -236,8 +236,7 @@ viewNotFound : Html msg
 viewNotFound =
     p
         []
-        [ img [ src "./img/elm.png" ] []
-        , text "Page not found!"
+        [ text "Page not found!"
         ]
 
 
