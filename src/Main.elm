@@ -14,8 +14,10 @@ import Html.App
 import Html.Attributes exposing (attribute, class, href, id, placeholder, src, type')
 -- import Html.Attributes.Aria exposing (..)
 import Navigation
+import Organizations
 import Routes exposing (makeUrl, Route(..), urlParser)
 import Statements
+import Tools
 import Views exposing (aForPath, viewNotFound)
 
 
@@ -42,9 +44,11 @@ type alias Model =
     , helpModel : Help.Model
     , homeModel : Home.Model
     , location : Hop.Types.Location
+    , organizationsModel : Organizations.Model
     , page : String
     , route : Route
     , statementsModel : Statements.Model
+    , toolsModel : Tools.Model
     }
 
 
@@ -57,10 +61,12 @@ init ( route, location ) =
     , examplesModel = Examples.init
     , helpModel = Help.init
     , homeModel = Home.init
+    , organizationsModel = Organizations.init
     , location = location
     , page = "reference"
     , route = route
     , statementsModel = Statements.init
+    , toolsModel = Tools.init
     }
         |> urlUpdate ( route, location )
 
@@ -102,12 +108,18 @@ urlUpdate (route, location) model =
             NotFoundRoute ->
                 (model', Cmd.none)
 
+            OrganizationsRoute ->
+                (model', Cmd.none)
+
             StatementsRoute childRoute ->
                 let
                     -- Cmd.map translateStatementsMsg Statements.load
                     (statementsModel, childEffect) = Statements.urlUpdate (childRoute, location) model'.statementsModel
                 in
                     ({ model' | statementsModel = statementsModel }, Cmd.map translateStatementsMsg childEffect)
+
+            ToolsRoute ->
+                (model', Cmd.none)
 
 
 -- UPDATE
@@ -121,7 +133,9 @@ type Msg
     | HelpMsg Help.InternalMsg
     | HomeMsg Home.InternalMsg
     | Navigate String
+    | OrganizationsMsg Organizations.InternalMsg
     | StatementsMsg Statements.InternalMsg
+    | ToolsMsg Tools.InternalMsg
 
 
 aboutMsgTranslation : About.MsgTranslation Msg
@@ -159,9 +173,23 @@ homeMsgTranslation =
     }
 
 
+organizationsMsgTranslation : Organizations.MsgTranslation Msg
+organizationsMsgTranslation =
+    { onInternalMsg = OrganizationsMsg
+    , onNavigate = Navigate
+    }
+
+
 statementsMsgTranslation : Statements.MsgTranslation Msg
 statementsMsgTranslation =
     { onInternalMsg = StatementsMsg
+    , onNavigate = Navigate
+    }
+
+
+toolsMsgTranslation : Tools.MsgTranslation Msg
+toolsMsgTranslation =
+    { onInternalMsg = ToolsMsg
     , onNavigate = Navigate
     }
 
@@ -186,8 +214,16 @@ translateHomeMsg : Home.MsgTranslator Msg
 translateHomeMsg = Home.translateMsg homeMsgTranslation
 
 
+translateOrganizationsMsg : Organizations.MsgTranslator Msg
+translateOrganizationsMsg = Organizations.translateMsg organizationsMsgTranslation
+
+
 translateStatementsMsg : Statements.MsgTranslator Msg
 translateStatementsMsg = Statements.translateMsg statementsMsgTranslation
+
+
+translateToolsMsg : Tools.MsgTranslator Msg
+translateToolsMsg = Tools.translateMsg toolsMsgTranslation
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -263,12 +299,26 @@ update msg model =
             in
                 ( { model | homeModel = homeModel }, Cmd.map translateHomeMsg childEffect )
 
+        OrganizationsMsg childMsg ->
+            let
+                ( organizationsModel, childEffect ) =
+                    Organizations.update childMsg model.authenticationMaybe model.organizationsModel
+            in
+                ( { model | organizationsModel = organizationsModel }, Cmd.map translateOrganizationsMsg childEffect )
+
         StatementsMsg childMsg ->
             let
                 ( statementsModel, childEffect ) =
                     Statements.update childMsg model.authenticationMaybe model.statementsModel
             in
                 ( { model | statementsModel = statementsModel }, Cmd.map translateStatementsMsg childEffect )
+
+        ToolsMsg childMsg ->
+            let
+                ( toolsModel, childEffect ) =
+                    Tools.update childMsg model.authenticationMaybe model.toolsModel
+            in
+                ( { model | toolsModel = toolsModel }, Cmd.map translateToolsMsg childEffect )
 
 
 -- VIEW
@@ -387,8 +437,16 @@ viewContent model =
         NotFoundRoute ->
             viewNotFound
 
+        OrganizationsRoute ->
+            Html.App.map translateOrganizationsMsg
+                (Organizations.view model.authenticationMaybe model.organizationsModel)
+
         StatementsRoute nestedRoute ->
             Html.App.map translateStatementsMsg (Statements.view model.authenticationMaybe model.statementsModel)
+
+        ToolsRoute ->
+            Html.App.map translateToolsMsg
+                (Tools.view model.authenticationMaybe model.toolsModel)
 
 
 -- SUBSCRIPTIONS

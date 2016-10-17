@@ -15,7 +15,9 @@ type Route
     | HelpRoute
     | HomeRoute
     | NotFoundRoute
+    | OrganizationsRoute
     | StatementsRoute StatementsNestedRoute
+    | ToolsRoute
 
 
 type StatementsNestedRoute
@@ -37,10 +39,12 @@ matchers =
     , match1 (AuthenticatorRoute Authenticator.Model.SignUpRoute) "/sign_up"
     , match1 ExamplesRoute "/examples"
     , match1 HelpRoute "/help"
+    , match1 OrganizationsRoute "/organizations"
     , nested1 StatementsRoute "/statements"
         [ match1 StatementsIndexRoute ""
         , match2 StatementRoute "/" statementIdParser
         ]
+    , match1 ToolsRoute "/tools"
     ]
 
 
