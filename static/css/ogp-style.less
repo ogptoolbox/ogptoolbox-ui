@@ -33,34 +33,52 @@ a {
 .grey {
     background: @light-grey;
 }
-.btn-default.btn-action     {
-    border: 2px solid @light-blue;
-    color: @light-blue;
-    background: none;
-    font-size: 14px;
-    background-image: none;
-    padding: 5px 20px;
+.btn.btn-default {
     box-shadow: none;
-    margin-top: 21px;
     text-shadow: none;
+    background: none;
+    background-image: none;
+    border: none;
+    background: @light-blue;
+    color: white;
+    border-radius: 2px;
 
-    &:hover     {
-        color: white;
-        background: @light-blue;
+    &:hover {
+        background: #3ca0da;
+    }
+
+    &.grey {
+    background: @dark-grey;
+        &:hover {
+        background: #5f5f5f;
+        }
+    }
+
+    &.btn-action     {
+        border: 2px solid @light-blue;
+        color: @light-blue;
+        font-size: 14px;
+        background: none;
+        padding: 5px 20px;
+        margin-top: 21px;
         text-shadow: none;
-    } 
-    &:active, &:focus     {
-        color: white;
-        background: #2590ff;
-        border-color: #2590ff;
-        text-shadow: none;
-    } 
+
+        &:hover     {
+            color: white;
+            background: @light-blue;
+        }
+        &:active, &:focus     {
+            color: white;
+            background: #2590ff;
+            border-color: #2590ff;
+        }
+    }
+
 }
 
 .nomargin   {
     padding: 0px;
 }
-
 
 // NAVIGATION
 nav.navbar.navbar-default {
@@ -80,7 +98,7 @@ nav.navbar.navbar-default {
 	display: block;
 	width: 191px;
 	height: 25px;
-	background: url(../img/ogptoolbox-logo.png) no-repeat no-repeat ; 
+	background: url(../img/ogptoolbox-logo.png) no-repeat no-repeat ;
    background-size: 191px ;
    margin: 27px 0 25px;
    margin-left: 0px !important;
@@ -200,7 +218,7 @@ nav.navbar.navbar-inverse {
             font-weight: 200;
             padding: 20px 0 10px;
         }
-        
+
 
     }
 
@@ -282,10 +300,7 @@ ol.breadcrumb {
     }
 }
 
-.dropdown-filter  {
-    display: inline-block;
-
-    a {
+.btn.btn-default.dropdown-toggle,  {
         border: none;
         border-radius: 3px;
         background-image: none;
@@ -307,7 +322,6 @@ ol.breadcrumb {
         span.caret {
             display: none;
         }
-    }
 }
 
 
@@ -352,9 +366,9 @@ p.info-box  {
     margin-bottom: 60px;
 }
 
-.dropdown-language button {
+.dropdown-language .dropdown-toggle {
     border: none;
-    border-radius: 0;
+    border-radius: 1px<;
     background-image: none;
     background-color: #34373a;
     color: white;
@@ -380,7 +394,7 @@ p.info-box  {
 
 
 
-// MAIN CONTENT 
+// MAIN CONTENT
 .content    {
 
     .metrics {
@@ -423,6 +437,8 @@ p.info-box  {
     background-image: none !important;
     padding: 10px 0;
     border-bottom: 1px solid #ececec;
+}
+.panel-default.panel-collapse>.panel-heading {
 
     &:hover {
         background-color: #fdfdfd;
@@ -495,7 +511,7 @@ p.info-box  {
 }
 
 .pull-screenshot {
-    margin-top: -(@screenshot-size); 
+    margin-top: -(@screenshot-size);
 }
 .push-screenshot {
     margin-top: (@screenshot-size) - 190px;
@@ -610,7 +626,7 @@ h3.zone-label {
         img     {
             width: 100%;
             opacity: 0.9;
-        }   
+        }
     }
 
 
@@ -699,7 +715,7 @@ a.show-more {
     font-size: 12px;
 
     &:hover  {
-        color: @light-blue; 
+        color: @light-blue;
         text-decoration: none;
     }
 
@@ -727,7 +743,7 @@ a.show-more {
 .table tr.editable:hover {
         background: #ececec;
 
-        &:after {   
+        &:after {
             content: "Edit";
             text-transform: uppercase;
             font-size: 9px;
@@ -778,7 +794,7 @@ a.show-more {
     }
 }
 
-.thumbnail .caption {
+.sidebar .thumbnail .caption {
 
     padding: 12px 0px 17px;
 
@@ -806,7 +822,7 @@ a.show-more {
         width: 18px;
         position: relative;
         left: -5px;
-        
+
     }
 
 }
