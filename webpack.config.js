@@ -74,6 +74,7 @@ if (TARGET_ENV === 'production') {
   console.log('Building for prod...');
   module.exports = merge(commonConfig, {
     entry: [
+      'expose?$!expose?jQuery!jquery',
       'bootstrap-webpack!./bootstrap.config.js',
       path.join(__dirname, 'static/index.js')
     ],
