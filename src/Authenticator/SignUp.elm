@@ -1,5 +1,6 @@
 module Authenticator.SignUp exposing (Model, init, Msg, update, view)
 
+import Configuration exposing (apiUrl)
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -108,7 +109,7 @@ update msg model =
                                 Success
                                 ( Http.fromJson decodeUserBody ( Http.send Http.defaultSettings
                                     { verb = "POST"
-                                    , url = "http://localhost:3000/users"
+                                    , url = apiUrl ++ "users"
                                     , headers =
                                         [ ("Accept", "application/json")
                                         , ("Content-Type", "application/json")

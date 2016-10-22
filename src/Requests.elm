@@ -2,6 +2,7 @@ module Requests exposing (newTaskCreateStatement, newTaskDeleteStatementRating, 
     newTaskRateStatement, updateFromDataId)
 
 import Authenticator.Model
+import Configuration exposing (apiUrl)
 import Dict exposing (Dict)
 import Http
 import Json.Encode
@@ -38,7 +39,7 @@ newTaskCreateStatement authentication statementCustom =
     in
         Http.fromJson decodeDataIdBody ( Http.send Http.defaultSettings
             { verb = "POST"
-            , url = ("http://localhost:3000/statements"
+            , url = (apiUrl ++ "statements"
                 ++ "?depth=1&show=abuse&show=author&show=ballot&show=grounds&show=properties&show=tags")
             , headers =
                 [ ("Accept", "application/json")
@@ -53,7 +54,7 @@ newTaskDeleteStatementRating : Authenticator.Model.Authentication -> String -> T
 newTaskDeleteStatementRating authentication statementId =
     Http.fromJson decodeDataIdBody ( Http.send Http.defaultSettings
         { verb = "DELETE"
-        , url = ("http://localhost:3000/statements/" ++ statementId
+        , url = (apiUrl ++ "statements/" ++ statementId
             ++ "/rating?depth=1&show=abuse&show=author&show=ballot&show=grounds&show=properties&show=tags")
         , headers =
             [ ("Accept", "application/json")
@@ -67,7 +68,7 @@ newTaskFlagAbuse : Authenticator.Model.Authentication -> String -> Task Http.Err
 newTaskFlagAbuse authentication statementId =
     Http.fromJson decodeDataIdBody ( Http.send Http.defaultSettings
         { verb = "GET"
-        , url = ("http://localhost:3000/statements/" ++ statementId
+        , url = (apiUrl ++ "statements/" ++ statementId
             ++ "/abuse?depth=1&show=abuse&show=author&show=ballot&show=grounds&show=properties&show=tags")
         , headers =
             [ ("Accept", "application/json")
@@ -89,7 +90,7 @@ newTaskGetStatements authenticationMaybe =
     in
         Http.fromJson decodeDataIdsBody ( Http.send Http.defaultSettings
             { verb = "GET"
-            , url = ("http://localhost:3000/statements"
+            , url = (apiUrl ++ "statements"
                 ++ "?depth=1&show=abuse&show=author&show=ballot&show=grounds&show=properties&show=tags")
             , headers =
                 [ ("Accept", "application/json")
@@ -106,7 +107,7 @@ newTaskRateStatement authentication rating statementId =
     in
         Http.fromJson decodeDataIdBody ( Http.send Http.defaultSettings
             { verb = "POST"
-            , url = ("http://localhost:3000/statements/" ++ statementId
+            , url = (apiUrl ++ "statements/" ++ statementId
                 ++ "/rating?depth=1&show=abuse&show=author&show=ballot&show=grounds&show=properties&show=tags")
             , headers =
                 [ ("Accept", "application/json")
