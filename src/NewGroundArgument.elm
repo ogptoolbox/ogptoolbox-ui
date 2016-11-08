@@ -9,8 +9,16 @@ import Http
 import Requests exposing (newTaskCreateStatement, newTaskRateStatement)
 import String
 import Task
-import Types exposing (convertStatementFormToCustom, DataId, DataIdBody, decodeDataIdBody, initStatementForm,
-    StatementCustom(..), StatementForm)
+import Types
+    exposing
+        ( convertStatementFormToCustom
+        , DataId
+        , DataIdBody
+        , decodeDataIdBody
+        , initStatementForm
+        , StatementCustom(..)
+        , StatementForm
+        )
 import Views exposing (viewArgumentType, viewKind, viewLanguageCode, viewName, viewOption)
 
 
@@ -34,6 +42,7 @@ init =
     }
 
 
+
 -- UPDATE
 
 
@@ -53,113 +62,135 @@ update : Msg -> Maybe Authenticator.Model.Authentication -> Model -> ( Model, Cm
 update msg authenticationMaybe model =
     case msg of
         ArgumentCreated body ->
-            (model, Cmd.none, Just body.data)
+            ( model, Cmd.none, Just body.data )
 
         ArgumentCreateError err ->
             let
-                _ = Debug.log "Argument Create Error" err
+                _ =
+                    Debug.log "Argument Create Error" err
             in
-                (model, Cmd.none, Nothing)
+                ( model, Cmd.none, Nothing )
 
         ArgumentTypeChanged argumentType ->
-            ({ model | argumentType = argumentType }, Cmd.none, Nothing)
+            ( { model | argumentType = argumentType }, Cmd.none, Nothing )
 
         GroundCreated body ->
             let
-                data = body.data
-                groundId = data.id
+                data =
+                    body.data
+
+                groundId =
+                    data.id
+
                 cmd =
                     case authenticationMaybe of
                         Just authentication ->
                             Task.perform
                                 ArgumentCreateError
                                 ArgumentCreated
-                                (newTaskCreateStatement authentication (convertStatementFormToCustom
-                                    { initStatementForm
-                                    | argumentType = model.argumentType
-                                    , claimId = model.claimId
-                                    , kind = "Argument"
-                                    , groundId = groundId
-                                    }))
+                                (newTaskCreateStatement authentication
+                                    (convertStatementFormToCustom
+                                        { initStatementForm
+                                            | argumentType = model.argumentType
+                                            , claimId = model.claimId
+                                            , kind = "Argument"
+                                            , groundId = groundId
+                                        }
+                                    )
+                                )
 
                         Nothing ->
                             Cmd.none
             in
-                ({ model | groundId = groundId }, cmd, Just data)
+                ( { model | groundId = groundId }, cmd, Just data )
 
         GroundCreateError err ->
             let
-                _ = Debug.log "Ground Statement Create Error" err
+                _ =
+                    Debug.log "Ground Statement Create Error" err
             in
-                (model, Cmd.none, Nothing)
+                ( model, Cmd.none, Nothing )
 
         KindChanged kind ->
             let
-                statementForm = model.statementForm
+                statementForm =
+                    model.statementForm
+
                 statementForm' =
                     { statementForm
-                    | kind = kind
+                        | kind = kind
                     }
             in
-                ({ model | statementForm = statementForm' }, Cmd.none, Nothing)
+                ( { model | statementForm = statementForm' }, Cmd.none, Nothing )
 
         LanguageCodeChanged languageCode ->
             let
-                statementForm = model.statementForm
+                statementForm =
+                    model.statementForm
+
                 statementForm' =
                     { statementForm
-                    | languageCode = languageCode
+                        | languageCode = languageCode
                     }
             in
-                ({ model | statementForm = statementForm' }, Cmd.none, Nothing)
+                ( { model | statementForm = statementForm' }, Cmd.none, Nothing )
 
         NameInput name ->
             let
-                statementForm = model.statementForm
+                statementForm =
+                    model.statementForm
+
                 statementForm' =
                     { statementForm
-                    | name = name
+                        | name = name
                     }
             in
-                ({ model | statementForm = statementForm' }, Cmd.none, Nothing)
+                ( { model | statementForm = statementForm' }, Cmd.none, Nothing )
 
         Submit ->
             let
-                statementForm = model.statementForm
-                errorsList = ( List.filterMap (
-                    \(name, errorMaybe) ->
-                        case errorMaybe of
-                            Just error ->
-                                Just (name, error)
-                            Nothing ->
+                statementForm =
+                    model.statementForm
+
+                errorsList =
+                    (List.filterMap
+                        (\( name, errorMaybe ) ->
+                            case errorMaybe of
+                                Just error ->
+                                    Just ( name, error )
+
+                                Nothing ->
+                                    Nothing
+                        )
+                        [ ( "argumentType"
+                          , if String.isEmpty model.argumentType then
+                                Just "Missing argument type"
+                            else
                                 Nothing
+                          )
+                        , ( "kind"
+                          , if String.isEmpty statementForm.kind then
+                                Just "Missing type"
+                            else
+                                Nothing
+                          )
+                        , ( "languageCpde"
+                          , if statementForm.kind == "PlainStatement" && String.isEmpty statementForm.languageCode then
+                                Just "Missing language"
+                            else
+                                Nothing
+                          )
+                        , ( "name"
+                          , if
+                                List.member statementForm.kind [ "PlainStatement", "Tag" ]
+                                    && String.isEmpty statementForm.name
+                            then
+                                Just "Missing name"
+                            else
+                                Nothing
+                          )
+                        ]
                     )
-                    [
-                        ( "argumentType"
-                        , if String.isEmpty model.argumentType
-                            then Just "Missing argument type"
-                            else Nothing
-                        )
-                    ,
-                        ( "kind"
-                        , if String.isEmpty statementForm.kind
-                            then Just "Missing type"
-                            else Nothing
-                        )
-                    ,
-                        ( "languageCpde"
-                        , if  statementForm.kind == "PlainStatement" && String.isEmpty statementForm.languageCode
-                            then Just "Missing language"
-                            else Nothing
-                        )
-                    ,
-                        ( "name"
-                        , if List.member statementForm.kind ["PlainStatement", "Tag"]
-                            && String.isEmpty statementForm.name
-                            then Just "Missing name"
-                            else Nothing
-                        )
-                    ] )
 
                 cmd =
                     if List.isEmpty errorsList then
@@ -170,17 +201,21 @@ update msg authenticationMaybe model =
                                     GroundCreated
                                     (newTaskCreateStatement
                                         authentication
-                                        (convertStatementFormToCustom statementForm))
+                                        (convertStatementFormToCustom statementForm)
+                                    )
+
                             Nothing ->
                                 Cmd.none
                     else
                         Cmd.none
+
                 statementForm' =
                     { statementForm
-                    | errors = Dict.fromList errorsList
+                        | errors = Dict.fromList errorsList
                     }
             in
-                ({ model | statementForm = statementForm' }, cmd, Nothing)
+                ( { model | statementForm = statementForm' }, cmd, Nothing )
+
 
 
 -- VIEW
@@ -189,28 +224,30 @@ update msg authenticationMaybe model =
 view : Model -> Html Msg
 view model =
     let
-        statementForm = model.statementForm
+        statementForm =
+            model.statementForm
     in
         Html.form [ onSubmit Submit ]
             ([ viewArgumentType model.argumentType (Dict.get "argumentType" statementForm.errors) ArgumentTypeChanged
-                , viewKind statementForm.kind (Dict.get "kind" statementForm.errors) KindChanged
-                ]
-            ++
-            (case statementForm.kind of
-                "PlainStatement" ->
-                    [ viewLanguageCode statementForm.languageCode (Dict.get "languageCode" statementForm.errors)
-                        LanguageCodeChanged
-                    , viewName statementForm.name (Dict.get "name" statementForm.errors) NameInput
-                    ]
-                "Tag" ->
-                    [ viewName statementForm.name (Dict.get "name" statementForm.errors) NameInput
-                    ]
+             , viewKind statementForm.kind (Dict.get "kind" statementForm.errors) KindChanged
+             ]
+                ++ (case statementForm.kind of
+                        "PlainStatement" ->
+                            [ viewLanguageCode statementForm.languageCode
+                                (Dict.get "languageCode" statementForm.errors)
+                                LanguageCodeChanged
+                            , viewName statementForm.name (Dict.get "name" statementForm.errors) NameInput
+                            ]
 
-                _ ->
-                    []
+                        "Tag" ->
+                            [ viewName statementForm.name (Dict.get "name" statementForm.errors) NameInput
+                            ]
+
+                        _ ->
+                            []
+                   )
+                ++ [ button
+                        [ class "btn btn-primary", type' "submit" ]
+                        [ text "Create" ]
+                   ]
             )
-            ++
-            [ button
-                [ class "btn btn-primary", type' "submit" ]
-                [ text "Create" ]
-            ])

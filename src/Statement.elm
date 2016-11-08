@@ -37,6 +37,7 @@ init =
     }
 
 
+
 -- UPDATE
 
 
@@ -65,7 +66,8 @@ type alias MsgTranslation parentMsg =
     }
 
 
-type alias MsgTranslator parentMsg = Msg -> parentMsg
+type alias MsgTranslator parentMsg =
+    Msg -> parentMsg
 
 
 navigate : String -> Msg
@@ -74,7 +76,7 @@ navigate path =
 
 
 translateMsg : MsgTranslation parentMsg -> MsgTranslator parentMsg
-translateMsg {onInternalMsg, onNavigate} msg =
+translateMsg { onInternalMsg, onNavigate } msg =
     case msg of
         ForParent (Navigate path) ->
             onNavigate path
@@ -95,14 +97,16 @@ update msg authenticationMaybe model =
                                 (\err -> ForSelf (FlagAbuseError err))
                                 (\body -> ForSelf (FlaggedAbuse body))
                                 (newTaskFlagAbuse authentication statementId)
+
                         Nothing ->
                             Cmd.none
             in
-                (model, cmd)
+                ( model, cmd )
 
         FlagAbuseError err ->
             let
-                _ = Debug.log "Flag Abuse Error" err
+                _ =
+                    Debug.log "Flag Abuse Error" err
             in
                 ( model, Cmd.none )
 
@@ -111,97 +115,137 @@ update msg authenticationMaybe model =
 
         NewGroundArgumentMsg childMsg ->
             let
-                newGroundArgumentModel = model.newGroundArgumentModel
+                newGroundArgumentModel =
+                    model.newGroundArgumentModel
+
                 newGroundArgumentModel' =
                     { newGroundArgumentModel
-                    | claimId = model.statementId
+                        | claimId = model.statementId
                     }
-                (newGroundArgumentModel'', childEffect, dataMaybe) =
+
+                ( newGroundArgumentModel'', childEffect, dataMaybe ) =
                     NewGroundArgument.update childMsg authenticationMaybe newGroundArgumentModel'
-                model' = case dataMaybe of
-                    Just data ->
-                        { model
-                        | ballotById = Dict.merge
-                            (\id ballot ballotById -> if ballot.deleted
-                                then ballotById
-                                else Dict.insert id ballot ballotById)
-                            (\id leftBallot rightBallot ballotById -> if leftBallot.deleted
-                                then ballotById
-                                else Dict.insert id leftBallot ballotById)
+
+                model' =
+                    case dataMaybe of
+                        Just data ->
+                            { model
+                                | ballotById =
+                                    Dict.merge
+                                        (\id ballot ballotById ->
+                                            if ballot.deleted then
+                                                ballotById
+                                            else
+                                                Dict.insert id ballot ballotById
+                                        )
+                                        (\id leftBallot rightBallot ballotById ->
+                                            if leftBallot.deleted then
+                                                ballotById
+                                            else
+                                                Dict.insert id leftBallot ballotById
+                                        )
+                                        Dict.insert
+                                        data.ballots
+                                        model.ballotById
+                                        Dict.empty
+                                , newGroundArgumentModel = newGroundArgumentModel''
+                                , statementById =
+                                    Dict.merge
+                                        (\id statement statementById ->
+                                            if statement.deleted then
+                                                statementById
+                                            else
+                                                Dict.insert id statement statementById
+                                        )
+                                        (\id leftStatement rightStatement statementById ->
+                                            if leftStatement.deleted then
+                                                statementById
+                                            else
+                                                Dict.insert id leftStatement statementById
+                                        )
+                                        Dict.insert
+                                        data.statements
+                                        model.statementById
+                                        Dict.empty
+                                , statementIds =
+                                    if Dict.member data.id data.statements then
+                                        if List.member data.id model.statementIds then
+                                            model.statementIds
+                                        else
+                                            data.id :: model.statementIds
+                                    else
+                                        -- data.id is not the ID of a statement (but a ballot ID, etc).
+                                        model.statementIds
+                            }
+
+                        Nothing ->
+                            { model
+                                | newGroundArgumentModel = newGroundArgumentModel''
+                            }
+            in
+                ( model', Cmd.map (\msg -> ForSelf (NewGroundArgumentMsg msg)) childEffect )
+
+        Rated body ->
+            let
+                data =
+                    body.data
+            in
+                ( { model
+                    | ballotById =
+                        Dict.merge
+                            (\id ballot ballotById ->
+                                if ballot.deleted then
+                                    ballotById
+                                else
+                                    Dict.insert id ballot ballotById
+                            )
+                            (\id leftBallot rightBallot ballotById ->
+                                if leftBallot.deleted then
+                                    ballotById
+                                else
+                                    Dict.insert id leftBallot ballotById
+                            )
                             Dict.insert
                             data.ballots
                             model.ballotById
                             Dict.empty
-                        , newGroundArgumentModel = newGroundArgumentModel''
-                        , statementById = Dict.merge
-                            (\id statement statementById -> if statement.deleted
-                                then statementById
-                                else Dict.insert id statement statementById)
-                            (\id leftStatement rightStatement statementById -> if leftStatement.deleted
-                                then statementById
-                                else Dict.insert id leftStatement statementById)
+                    , statementById =
+                        Dict.merge
+                            (\id statement statementById ->
+                                if statement.deleted then
+                                    statementById
+                                else
+                                    Dict.insert id statement statementById
+                            )
+                            (\id leftStatement rightStatement statementById ->
+                                if leftStatement.deleted then
+                                    statementById
+                                else
+                                    Dict.insert id leftStatement statementById
+                            )
                             Dict.insert
                             data.statements
                             model.statementById
                             Dict.empty
-                        , statementIds = if Dict.member data.id data.statements
-                            then if List.member data.id model.statementIds
-                                then model.statementIds
-                                else data.id :: model.statementIds
-                            else
-                                -- data.id is not the ID of a statement (but a ballot ID, etc).
+                    , statementIds =
+                        if Dict.member data.id data.statements then
+                            if List.member data.id model.statementIds then
                                 model.statementIds
-                        }
-                    Nothing ->
-                        { model
-                        | newGroundArgumentModel = newGroundArgumentModel''
-                        }
-            in
-                (model', Cmd.map (\msg -> ForSelf (NewGroundArgumentMsg msg)) childEffect)
-
-        Rated body ->
-            let
-                data = body.data
-            in
-                ( { model
-                    | ballotById = Dict.merge
-                        (\id ballot ballotById -> if ballot.deleted
-                            then ballotById
-                            else Dict.insert id ballot ballotById)
-                        (\id leftBallot rightBallot ballotById -> if leftBallot.deleted
-                            then ballotById
-                            else Dict.insert id leftBallot ballotById)
-                        Dict.insert
-                        data.ballots
-                        model.ballotById
-                        Dict.empty
-                    , statementById = Dict.merge
-                        (\id statement statementById -> if statement.deleted
-                            then statementById
-                            else Dict.insert id statement statementById)
-                        (\id leftStatement rightStatement statementById -> if leftStatement.deleted
-                            then statementById
-                            else Dict.insert id leftStatement statementById)
-                        Dict.insert
-                        data.statements
-                        model.statementById
-                        Dict.empty
-                    , statementIds = if Dict.member data.id data.statements
-                        then if List.member data.id model.statementIds
-                            then model.statementIds
-                            else data.id :: model.statementIds
+                            else
+                                data.id :: model.statementIds
                         else
                             -- data.id is not the ID of a statement (but a ballot ID, etc).
                             model.statementIds
-                    }
+                  }
                 , Cmd.none
                 )
 
         RateError err ->
             let
-                _ = Debug.log "Existing Statement Rate Error" err
+                _ =
+                    Debug.log "Existing Statement Rate Error" err
             in
-                (model, Cmd.none)
+                ( model, Cmd.none )
 
         RatingChanged ratingMaybe statementId ->
             let
@@ -214,15 +258,18 @@ update msg authenticationMaybe model =
                                         (\err -> ForSelf (RateError err))
                                         (\body -> ForSelf (Rated body))
                                         (newTaskRateStatement authentication rating statementId)
+
                                 Nothing ->
                                     Task.perform
                                         (\err -> ForSelf (RateError err))
                                         (\body -> ForSelf (Rated body))
                                         (newTaskDeleteStatementRating authentication statementId)
+
                         Nothing ->
                             Cmd.none
             in
-                (model, cmd)
+                ( model, cmd )
+
 
 
 -- VIEW
@@ -243,59 +290,63 @@ view authenticationMaybe model =
             model
         , hr [] []
         , let
-                statementMaybe =
-                    Dict.get model.statementId model.statementById
-            in
-                case statementMaybe of
-                    Just statement ->
-                        ul
-                            [ class "statements-list list-unstyled" ]
-                            (List.map
-                                (\argumentId ->
-                                    let
-                                        groundArgumentMaybe = Dict.get argumentId model.statementById
-                                    in
-                                        case groundArgumentMaybe of
-                                            Just groundArgument ->
-                                                case groundArgument.custom of
-                                                    ArgumentCustom argument ->
-                                                        li
-                                                            [ class "statement-line" ]
-                                                            [ viewStatementLinePanel
-                                                                authenticationMaybe
-                                                                argumentId
-                                                                (\ratingMaybe statementId ->
-                                                                    ForSelf (RatingChanged ratingMaybe statementId))
-                                                                (\statementId -> ForSelf (FlagAbuse statementId))
-                                                                model
-                                                            , div
-                                                                [ class "statement-line-argument-type" ]
-                                                                [ text
-                                                                    (convertArgumentTypeToString argument.argumentType)
-                                                                ]
-                                                            , viewStatementLineBody
-                                                                authenticationMaybe
-                                                                argument.groundId
-                                                                True
-                                                                navigate
-                                                                model
+            statementMaybe =
+                Dict.get model.statementId model.statementById
+          in
+            case statementMaybe of
+                Just statement ->
+                    ul
+                        [ class "statements-list list-unstyled" ]
+                        (List.map
+                            (\argumentId ->
+                                let
+                                    groundArgumentMaybe =
+                                        Dict.get argumentId model.statementById
+                                in
+                                    case groundArgumentMaybe of
+                                        Just groundArgument ->
+                                            case groundArgument.custom of
+                                                ArgumentCustom argument ->
+                                                    li
+                                                        [ class "statement-line" ]
+                                                        [ viewStatementLinePanel
+                                                            authenticationMaybe
+                                                            argumentId
+                                                            (\ratingMaybe statementId ->
+                                                                ForSelf (RatingChanged ratingMaybe statementId)
+                                                            )
+                                                            (\statementId -> ForSelf (FlagAbuse statementId))
+                                                            model
+                                                        , div
+                                                            [ class "statement-line-argument-type" ]
+                                                            [ text
+                                                                (convertArgumentTypeToString argument.argumentType)
                                                             ]
-                                                    _ ->
-                                                        text "Error: Argument is not of type Argument"
+                                                        , viewStatementLineBody
+                                                            authenticationMaybe
+                                                            argument.groundId
+                                                            True
+                                                            navigate
+                                                            model
+                                                        ]
 
-                                            Nothing ->
-                                                text "Error: Missing argument"
-                                    )
-                                statement.groundIds)
+                                                _ ->
+                                                    text "Error: Argument is not of type Argument"
 
-                    Nothing ->
-                        text ""
+                                        Nothing ->
+                                            text "Error: Missing argument"
+                            )
+                            statement.groundIds
+                        )
 
+                Nothing ->
+                    text ""
         , case authenticationMaybe of
             Just authentication ->
                 Html.App.map
                     (\msg -> ForSelf (NewGroundArgumentMsg msg))
                     (NewGroundArgument.view model.newGroundArgumentModel)
+
             Nothing ->
                 text ""
         ]

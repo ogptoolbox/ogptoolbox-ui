@@ -10,8 +10,14 @@ import Html.App
 import Http
 import Navigation
 import NewCard
-import Requests exposing (newTaskDeleteCardRating, newTaskFlagAbuse, newTaskGetCards, newTaskRateCard,
-    updateFromDataId)
+import Requests
+    exposing
+        ( newTaskDeleteCardRating
+        , newTaskFlagAbuse
+        , newTaskGetCards
+        , newTaskRateCard
+        , updateFromDataId
+        )
 import Routes exposing (makeUrl, CardsNestedRoute(..))
 import Task
 import Types exposing (Ballot, DataId, DataIdBody, DataIdsBody, decodeDataIdsBody, Card, CardCustom(..))
@@ -23,8 +29,9 @@ import Views exposing (aForPath, viewNotFound, viewCardLine)
 
 type alias Model =
     { ballotById : Dict String Ballot
-    , loaded : Bool
-    -- , location : Hop.Types.Location
+    , loaded :
+        Bool
+        -- , location : Hop.Types.Location
     , newCardModel : NewCard.Model
     , route : CardsNestedRoute
     , cardModel : Card.Model
@@ -36,8 +43,9 @@ type alias Model =
 init : Model
 init =
     { ballotById = Dict.empty
-    , loaded = False
-    -- , location = Hop.Types.newLocation
+    , loaded =
+        False
+        -- , location = Hop.Types.newLocation
     , newCardModel = NewCard.init
     , route = CardsNotFoundRoute
     , cardModel = Card.init
@@ -46,36 +54,41 @@ init =
     }
 
 
+
 -- ROUTING
 
 
-urlUpdate : (CardsNestedRoute, Hop.Types.Location) -> Model -> (Model, Cmd Msg)
-urlUpdate (route, location) model =
+urlUpdate : ( CardsNestedRoute, Hop.Types.Location ) -> Model -> ( Model, Cmd Msg )
+urlUpdate ( route, location ) model =
     let
-        model' = { model
-            -- | location = location
-            | route = route
+        model' =
+            { model
+              -- | location = location
+                | route = route
             }
     in
         case route of
             CardRoute cardId ->
                 let
-                    cardModel = model'.cardModel
+                    cardModel =
+                        model'.cardModel
+
                     model'' =
                         { model'
-                        | cardModel =
-                            { cardModel
-                            | cardId = cardId
-                            }
+                            | cardModel =
+                                { cardModel
+                                    | cardId = cardId
+                                }
                         }
                 in
-                    (model'', load)
+                    ( model'', load )
 
             CardsIndexRoute ->
-                (model', load)
+                ( model', load )
 
             CardsNotFoundRoute ->
-                (model', Cmd.none)
+                ( model', Cmd.none )
+
 
 
 -- UPDATE
@@ -110,7 +123,8 @@ type alias MsgTranslation parentMsg =
     }
 
 
-type alias MsgTranslator parentMsg = Msg -> parentMsg
+type alias MsgTranslator parentMsg =
+    Msg -> parentMsg
 
 
 cardMsgTranslation : Card.MsgTranslation Msg
@@ -131,11 +145,12 @@ navigate path =
 
 
 translateCardMsg : Card.MsgTranslator Msg
-translateCardMsg = Card.translateMsg cardMsgTranslation
+translateCardMsg =
+    Card.translateMsg cardMsgTranslation
 
 
 translateMsg : MsgTranslation parentMsg -> MsgTranslator parentMsg
-translateMsg {onInternalMsg, onNavigate} msg =
+translateMsg { onInternalMsg, onNavigate } msg =
     case msg of
         ForParent (Navigate path) ->
             onNavigate path
@@ -149,7 +164,8 @@ update msg authenticationMaybe model =
     case msg of
         Error err ->
             let
-                _ = Debug.log "Cards Error" err
+                _ =
+                    Debug.log "Cards Error" err
             in
                 ( model, Cmd.none )
 
@@ -162,6 +178,7 @@ update msg authenticationMaybe model =
                                 (\err -> ForSelf (FlagAbuseError err))
                                 (\body -> ForSelf (FlaggedAbuse body))
                                 (newTaskFlagAbuse authentication cardId)
+
                         Nothing ->
                             Cmd.none
             in
@@ -169,7 +186,8 @@ update msg authenticationMaybe model =
 
         FlagAbuseError err ->
             let
-                _ = Debug.log "Flag Abuse Error" err
+                _ =
+                    Debug.log "Flag Abuse Error" err
             in
                 ( model, Cmd.none )
 
@@ -178,8 +196,8 @@ update msg authenticationMaybe model =
 
         Load ->
             let
-                cmd = if model.loaded
-                    then
+                cmd =
+                    if model.loaded then
                         Cmd.none
                     else
                         Task.perform
@@ -195,19 +213,22 @@ update msg authenticationMaybe model =
                 , loaded = True
                 , cardById = body.data.cards
                 , cardIds = body.data.ids
-                }
+              }
             , Cmd.none
             )
 
         NewCardMsg childMsg ->
             let
-                (newCardModel, childEffect, dataMaybe) =
+                ( newCardModel, childEffect, dataMaybe ) =
                     NewCard.update childMsg authenticationMaybe model.newCardModel
-                model' = case dataMaybe of
-                    Just data ->
-                        updateFromDataId data model
-                    Nothing ->
-                        model
+
+                model' =
+                    case dataMaybe of
+                        Just data ->
+                            updateFromDataId data model
+
+                        Nothing ->
+                            model
             in
                 ( { model' | newCardModel = newCardModel }
                 , Cmd.map (\msg -> ForSelf (NewCardMsg msg)) childEffect
@@ -218,9 +239,10 @@ update msg authenticationMaybe model =
 
         RateError err ->
             let
-                _ = Debug.log "Existing Card Rate Error" err
+                _ =
+                    Debug.log "Existing Card Rate Error" err
             in
-                (model, Cmd.none)
+                ( model, Cmd.none )
 
         RatingChanged ratingMaybe cardId ->
             let
@@ -233,35 +255,43 @@ update msg authenticationMaybe model =
                                         (\err -> ForSelf (RateError err))
                                         (\body -> ForSelf (Rated body))
                                         (newTaskRateCard authentication rating cardId)
+
                                 Nothing ->
                                     Task.perform
                                         (\err -> ForSelf (RateError err))
                                         (\body -> ForSelf (Rated body))
                                         (newTaskDeleteCardRating authentication cardId)
+
                         Nothing ->
                             Cmd.none
             in
-                (model, cmd)
+                ( model, cmd )
 
         CardMsg childMsg ->
             let
-                cardModel = model.cardModel
+                cardModel =
+                    model.cardModel
+
                 cardModel' =
                     { cardModel
-                    | ballotById = model.ballotById
-                    , cardById = model.cardById
-                    , cardIds = model.cardIds
+                        | ballotById = model.ballotById
+                        , cardById = model.cardById
+                        , cardIds = model.cardIds
                     }
-                (cardModel'', childEffect) = Card.update childMsg authenticationMaybe cardModel'
+
+                ( cardModel'', childEffect ) =
+                    Card.update childMsg authenticationMaybe cardModel'
+
                 model' =
                     { model
-                    | ballotById = cardModel''.ballotById
-                    , cardById = cardModel''.cardById
-                    , cardIds = cardModel''.cardIds
-                    , cardModel = cardModel''
+                        | ballotById = cardModel''.ballotById
+                        , cardById = cardModel''.cardById
+                        , cardIds = cardModel''.cardIds
+                        , cardModel = cardModel''
                     }
             in
-                (model', Cmd.map translateCardMsg childEffect)
+                ( model', Cmd.map translateCardMsg childEffect )
+
 
 
 -- VIEW
@@ -272,12 +302,14 @@ view authenticationMaybe model =
     case model.route of
         CardRoute cardId ->
             let
-                cardModel = model.cardModel
+                cardModel =
+                    model.cardModel
+
                 cardModel' =
                     { cardModel
-                    | ballotById = model.ballotById
-                    , cardById = model.cardById
-                    , cardIds = model.cardIds
+                        | ballotById = model.ballotById
+                        , cardById = model.cardById
+                        , cardIds = model.cardIds
                     }
             in
                 Html.App.map translateCardMsg (Card.view authenticationMaybe cardModel')
@@ -289,19 +321,23 @@ view authenticationMaybe model =
                 , ul
                     [ class "list-unstyled cards-list" ]
                     (List.map
-                        (\cardId -> viewCardLine
-                            authenticationMaybe
-                            li
-                            cardId
-                            True
-                            navigate
-                            (\ratingMaybe cardId -> ForSelf (RatingChanged ratingMaybe cardId))
-                            (\cardId -> ForSelf (FlagAbuse cardId))
-                            model)
-                        model.cardIds)
+                        (\cardId ->
+                            viewCardLine
+                                authenticationMaybe
+                                li
+                                cardId
+                                True
+                                navigate
+                                (\ratingMaybe cardId -> ForSelf (RatingChanged ratingMaybe cardId))
+                                (\cardId -> ForSelf (FlagAbuse cardId))
+                                model
+                        )
+                        model.cardIds
+                    )
                 , case authenticationMaybe of
                     Just authentication ->
                         Html.App.map (\msg -> ForSelf (NewCardMsg msg)) (NewCard.view model.newCardModel)
+
                     Nothing ->
                         text ""
                 ]

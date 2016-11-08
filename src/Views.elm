@@ -1,12 +1,36 @@
-module Views exposing (aForPath, viewArgumentType, viewKind, viewLanguageCode, viewName, viewNotFound, viewOption,
-    viewStatementLine, viewStatementLineBody, viewStatementLinePanel)
+module Views
+    exposing
+        ( aForPath
+        , viewArgumentType
+        , viewKind
+        , viewLanguageCode
+        , viewName
+        , viewNotFound
+        , viewOption
+        , viewStatementLine
+        , viewStatementLineBody
+        , viewStatementLinePanel
+        )
 
 import Authenticator.Model
 import Dict
 import Json.Decode
 import Html exposing (a, Attribute, button, dd, div, dl, dt, h4, Html, img, input, label, option, p, select, span, text)
-import Html.Attributes exposing (attribute, class, disabled, for, href, id, placeholder, selected, src, title, type',
-    value)
+import Html.Attributes
+    exposing
+        ( attribute
+        , class
+        , disabled
+        , for
+        , href
+        , id
+        , placeholder
+        , selected
+        , src
+        , title
+        , type'
+        , value
+        )
 import Html.Attributes.Aria exposing (ariaDescribedby, ariaHidden, ariaLabel, ariaPressed, role)
 import Html.Events exposing (on, onClick, onInput, onWithOptions, targetValue)
 import Routes exposing (makeUrl)
@@ -14,51 +38,53 @@ import String
 import Types exposing (Ballot, convertArgumentTypeToString, ModelFragment, Statement, StatementCustom(..))
 
 
-argumentTypeLabelCouples : List (String, String)
+argumentTypeLabelCouples : List ( String, String )
 argumentTypeLabelCouples =
-    [ ("because", "Because")
-    , ("but", "But")
-    , ("comment", "Comment")
-    , ("example", "Example")
+    [ ( "because", "Because" )
+    , ( "but", "But" )
+    , ( "comment", "Comment" )
+    , ( "example", "Example" )
     ]
 
 
 argumentTypes : List String
-argumentTypes = List.map (\(item, label) -> item) argumentTypeLabelCouples
+argumentTypes =
+    List.map (\( item, label ) -> item) argumentTypeLabelCouples
 
 
-kindLabelCouples : List (String, String)
+kindLabelCouples : List ( String, String )
 kindLabelCouples =
-    [ ("PlainStatement", "Plain")
-    , ("Tag", "Tag")
+    [ ( "PlainStatement", "Plain" )
+    , ( "Tag", "Tag" )
     ]
 
 
 kinds : List String
-kinds = List.map (\(item, label) -> item) kindLabelCouples
+kinds =
+    List.map (\( item, label ) -> item) kindLabelCouples
 
 
-languageCodeLabelCouples : List (String, String)
+languageCodeLabelCouples : List ( String, String )
 languageCodeLabelCouples =
-    [ ("en", "English")
-    , ("fr", "Français")
+    [ ( "en", "English" )
+    , ( "fr", "Français" )
     ]
 
 
 languageCodes : List String
-languageCodes = List.map (\(item, label) -> item) languageCodeLabelCouples
+languageCodes =
+    List.map (\( item, label ) -> item) languageCodeLabelCouples
 
 
 aForPath : (String -> msg) -> String -> List (Attribute msg) -> List (Html msg) -> Html msg
 aForPath navigate path attributes children =
     a
-        (
-            [ href (makeUrl path)
-            , onWithOptions
-                "click"
-                { stopPropagation = False, preventDefault = True }
-                (Json.Decode.succeed (navigate path))
-            ]
+        ([ href (makeUrl path)
+         , onWithOptions
+            "click"
+            { stopPropagation = False, preventDefault = True }
+            (Json.Decode.succeed (navigate path))
+         ]
             ++ attributes
         )
         children
@@ -88,14 +114,13 @@ decodeLanguageCode value =
         Json.Decode.fail ("Unknown language: " ++ value)
 
 
+
 -- decodeRating : Int -> Json.Decode.Decoder Int
 -- decodeRating value =
 --     if List.member value ratings then
 --         Json.Decode.succeed value
 --     else
 --         Json.Decode.fail ("Unknown rating: " ++ toString value)
-
-
 -- decodeRatingTargetValue : Json.Decode.Decoder Int
 -- decodeRatingTargetValue =
 --     Json.Decode.customDecoder targetValue (Json.Decode.decodeString Json.Decode.int) `Json.Decode.andThen` decodeRating
@@ -106,6 +131,7 @@ hasBallotRating rating ballotMaybe =
     case ballotMaybe of
         Just ballot ->
             ballot.rating == rating
+
         Nothing ->
             False
 
@@ -113,123 +139,155 @@ hasBallotRating rating ballotMaybe =
 viewArgumentType : String -> Maybe String -> (String -> msg) -> Html msg
 viewArgumentType argumentType errorMaybe argumentTypeChanged =
     let
-        ( errorClass, errorAttributes, errorBlock ) = case errorMaybe of
-            Just error ->
-                ( " has-error"
-                , [ ariaDescribedby "argument-type-error" ]
-                , [ span
-                    [ class "help-block"
-                    , id "argument-type-error"
-                    ]
-                    [ text error ] ]
-                )
-            Nothing ->
-                ("", [] , [])
+        ( errorClass, errorAttributes, errorBlock ) =
+            case errorMaybe of
+                Just error ->
+                    ( " has-error"
+                    , [ ariaDescribedby "argument-type-error" ]
+                    , [ span
+                            [ class "help-block"
+                            , id "argument-type-error"
+                            ]
+                            [ text error ]
+                      ]
+                    )
+
+                Nothing ->
+                    ( "", [], [] )
     in
         div [ class ("form-group" ++ errorClass) ]
-            ( [ label [ class "control-label", for "argument-type" ] [ text "Argument Type" ]
-            , select
-                ( [ class "form-control"
-                , id "argument-type"
-                , on "change" (Json.Decode.map argumentTypeChanged
-                    (targetValue `Json.Decode.andThen` decodeArgumentType))
-                ] ++ errorAttributes )
-                ( List.map
-                    (viewOption argumentType)
-                    ([("", "")] ++ argumentTypeLabelCouples)
+            ([ label [ class "control-label", for "argument-type" ] [ text "Argument Type" ]
+             , select
+                ([ class "form-control"
+                 , id "argument-type"
+                 , on "change"
+                    (Json.Decode.map argumentTypeChanged
+                        (targetValue `Json.Decode.andThen` decodeArgumentType)
+                    )
+                 ]
+                    ++ errorAttributes
                 )
-            ] ++ errorBlock )
+                (List.map
+                    (viewOption argumentType)
+                    ([ ( "", "" ) ] ++ argumentTypeLabelCouples)
+                )
+             ]
+                ++ errorBlock
+            )
 
 
 viewKind : String -> Maybe String -> (String -> msg) -> Html msg
 viewKind kind errorMaybe kindChanged =
     let
-        ( errorClass, errorAttributes, errorBlock ) = case errorMaybe of
-            Just error ->
-                ( " has-error"
-                , [ ariaDescribedby "type-error" ]
-                , [ span
-                    [ class "help-block"
-                    , id "type-error"
-                    ]
-                    [ text error ] ]
-                )
-            Nothing ->
-                ("", [] , [])
+        ( errorClass, errorAttributes, errorBlock ) =
+            case errorMaybe of
+                Just error ->
+                    ( " has-error"
+                    , [ ariaDescribedby "type-error" ]
+                    , [ span
+                            [ class "help-block"
+                            , id "type-error"
+                            ]
+                            [ text error ]
+                      ]
+                    )
+
+                Nothing ->
+                    ( "", [], [] )
     in
         div [ class ("form-group" ++ errorClass) ]
-            ( [ label [ class "control-label", for "type" ] [ text "Type" ]
-            , select
-                ( [ class "form-control"
-                , id "type"
-                , on "change" (Json.Decode.map kindChanged (targetValue `Json.Decode.andThen` decodeKind))
-                ] ++ errorAttributes )
-                ( List.map
+            ([ label [ class "control-label", for "type" ] [ text "Type" ]
+             , select
+                ([ class "form-control"
+                 , id "type"
+                 , on "change" (Json.Decode.map kindChanged (targetValue `Json.Decode.andThen` decodeKind))
+                 ]
+                    ++ errorAttributes
+                )
+                (List.map
                     (viewOption kind)
                     kindLabelCouples
                 )
-            ] ++ errorBlock )
+             ]
+                ++ errorBlock
+            )
 
 
 viewLanguageCode : String -> Maybe String -> (String -> msg) -> Html msg
 viewLanguageCode languageCode errorMaybe languageCodeChanged =
     let
-        ( errorClass, errorAttributes, errorBlock ) = case errorMaybe of
-            Just error ->
-                ( " has-error"
-                , [ ariaDescribedby "language-error" ]
-                , [ span
-                    [ class "help-block"
-                    , id "language-error"
-                    ]
-                    [ text error ] ]
-                )
-            Nothing ->
-                ("", [] , [])
+        ( errorClass, errorAttributes, errorBlock ) =
+            case errorMaybe of
+                Just error ->
+                    ( " has-error"
+                    , [ ariaDescribedby "language-error" ]
+                    , [ span
+                            [ class "help-block"
+                            , id "language-error"
+                            ]
+                            [ text error ]
+                      ]
+                    )
+
+                Nothing ->
+                    ( "", [], [] )
     in
-        div [ class ( "form-group" ++ errorClass) ]
-            ( [ label [ class "control-label", for "language" ] [ text "Language" ]
-            , select
-                ( [ class "form-control"
-                , id "language"
-                , on "change" (Json.Decode.map languageCodeChanged
-                    (targetValue `Json.Decode.andThen` decodeLanguageCode))
-                ] ++ errorAttributes )
-                ( List.map
+        div [ class ("form-group" ++ errorClass) ]
+            ([ label [ class "control-label", for "language" ] [ text "Language" ]
+             , select
+                ([ class "form-control"
+                 , id "language"
+                 , on "change"
+                    (Json.Decode.map languageCodeChanged
+                        (targetValue `Json.Decode.andThen` decodeLanguageCode)
+                    )
+                 ]
+                    ++ errorAttributes
+                )
+                (List.map
                     (viewOption languageCode)
                     languageCodeLabelCouples
                 )
-            ] ++ errorBlock )
+             ]
+                ++ errorBlock
+            )
 
 
 viewName : String -> Maybe String -> (String -> msg) -> Html msg
 viewName name errorMaybe nameChanged =
     let
-        ( errorClass, errorAttributes, errorBlock ) = case errorMaybe of
-            Just error ->
-                ( " has-error"
-                , [ ariaDescribedby "name-error" ]
-                , [ span
-                    [ class "help-block"
-                    , id "name-error"
-                    ]
-                    [ text error ] ]
-                )
-            Nothing ->
-                ("", [] , [])
+        ( errorClass, errorAttributes, errorBlock ) =
+            case errorMaybe of
+                Just error ->
+                    ( " has-error"
+                    , [ ariaDescribedby "name-error" ]
+                    , [ span
+                            [ class "help-block"
+                            , id "name-error"
+                            ]
+                            [ text error ]
+                      ]
+                    )
+
+                Nothing ->
+                    ( "", [], [] )
     in
-        div [ class ( "form-group" ++ errorClass) ]
-            ( [ label [ class "control-label", for "name" ] [ text "Name" ]
-            , input
-                ( [ class "form-control"
-                , id "name"
-                , placeholder "To be or not to be"
-                , type' "text"
-                , value name
-                , onInput nameChanged
-                ] ++ errorAttributes )
+        div [ class ("form-group" ++ errorClass) ]
+            ([ label [ class "control-label", for "name" ] [ text "Name" ]
+             , input
+                ([ class "form-control"
+                 , id "name"
+                 , placeholder "To be or not to be"
+                 , type' "text"
+                 , value name
+                 , onInput nameChanged
+                 ]
+                    ++ errorAttributes
+                )
                 []
-            ] ++ errorBlock )
+             ]
+                ++ errorBlock
+            )
 
 
 viewNotFound : Html msg
@@ -240,11 +298,14 @@ viewNotFound =
         ]
 
 
-viewOption : a -> (a, String) -> Html msg
-viewOption selectedItem (item, label) =
+viewOption : a -> ( a, String ) -> Html msg
+viewOption selectedItem ( item, label ) =
     let
-        itemString = (toString item)
-        itemString' = if String.left 1 itemString == "\"" && String.right 1 itemString == "\"" then
+        itemString =
+            (toString item)
+
+        itemString' =
+            if String.left 1 itemString == "\"" && String.right 1 itemString == "\"" then
                 String.slice 1 -1 itemString
             else
                 itemString
@@ -256,8 +317,15 @@ viewOption selectedItem (item, label) =
             [ text label ]
 
 
-viewStatementLine : Maybe Authenticator.Model.Authentication -> (List (Attribute msg) -> List (Html msg) -> Html msg)
-    -> String -> Bool -> (String -> msg) -> (Maybe Int -> String -> msg) -> (String -> msg) -> ModelFragment a
+viewStatementLine :
+    Maybe Authenticator.Model.Authentication
+    -> (List (Attribute msg) -> List (Html msg) -> Html msg)
+    -> String
+    -> Bool
+    -> (String -> msg)
+    -> (Maybe Int -> String -> msg)
+    -> (String -> msg)
+    -> ModelFragment a
     -> Html msg
 viewStatementLine authenticationMaybe htmlElement statementId link navigate ratingChanged flagAbuse model =
     htmlElement
@@ -267,7 +335,12 @@ viewStatementLine authenticationMaybe htmlElement statementId link navigate rati
         ]
 
 
-viewStatementLineBody : Maybe Authenticator.Model.Authentication -> String -> Bool -> (String -> msg) -> ModelFragment a
+viewStatementLineBody :
+    Maybe Authenticator.Model.Authentication
+    -> String
+    -> Bool
+    -> (String -> msg)
+    -> ModelFragment a
     -> Html msg
 viewStatementLineBody authenticationMaybe statementId link navigate model =
     let
@@ -287,16 +360,17 @@ viewStatementLineBody authenticationMaybe statementId link navigate model =
                 case statement.custom of
                     AbuseCustom abuse ->
                         let
-                            content = "Abuse"
+                            content =
+                                "Abuse"
                         in
                             div
                                 [ class "statement-line-body" ]
                                 [ h4
                                     [ class "statement-line-title" ]
                                     [ if link then
-                                            aForPath navigate ("/statements/" ++ statement.id) [] [ text content ]
-                                        else
-                                    text content
+                                        aForPath navigate ("/statements/" ++ statement.id) [] [ text content ]
+                                      else
+                                        text content
                                     , text " for "
                                     ]
                                 , viewStatementLineBody authenticationMaybe abuse.statementId True navigate model
@@ -304,29 +378,38 @@ viewStatementLineBody authenticationMaybe statementId link navigate model =
 
                     ArgumentCustom argument ->
                         let
-                            content = "Argument"
+                            content =
+                                "Argument"
                         in
                             div
                                 [ class "statement-line-body" ]
                                 [ h4
                                     [ class "statement-line-title" ]
                                     [ if link then
-                                            aForPath navigate ("/statements/" ++ statement.id) [] [ text content ]
-                                        else
-                                            text content
+                                        aForPath navigate ("/statements/" ++ statement.id) [] [ text content ]
+                                      else
+                                        text content
                                     , text " for "
                                     ]
                                 , text (convertArgumentTypeToString argument.argumentType)
                                 , dl
                                     []
-                                    [ dt [] [ text "Claim:"]
+                                    [ dt [] [ text "Claim:" ]
                                     , dd []
-                                        [ viewStatementLineBody authenticationMaybe argument.claimId True navigate
-                                            model ]
-                                    , dt [] [ text "Ground:"]
+                                        [ viewStatementLineBody authenticationMaybe
+                                            argument.claimId
+                                            True
+                                            navigate
+                                            model
+                                        ]
+                                    , dt [] [ text "Ground:" ]
                                     , dd []
-                                        [ viewStatementLineBody authenticationMaybe argument.groundId True navigate
-                                            model ]
+                                        [ viewStatementLineBody authenticationMaybe
+                                            argument.groundId
+                                            True
+                                            navigate
+                                            model
+                                        ]
                                     ]
                                 ]
 
@@ -336,33 +419,40 @@ viewStatementLineBody authenticationMaybe statementId link navigate model =
                             [ h4
                                 [ class "statement-line-title" ]
                                 [ if link then
-                                        aForPath navigate ("/statements/" ++ statement.id) [] [ text plain.name ]
-                                    else
-                                        text plain.name
+                                    aForPath navigate ("/statements/" ++ statement.id) [] [ text plain.name ]
+                                  else
+                                    text plain.name
                                 ]
                             ]
 
                     TagCustom tag ->
                         let
-                            content = "Tag " ++ tag.name
+                            content =
+                                "Tag " ++ tag.name
                         in
                             div
                                 [ class "statement-line-body" ]
                                 [ h4
                                     [ class "statement-line-title" ]
                                     [ if link then
-                                            aForPath navigate ("/statements/" ++ statement.id) [] [ text content ]
-                                        else
-                                            text content
+                                        aForPath navigate ("/statements/" ++ statement.id) [] [ text content ]
+                                      else
+                                        text content
                                     , text " for "
                                     ]
                                 , viewStatementLineBody authenticationMaybe tag.statementId True navigate model
                                 ]
 
-viewStatementLinePanel : Maybe Authenticator.Model.Authentication -> String -> (Maybe Int -> String -> msg)
-    -> (String -> msg) -> ModelFragment a -> Html msg
+
+viewStatementLinePanel :
+    Maybe Authenticator.Model.Authentication
+    -> String
+    -> (Maybe Int -> String -> msg)
+    -> (String -> msg)
+    -> ModelFragment a
+    -> Html msg
 viewStatementLinePanel authenticationMaybe statementId ratingChanged flagAbuse model =
-     let
+    let
         statementMaybe =
             Dict.get statementId model.statementById
     in
@@ -372,34 +462,44 @@ viewStatementLinePanel authenticationMaybe statementId ratingChanged flagAbuse m
 
             Just statement ->
                 let
-                    authenticated = case authenticationMaybe of
-                        Just _ ->
-                            True
-                        Nothing ->
-                            False
-                    abuseAttributes = if authenticated
-                        then
+                    authenticated =
+                        case authenticationMaybe of
+                            Just _ ->
+                                True
+
+                            Nothing ->
+                                False
+
+                    abuseAttributes =
+                        if authenticated then
                             [ onClick (flagAbuse statement.id)
                             ]
                         else
                             [ disabled True
                             ]
-                    ballotMaybe = case statement.ballotIdMaybe of
-                        Just ballotId ->
-                            Dict.get ballotId model.ballotById
-                        Nothing ->
-                            Nothing
-                    deleteRatingAttributes = case ballotMaybe of
-                        Just ballot ->
-                            [ class "btn btn-default"
-                            , onClick (ratingChanged Nothing statement.id)
-                            ]
-                        Nothing ->
-                            [ class "btn btn-default"
-                            , disabled (not authenticated)
-                            ]
-                    negativeRatingAttributes = if hasBallotRating -1 ballotMaybe
-                        then
+
+                    ballotMaybe =
+                        case statement.ballotIdMaybe of
+                            Just ballotId ->
+                                Dict.get ballotId model.ballotById
+
+                            Nothing ->
+                                Nothing
+
+                    deleteRatingAttributes =
+                        case ballotMaybe of
+                            Just ballot ->
+                                [ class "btn btn-default"
+                                , onClick (ratingChanged Nothing statement.id)
+                                ]
+
+                            Nothing ->
+                                [ class "btn btn-default"
+                                , disabled (not authenticated)
+                                ]
+
+                    negativeRatingAttributes =
+                        if hasBallotRating -1 ballotMaybe then
                             [ ariaPressed True
                             , class "active btn btn-default"
                             ]
@@ -411,8 +511,9 @@ viewStatementLinePanel authenticationMaybe statementId ratingChanged flagAbuse m
                             [ class "btn btn-default"
                             , disabled True
                             ]
-                    positiveRatingAttributes = if hasBallotRating 1 ballotMaybe
-                        then
+
+                    positiveRatingAttributes =
+                        if hasBallotRating 1 ballotMaybe then
                             [ ariaPressed True
                             , class "active btn btn-default"
                             ]
@@ -424,8 +525,9 @@ viewStatementLinePanel authenticationMaybe statementId ratingChanged flagAbuse m
                             [ class "btn btn-default"
                             , disabled True
                             ]
-                    zeroRatingAttributes = if hasBallotRating 0 ballotMaybe
-                        then
+
+                    zeroRatingAttributes =
+                        if hasBallotRating 0 ballotMaybe then
                             [ ariaPressed True
                             , class "active btn btn-default"
                             ]
@@ -450,10 +552,12 @@ viewStatementLinePanel authenticationMaybe statementId ratingChanged flagAbuse m
                             ]
                             [ button
                                 ([ ariaLabel "Set rating for statement to 1"
-                                , role "button"
-                                , title "Set rating for statement to 1"
-                                , type' "button"
-                                ] ++ positiveRatingAttributes)
+                                 , role "button"
+                                 , title "Set rating for statement to 1"
+                                 , type' "button"
+                                 ]
+                                    ++ positiveRatingAttributes
+                                )
                                 [ span
                                     [ ariaHidden True
                                     , class "glyphicon glyphicon-triangle-top"
@@ -462,18 +566,22 @@ viewStatementLinePanel authenticationMaybe statementId ratingChanged flagAbuse m
                                 ]
                             , button
                                 ([ ariaLabel "Set rating for statement to 0"
-                                , role "button"
-                                , title "Set rating for statement to 0"
-                                , type' "button"
-                                ] ++ zeroRatingAttributes)
+                                 , role "button"
+                                 , title "Set rating for statement to 0"
+                                 , type' "button"
+                                 ]
+                                    ++ zeroRatingAttributes
+                                )
                                 [ text "="
                                 ]
                             , button
                                 ([ ariaLabel "Set rating for statement to -1"
-                                , role "button"
-                                , title "Set rating for statement to -1"
-                                , type' "button"
-                                ] ++ negativeRatingAttributes)
+                                 , role "button"
+                                 , title "Set rating for statement to -1"
+                                 , type' "button"
+                                 ]
+                                    ++ negativeRatingAttributes
+                                )
                                 [ span
                                     [ ariaHidden True
                                     , class "glyphicon glyphicon-triangle-bottom"
@@ -488,10 +596,12 @@ viewStatementLinePanel authenticationMaybe statementId ratingChanged flagAbuse m
                             ]
                             [ button
                                 ([ ariaLabel "Erase rating for statement"
-                                , role "button"
-                                , title "Delete rating for statement"
-                                , type' "button"
-                                ] ++ deleteRatingAttributes)
+                                 , role "button"
+                                 , title "Delete rating for statement"
+                                 , type' "button"
+                                 ]
+                                    ++ deleteRatingAttributes
+                                )
                                 [ span
                                     [ ariaHidden True
                                     , class "glyphicon glyphicon-erase"
@@ -502,7 +612,7 @@ viewStatementLinePanel authenticationMaybe statementId ratingChanged flagAbuse m
                                 [ ariaLabel "Sum and count of ratings"
                                 , class "btn btn-default"
                                 , disabled True
-                                -- , role "button"
+                                  -- , role "button"
                                 , title "Sum and count of ratings"
                                 , type' "button"
                                 ]
@@ -510,16 +620,21 @@ viewStatementLinePanel authenticationMaybe statementId ratingChanged flagAbuse m
                                 ]
                             , button
                                 ([ ariaLabel "Set statement rating to -1"
-                                , class "btn btn-default"
-                                , role "button"
-                                , title "Sum and count of ratings"
-                                , type' "button"
-                                ] ++ abuseAttributes)
+                                 , class "btn btn-default"
+                                 , role "button"
+                                 , title "Sum and count of ratings"
+                                 , type' "button"
+                                 ]
+                                    ++ abuseAttributes
+                                )
                                 [ span
                                     [ ariaHidden True
-                                    , class (if statement.isAbuse
-                                        then "glyphicon glyphicon-trash"
-                                        else "glyphicon glyphicon-warning-sign")
+                                    , class
+                                        (if statement.isAbuse then
+                                            "glyphicon glyphicon-trash"
+                                         else
+                                            "glyphicon glyphicon-warning-sign"
+                                        )
                                     ]
                                     []
                                 ]

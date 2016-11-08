@@ -16,6 +16,7 @@ init =
     {}
 
 
+
 -- UPDATE
 
 
@@ -38,7 +39,8 @@ type alias MsgTranslation parentMsg =
     }
 
 
-type alias MsgTranslator parentMsg = Msg -> parentMsg
+type alias MsgTranslator parentMsg =
+    Msg -> parentMsg
 
 
 navigate : String -> Msg
@@ -47,7 +49,7 @@ navigate path =
 
 
 translateMsg : MsgTranslation parentMsg -> MsgTranslator parentMsg
-translateMsg {onInternalMsg, onNavigate} msg =
+translateMsg { onInternalMsg, onNavigate } msg =
     case msg of
         ForParent (Navigate path) ->
             onNavigate path
@@ -61,6 +63,7 @@ update msg authenticationMaybe model =
     case msg of
         Todo ->
             ( model, Cmd.none )
+
 
 
 -- VIEW

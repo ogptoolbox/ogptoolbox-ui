@@ -27,7 +27,8 @@ type StatementsNestedRoute
 
 
 makeUrl : String -> String
-makeUrl path = Hop.makeUrl routerConfig path
+makeUrl path =
+    Hop.makeUrl routerConfig path
 
 
 matchers : List (Hop.Types.PathMatcher Route)
@@ -40,7 +41,8 @@ matchers =
     , match1 ExamplesRoute "/examples"
     , match1 HelpRoute "/help"
     , match1 OrganizationsRoute "/organizations"
-    , nested1 StatementsRoute "/statements"
+    , nested1 StatementsRoute
+        "/statements"
         [ match1 StatementsIndexRoute ""
         , match2 StatementRoute "/" statementIdParser
         ]

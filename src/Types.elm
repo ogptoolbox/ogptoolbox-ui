@@ -1,8 +1,24 @@
 module Types exposing (..)
 
 import Dict exposing (Dict)
-import Json.Decode exposing ((:=), andThen, bool, customDecoder, Decoder, dict, fail, int, list, map, maybe, null,
-    oneOf, string, succeed)
+import Json.Decode
+    exposing
+        ( (:=)
+        , andThen
+        , bool
+        , customDecoder
+        , Decoder
+        , dict
+        , fail
+        , int
+        , list
+        , map
+        , maybe
+        , null
+        , oneOf
+        , string
+        , succeed
+        )
 import Json.Decode.Extra as Json exposing ((|:))
 
 
@@ -12,7 +28,7 @@ type alias Abuse =
 
 
 type alias Argument =
-    { argumentType: ArgumentType
+    { argumentType : ArgumentType
     , claimId : String
     , groundId : String
     }
@@ -63,13 +79,14 @@ type alias DataIdsBody =
 
 type alias ModelFragment a =
     { a
-    | ballotById : Dict String Ballot
-    , statementById : Dict String Statement
-    , statementIds : List String
+        | ballotById : Dict String Ballot
+        , statementById : Dict String Statement
+        , statementIds : List String
     }
 
 
-type alias FormErrors = Dict String String
+type alias FormErrors =
+    Dict String String
 
 
 type alias Plain =
@@ -99,7 +116,7 @@ type StatementCustom
 
 
 type alias StatementForm =
-    { argumentType: String
+    { argumentType : String
     , claimId : String
     , errors : FormErrors
     , groundId : String
@@ -130,7 +147,7 @@ type alias UserBody =
 
 
 convertArgumentTypeToString : ArgumentType -> String
-convertArgumentTypeToString argumentType = 
+convertArgumentTypeToString argumentType =
     case argumentType of
         Because ->
             "because"
@@ -171,21 +188,22 @@ convertStatementFormToCustom form =
 
         "Argument" ->
             ArgumentCustom
-                { argumentType = case form.argumentType of
-                    "because" ->
-                        Because
+                { argumentType =
+                    case form.argumentType of
+                        "because" ->
+                            Because
 
-                    "but" ->
-                        But
+                        "but" ->
+                            But
 
-                    "comment" ->
-                        Comment
+                        "comment" ->
+                            Comment
 
-                    "example" ->
-                        Example
+                        "example" ->
+                            Example
 
-                    _ ->
-                        Comment
+                        _ ->
+                            Comment
                 , claimId = form.claimId
                 , groundId = form.groundId
                 }
@@ -211,52 +229,54 @@ convertStatementFormToCustom form =
 
 
 decodeArgumentType : Decoder ArgumentType
-decodeArgumentType = customDecoder string (\argumentType ->
-    case argumentType of
-        "because" ->
-            Ok Because
+decodeArgumentType =
+    customDecoder string
+        (\argumentType ->
+            case argumentType of
+                "because" ->
+                    Ok Because
 
-        "but" ->
-            Ok But
+                "but" ->
+                    Ok But
 
-        "comment" ->
-            Ok Comment
+                "comment" ->
+                    Ok Comment
 
-        "example" ->
-            Ok Example
+                "example" ->
+                    Ok Example
 
-        _ ->
-            Err ("Unkown argument type: " ++ argumentType)
-    )
+                _ ->
+                    Err ("Unkown argument type: " ++ argumentType)
+        )
 
 
 decodeBallot : Decoder Ballot
 decodeBallot =
     succeed Ballot
-        |: oneOf [("rating" := int) `andThen` (\_ -> succeed False), succeed True]
+        |: oneOf [ ("rating" := int) `andThen` (\_ -> succeed False), succeed True ]
         |: ("id" := string)
-        |: oneOf [("rating" := int), succeed 0]
+        |: oneOf [ ("rating" := int), succeed 0 ]
         |: ("statementId" := string)
-        |: oneOf [("updatedAt" := string), succeed ""]
+        |: oneOf [ ("updatedAt" := string), succeed "" ]
         |: ("voterId" := string)
 
 
 decodeDataId : Decoder DataId
 decodeDataId =
     succeed DataId
-        |: oneOf [("ballots" := dict decodeBallot), succeed Dict.empty]
+        |: oneOf [ ("ballots" := dict decodeBallot), succeed Dict.empty ]
         |: ("id" := string)
-        |: oneOf [("statements" := dict decodeStatement), succeed Dict.empty]
-        |: oneOf [("users" := dict decodeUser), succeed Dict.empty]
+        |: oneOf [ ("statements" := dict decodeStatement), succeed Dict.empty ]
+        |: oneOf [ ("users" := dict decodeUser), succeed Dict.empty ]
 
 
 decodeDataIds : Decoder DataIds
 decodeDataIds =
     succeed DataIds
-        |: oneOf [("ballots" := dict decodeBallot), succeed Dict.empty]
+        |: oneOf [ ("ballots" := dict decodeBallot), succeed Dict.empty ]
         |: ("ids" := list string)
-        |: oneOf [("statements" := dict decodeStatement), succeed Dict.empty]
-        |: oneOf [("users" := dict decodeUser), succeed Dict.empty]
+        |: oneOf [ ("statements" := dict decodeStatement), succeed Dict.empty ]
+        |: oneOf [ ("users" := dict decodeUser), succeed Dict.empty ]
 
 
 decodeDataIdBody : Decoder DataIdBody
@@ -277,12 +297,12 @@ decodeStatement =
         |: maybe ("ballotId" := string)
         |: ("createdAt" := string)
         |: (("type" := string) `andThen` decodeStatementFromType)
-        |: oneOf [("deleted" := bool), succeed False]
-        |: oneOf [("groundIds" := list string), succeed []]
+        |: oneOf [ ("deleted" := bool), succeed False ]
+        |: oneOf [ ("groundIds" := list string), succeed [] ]
         |: ("id" := string)
-        |: oneOf [("isAbuse" := bool), succeed False]
-        |: oneOf [("ratingCount" := int), succeed 0]
-        |: oneOf [("ratingSum" := int), succeed 0]
+        |: oneOf [ ("isAbuse" := bool), succeed False ]
+        |: oneOf [ ("ratingCount" := int), succeed 0 ]
+        |: oneOf [ ("ratingSum" := int), succeed 0 ]
 
 
 decodeStatementFromType : String -> Decoder StatementCustom
@@ -291,26 +311,26 @@ decodeStatementFromType statementType =
         "Abuse" ->
             succeed Abuse
                 |: ("statementId" := string)
-            `andThen` \abuse -> succeed (AbuseCustom abuse)
+                `andThen` \abuse -> succeed (AbuseCustom abuse)
 
         "Argument" ->
             succeed Argument
                 |: ("argumentType" := decodeArgumentType)
                 |: ("claimId" := string)
                 |: ("groundId" := string)
-            `andThen` \argument -> succeed (ArgumentCustom argument)
+                `andThen` \argument -> succeed (ArgumentCustom argument)
 
         "PlainStatement" ->
             succeed Plain
                 |: ("languageCode" := string)
                 |: ("name" := string)
-            `andThen` \plain -> succeed (PlainCustom plain)
+                `andThen` \plain -> succeed (PlainCustom plain)
 
         "Tag" ->
             succeed Tag
                 |: ("name" := string)
                 |: ("statementId" := string)
-            `andThen` \tag -> succeed (TagCustom tag)
+                `andThen` \tag -> succeed (TagCustom tag)
 
         _ ->
             fail ("Unkown statement type: " ++ statementType)

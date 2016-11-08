@@ -4,7 +4,10 @@ import About
 import Authenticator.Model
 import Authenticator.Update
 import Authenticator.View
+
+
 -- import Cards
+
 import Examples
 import Help
 import Home
@@ -12,7 +15,10 @@ import Hop.Types
 import Html exposing (a, button, div, form, header, Html, img, input, li, nav, p, span, text, ul)
 import Html.App
 import Html.Attributes exposing (attribute, class, href, id, placeholder, src, type')
+
+
 -- import Html.Attributes.Aria exposing (..)
+
 import Navigation
 import Organizations
 import Routes exposing (makeUrl, Route(..), urlParser)
@@ -32,14 +38,16 @@ main =
         }
 
 
+
 -- MODEL
 
 
 type alias Model =
     { aboutModel : About.Model
     , authenticationMaybe : Maybe Authenticator.Model.Authentication
-    , authenticatorModel : Authenticator.Model.Model
-    -- , cardsModel : Cards.Model
+    , authenticatorModel :
+        Authenticator.Model.Model
+        -- , cardsModel : Cards.Model
     , examplesModel : Examples.Model
     , helpModel : Help.Model
     , homeModel : Home.Model
@@ -56,8 +64,9 @@ init : ( Route, Hop.Types.Location ) -> ( Model, Cmd Msg )
 init ( route, location ) =
     { aboutModel = About.init
     , authenticationMaybe = Nothing
-    , authenticatorModel = Authenticator.Model.init
-    -- , cardsModel = Cards.init
+    , authenticatorModel =
+        Authenticator.Model.init
+        -- , cardsModel = Cards.init
     , examplesModel = Examples.init
     , helpModel = Help.init
     , homeModel = Home.init
@@ -71,23 +80,25 @@ init ( route, location ) =
         |> urlUpdate ( route, location )
 
 
+
 -- ROUTING
 
 
-urlUpdate : (Route, Hop.Types.Location) -> Model -> (Model, Cmd Msg)
-urlUpdate (route, location) model =
+urlUpdate : ( Route, Hop.Types.Location ) -> Model -> ( Model, Cmd Msg )
+urlUpdate ( route, location ) model =
     let
-        model' = { model
-            | location = location
-            , route = route
+        model' =
+            { model
+                | location = location
+                , route = route
             }
     in
         case route of
             AboutRoute ->
-                (model', Cmd.none)
+                ( model', Cmd.none )
 
             AuthenticatorRoute _ ->
-                (model', Cmd.none)
+                ( model', Cmd.none )
 
             -- CardsRoute childRoute ->
             --     let
@@ -95,31 +106,32 @@ urlUpdate (route, location) model =
             --         (cardsModel, childEffect) = Cards.urlUpdate (childRoute, location) model'.cardsModel
             --     in
             --         ({ model' | cardsModel = cardsModel }, Cmd.map translateCardsMsg childEffect)
-
             ExamplesRoute ->
-                (model', Cmd.none)
+                ( model', Cmd.none )
 
             HelpRoute ->
-                (model', Cmd.none)
+                ( model', Cmd.none )
 
             HomeRoute ->
-                (model', Cmd.none)
+                ( model', Cmd.none )
 
             NotFoundRoute ->
-                (model', Cmd.none)
+                ( model', Cmd.none )
 
             OrganizationsRoute ->
-                (model', Cmd.none)
+                ( model', Cmd.none )
 
             StatementsRoute childRoute ->
                 let
                     -- Cmd.map translateStatementsMsg Statements.load
-                    (statementsModel, childEffect) = Statements.urlUpdate (childRoute, location) model'.statementsModel
+                    ( statementsModel, childEffect ) =
+                        Statements.urlUpdate ( childRoute, location ) model'.statementsModel
                 in
-                    ({ model' | statementsModel = statementsModel }, Cmd.map translateStatementsMsg childEffect)
+                    ( { model' | statementsModel = statementsModel }, Cmd.map translateStatementsMsg childEffect )
 
             ToolsRoute ->
-                (model', Cmd.none)
+                ( model', Cmd.none )
+
 
 
 -- UPDATE
@@ -128,7 +140,7 @@ urlUpdate (route, location) model =
 type Msg
     = AboutMsg About.InternalMsg
     | AuthenticatorMsg Authenticator.Update.Msg
-    -- | CardsMsg Cards.InternalMsg
+      -- | CardsMsg Cards.InternalMsg
     | ExamplesMsg Examples.InternalMsg
     | HelpMsg Help.InternalMsg
     | HomeMsg Home.InternalMsg
@@ -143,6 +155,7 @@ aboutMsgTranslation =
     { onInternalMsg = AboutMsg
     , onNavigate = Navigate
     }
+
 
 
 -- cardsMsgTranslation : Cards.MsgTranslation Msg
@@ -195,7 +208,9 @@ toolsMsgTranslation =
 
 
 translateAboutMsg : About.MsgTranslator Msg
-translateAboutMsg = About.translateMsg aboutMsgTranslation
+translateAboutMsg =
+    About.translateMsg aboutMsgTranslation
+
 
 
 -- translateCardsMsg : Cards.MsgTranslator Msg
@@ -203,27 +218,33 @@ translateAboutMsg = About.translateMsg aboutMsgTranslation
 
 
 translateExamplesMsg : Examples.MsgTranslator Msg
-translateExamplesMsg = Examples.translateMsg examplesMsgTranslation
+translateExamplesMsg =
+    Examples.translateMsg examplesMsgTranslation
 
 
 translateHelpMsg : Help.MsgTranslator Msg
-translateHelpMsg = Help.translateMsg helpMsgTranslation
+translateHelpMsg =
+    Help.translateMsg helpMsgTranslation
 
 
 translateHomeMsg : Home.MsgTranslator Msg
-translateHomeMsg = Home.translateMsg homeMsgTranslation
+translateHomeMsg =
+    Home.translateMsg homeMsgTranslation
 
 
 translateOrganizationsMsg : Organizations.MsgTranslator Msg
-translateOrganizationsMsg = Organizations.translateMsg organizationsMsgTranslation
+translateOrganizationsMsg =
+    Organizations.translateMsg organizationsMsgTranslation
 
 
 translateStatementsMsg : Statements.MsgTranslator Msg
-translateStatementsMsg = Statements.translateMsg statementsMsgTranslation
+translateStatementsMsg =
+    Statements.translateMsg statementsMsgTranslation
 
 
 translateToolsMsg : Tools.MsgTranslator Msg
-translateToolsMsg = Tools.translateMsg toolsMsgTranslation
+translateToolsMsg =
+    Tools.translateMsg toolsMsgTranslation
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -248,28 +269,34 @@ update msg model =
             let
                 ( authenticatorModel, childEffect ) =
                     Authenticator.Update.update childMsg model.authenticatorModel
-                changed = authenticatorModel.authenticationMaybe /= model.authenticationMaybe
-                model' = { model
-                    | authenticationMaybe = authenticatorModel.authenticationMaybe
-                    , authenticatorModel = authenticatorModel
-                    -- , cardsModel = if changed
-                    --     then
-                    --         Cards.init
-                    --     else
-                    --         model.cardsModel
-                    , statementsModel = if changed
-                        then
-                            Statements.init
-                        else
-                            model.statementsModel
+
+                changed =
+                    authenticatorModel.authenticationMaybe /= model.authenticationMaybe
+
+                model' =
+                    { model
+                        | authenticationMaybe = authenticatorModel.authenticationMaybe
+                        , authenticatorModel =
+                            authenticatorModel
+                            -- , cardsModel = if changed
+                            --     then
+                            --         Cards.init
+                            --     else
+                            --         model.cardsModel
+                        , statementsModel =
+                            if changed then
+                                Statements.init
+                            else
+                                model.statementsModel
                     }
-                (model'', effect'') = if changed
-                    then
+
+                ( model'', effect'' ) =
+                    if changed then
                         update (Navigate "/") model'
                     else
-                        (model', Cmd.none)
+                        ( model', Cmd.none )
             in
-                model'' ! [Cmd.map AuthenticatorMsg childEffect, effect'']
+                model'' ! [ Cmd.map AuthenticatorMsg childEffect, effect'' ]
 
         -- CardsMsg childMsg ->
         --     let
@@ -277,7 +304,6 @@ update msg model =
         --             Cards.update childMsg model.authenticationMaybe model.cardsModel
         --     in
         --         ( { model | cardsModel = cardsModel }, Cmd.map translateCardsMsg childEffect )
-
         ExamplesMsg childMsg ->
             let
                 ( examplesModel, childEffect ) =
@@ -321,94 +347,102 @@ update msg model =
                 ( { model | toolsModel = toolsModel }, Cmd.map translateToolsMsg childEffect )
 
 
+
 -- VIEW
 
 
 view : Model -> Html Msg
 view model =
     let
-        profileNavItem = case model.authenticationMaybe of
-            Just authentication ->
-                li [] [ aForPath Navigate "/profile" [] [ text authentication.name ] ]
-            Nothing ->
-                text ""
-        signInOrOutNavItem = case model.authenticationMaybe of
-            Just authentication ->
-                li [] [ aForPath Navigate "/sign_out" [] [ text "Sign Out" ] ]
-            Nothing ->
-                li [] [ aForPath Navigate "/sign_in" [] [ text "Sign In" ] ]
-        signUpNavItem = case model.authenticationMaybe of
-            Just authentication ->
-                text ""
-            Nothing ->
-                li [] [ aForPath Navigate "/sign_up" [] [ text "Sign Up" ] ]
+        profileNavItem =
+            case model.authenticationMaybe of
+                Just authentication ->
+                    li [] [ aForPath Navigate "/profile" [] [ text authentication.name ] ]
+
+                Nothing ->
+                    text ""
+
+        signInOrOutNavItem =
+            case model.authenticationMaybe of
+                Just authentication ->
+                    li [] [ aForPath Navigate "/sign_out" [] [ text "Sign Out" ] ]
+
+                Nothing ->
+                    li [] [ aForPath Navigate "/sign_in" [] [ text "Sign In" ] ]
+
+        signUpNavItem =
+            case model.authenticationMaybe of
+                Just authentication ->
+                    text ""
+
+                Nothing ->
+                    li [] [ aForPath Navigate "/sign_up" [] [ text "Sign Up" ] ]
     in
         div []
-            (
-                [ header []
-                    [ nav [ class "navbar navbar-default navbar-fixed-top", attribute "role" "navigation" ]
-                        [ div [ class "container" ]
-                            [ div [ class "navbar-header" ]
-                                [ button [ attribute "aria-controls" "navbar", attribute "aria-expanded" "false", class "navbar-toggle collapsed", attribute "data-target" "#navbar", attribute "data-toggle" "collapse", type' "button" ]
-                                    [ span [ class "sr-only" ]
-                                        [ text "Toggle navigation" ]
-                                    , span [ class "icon-bar" ]
-                                        []
-                                    , span [ class "icon-bar" ]
-                                        []
-                                    , span [ class "icon-bar" ]
-                                        []
-                                    ]
-                                , a [ class "navbar-brand", href "#" ]
-                                    [ text "OGPtoolbox" ]
-                                , p [ class "navbar-text" ]
-                                    [ text "tools and use cases for open government" ]
+            ([ header []
+                [ nav [ class "navbar navbar-default navbar-fixed-top", attribute "role" "navigation" ]
+                    [ div [ class "container" ]
+                        [ div [ class "navbar-header" ]
+                            [ button [ attribute "aria-controls" "navbar", attribute "aria-expanded" "false", class "navbar-toggle collapsed", attribute "data-target" "#navbar", attribute "data-toggle" "collapse", type' "button" ]
+                                [ span [ class "sr-only" ]
+                                    [ text "Toggle navigation" ]
+                                , span [ class "icon-bar" ]
+                                    []
+                                , span [ class "icon-bar" ]
+                                    []
+                                , span [ class "icon-bar" ]
+                                    []
                                 ]
-                            , ul [ class "nav navbar-nav navbar-right" ]
-                                [ profileNavItem
-                                , signInOrOutNavItem
-                                , signUpNavItem
-                                , button [ class "btn btn-default btn-action", type' "button" ]
-                                    [ text "Add new" ]
-                                ]
+                            , a [ class "navbar-brand", href "#" ]
+                                [ text "OGPtoolbox" ]
+                            , p [ class "navbar-text" ]
+                                [ text "tools and use cases for open government" ]
+                            ]
+                        , ul [ class "nav navbar-nav navbar-right" ]
+                            [ profileNavItem
+                            , signInOrOutNavItem
+                            , signUpNavItem
+                            , button [ class "btn btn-default btn-action", type' "button" ]
+                                [ text "Add new" ]
                             ]
                         ]
-                    , nav [ class "navbar navbar-inverse" ]
-                        [ div [ class "container" ]
-                            [ div [ class "navbar-header" ]
-                                [ button [ attribute "aria-expanded" "false", class "navbar-toggle collapsed", attribute "data-target" "#bs-example-navbar-collapse-1", attribute "data-toggle" "collapse", type' "button" ]
-                                    [ span [ class "sr-only" ]
-                                        [ text "Toggle navigation" ]
-                                    , span [ class "icon-bar" ]
-                                        []
-                                    , span [ class "icon-bar" ]
-                                        []
-                                    , span [ class "icon-bar" ]
-                                        []
-                                    ]
+                    ]
+                , nav [ class "navbar navbar-inverse" ]
+                    [ div [ class "container" ]
+                        [ div [ class "navbar-header" ]
+                            [ button [ attribute "aria-expanded" "false", class "navbar-toggle collapsed", attribute "data-target" "#bs-example-navbar-collapse-1", attribute "data-toggle" "collapse", type' "button" ]
+                                [ span [ class "sr-only" ]
+                                    [ text "Toggle navigation" ]
+                                , span [ class "icon-bar" ]
+                                    []
+                                , span [ class "icon-bar" ]
+                                    []
+                                , span [ class "icon-bar" ]
+                                    []
                                 ]
-                            , div [ class "collapse navbar-collapse", id "bs-example-navbar-collapse-1" ]
-                                [ ul [ class "nav navbar-nav" ]
-                                    [ li [] [ aForPath Navigate "/" [] [ text "Home" ] ]
-                                    , li [] [ aForPath Navigate "/about" [] [ text "About" ] ]
-                                    , li [] [ aForPath Navigate "/tools" [] [ text "Tools" ] ]
-                                    , li [] [ aForPath Navigate "/examples" [] [ text "Examples" ] ]
-                                    , li [] [ aForPath Navigate "/organizations" [] [ text "Organizations" ] ]
-                                    , li [] [ aForPath Navigate "/help" [] [ text "Help" ] ]
-                                    ]
-                                , form [ class "navbar-form navbar-right" ]
-                                    [ div [ class "form-group search-bar" ]
-                                        [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-search" ]
-                                            []
-                                        , input [ class "form-control", placeholder "Search for a tool, example or organization", type' "text" ]
-                                            []
-                                        ]
+                            ]
+                        , div [ class "collapse navbar-collapse", id "bs-example-navbar-collapse-1" ]
+                            [ ul [ class "nav navbar-nav" ]
+                                [ li [] [ aForPath Navigate "/" [] [ text "Home" ] ]
+                                , li [] [ aForPath Navigate "/about" [] [ text "About" ] ]
+                                , li [] [ aForPath Navigate "/tools" [] [ text "Tools" ] ]
+                                , li [] [ aForPath Navigate "/examples" [] [ text "Examples" ] ]
+                                , li [] [ aForPath Navigate "/organizations" [] [ text "Organizations" ] ]
+                                , li [] [ aForPath Navigate "/help" [] [ text "Help" ] ]
+                                ]
+                            , form [ class "navbar-form navbar-right" ]
+                                [ div [ class "form-group search-bar" ]
+                                    [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-search" ]
+                                        []
+                                    , input [ class "form-control", placeholder "Search for a tool, example or organization", type' "text" ]
+                                        []
                                     ]
                                 ]
                             ]
                         ]
                     ]
                 ]
+             ]
                 ++ [ viewContent model ]
             )
 
@@ -424,7 +458,6 @@ viewContent model =
 
         -- CardsRoute nestedRoute ->
         --     Html.App.map translateCardsMsg (Cards.view model.authenticationMaybe model.cardsModel)
-
         ExamplesRoute ->
             Html.App.map translateExamplesMsg (Examples.view model.authenticationMaybe model.examplesModel)
 
@@ -449,13 +482,17 @@ viewContent model =
                 (Tools.view model.authenticationMaybe model.toolsModel)
 
 
+
 -- SUBSCRIPTIONS
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.none
-    -- Sub.batch
-    --     -- [ Emitter.listenString "navigation" Navigate
-    --     -- , Sub.map Reference (Reference.subscriptions model.reference)
-    --     ]
+
+
+
+-- Sub.batch
+--     -- [ Emitter.listenString "navigation" Navigate
+--     -- , Sub.map Reference (Reference.subscriptions model.reference)
+--     ]
