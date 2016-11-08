@@ -92,24 +92,13 @@ viewBanner authenticationMaybe model =
                         [ div [ class "jumbotron" ]
                             [ div [ class "container" ]
                                 [ h1 []
-                                    [ text "The international toolbox for"
+                                    [ text "Find digital tools"
                                     , br []
                                         []
-                                    , text "open government projects"
+                                    , text "to improve democracy"
                                     ]
-                                , p []
-                                    [ text "Build your own project upon the common knowledge"
-                                    , br []
-                                        []
-                                    , text "and practice of the International community."
-                                    , br []
-                                        []
-                                    , text "Share your tools and list your initiative."
-                                    ]
-                                , p []
-                                    [ a [ class "btn btn-primary btn-lg", attribute "data-slide-to" "1", href "#carousel-example-generic", attribute "role" "button" ]
-                                        [ text "Start browsing" ]
-                                    ]
+                                , a [ class "btn btn-primary btn-lg", attribute "data-slide-to" "1", href "#carousel-example-generic", attribute "role" "button" ]
+                                    [ text "Start browsing" ]
                                 ]
                             ]
                         , div [ class "carousel-caption" ]
