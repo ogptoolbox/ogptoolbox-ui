@@ -7,25 +7,7 @@ import Html.Attributes exposing (..)
 import Http
 import Task
 import Dict exposing (Dict)
-import Json.Decode as Decode
-    exposing
-        ( (:=)
-        , andThen
-        , at
-        , bool
-        , customDecoder
-        , Decoder
-        , dict
-        , fail
-        , int
-        , list
-        , map
-        , maybe
-        , null
-        , oneOf
-        , string
-        , succeed
-        )
+import Json.Decode as Decode exposing (..)
 import Json.Decode.Extra as Json exposing ((|:))
 import Footer
 
@@ -44,9 +26,10 @@ init =
 
 
 type alias Statement =
-    { id :
-        String
-        -- , values : Dict String StatementValue
+    { id : String
+    , name : String
+    , cardTypes : List String
+    , tags : List String
     }
 
 
@@ -58,17 +41,27 @@ type alias Statement =
 
 decodeStatementsBody : Decoder (List Statement)
 decodeStatementsBody =
-    at [ "data", "statements" ] (dict decodeStatement |> Decode.map Dict.values)
+    at
+        [ "data", "statements" ]
+        (dict decodeStatement
+            |> Decode.map
+                (\dict ->
+                    Dict.values dict
+                        |> List.filter (\statement -> List.member "Software" statement.cardTypes)
+                )
+        )
 
 
 decodeStatement : Decoder Statement
 decodeStatement =
     succeed Statement
-        |: Decode.map (\id -> Debug.log "id" id) ("id" := string)
+        |: ("id" := string)
+        |: (oneOf [ at [ "values", "Name" ] string, succeed "" ])
+        |: (oneOf [ at [ "values", "Card Type" ] (Decode.list string), succeed [] ])
+        |: (oneOf [ at [ "values", "Tag" ] (Decode.list string), succeed [] ])
 
 
 
--- |: ("values" := dict (oneOf [ Decode.list string, string ]))
 -- UPDATE
 
 
@@ -245,21 +238,13 @@ viewTool statement =
                                         ]
                                     ]
                                 , div [ class "panel-body" ]
-                                    [ span [ class "label label-default label-tag" ]
-                                        [ text "CMS" ]
-                                    , span [ class "label label-default label-tag" ]
-                                        [ text "Open-Data" ]
-                                    , span [ class "label label-default label-tag" ]
-                                        [ text "Open-Spurce" ]
-                                    , span [ class "label label-default label-tag" ]
-                                        [ text "Python" ]
-                                    , span [ class "label label-default label-tag" ]
-                                        [ text "Framework" ]
-                                    , span [ class "label label-default label-tag" ]
-                                        [ text "web" ]
-                                    , span [ class "label label-default label-tag" ]
-                                        [ text "platform" ]
-                                    ]
+                                    (List.map
+                                        (\tag ->
+                                            span [ class "label label-default label-tag" ]
+                                                [ text tag ]
+                                        )
+                                        statement.tags
+                                    )
                                 ]
                             ]
                         ]
@@ -333,7 +318,7 @@ viewTool statement =
                     [ div [ class "row" ]
                         [ div [ class "col-xs-12" ]
                             [ h1 []
-                                [ text statement.id
+                                [ text statement.name
                                 , small []
                                     [ text "Software" ]
                                 ]
