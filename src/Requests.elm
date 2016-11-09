@@ -3,6 +3,7 @@ module Requests
         ( newTaskCreateStatement
         , newTaskDeleteStatementRating
         , newTaskFlagAbuse
+        , newTaskGetCards
         , newTaskGetStatements
         , newTaskRateStatement
         , updateFromDataId
@@ -46,6 +47,9 @@ newTaskCreateStatement authentication statementCustom =
                             , ( "claimId", Json.Encode.string argument.claimId )
                             , ( "groundId", Json.Encode.string argument.groundId )
                             ]
+
+                        CardCustom card ->
+                            Debug.crash "TODO"
 
                         PlainCustom plain ->
                             [ ( "languageCode", Json.Encode.string plain.languageCode )
@@ -113,6 +117,32 @@ newTaskFlagAbuse authentication statementId =
             , body = Http.empty
             }
         )
+
+
+newTaskGetCards : Maybe Authenticator.Model.Authentication -> Task Http.Error DataIdsBody
+newTaskGetCards authenticationMaybe =
+    let
+        authenticationHeaders =
+            case authenticationMaybe of
+                Just authentication ->
+                    [ ( "Retruco-API-Key", authentication.apiKey )
+                    ]
+
+                Nothing ->
+                    []
+    in
+        Http.fromJson decodeDataIdsBody
+            (Http.send Http.defaultSettings
+                { verb = "GET"
+                , url =
+                    apiUrl ++ "statements?type=Card"
+                , headers =
+                    [ ( "Accept", "application/json" )
+                    ]
+                        ++ authenticationHeaders
+                , body = Http.empty
+                }
+            )
 
 
 newTaskGetStatements : Maybe Authenticator.Model.Authentication -> Task Http.Error DataIdsBody

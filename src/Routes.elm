@@ -1,4 +1,11 @@
-module Routes exposing (makeUrl, Route(..), StatementsNestedRoute(..), urlParser)
+module Routes
+    exposing
+        ( makeUrl
+        , Route(..)
+        , StatementsNestedRoute(..)
+        , ToolsNestedRoute(..)
+        , urlParser
+        )
 
 import Authenticator.Model
 import Combine exposing (Parser)
@@ -17,13 +24,19 @@ type Route
     | NotFoundRoute
     | OrganizationsRoute
     | StatementsRoute StatementsNestedRoute
-    | ToolsRoute
+    | ToolsRoute ToolsNestedRoute
 
 
 type StatementsNestedRoute
     = StatementRoute String
     | StatementsIndexRoute
     | StatementsNotFoundRoute
+
+
+type ToolsNestedRoute
+    = ToolRoute String
+    | ToolsIndexRoute
+    | ToolsNotFoundRoute
 
 
 makeUrl : String -> String
@@ -44,9 +57,13 @@ matchers =
     , nested1 StatementsRoute
         "/statements"
         [ match1 StatementsIndexRoute ""
-        , match2 StatementRoute "/" statementIdParser
+        , match2 StatementRoute "/" idParser
         ]
-    , match1 ToolsRoute "/tools"
+    , nested1 ToolsRoute
+        "/tools"
+        [ match1 ToolsIndexRoute ""
+        , match2 ToolRoute "/" idParser
+        ]
     ]
 
 
@@ -66,8 +83,8 @@ routerConfig =
     }
 
 
-statementIdParser : Parser String
-statementIdParser =
+idParser : Parser String
+idParser =
     Combine.regex "[0-9]+"
 
 

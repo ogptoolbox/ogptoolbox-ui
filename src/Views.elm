@@ -413,6 +413,9 @@ viewStatementLineBody authenticationMaybe statementId link navigate model =
                                     ]
                                 ]
 
+                    CardCustom card ->
+                        Debug.crash "TODO"
+
                     PlainCustom plain ->
                         div
                             [ class "statement-line-body" ]

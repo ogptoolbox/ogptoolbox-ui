@@ -1,10 +1,11 @@
 module Types exposing (..)
 
 import Dict exposing (Dict)
-import Json.Decode
+import Json.Decode as Decode
     exposing
         ( (:=)
         , andThen
+        , at
         , bool
         , customDecoder
         , Decoder
@@ -48,6 +49,13 @@ type alias Ballot =
     , statementId : String
     , updatedAt : String
     , voterId : String
+    }
+
+
+type alias Card =
+    { cardTypes : List String
+    , name : String
+    , tags : List String
     }
 
 
@@ -113,6 +121,7 @@ type StatementCustom
     | ArgumentCustom Argument
     | PlainCustom Plain
     | TagCustom Tag
+    | CardCustom Card
 
 
 type alias StatementForm =
@@ -170,6 +179,9 @@ convertStatementCustomToKind statementCustom =
 
         ArgumentCustom argument ->
             "Argument"
+
+        CardCustom card ->
+            "Card"
 
         PlainCustom plain ->
             "PlainStatement"
@@ -296,7 +308,7 @@ decodeStatement =
     succeed Statement
         |: maybe ("ballotId" := string)
         |: ("createdAt" := string)
-        |: (("type" := string) `andThen` decodeStatementFromType)
+        |: (("type" := string) `andThen` decodeStatementCustomFromType)
         |: oneOf [ ("deleted" := bool), succeed False ]
         |: oneOf [ ("groundIds" := list string), succeed [] ]
         |: ("id" := string)
@@ -305,8 +317,8 @@ decodeStatement =
         |: oneOf [ ("ratingSum" := int), succeed 0 ]
 
 
-decodeStatementFromType : String -> Decoder StatementCustom
-decodeStatementFromType statementType =
+decodeStatementCustomFromType : String -> Decoder StatementCustom
+decodeStatementCustomFromType statementType =
     case statementType of
         "Abuse" ->
             succeed Abuse
@@ -319,6 +331,13 @@ decodeStatementFromType statementType =
                 |: ("claimId" := string)
                 |: ("groundId" := string)
                 `andThen` \argument -> succeed (ArgumentCustom argument)
+
+        "Card" ->
+            succeed Card
+                |: oneOf [ at [ "values", "Card Type" ] (list string), succeed [] ]
+                |: oneOf [ at [ "values", "Name" ] string, succeed "" ]
+                |: oneOf [ at [ "values", "Tag" ] (list string), succeed [] ]
+                `andThen` \card -> succeed (CardCustom card)
 
         "PlainStatement" ->
             succeed Plain

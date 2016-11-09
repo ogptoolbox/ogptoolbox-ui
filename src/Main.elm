@@ -10,7 +10,7 @@ import Authenticator.View
 
 import Examples
 import Help
-import Home
+import Home exposing (Msg(..))
 import Hop.Types
 import Html exposing (a, button, div, form, header, Html, img, input, li, nav, p, span, text, ul)
 import Html.App
@@ -23,7 +23,7 @@ import Navigation
 import Organizations
 import Routes exposing (makeUrl, Route(..), urlParser)
 import Statements
-import Tools exposing (Msg(..))
+import Tools
 import Views exposing (aForPath, viewNotFound)
 
 
@@ -113,7 +113,11 @@ urlUpdate ( route, location ) model =
                 ( model', Cmd.none )
 
             HomeRoute ->
-                ( model', Cmd.none )
+                let
+                    ( homeModel, childEffect ) =
+                        Home.update Home.Load model.authenticationMaybe model'.homeModel
+                in
+                    ( { model' | homeModel = homeModel }, Cmd.map translateHomeMsg childEffect )
 
             NotFoundRoute ->
                 ( model', Cmd.none )
@@ -129,10 +133,10 @@ urlUpdate ( route, location ) model =
                 in
                     ( { model' | statementsModel = statementsModel }, Cmd.map translateStatementsMsg childEffect )
 
-            ToolsRoute ->
+            ToolsRoute childRoute ->
                 let
                     ( toolsModel, childEffect ) =
-                        Tools.update Tools.FetchTools model.authenticationMaybe model'.toolsModel
+                        Tools.urlUpdate ( childRoute, location ) model'.toolsModel
                 in
                     ( { model' | toolsModel = toolsModel }, Cmd.map translateToolsMsg childEffect )
 
@@ -478,10 +482,11 @@ viewContent model =
             Html.App.map translateOrganizationsMsg
                 (Organizations.view model.authenticationMaybe model.organizationsModel)
 
-        StatementsRoute nestedRoute ->
-            Html.App.map translateStatementsMsg (Statements.view model.authenticationMaybe model.statementsModel)
+        StatementsRoute _ ->
+            Html.App.map translateStatementsMsg
+                (Statements.view model.authenticationMaybe model.statementsModel)
 
-        ToolsRoute ->
+        ToolsRoute _ ->
             Html.App.map translateToolsMsg
                 (Tools.view model.authenticationMaybe model.toolsModel)
 
