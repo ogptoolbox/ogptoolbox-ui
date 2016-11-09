@@ -23,7 +23,7 @@ import Navigation
 import Organizations
 import Routes exposing (makeUrl, Route(..), urlParser)
 import Statements
-import Tools
+import Tools exposing (Msg(..))
 import Views exposing (aForPath, viewNotFound)
 
 
@@ -130,7 +130,11 @@ urlUpdate ( route, location ) model =
                     ( { model' | statementsModel = statementsModel }, Cmd.map translateStatementsMsg childEffect )
 
             ToolsRoute ->
-                ( model', Cmd.none )
+                let
+                    ( toolsModel, childEffect ) =
+                        Tools.update Tools.FetchTools model.authenticationMaybe model'.toolsModel
+                in
+                    ( { model' | toolsModel = toolsModel }, Cmd.map translateToolsMsg childEffect )
 
 
 
