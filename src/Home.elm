@@ -8,7 +8,7 @@ import Html.Events exposing (onClick)
 import Http
 import Task
 import Types exposing (Card, DataIdsBody, Statement, StatementCustom(..))
-import Requests exposing (newTaskGetExamples, newTaskGetTools)
+import Requests exposing (newTaskGetExamples, newTaskGetOrganizations, newTaskGetTools)
 import Views exposing (aForPath)
 
 
@@ -17,6 +17,7 @@ import Views exposing (aForPath)
 
 type alias Model =
     { examples : List Statement
+    , organizations : List Statement
     , tools : List Statement
     }
 
@@ -24,6 +25,7 @@ type alias Model =
 init : Model
 init =
     { examples = []
+    , organizations = []
     , tools = []
     }
 
@@ -40,6 +42,7 @@ type InternalMsg
     = Error Http.Error
     | Load
     | LoadedExamples DataIdsBody
+    | LoadedOrganizations DataIdsBody
     | LoadedTools DataIdsBody
 
 
@@ -92,6 +95,10 @@ update msg authenticationMaybe model =
                         (newTaskGetExamples authenticationMaybe)
                     , Task.perform
                         (\msg -> ForSelf (Error msg))
+                        (\msg -> ForSelf (LoadedOrganizations msg))
+                        (newTaskGetOrganizations authenticationMaybe)
+                    , Task.perform
+                        (\msg -> ForSelf (Error msg))
                         (\msg -> ForSelf (LoadedTools msg))
                         (newTaskGetTools authenticationMaybe)
                     ]
@@ -100,6 +107,11 @@ update msg authenticationMaybe model =
 
         LoadedExamples body ->
             ( { model | examples = Dict.values body.data.statements }
+            , Cmd.none
+            )
+
+        LoadedOrganizations body ->
+            ( { model | organizations = Dict.values body.data.statements }
             , Cmd.none
             )
 
@@ -515,32 +527,53 @@ viewOrganizations authenticationMaybe model =
             [ h3 [ class "zone-label" ]
                 [ text "Organizations" ]
             , div [ class "row" ]
-                [ div [ class "col-xs-6 col-md-3 " ]
-                    [ div [ class "thumbnail orga grey" ]
-                        [ div [ class "visual" ]
-                            [ img [ alt "logo", src "img/hackpad.png" ]
-                                []
+                ((model.organizations
+                    |> List.take 8
+                    |> List.map
+                        (\statement ->
+                            case statement.custom of
+                                CardCustom card ->
+                                    viewOrganizationThumbnail statement card
+
+                                _ ->
+                                    Debug.crash "Unexpected statement.custom type"
+                        )
+                 )
+                    ++ [ div [ class "col-sm-12 text-center" ]
+                            [ aForPath navigate
+                                "/organizations"
+                                [ class "show-more" ]
+                                [ text "Show all 398"
+                                , span [ class "glyphicon glyphicon-menu-down" ]
+                                    []
+                                ]
                             ]
-                        , div [ class "caption" ]
-                            [ h4 []
-                                [ text "The White House" ]
-                            , p []
-                                [ text "OpenSpending is a cen" ]
-                            ]
-                        ]
+                       ]
+                )
+            ]
+        ]
+
+
+viewOrganizationThumbnail : Statement -> Card -> Html Msg
+viewOrganizationThumbnail statement card =
+    let
+        organizationUrl =
+            "/organizations/" ++ statement.id
+    in
+        div [ class "col-xs-6 col-md-3 " ]
+            [ div [ class "thumbnail orga grey", onClick (navigate organizationUrl) ]
+                [ div [ class "visual" ]
+                    [ img [ alt "logo", src "img/hackpad.png" ]
+                        []
                     ]
-                , div [ class "col-sm-12 text-center" ]
-                    [ aForPath navigate
-                        "/organizations"
-                        [ class "show-more" ]
-                        [ text "Show all 398"
-                        , span [ class "glyphicon glyphicon-menu-down" ]
-                            []
-                        ]
+                , div [ class "caption" ]
+                    [ h4 []
+                        [ aForPath navigate organizationUrl [] [ text card.name ] ]
+                    , p []
+                        [ text card.description ]
                     ]
                 ]
             ]
-        ]
 
 
 viewTools : Maybe Authenticator.Model.Authentication -> Model -> Html Msg

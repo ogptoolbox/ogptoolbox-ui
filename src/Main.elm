@@ -113,7 +113,9 @@ urlUpdate ( route, location ) model =
                         ( examplesModel, childCmd ) =
                             Examples.urlUpdate ( childRoute, location ) model'.examplesModel
                     in
-                        ( { model' | examplesModel = examplesModel }, Cmd.map translateExamplesMsg childCmd )
+                        ( { model' | examplesModel = examplesModel }
+                        , Cmd.map translateExamplesMsg childCmd
+                        )
 
                 HelpRoute ->
                     ( model', Cmd.none )
@@ -128,8 +130,14 @@ urlUpdate ( route, location ) model =
                 NotFoundRoute ->
                     ( model', Cmd.none )
 
-                OrganizationsRoute ->
-                    ( model', Cmd.none )
+                OrganizationsRoute childRoute ->
+                    let
+                        ( organizationsModel, childCmd ) =
+                            Organizations.urlUpdate ( childRoute, location ) model'.organizationsModel
+                    in
+                        ( { model' | organizationsModel = organizationsModel }
+                        , Cmd.map translateOrganizationsMsg childCmd
+                        )
 
                 StatementsRoute childRoute ->
                     let
@@ -137,14 +145,18 @@ urlUpdate ( route, location ) model =
                         ( statementsModel, childCmd ) =
                             Statements.urlUpdate ( childRoute, location ) model'.statementsModel
                     in
-                        ( { model' | statementsModel = statementsModel }, Cmd.map translateStatementsMsg childCmd )
+                        ( { model' | statementsModel = statementsModel }
+                        , Cmd.map translateStatementsMsg childCmd
+                        )
 
                 ToolsRoute childRoute ->
                     let
                         ( toolsModel, childCmd ) =
                             Tools.urlUpdate ( childRoute, location ) model'.toolsModel
                     in
-                        ( { model' | toolsModel = toolsModel }, Cmd.map translateToolsMsg childCmd )
+                        ( { model' | toolsModel = toolsModel }
+                        , Cmd.map translateToolsMsg childCmd
+                        )
     in
         model''
             ! [ Task.perform
@@ -467,7 +479,7 @@ viewContent model =
         NotFoundRoute ->
             viewNotFound
 
-        OrganizationsRoute ->
+        OrganizationsRoute _ ->
             Html.App.map translateOrganizationsMsg
                 (Organizations.view model.authenticationMaybe model.organizationsModel)
 

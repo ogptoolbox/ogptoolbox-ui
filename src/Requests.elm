@@ -214,6 +214,58 @@ newTaskGetExamples authenticationMaybe =
             )
 
 
+newTaskGetOrganization : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
+newTaskGetOrganization authenticationMaybe statementId =
+    let
+        authenticationHeaders =
+            case authenticationMaybe of
+                Just authentication ->
+                    [ ( "Retruco-API-Key", authentication.apiKey )
+                    ]
+
+                Nothing ->
+                    []
+    in
+        Http.fromJson decodeDataIdBody
+            (Http.send Http.defaultSettings
+                { verb = "GET"
+                , url =
+                    apiUrl ++ "statements/" ++ statementId ++ "?type=Organization"
+                , headers =
+                    [ ( "Accept", "application/json" )
+                    ]
+                        ++ authenticationHeaders
+                , body = Http.empty
+                }
+            )
+
+
+newTaskGetOrganizations : Maybe Authenticator.Model.Authentication -> Task Http.Error DataIdsBody
+newTaskGetOrganizations authenticationMaybe =
+    let
+        authenticationHeaders =
+            case authenticationMaybe of
+                Just authentication ->
+                    [ ( "Retruco-API-Key", authentication.apiKey )
+                    ]
+
+                Nothing ->
+                    []
+    in
+        Http.fromJson decodeDataIdsBody
+            (Http.send Http.defaultSettings
+                { verb = "GET"
+                , url =
+                    apiUrl ++ "statements?type=Organization"
+                , headers =
+                    [ ( "Accept", "application/json" )
+                    ]
+                        ++ authenticationHeaders
+                , body = Http.empty
+                }
+            )
+
+
 newTaskGetStatements : Maybe Authenticator.Model.Authentication -> Task Http.Error DataIdsBody
 newTaskGetStatements authenticationMaybe =
     let
