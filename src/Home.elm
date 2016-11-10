@@ -468,7 +468,9 @@ viewExamples authenticationMaybe model =
                         )
                  )
                     ++ [ div [ class "col-sm-12 text-center" ]
-                            [ a [ class "show-more" ]
+                            [ aForPath navigate
+                                "/examples"
+                                [ class "show-more" ]
                                 [ text "Show all 398"
                                 , span [ class "glyphicon glyphicon-menu-down" ]
                                     []
@@ -528,7 +530,9 @@ viewOrganizations authenticationMaybe model =
                         ]
                     ]
                 , div [ class "col-sm-12 text-center" ]
-                    [ a [ class "show-more" ]
+                    [ aForPath navigate
+                        "/organizations"
+                        [ class "show-more" ]
                         [ text "Show all 398"
                         , span [ class "glyphicon glyphicon-menu-down" ]
                             []
@@ -559,7 +563,10 @@ viewTools authenticationMaybe model =
                         )
                  )
                     ++ [ div [ class "col-sm-12 text-center" ]
-                            [ a [ class "show-more" ]
+                            [ aForPath navigate
+                                "/tools"
+                                [ class "show-more" ]
+                                -- TODO Store total count in model since model.tools contains only some pages.
                                 [ text ("Show all " ++ (model.tools |> List.length |> toString))
                                 , span [ class "glyphicon glyphicon-menu-down" ]
                                     []
