@@ -23,6 +23,7 @@ a {
     padding-right: 12px;
     padding-left: 12px;
 }
+
 .row {
     margin-right: -12px;
     margin-left: -12px;
@@ -34,7 +35,11 @@ a {
 }
 .row.section {
     padding: 55px 0 60px;
+    &.last {
+        padding-bottom: 100px;
+    }
 }
+
 .btn.btn-default {
     box-shadow: none;
     text-shadow: none;
@@ -203,6 +208,11 @@ nav.navbar.navbar-inverse {
     background-image: none;
     background: @darker;
     margin-bottom: 0;
+    padding-top: 83px;
+
+    &.fullscreen {
+        padding-top: 0px;
+    }
 
     .navbar-collapse {
         padding: 0;
@@ -384,6 +394,16 @@ ol.breadcrumb {
             width: 100%;
         }
     }
+    &.collection-header {
+        margin-bottom: 0px;
+        height: 350px;
+        background-color: @dark;
+        overflow: hidden;
+
+        .collection-info {
+            margin-top: 170px;
+        }
+    }
     &.collection-header-mini {
         margin-bottom: 0px;
         height: 220px;
@@ -420,7 +440,7 @@ ol.breadcrumb {
 .row.footer {
     background-color: @darkest;
     padding: 45px 0 20px;
-    margin-top: 50px;
+    margin-top: 0px;
 
     h4 {
         font-size: 17px;
@@ -519,6 +539,10 @@ p.info-box  {
     padding: 0;
     margin: 32px 0;
 
+    &.main {
+        margin-bottom: 70px;
+    }
+
     .btn-default.btn-action {
         border: 1px solid #a7a7a7;
         padding: 1px 10px;
@@ -549,6 +573,11 @@ p.info-box  {
     background-image: none !important;
     padding: 10px 0;
     border-bottom: 1px solid @line-grey;
+
+    &.simple {
+        border-bottom: none;
+        padding: 7px 0;
+    }
 }
 .panel-default.panel-collapse>.panel-heading {
 
@@ -560,11 +589,15 @@ p.info-box  {
 
 .panel-title  {
     font-weight: 600;
-    font-size: 15px;
+    font-size: 16px;
 }
 
 .panel-body {
     padding: 9px 0;
+
+    &.simple {
+        padding-top: 2px;
+    }
     p {
         padding: 0;
         line-height: 1.6em;
@@ -648,6 +681,13 @@ div.metrics {
 h3.zone-label {
     font-size: 23px;
     font-weight: 300;
+    margin-top: 0px;
+    margin-bottom: 15px;
+    margin-left: -3px;
+}
+h4.zone-label {
+    font-weight: 600;
+    font-size: 16px;
     margin-top: 0px;
     margin-bottom: 15px;
     margin-left: -3px;
@@ -1149,10 +1189,11 @@ table {
 }
 
 //FULL SCREEN BROWSE PAGE
-body.fullscreen, html, .main-container {
+body, html, .main-container {
     height: 100%;
     padding: 0;
     margin: 0;
+    background-color: white;
 }
 
 .fullscreen .search-bar {
