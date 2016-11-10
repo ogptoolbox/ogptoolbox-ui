@@ -7,6 +7,7 @@ import Html.Attributes exposing (alt, attribute, class, href, id, name, src, typ
 import Html.Events exposing (onClick)
 import Http
 import Task
+import Tools
 import Types exposing (Card, DataIdsBody, Statement, StatementCustom(..))
 import Requests exposing (newTaskGetCards)
 import Views exposing (aForPath)
@@ -93,16 +94,7 @@ update msg authenticationMaybe model =
         Loaded body ->
             ( { model
                 | tools =
-                    Dict.values body.data.statements
-                        |> List.filter
-                            (\statement ->
-                                case statement.custom of
-                                    CardCustom card ->
-                                        List.member "Platform" card.cardTypes || List.member "Software" card.cardTypes
-
-                                    _ ->
-                                        False
-                            )
+                    Dict.values body.data.statements |> List.filter Tools.isTool
               }
             , Cmd.none
             )
@@ -138,7 +130,12 @@ viewBanner authenticationMaybe model =
                                         []
                                     , text "to improve democracy"
                                     ]
-                                , a [ class "btn btn-primary btn-lg", attribute "data-slide-to" "1", href "#carousel-example-generic", attribute "role" "button" ]
+                                , a
+                                    [ class "btn btn-primary btn-lg"
+                                    , attribute "data-slide-to" "1"
+                                    , href "#carousel-example-generic"
+                                    , attribute "role" "button"
+                                    ]
                                     [ text "Start browsing" ]
                                 ]
                             ]
@@ -157,7 +154,12 @@ viewBanner authenticationMaybe model =
                                 [ div [ class "col-md-12 text-center" ]
                                     [ text "Showing results suited for                  "
                                     , div [ class "dropdown dropdown-filter dropup" ]
-                                        [ a [ class "btn btn-default dropdown-toggle", attribute "data-slide-to" "2", href "#carousel-example-generic", attribute "role" "button" ]
+                                        [ a
+                                            [ class "btn btn-default dropdown-toggle"
+                                            , attribute "data-slide-to" "2"
+                                            , href "#carousel-example-generic"
+                                            , attribute "role" "button"
+                                            ]
                                             [ text "all organizations                      "
                                             , span [ class "caret" ]
                                                 []
@@ -179,7 +181,12 @@ viewBanner authenticationMaybe model =
                                         ]
                                     , text "and available in                   "
                                     , div [ class "dropdown dropdown-filter dropup" ]
-                                        [ a [ class "btn btn-default dropdown-toggle", attribute "data-slide-to" "3", href "#carousel-example-generic", attribute "role" "button" ]
+                                        [ a
+                                            [ class "btn btn-default dropdown-toggle"
+                                            , attribute "data-slide-to" "3"
+                                            , href "#carousel-example-generic"
+                                            , attribute "role" "button"
+                                            ]
                                             [ text "English                      "
                                             , span [ class "caret" ]
                                                 []
@@ -222,7 +229,13 @@ viewBanner authenticationMaybe model =
                                 [ div [ class "col-md-3 text-center" ]
                                     [ div [ class "radio" ]
                                         [ label []
-                                            [ input [ attribute "checked" "", id "optionsRadios1", name "optionsRadios", type' "radio", value "option1" ]
+                                            [ input
+                                                [ attribute "checked" ""
+                                                , id "optionsRadios1"
+                                                , name "optionsRadios"
+                                                , type' "radio"
+                                                , value "option1"
+                                                ]
                                                 []
                                             , text "All organiations                    "
                                             ]
@@ -231,7 +244,13 @@ viewBanner authenticationMaybe model =
                                 , div [ class "col-md-3 text-center" ]
                                     [ div [ class "radio" ]
                                         [ label []
-                                            [ input [ attribute "checked" "", id "optionsRadios1", name "optionsRadios", type' "radio", value "option1" ]
+                                            [ input
+                                                [ attribute "checked" ""
+                                                , id "optionsRadios1"
+                                                , name "optionsRadios"
+                                                , type' "radio"
+                                                , value "option1"
+                                                ]
                                                 []
                                             , text "Local government                    "
                                             ]
@@ -240,7 +259,13 @@ viewBanner authenticationMaybe model =
                                 , div [ class "col-md-3 text-center" ]
                                     [ div [ class "radio" ]
                                         [ label []
-                                            [ input [ attribute "checked" "", id "optionsRadios1", name "optionsRadios", type' "radio", value "option1" ]
+                                            [ input
+                                                [ attribute "checked" ""
+                                                , id "optionsRadios1"
+                                                , name "optionsRadios"
+                                                , type' "radio"
+                                                , value "option1"
+                                                ]
                                                 []
                                             , text "Regional government                    "
                                             ]
@@ -249,7 +274,13 @@ viewBanner authenticationMaybe model =
                                 , div [ class "col-md-3 text-center" ]
                                     [ div [ class "radio" ]
                                         [ label []
-                                            [ input [ attribute "checked" "", id "optionsRadios1", name "optionsRadios", type' "radio", value "option1" ]
+                                            [ input
+                                                [ attribute "checked" ""
+                                                , id "optionsRadios1"
+                                                , name "optionsRadios"
+                                                , type' "radio"
+                                                , value "option1"
+                                                ]
                                                 []
                                             , text "National government                    "
                                             ]
@@ -258,7 +289,13 @@ viewBanner authenticationMaybe model =
                                 , div [ class "col-md-3 text-center" ]
                                     [ div [ class "radio" ]
                                         [ label []
-                                            [ input [ attribute "checked" "", id "optionsRadios1", name "optionsRadios", type' "radio", value "option1" ]
+                                            [ input
+                                                [ attribute "checked" ""
+                                                , id "optionsRadios1"
+                                                , name "optionsRadios"
+                                                , type' "radio"
+                                                , value "option1"
+                                                ]
                                                 []
                                             , text "Political organization                    "
                                             ]
@@ -267,7 +304,13 @@ viewBanner authenticationMaybe model =
                                 , div [ class "col-md-3 text-center" ]
                                     [ div [ class "radio" ]
                                         [ label []
-                                            [ input [ attribute "checked" "", id "optionsRadios1", name "optionsRadios", type' "radio", value "option1" ]
+                                            [ input
+                                                [ attribute "checked" ""
+                                                , id "optionsRadios1"
+                                                , name "optionsRadios"
+                                                , type' "radio"
+                                                , value "option1"
+                                                ]
                                                 []
                                             , text "Political movement                    "
                                             ]
@@ -276,7 +319,13 @@ viewBanner authenticationMaybe model =
                                 , div [ class "col-md-3 text-center" ]
                                     [ div [ class "radio" ]
                                         [ label []
-                                            [ input [ attribute "checked" "", id "optionsRadios1", name "optionsRadios", type' "radio", value "option1" ]
+                                            [ input
+                                                [ attribute "checked" ""
+                                                , id "optionsRadios1"
+                                                , name "optionsRadios"
+                                                , type' "radio"
+                                                , value "option1"
+                                                ]
                                                 []
                                             , text "Non-profit organization                    "
                                             ]
@@ -285,7 +334,13 @@ viewBanner authenticationMaybe model =
                                 , div [ class "col-md-3 text-center" ]
                                     [ div [ class "radio" ]
                                         [ label []
-                                            [ input [ attribute "checked" "", id "optionsRadios1", name "optionsRadios", type' "radio", value "option1" ]
+                                            [ input
+                                                [ attribute "checked" ""
+                                                , id "optionsRadios1"
+                                                , name "optionsRadios"
+                                                , type' "radio"
+                                                , value "option1"
+                                                ]
                                                 []
                                             , text "For-profit organization                    "
                                             ]
@@ -294,7 +349,12 @@ viewBanner authenticationMaybe model =
                                 ]
                             , div [ class "row" ]
                                 [ div [ class "col-md-12 text-center" ]
-                                    [ a [ class "btn btn-primary btn-lg", attribute "data-slide-to" "1", href "#carousel-example-generic", attribute "role" "button" ]
+                                    [ a
+                                        [ class "btn btn-primary btn-lg"
+                                        , attribute "data-slide-to" "1"
+                                        , href "#carousel-example-generic"
+                                        , attribute "role" "button"
+                                        ]
                                         [ text "Continue" ]
                                     ]
                                 ]
@@ -316,7 +376,13 @@ viewBanner authenticationMaybe model =
                             [ div [ class "col-md-3 text-center" ]
                                 [ div [ class "checkbox" ]
                                     [ label []
-                                        [ input [ attribute "checked" "", id "optionsRadios1", name "optionsRadios", type' "checkbox", value "option1" ]
+                                        [ input
+                                            [ attribute "checked" ""
+                                            , id "optionsRadios1"
+                                            , name "optionsRadios"
+                                            , type' "checkbox"
+                                            , value "option1"
+                                            ]
                                             []
                                         , text "English                    "
                                         ]
@@ -325,7 +391,12 @@ viewBanner authenticationMaybe model =
                             ]
                         , div [ class "row" ]
                             [ div [ class "col-md-12 text-center" ]
-                                [ a [ class "btn btn-primary btn-lg", attribute "data-slide-to" "1", href "#carousel-example-generic", attribute "role" "button" ]
+                                [ a
+                                    [ class "btn btn-primary btn-lg"
+                                    , attribute "data-slide-to" "1"
+                                    , href "#carousel-example-generic"
+                                    , attribute "role" "button"
+                                    ]
                                     [ text "Continue" ]
                                 ]
                             ]
@@ -357,7 +428,7 @@ viewExamples authenticationMaybe model =
                             , h4 []
                                 [ text "OpenSpending" ]
                             , p []
-                                [ text "OpenSpending is a centralized platform on the topic of public financial information, including an global database of budgets and spending data, a community of contributors and users exposing cases, and a set of open resources and tools providing technical, fiscal, and political understanding necessary to work with financial data." ]
+                                [ text "OpenSpending is a centralized platform on the topic financial data." ]
                             , span [ class "label label-default label-tool" ]
                                 [ text "Default" ]
                             , span [ class "label label-default label-tool" ]
@@ -422,7 +493,7 @@ viewOrganizations authenticationMaybe model =
                             [ h4 []
                                 [ text "The White House" ]
                             , p []
-                                [ text "OpenSpending is a centralized platform on the topic of public financial information, including an global database of budgets and spending data, a community of contributors and users exposing cases, and a set of open resources and tools providing technical, fiscal, and political understanding necessary to work with financial data." ]
+                                [ text "OpenSpending is a cen" ]
                             ]
                         ]
                     ]
@@ -486,7 +557,7 @@ viewToolThumbnail statement card =
                     [ h4 []
                         [ aForPath navigate toolUrl [] [ text card.name ] ]
                     , p []
-                        [ text "OpenSpending is a centralized platform on the topic of public financial information, including an global database of budgets and spending data, a community of contributors and users exposing cases, and a set of open resources and tools providing technical, fiscal, and political understanding necessary to work with financial data." ]
+                        [ text "OpenSpending is a centralized platform on the topic of pu." ]
                     , span [ class "label label-default label-tool" ]
                         [ text "Default" ]
                     , span [ class "label label-default label-tool" ]

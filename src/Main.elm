@@ -1,29 +1,23 @@
 module Main exposing (main)
 
+-- import Cards
+-- import Html.Attributes.Aria exposing (..)
+
 import About
 import Authenticator.Model
 import Authenticator.Update
 import Authenticator.View
-import Footer
-
-
--- import Cards
-
 import Examples
+import Footer
 import Help
 import Home
 import Hop.Types
 import Json.Decode
-import Html exposing (a, button, div, form, header, h4, Html, img, input, li, nav, p, span, text, ul)
-import Html.Attributes exposing (classList, style)
+import Html exposing (..)
+import Html.Attributes exposing (..)
 import Html.Attributes.Aria exposing (ariaHidden, ariaLabelledby)
 import Html.Events exposing (onWithOptions)
 import Html.App
-import Html.Attributes exposing (attribute, class, href, id, placeholder, src, type')
-
-
--- import Html.Attributes.Aria exposing (..)
-
 import Navigation
 import Organizations
 import Routes exposing (makeUrl, Route(..), urlParser)
@@ -51,7 +45,8 @@ type alias Model =
     { aboutModel : About.Model
     , authenticationMaybe : Maybe Authenticator.Model.Authentication
     , authenticatorModel : Authenticator.Model.Model
-    , authenticatorRouteMaybe : Maybe Authenticator.Model.Route
+    , authenticatorRouteMaybe :
+        Maybe Authenticator.Model.Route
         -- , cardsModel : Cards.Model
     , examplesModel : Examples.Model
     , helpModel : Help.Model
@@ -105,7 +100,6 @@ urlUpdate ( route, location ) model =
 
             -- AuthenticatorRoute _ ->
             --     ( model', Cmd.none )
-
             -- CardsRoute childRoute ->
             --     let
             --         -- Cmd.map translateCardsMsg Cards.load
@@ -311,7 +305,7 @@ update msg model =
                 model'' ! [ Cmd.map AuthenticatorMsg childEffect, effect'' ]
 
         AuthenticatorRouteMsg authenticatorRouteMaybe ->
-            ( { model | authenticatorRouteMaybe = authenticatorRouteMaybe }, Cmd.none)
+            ( { model | authenticatorRouteMaybe = authenticatorRouteMaybe }, Cmd.none )
 
         -- CardsMsg childMsg ->
         --     let
@@ -370,6 +364,7 @@ update msg model =
                 ( { model | toolsModel = toolsModel }, Cmd.map translateToolsMsg childEffect )
 
 
+
 -- VIEW
 
 
@@ -393,7 +388,7 @@ viewAuthenticatorModal model =
                 , attribute "role" "dialog"
                 , attribute "tabindex" "-1"
                 , class "modal fade in"
-                , style [ ("display", "block") ]
+                , style [ ( "display", "block" ) ]
                 ]
                 [ div [ class "modal-dialog", id "login-overlay" ]
                     [ div [ class "modal-content" ]
@@ -421,6 +416,7 @@ viewAuthenticatorModal model =
                         ]
                     ]
                 ]
+
         Nothing ->
             text ""
 
@@ -439,7 +435,6 @@ viewContent model =
 
         -- AuthenticatorRoute subRoute ->
         --     Html.App.map AuthenticatorMsg (Authenticator.View.view subRoute model.authenticatorModel)
-
         -- CardsRoute nestedRoute ->
         --     Html.App.map translateCardsMsg (Cards.view model.authenticationMaybe model.cardsModel)
         ExamplesRoute ->
@@ -521,78 +516,87 @@ viewHeader model =
                             [ text "Sign Up" ]
                         ]
     in
-        div []
-            [ header []
-                [ nav [ class "navbar navbar-default navbar-fixed-top", attribute "role" "navigation" ]
-                    [ div [ class "container" ]
-                        [ div [ class "navbar-header" ]
-                            [ button
-                                [ attribute "aria-controls" "navbar"
-                                , attribute "aria-expanded" "false"
-                                , class "navbar-toggle collapsed"
-                                , attribute "data-target" "#navbar"
-                                , attribute "data-toggle" "collapse"
-                                , type' "button"
-                                ]
-                                [ span [ class "sr-only" ]
-                                    [ text "Toggle navigation" ]
-                                , span [ class "icon-bar" ]
-                                    []
-                                , span [ class "icon-bar" ]
-                                    []
-                                , span [ class "icon-bar" ]
-                                    []
-                                ]
-                            , a [ class "navbar-brand", href "#" ]
-                                [ text "OGPtoolbox" ]
-                            , p [ class "navbar-text" ]
-                                [ text "tools and use cases for open government" ]
+        header []
+            [ nav [ class "navbar navbar-default navbar-fixed-top", attribute "role" "navigation" ]
+                [ div [ class "container" ]
+                    [ div [ class "navbar-header" ]
+                        [ button
+                            [ attribute "aria-controls" "navbar"
+                            , attribute "aria-expanded" "false"
+                            , class "navbar-toggle collapsed"
+                            , attribute "data-target" "#navbar"
+                            , attribute "data-toggle" "collapse"
+                            , type' "button"
                             ]
-                        , ul [ class "nav navbar-nav navbar-right" ]
-                            [ profileNavItem
-                            , signInOrOutNavItem
-                            , signUpNavItem
-                            , button [ class "btn btn-default btn-action", type' "button" ]
-                                [ text "Add new" ]
+                            [ span [ class "sr-only" ]
+                                [ text "Toggle navigation" ]
+                            , span [ class "icon-bar" ]
+                                []
+                            , span [ class "icon-bar" ]
+                                []
+                            , span [ class "icon-bar" ]
+                                []
                             ]
+                        , a [ class "navbar-brand", href "#" ]
+                            [ text "OGPtoolbox" ]
+                        , p [ class "navbar-text" ]
+                            [ text "tools and use cases for open government" ]
+                        ]
+                    , ul [ class "nav navbar-nav navbar-right" ]
+                        [ profileNavItem
+                        , signInOrOutNavItem
+                        , signUpNavItem
+                        , button [ class "btn btn-default btn-action", type' "button" ]
+                            [ text "Add new" ]
                         ]
                     ]
-                , nav [ class "navbar navbar-inverse" ]
-                    [ div [ class "container" ]
-                        [ div [ class "navbar-header" ]
-                            [ button [ attribute "aria-expanded" "false", class "navbar-toggle collapsed", attribute "data-target" "#bs-example-navbar-collapse-1", attribute "data-toggle" "collapse", type' "button" ]
-                                [ span [ class "sr-only" ]
-                                    [ text "Toggle navigation" ]
-                                , span [ class "icon-bar" ]
-                                    []
-                                , span [ class "icon-bar" ]
-                                    []
-                                , span [ class "icon-bar" ]
-                                    []
-                                ]
+                ]
+            , nav [ class "navbar navbar-inverse" ]
+                [ div [ class "container" ]
+                    [ div [ class "navbar-header" ]
+                        [ button
+                            [ attribute "aria-expanded" "false"
+                            , class "navbar-toggle collapsed"
+                            , attribute "data-target" "#bs-example-navbar-collapse-1"
+                            , attribute "data-toggle" "collapse"
+                            , type' "button"
                             ]
-                        , div [ class "collapse navbar-collapse", id "bs-example-navbar-collapse-1" ]
-                            [ ul [ class "nav navbar-nav" ]
-                                [ li [] [ aForPath Navigate "/" [] [ text "Home" ] ]
-                                , li [] [ aForPath Navigate "/about" [] [ text "About" ] ]
-                                , li [] [ aForPath Navigate "/tools" [] [ text "Tools" ] ]
-                                , li [] [ aForPath Navigate "/examples" [] [ text "Examples" ] ]
-                                , li [] [ aForPath Navigate "/organizations" [] [ text "Organizations" ] ]
-                                , li [] [ aForPath Navigate "/help" [] [ text "Help" ] ]
-                                ]
-                            , form [ class "navbar-form navbar-right" ]
-                                [ div [ class "form-group search-bar" ]
-                                    [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-search" ]
-                                        []
-                                    , input [ class "form-control", placeholder "Search for a tool, example or organization", type' "text" ]
-                                        []
+                            [ span [ class "sr-only" ]
+                                [ text "Toggle navigation" ]
+                            , span [ class "icon-bar" ]
+                                []
+                            , span [ class "icon-bar" ]
+                                []
+                            , span [ class "icon-bar" ]
+                                []
+                            ]
+                        ]
+                    , div [ class "collapse navbar-collapse", id "bs-example-navbar-collapse-1" ]
+                        [ ul [ class "nav navbar-nav" ]
+                            [ li [] [ aForPath Navigate "/" [] [ text "Home" ] ]
+                            , li [] [ aForPath Navigate "/about" [] [ text "About" ] ]
+                            , li [] [ aForPath Navigate "/tools" [] [ text "Tools" ] ]
+                            , li [] [ aForPath Navigate "/examples" [] [ text "Examples" ] ]
+                            , li [] [ aForPath Navigate "/organizations" [] [ text "Organizations" ] ]
+                            , li [] [ aForPath Navigate "/help" [] [ text "Help" ] ]
+                            ]
+                        , Html.form [ class "navbar-form navbar-right" ]
+                            [ div [ class "form-group search-bar" ]
+                                [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-search" ]
+                                    []
+                                , input
+                                    [ class "form-control"
+                                    , placeholder "Search for a tool, example or organization"
+                                    , type' "text"
                                     ]
+                                    []
                                 ]
                             ]
                         ]
                     ]
                 ]
-             ]
+            ]
+
 
 
 -- SUBSCRIPTIONS

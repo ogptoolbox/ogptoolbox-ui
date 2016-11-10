@@ -3,6 +3,7 @@ module Requests
         ( newTaskCreateStatement
         , newTaskDeleteStatementRating
         , newTaskFlagAbuse
+        , newTaskGetCard
         , newTaskGetCards
         , newTaskGetStatements
         , newTaskRateStatement
@@ -117,6 +118,32 @@ newTaskFlagAbuse authentication statementId =
             , body = Http.empty
             }
         )
+
+
+newTaskGetCard : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
+newTaskGetCard authenticationMaybe statementId =
+    let
+        authenticationHeaders =
+            case authenticationMaybe of
+                Just authentication ->
+                    [ ( "Retruco-API-Key", authentication.apiKey )
+                    ]
+
+                Nothing ->
+                    []
+    in
+        Http.fromJson decodeDataIdBody
+            (Http.send Http.defaultSettings
+                { verb = "GET"
+                , url =
+                    apiUrl ++ "statements/" ++ statementId
+                , headers =
+                    [ ( "Accept", "application/json" )
+                    ]
+                        ++ authenticationHeaders
+                , body = Http.empty
+                }
+            )
 
 
 newTaskGetCards : Maybe Authenticator.Model.Authentication -> Task Http.Error DataIdsBody

@@ -1,6 +1,19 @@
-module Tools exposing (init, InternalMsg, Model, MsgTranslation, MsgTranslator, translateMsg, update, urlUpdate, view)
+module Tools
+    exposing
+        ( init
+        , InternalMsg
+        , isTool
+        , Model
+        , MsgTranslation
+        , MsgTranslator
+        , translateMsg
+        , update
+        , urlUpdate
+        , view
+        )
 
 import Authenticator.Model
+import Browse exposing (PillType(..))
 import Dict exposing (Dict)
 import Hop.Types
 import Html exposing (..)
@@ -8,11 +21,25 @@ import Html.Attributes exposing (..)
 import Html.App
 import Http
 import Task
-import Types exposing (DataIdsBody, Statement, StatementCustom(..))
-import Requests exposing (newTaskGetCards)
+import Types exposing (DataIdBody, DataIdsBody, Statement, StatementCustom(..))
+import Requests exposing (newTaskGetCard, newTaskGetCards)
 import Routes exposing (ToolsNestedRoute(..))
 import Tool
 import Views exposing (viewNotFound)
+
+
+-- HELPERS
+
+
+isTool : Statement -> Bool
+isTool statement =
+    case statement.custom of
+        CardCustom card ->
+            List.member "Platform" card.cardTypes || List.member "Software" card.cardTypes
+
+        _ ->
+            False
+
 
 
 -- MODEL
@@ -22,7 +49,6 @@ type alias Model =
     { route : ToolsNestedRoute
     , toolModel : Tool.Model
     , toolById : Dict String Statement
-    , toolIds : List String
     }
 
 
@@ -31,7 +57,6 @@ init =
     { route = ToolsNotFoundRoute
     , toolModel = Tool.init
     , toolById = Dict.empty
-    , toolIds = []
     }
 
 
@@ -47,22 +72,10 @@ urlUpdate ( route, location ) model =
     in
         case route of
             ToolRoute toolId ->
-                let
-                    toolModel =
-                        model'.toolModel
-
-                    model'' =
-                        { model'
-                            | toolModel =
-                                { toolModel
-                                    | tool = Dict.get toolId model'.toolById
-                                }
-                        }
-                in
-                    ( model'', load )
+                ( model', loadOne toolId )
 
             ToolsIndexRoute ->
-                ( model', load )
+                ( model', loadAll )
 
             ToolsNotFoundRoute ->
                 ( model', Cmd.none )
@@ -78,8 +91,10 @@ type ExternalMsg
 
 type InternalMsg
     = Error Http.Error
-    | Load
-    | Loaded DataIdsBody
+    | LoadAll
+    | LoadOne String
+    | LoadedAll DataIdsBody
+    | LoadedOne DataIdBody
     | ToolMsg Tool.InternalMsg
 
 
@@ -98,9 +113,14 @@ type alias MsgTranslator parentMsg =
     Msg -> parentMsg
 
 
-load : Cmd Msg
-load =
-    Task.perform (\_ -> Debug.crash "") (\_ -> ForSelf Load) (Task.succeed "")
+loadAll : Cmd Msg
+loadAll =
+    Task.perform (\_ -> Debug.crash "") (\_ -> ForSelf LoadAll) (Task.succeed "")
+
+
+loadOne : String -> Cmd Msg
+loadOne id =
+    Task.perform (\_ -> Debug.crash "") (\_ -> ForSelf (LoadOne id)) (Task.succeed "")
 
 
 navigate : String -> Msg
@@ -140,54 +160,44 @@ update msg authenticationMaybe model =
             in
                 ( model, Cmd.none )
 
-        Load ->
+        LoadAll ->
             let
                 cmd =
                     Task.perform
                         (\msg -> ForSelf (Error msg))
-                        (\msg -> ForSelf (Loaded msg))
+                        (\msg -> ForSelf (LoadedAll msg))
                         (newTaskGetCards authenticationMaybe)
             in
                 ( model, cmd )
 
-        Loaded body ->
+        LoadOne toolId ->
+            let
+                cmd =
+                    Task.perform
+                        (\msg -> ForSelf (Error msg))
+                        (\msg -> ForSelf (LoadedOne msg))
+                        (newTaskGetCard authenticationMaybe toolId)
+            in
+                ( model, cmd )
+
+        LoadedAll body ->
             ( { model
                 | toolById =
-                    Dict.filter
-                        (\id statement ->
-                            case statement.custom of
-                                CardCustom card ->
-                                    List.member "Platform" card.cardTypes || List.member "Software" card.cardTypes
+                    Dict.filter (\_ statement -> isTool statement) body.data.statements
+              }
+            , Cmd.none
+            )
 
-                                _ ->
-                                    False
-                        )
-                        body.data.statements
-                , toolIds = body.data.ids
+        LoadedOne body ->
+            ( { model
+                | toolById =
+                    Dict.filter (\_ statement -> isTool statement) body.data.statements
               }
             , Cmd.none
             )
 
         ToolMsg childMsg ->
-            case model.toolModel.tool of
-                Nothing ->
-                    ( model, Cmd.none )
-
-                Just tool ->
-                    let
-                        toolModel =
-                            model.toolModel
-
-                        toolModel' =
-                            { toolModel | tool = Dict.get tool.id model'.toolById }
-
-                        ( toolModel'', childEffect ) =
-                            Tool.update childMsg authenticationMaybe toolModel'
-
-                        model' =
-                            { model | toolModel = toolModel'' }
-                    in
-                        ( model', Cmd.map translateToolMsg childEffect )
+            ( model, Cmd.none )
 
 
 
@@ -196,10 +206,31 @@ update msg authenticationMaybe model =
 
 view : Maybe Authenticator.Model.Authentication -> Model -> Html Msg
 view authenticationMaybe model =
-    div []
-        [ viewBreadcrumb
-        , viewContainer authenticationMaybe model
-        ]
+    let
+        layout container =
+            div []
+                [ viewBreadcrumb
+                , container
+                ]
+    in
+        case model.route of
+            ToolRoute toolId ->
+                case Dict.get toolId model.toolById of
+                    Nothing ->
+                        text "Loading..."
+
+                    Just tool ->
+                        Html.App.map translateToolMsg (Tool.view tool) |> layout
+
+            ToolsIndexRoute ->
+                let
+                    tools =
+                        Dict.values model.toolById
+                in
+                    Browse.view Tools tools navigate
+
+            ToolsNotFoundRoute ->
+                viewNotFound |> layout
 
 
 viewBreadcrumb : Html msg
@@ -224,23 +255,3 @@ viewBreadcrumb =
                 ]
             ]
         ]
-
-
-viewContainer : Maybe Authenticator.Model.Authentication -> Model -> Html Msg
-viewContainer authenticationMaybe model =
-    case model.route of
-        ToolRoute toolId ->
-            let
-                toolModel =
-                    model.toolModel
-
-                toolModel' =
-                    { toolModel | tool = Dict.get toolId model.toolById }
-            in
-                Html.App.map translateToolMsg (Tool.view authenticationMaybe toolModel')
-
-        ToolsIndexRoute ->
-            text "TODO"
-
-        ToolsNotFoundRoute ->
-            viewNotFound
