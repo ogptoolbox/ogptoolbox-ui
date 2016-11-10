@@ -54,6 +54,7 @@ type alias Ballot =
 
 type alias Card =
     { cardTypes : List String
+    , description : String
     , name : String
     , tags : List String
     }
@@ -335,6 +336,11 @@ decodeStatementCustomFromType statementType =
         "Card" ->
             succeed Card
                 |: oneOf [ at [ "values", "Card Type" ] (list string), succeed [] ]
+                |: oneOf
+                    [ at [ "values", "Description-EN" ] (list string)
+                        |> Decode.map (List.head >> (Maybe.withDefault ""))
+                    , succeed ""
+                    ]
                 |: oneOf [ at [ "values", "Name" ] string, succeed "" ]
                 |: oneOf [ at [ "values", "Tag" ] (list string), succeed [] ]
                 `andThen` \card -> succeed (CardCustom card)

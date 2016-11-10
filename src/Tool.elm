@@ -5,8 +5,6 @@ import Html.Attributes exposing (..)
 import Types exposing (Card, Statement, StatementCustom(..))
 
 
-
-
 -- VIEW
 
 
@@ -211,9 +209,7 @@ viewCard card =
                             ]
                         ]
                     , div [ class "panel-body" ]
-                        [ p []
-                            [ text "The Comprehensive Knowledge Archive Network (CKAN" ]
-                        ]
+                        [ text card.description ]
                     ]
                 , div [ class "panel panel-default panel-collapse up20" ]
                     [ div

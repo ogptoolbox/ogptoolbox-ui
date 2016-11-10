@@ -63,7 +63,9 @@ view activeBadge statements navigate =
                                         ]
                                     , attribute "role" "presentation"
                                     ]
-                                    [ a [ href "#" ]
+                                    [ aForPath navigate
+                                        "/examples"
+                                        []
                                         [ text "Examples "
                                         , span [ class "badge" ]
                                             [ text "42" ]
@@ -82,7 +84,9 @@ view activeBadge statements navigate =
                                         ]
                                     , attribute "role" "presentation"
                                     ]
-                                    [ a [ href "#" ]
+                                    [ aForPath navigate
+                                        "/tools"
+                                        []
                                         [ text "Tools "
                                         , span [ class "badge" ]
                                             [ text "42" ]
@@ -101,7 +105,9 @@ view activeBadge statements navigate =
                                         ]
                                     , attribute "role" "presentation"
                                     ]
-                                    [ a [ href "#" ]
+                                    [ aForPath navigate
+                                        "/organizations"
+                                        []
                                         [ text "Organizations "
                                         , span [ class "badge" ]
                                             [ text "42" ]
@@ -154,7 +160,7 @@ viewTool statement card navigate =
                         []
                     ]
                 , div [ class "caption" ]
-                    [ h4 []
+                    ([ h4 []
                         [ aForPath navigate toolUrl [] [ text card.name ]
                         , small []
                             [ text "Software" ]
@@ -164,14 +170,13 @@ viewTool statement card navigate =
                             []
                         , text "The White House"
                         ]
-                    , p []
-                        [ text "OpenSpending is a centralized platform on." ]
+                    , text card.description
                     , span [ class "label label-default label-tool" ]
-                        [ text "Default" ]
-                    , span [ class "label label-default label-tool" ]
-                        [ text "Default" ]
-                    , span [ class "label label-default label-tool" ]
-                        [ text "Default" ]
-                    ]
+                            [ text "Default" ]
+                       , span [ class "label label-default label-tool" ]
+                            [ text "Default" ]
+                       , span [ class "label label-default label-tool" ]
+                            [ text "Default" ]
+                       ])
                 ]
             ]
