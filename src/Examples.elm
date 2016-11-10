@@ -1,19 +1,65 @@
-module Examples exposing (init, InternalMsg, Model, MsgTranslation, MsgTranslator, translateMsg, update, view)
+module Examples
+    exposing
+        ( init
+        , InternalMsg
+        , Model
+        , MsgTranslation
+        , MsgTranslator
+        , translateMsg
+        , update
+        , urlUpdate
+        , view
+        )
 
 import Authenticator.Model
-import Html exposing (a, br, div, h1, h2, h3, Html, img, input, label, li, p, span, text, ul)
+import Browse exposing (PillType(..))
+import Dict exposing (Dict)
+import Hop.Types
+import Html exposing (..)
+import Http
+import Requests exposing (newTaskGetExample, newTaskGetExamples)
+import Routes exposing (ExamplesNestedRoute(..))
+import Task
+import Tool
+import Types exposing (DataIdBody, DataIdsBody, Statement, StatementCustom(..))
+import Views exposing (viewNotFound)
 
 
 -- MODEL
 
 
 type alias Model =
-    {}
+    { route : ExamplesNestedRoute
+    , exampleById : Dict String Statement
+    }
 
 
 init : Model
 init =
-    {}
+    { route = ExamplesNotFoundRoute
+    , exampleById = Dict.empty
+    }
+
+
+
+-- ROUTING
+
+
+urlUpdate : ( ExamplesNestedRoute, Hop.Types.Location ) -> Model -> ( Model, Cmd Msg )
+urlUpdate ( route, location ) model =
+    let
+        model' =
+            { model | route = route }
+    in
+        case route of
+            ExampleRoute exampleId ->
+                ( model', loadOne exampleId )
+
+            ExamplesIndexRoute ->
+                ( model', loadAll )
+
+            ExamplesNotFoundRoute ->
+                ( model', Cmd.none )
 
 
 
@@ -25,7 +71,11 @@ type ExternalMsg
 
 
 type InternalMsg
-    = Todo
+    = Error Http.Error
+    | LoadAll
+    | LoadOne String
+    | LoadedAll DataIdsBody
+    | LoadedOne DataIdBody
 
 
 type Msg
@@ -41,6 +91,16 @@ type alias MsgTranslation parentMsg =
 
 type alias MsgTranslator parentMsg =
     Msg -> parentMsg
+
+
+loadAll : Cmd Msg
+loadAll =
+    Task.perform (\_ -> Debug.crash "") (\_ -> ForSelf LoadAll) (Task.succeed "")
+
+
+loadOne : String -> Cmd Msg
+loadOne id =
+    Task.perform (\_ -> Debug.crash "") (\_ -> ForSelf (LoadOne id)) (Task.succeed "")
 
 
 navigate : String -> Msg
@@ -61,8 +121,42 @@ translateMsg { onInternalMsg, onNavigate } msg =
 update : InternalMsg -> Maybe Authenticator.Model.Authentication -> Model -> ( Model, Cmd Msg )
 update msg authenticationMaybe model =
     case msg of
-        Todo ->
-            ( model, Cmd.none )
+        Error err ->
+            let
+                _ =
+                    Debug.log "Examples Error" err
+            in
+                ( model, Cmd.none )
+
+        LoadAll ->
+            let
+                cmd =
+                    Task.perform
+                        (\msg -> ForSelf (Error msg))
+                        (\msg -> ForSelf (LoadedAll msg))
+                        (newTaskGetExamples authenticationMaybe)
+            in
+                ( model, cmd )
+
+        LoadOne toolId ->
+            let
+                cmd =
+                    Task.perform
+                        (\msg -> ForSelf (Error msg))
+                        (\msg -> ForSelf (LoadedOne msg))
+                        (newTaskGetExample authenticationMaybe toolId)
+            in
+                ( model, cmd )
+
+        LoadedAll body ->
+            ( { model | exampleById = body.data.statements }
+            , Cmd.none
+            )
+
+        LoadedOne body ->
+            ( { model | exampleById = body.data.statements }
+            , Cmd.none
+            )
 
 
 
@@ -71,5 +165,22 @@ update msg authenticationMaybe model =
 
 view : Maybe Authenticator.Model.Authentication -> Model -> Html Msg
 view authenticationMaybe model =
-    div []
-        [ text "Examples OGP Toolbox" ]
+    case model.route of
+        ExampleRoute exampleId ->
+            case Dict.get exampleId model.exampleById of
+                Nothing ->
+                    text "Loading..."
+
+                Just example ->
+                    -- TODO Use Example.view, or rename Tool to Card
+                    Tool.view example
+
+        ExamplesIndexRoute ->
+            let
+                examples =
+                    Dict.values model.exampleById
+            in
+                Browse.view Examples examples navigate
+
+        ExamplesNotFoundRoute ->
+            viewNotFound

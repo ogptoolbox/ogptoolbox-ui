@@ -105,8 +105,12 @@ urlUpdate ( route, location ) model =
             --         (cardsModel, childEffect) = Cards.urlUpdate (childRoute, location) model'.cardsModel
             --     in
             --         ({ model' | cardsModel = cardsModel }, Cmd.map translateCardsMsg childEffect)
-            ExamplesRoute ->
-                ( model', Cmd.none )
+            ExamplesRoute childRoute ->
+                let
+                    ( examplesModel, childEffect ) =
+                        Examples.urlUpdate ( childRoute, location ) model'.examplesModel
+                in
+                    ( { model' | examplesModel = examplesModel }, Cmd.map translateExamplesMsg childEffect )
 
             HelpRoute ->
                 ( model', Cmd.none )
@@ -436,7 +440,7 @@ viewContent model =
         --     Html.App.map AuthenticatorMsg (Authenticator.View.view subRoute model.authenticatorModel)
         -- CardsRoute nestedRoute ->
         --     Html.App.map translateCardsMsg (Cards.view model.authenticationMaybe model.cardsModel)
-        ExamplesRoute ->
+        ExamplesRoute _ ->
             Html.App.map translateExamplesMsg (Examples.view model.authenticationMaybe model.examplesModel)
 
         HelpRoute ->
@@ -643,8 +647,7 @@ viewHeader model =
                             , span [ class "icon-bar" ]
                                 []
                             ]
-                        , a [ class "navbar-brand", href "#" ]
-                            [ text "OGPtoolbox" ]
+                        , aForPath Navigate "/" [ class "navbar-brand" ] [ text "OGPtoolbox" ]
                         , p [ class "navbar-text" ]
                             [ text "tools and use cases for open government" ]
                         ]

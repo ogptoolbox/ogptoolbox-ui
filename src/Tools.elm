@@ -2,7 +2,6 @@ module Tools
     exposing
         ( init
         , InternalMsg
-        , isTool
         , Model
         , MsgTranslation
         , MsgTranslator
@@ -17,29 +16,13 @@ import Browse exposing (PillType(..))
 import Dict exposing (Dict)
 import Hop.Types
 import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.App
 import Http
-import Task
-import Types exposing (DataIdBody, DataIdsBody, Statement, StatementCustom(..))
-import Requests exposing (newTaskGetCard, newTaskGetCards)
+import Requests exposing (newTaskGetTool, newTaskGetTools)
 import Routes exposing (ToolsNestedRoute(..))
+import Task
 import Tool
+import Types exposing (DataIdBody, DataIdsBody, Statement, StatementCustom(..))
 import Views exposing (viewNotFound)
-
-
--- HELPERS
-
-
-isTool : Statement -> Bool
-isTool statement =
-    case statement.custom of
-        CardCustom card ->
-            List.member "Platform" card.cardTypes || List.member "Software" card.cardTypes
-
-        _ ->
-            False
-
 
 
 -- MODEL
@@ -47,7 +30,6 @@ isTool statement =
 
 type alias Model =
     { route : ToolsNestedRoute
-    , toolModel : Tool.Model
     , toolById : Dict String Statement
     }
 
@@ -55,7 +37,6 @@ type alias Model =
 init : Model
 init =
     { route = ToolsNotFoundRoute
-    , toolModel = Tool.init
     , toolById = Dict.empty
     }
 
@@ -95,7 +76,6 @@ type InternalMsg
     | LoadOne String
     | LoadedAll DataIdsBody
     | LoadedOne DataIdBody
-    | ToolMsg Tool.InternalMsg
 
 
 type Msg
@@ -128,18 +108,6 @@ navigate path =
     ForParent (Navigate path)
 
 
-toolMsgTranslation : Tool.MsgTranslation Msg
-toolMsgTranslation =
-    { onInternalMsg = \internalMsg -> ForSelf (ToolMsg internalMsg)
-    , onNavigate = \path -> ForParent (Navigate path)
-    }
-
-
-translateToolMsg : Tool.MsgTranslator Msg
-translateToolMsg =
-    Tool.translateMsg toolMsgTranslation
-
-
 translateMsg : MsgTranslation parentMsg -> MsgTranslator parentMsg
 translateMsg { onInternalMsg, onNavigate } msg =
     case msg of
@@ -156,7 +124,7 @@ update msg authenticationMaybe model =
         Error err ->
             let
                 _ =
-                    Debug.log "Cards Error" err
+                    Debug.log "Tools Error" err
             in
                 ( model, Cmd.none )
 
@@ -166,7 +134,7 @@ update msg authenticationMaybe model =
                     Task.perform
                         (\msg -> ForSelf (Error msg))
                         (\msg -> ForSelf (LoadedAll msg))
-                        (newTaskGetCards authenticationMaybe)
+                        (newTaskGetTools authenticationMaybe)
             in
                 ( model, cmd )
 
@@ -176,28 +144,19 @@ update msg authenticationMaybe model =
                     Task.perform
                         (\msg -> ForSelf (Error msg))
                         (\msg -> ForSelf (LoadedOne msg))
-                        (newTaskGetCard authenticationMaybe toolId)
+                        (newTaskGetTool authenticationMaybe toolId)
             in
                 ( model, cmd )
 
         LoadedAll body ->
-            ( { model
-                | toolById =
-                    Dict.filter (\_ statement -> isTool statement) body.data.statements
-              }
+            ( { model | toolById = body.data.statements }
             , Cmd.none
             )
 
         LoadedOne body ->
-            ( { model
-                | toolById =
-                    Dict.filter (\_ statement -> isTool statement) body.data.statements
-              }
+            ( { model | toolById = body.data.statements }
             , Cmd.none
             )
-
-        ToolMsg childMsg ->
-            ( model, Cmd.none )
 
 
 
@@ -206,52 +165,54 @@ update msg authenticationMaybe model =
 
 view : Maybe Authenticator.Model.Authentication -> Model -> Html Msg
 view authenticationMaybe model =
-    let
-        layout container =
-            div []
-                [ viewBreadcrumb
-                , container
-                ]
-    in
-        case model.route of
-            ToolRoute toolId ->
-                case Dict.get toolId model.toolById of
-                    Nothing ->
-                        text "Loading..."
+    case model.route of
+        ToolRoute toolId ->
+            case Dict.get toolId model.toolById of
+                Nothing ->
+                    text "Loading..."
 
-                    Just tool ->
-                        Html.App.map translateToolMsg (Tool.view tool) |> layout
+                Just tool ->
+                    Tool.view tool
 
-            ToolsIndexRoute ->
-                let
-                    tools =
-                        Dict.values model.toolById
-                in
-                    Browse.view Tools tools navigate
+        -- div []
+        --     [ viewBreadcrumb
+        --     ,
+        --     ]
+        ToolsIndexRoute ->
+            let
+                tools =
+                    Dict.values model.toolById
+            in
+                Browse.view Tools tools navigate
 
-            ToolsNotFoundRoute ->
-                viewNotFound |> layout
+        ToolsNotFoundRoute ->
+            viewNotFound
 
 
-viewBreadcrumb : Html msg
-viewBreadcrumb =
-    div [ class "row" ]
-        [ div [ class "container" ]
-            [ div [ class "row" ]
-                [ div [ class "col-xs-12" ]
-                    [ ol [ class "breadcrumb" ]
-                        [ li []
-                            [ a [ href "#" ]
-                                [ text "Home" ]
-                            ]
-                        , li []
-                            [ a [ href "#" ]
-                                [ text "Library" ]
-                            ]
-                        , li [ class "active" ]
-                            [ text "Data" ]
-                        ]
-                    ]
-                ]
-            ]
-        ]
+
+-- div []
+--     [ viewBreadcrumb
+--     ,
+--     ]
+-- viewBreadcrumb : Html msg
+-- viewBreadcrumb =
+--     div [ class "row" ]
+--         [ div [ class "container" ]
+--             [ div [ class "row" ]
+--                 [ div [ class "col-xs-12" ]
+--                     [ ol [ class "breadcrumb" ]
+--                         [ li []
+--                             [ a [ href "#" ]
+--                                 [ text "Home" ]
+--                             ]
+--                         , li []
+--                             [ a [ href "#" ]
+--                                 [ text "Library" ]
+--                             ]
+--                         , li [ class "active" ]
+--                             [ text "Data" ]
+--                         ]
+--                     ]
+--                 ]
+--             ]
+--         ]

@@ -1,6 +1,7 @@
 module Routes
     exposing
-        ( makeUrl
+        ( ExamplesNestedRoute(..)
+        , makeUrl
         , Route(..)
         , StatementsNestedRoute(..)
         , ToolsNestedRoute(..)
@@ -8,6 +9,7 @@ module Routes
         )
 
 -- import Authenticator.Model
+
 import Combine exposing (Parser)
 import Hop
 import Hop.Matchers exposing (match1, match2, nested1)
@@ -15,16 +17,29 @@ import Hop.Types
 import Navigation
 
 
+-- MAIN ROUTE
+
+
 type Route
     = AboutRoute
-    -- | AuthenticatorRoute Authenticator.Model.Route
-    | ExamplesRoute
+      -- | AuthenticatorRoute Authenticator.Model.Route
+    | ExamplesRoute ExamplesNestedRoute
     | HelpRoute
     | HomeRoute
     | NotFoundRoute
     | OrganizationsRoute
     | StatementsRoute StatementsNestedRoute
     | ToolsRoute ToolsNestedRoute
+
+
+
+-- NESTED ROUTES
+
+
+type ExamplesNestedRoute
+    = ExampleRoute String
+    | ExamplesIndexRoute
+    | ExamplesNotFoundRoute
 
 
 type StatementsNestedRoute
@@ -48,10 +63,14 @@ matchers : List (Hop.Types.PathMatcher Route)
 matchers =
     [ match1 HomeRoute ""
     , match1 AboutRoute "/about"
-    -- , match1 (AuthenticatorRoute Authenticator.Model.SignInRoute) "/sign_in"
-    -- , match1 (AuthenticatorRoute Authenticator.Model.SignOutRoute) "/sign_out"
-    -- , match1 (AuthenticatorRoute Authenticator.Model.SignUpRoute) "/sign_up"
-    , match1 ExamplesRoute "/examples"
+      -- , match1 (AuthenticatorRoute Authenticator.Model.SignInRoute) "/sign_in"
+      -- , match1 (AuthenticatorRoute Authenticator.Model.SignOutRoute) "/sign_out"
+      -- , match1 (AuthenticatorRoute Authenticator.Model.SignUpRoute) "/sign_up"
+    , nested1 ExamplesRoute
+        "/examples"
+        [ match1 ExamplesIndexRoute ""
+        , match2 ExampleRoute "/" idParser
+        ]
     , match1 HelpRoute "/help"
     , match1 OrganizationsRoute "/organizations"
     , nested1 StatementsRoute

@@ -5,7 +5,11 @@ module Requests
         , newTaskFlagAbuse
         , newTaskGetCard
         , newTaskGetCards
+        , newTaskGetExample
+        , newTaskGetExamples
         , newTaskGetStatements
+        , newTaskGetTool
+        , newTaskGetTools
         , newTaskRateStatement
         , updateFromDataId
         )
@@ -172,6 +176,58 @@ newTaskGetCards authenticationMaybe =
             )
 
 
+newTaskGetExample : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
+newTaskGetExample authenticationMaybe statementId =
+    let
+        authenticationHeaders =
+            case authenticationMaybe of
+                Just authentication ->
+                    [ ( "Retruco-API-Key", authentication.apiKey )
+                    ]
+
+                Nothing ->
+                    []
+    in
+        Http.fromJson decodeDataIdBody
+            (Http.send Http.defaultSettings
+                { verb = "GET"
+                , url =
+                    apiUrl ++ "statements/" ++ statementId ++ "?type=Usage"
+                , headers =
+                    [ ( "Accept", "application/json" )
+                    ]
+                        ++ authenticationHeaders
+                , body = Http.empty
+                }
+            )
+
+
+newTaskGetExamples : Maybe Authenticator.Model.Authentication -> Task Http.Error DataIdsBody
+newTaskGetExamples authenticationMaybe =
+    let
+        authenticationHeaders =
+            case authenticationMaybe of
+                Just authentication ->
+                    [ ( "Retruco-API-Key", authentication.apiKey )
+                    ]
+
+                Nothing ->
+                    []
+    in
+        Http.fromJson decodeDataIdsBody
+            (Http.send Http.defaultSettings
+                { verb = "GET"
+                , url =
+                    apiUrl ++ "statements?type=Usage"
+                , headers =
+                    [ ( "Accept", "application/json" )
+                    ]
+                        ++ authenticationHeaders
+                , body = Http.empty
+                }
+            )
+
+
 newTaskGetStatements : Maybe Authenticator.Model.Authentication -> Task Http.Error DataIdsBody
 newTaskGetStatements authenticationMaybe =
     let
@@ -192,6 +248,58 @@ newTaskGetStatements authenticationMaybe =
                         ++ "statements"
                         ++ "?depth=1&show=abuse&show=author&show=ballot&show=grounds&show=properties&show=tags"
                     )
+                , headers =
+                    [ ( "Accept", "application/json" )
+                    ]
+                        ++ authenticationHeaders
+                , body = Http.empty
+                }
+            )
+
+
+newTaskGetTool : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
+newTaskGetTool authenticationMaybe statementId =
+    let
+        authenticationHeaders =
+            case authenticationMaybe of
+                Just authentication ->
+                    [ ( "Retruco-API-Key", authentication.apiKey )
+                    ]
+
+                Nothing ->
+                    []
+    in
+        Http.fromJson decodeDataIdBody
+            (Http.send Http.defaultSettings
+                { verb = "GET"
+                , url =
+                    apiUrl ++ "statements/" ++ statementId ++ "?type=Software&type=Platform"
+                , headers =
+                    [ ( "Accept", "application/json" )
+                    ]
+                        ++ authenticationHeaders
+                , body = Http.empty
+                }
+            )
+
+
+newTaskGetTools : Maybe Authenticator.Model.Authentication -> Task Http.Error DataIdsBody
+newTaskGetTools authenticationMaybe =
+    let
+        authenticationHeaders =
+            case authenticationMaybe of
+                Just authentication ->
+                    [ ( "Retruco-API-Key", authentication.apiKey )
+                    ]
+
+                Nothing ->
+                    []
+    in
+        Http.fromJson decodeDataIdsBody
+            (Http.send Http.defaultSettings
+                { verb = "GET"
+                , url =
+                    apiUrl ++ "statements?type=Software&type=Platform"
                 , headers =
                     [ ( "Accept", "application/json" )
                     ]

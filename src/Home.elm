@@ -2,14 +2,13 @@ module Home exposing (init, InternalMsg(..), Model, Msg(..), MsgTranslation, Msg
 
 import Authenticator.Model
 import Dict
-import Html exposing (a, br, button, div, footer, h1, h2, h3, h4, Html, img, input, label, li, p, span, text, ul)
-import Html.Attributes exposing (alt, attribute, class, href, id, name, src, type', value)
+import Html exposing (..)
+import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Http
 import Task
-import Tools
 import Types exposing (Card, DataIdsBody, Statement, StatementCustom(..))
-import Requests exposing (newTaskGetCards)
+import Requests exposing (newTaskGetExamples, newTaskGetTools)
 import Views exposing (aForPath)
 
 
@@ -17,13 +16,15 @@ import Views exposing (aForPath)
 
 
 type alias Model =
-    { tools : List Statement
+    { examples : List Statement
+    , tools : List Statement
     }
 
 
 init : Model
 init =
-    { tools = []
+    { examples = []
+    , tools = []
     }
 
 
@@ -38,7 +39,8 @@ type ExternalMsg
 type InternalMsg
     = Error Http.Error
     | Load
-    | Loaded DataIdsBody
+    | LoadedExamples DataIdsBody
+    | LoadedTools DataIdsBody
 
 
 type Msg
@@ -77,25 +79,32 @@ update msg authenticationMaybe model =
         Error err ->
             let
                 _ =
-                    Debug.log "Cards Error" err
+                    Debug.log "Home Error" err
             in
                 ( model, Cmd.none )
 
         Load ->
             let
-                cmd =
-                    Task.perform
+                cmds =
+                    [ Task.perform
                         (\msg -> ForSelf (Error msg))
-                        (\msg -> ForSelf (Loaded msg))
-                        (newTaskGetCards authenticationMaybe)
+                        (\msg -> ForSelf (LoadedExamples msg))
+                        (newTaskGetExamples authenticationMaybe)
+                    , Task.perform
+                        (\msg -> ForSelf (Error msg))
+                        (\msg -> ForSelf (LoadedTools msg))
+                        (newTaskGetTools authenticationMaybe)
+                    ]
             in
-                ( model, cmd )
+                model ! cmds
 
-        Loaded body ->
-            ( { model
-                | tools =
-                    Dict.values body.data.statements |> List.filter Tools.isTool
-              }
+        LoadedExamples body ->
+            ( { model | examples = Dict.values body.data.statements }
+            , Cmd.none
+            )
+
+        LoadedTools body ->
+            ( { model | tools = Dict.values body.data.statements }
             , Cmd.none
             )
 
@@ -407,6 +416,38 @@ viewBanner authenticationMaybe model =
         ]
 
 
+viewExampleThumbnail : Statement -> Card -> Html Msg
+viewExampleThumbnail statement card =
+    let
+        exampleUrl =
+            "/examples/" ++ statement.id
+    in
+        div [ class "col-xs-6 col-md-3 " ]
+            [ div [ class "thumbnail example grey", onClick (navigate exampleUrl) ]
+                [ div [ class "visual" ]
+                    [ img [ alt "screen", src "img/screen1.png" ]
+                        []
+                    ]
+                , div [ class "caption" ]
+                    [ div [ class "example-author-thumb" ]
+                        [ img [ alt "screen", src "img/whitehouse.png" ]
+                            []
+                        ]
+                    , h4 []
+                        [ aForPath navigate exampleUrl [] [ text card.name ] ]
+                    , p []
+                        [ text "OpenSpending is a centralized platform on the topic financial data." ]
+                    , span [ class "label label-default label-tool" ]
+                        [ text "Default" ]
+                    , span [ class "label label-default label-tool" ]
+                        [ text "Default" ]
+                    , span [ class "label label-default label-tool" ]
+                        [ text "Default" ]
+                    ]
+                ]
+            ]
+
+
 viewExamples : Maybe Authenticator.Model.Authentication -> Model -> Html Msg
 viewExamples authenticationMaybe model =
     div [ class "row section" ]
@@ -414,38 +455,27 @@ viewExamples authenticationMaybe model =
             [ h3 [ class "zone-label" ]
                 [ text "Examples" ]
             , div [ class "row" ]
-                [ div [ class "col-xs-6 col-md-3 " ]
-                    [ div [ class "thumbnail example grey" ]
-                        [ div [ class "visual" ]
-                            [ img [ alt "screen", src "img/screen1.png" ]
-                                []
-                            ]
-                        , div [ class "caption" ]
-                            [ div [ class "example-author-thumb" ]
-                                [ img [ alt "screen", src "img/whitehouse.png" ]
+                ((model.examples
+                    |> List.take 8
+                    |> List.map
+                        (\statement ->
+                            case statement.custom of
+                                CardCustom card ->
+                                    viewExampleThumbnail statement card
+
+                                _ ->
+                                    Debug.crash "Unexpected statement.custom type"
+                        )
+                 )
+                    ++ [ div [ class "col-sm-12 text-center" ]
+                            [ a [ class "show-more" ]
+                                [ text "Show all 398"
+                                , span [ class "glyphicon glyphicon-menu-down" ]
                                     []
                                 ]
-                            , h4 []
-                                [ text "OpenSpending" ]
-                            , p []
-                                [ text "OpenSpending is a centralized platform on the topic financial data." ]
-                            , span [ class "label label-default label-tool" ]
-                                [ text "Default" ]
-                            , span [ class "label label-default label-tool" ]
-                                [ text "Default" ]
-                            , span [ class "label label-default label-tool" ]
-                                [ text "Default" ]
                             ]
-                        ]
-                    ]
-                , div [ class "col-sm-12 text-center" ]
-                    [ a [ class "show-more" ]
-                        [ text "Show all 398"
-                        , span [ class "glyphicon glyphicon-menu-down" ]
-                            []
-                        ]
-                    ]
-                ]
+                       ]
+                )
             ]
         ]
 
