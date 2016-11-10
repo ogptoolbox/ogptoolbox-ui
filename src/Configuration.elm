@@ -1,4 +1,4 @@
-module Configuration exposing (apiUrl)
+module Configuration exposing (..)
 
 
 apiUrl : String

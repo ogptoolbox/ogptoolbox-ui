@@ -1,36 +1,10 @@
-module Views
-    exposing
-        ( aForPath
-        , viewArgumentType
-        , viewKind
-        , viewLanguageCode
-        , viewName
-        , viewNotFound
-        , viewOption
-        , viewStatementLine
-        , viewStatementLineBody
-        , viewStatementLinePanel
-        )
+module Views exposing (..)
 
 import Authenticator.Model
 import Dict
 import Json.Decode
-import Html exposing (a, Attribute, button, dd, div, dl, dt, h4, Html, img, input, label, option, p, select, span, text)
-import Html.Attributes
-    exposing
-        ( attribute
-        , class
-        , disabled
-        , for
-        , href
-        , id
-        , placeholder
-        , selected
-        , src
-        , title
-        , type'
-        , value
-        )
+import Html exposing (..)
+import Html.Attributes exposing (..)
 import Html.Attributes.Aria exposing (ariaDescribedby, ariaHidden, ariaLabel, ariaPressed, role)
 import Html.Events exposing (on, onClick, onInput, onWithOptions, targetValue)
 import Routes exposing (makeUrl)

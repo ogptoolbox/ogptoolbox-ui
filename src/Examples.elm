@@ -1,15 +1,4 @@
-module Examples
-    exposing
-        ( init
-        , InternalMsg
-        , Model
-        , MsgTranslation
-        , MsgTranslator
-        , translateMsg
-        , update
-        , urlUpdate
-        , view
-        )
+module Examples exposing (..)
 
 import Authenticator.Model
 import Browse exposing (PillType(..))

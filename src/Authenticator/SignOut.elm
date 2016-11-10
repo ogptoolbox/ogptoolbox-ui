@@ -1,4 +1,4 @@
-module Authenticator.SignOut exposing (Model, init, Msg, update, viewModalBody)
+module Authenticator.SignOut exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)

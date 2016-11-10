@@ -1,4 +1,4 @@
-module Main exposing (main)
+module Main exposing (..)
 
 -- import Cards
 -- import Html.Attributes.Aria exposing (..)

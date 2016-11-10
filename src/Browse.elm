@@ -1,4 +1,4 @@
-module Browse exposing (PillType(..), view)
+module Browse exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)

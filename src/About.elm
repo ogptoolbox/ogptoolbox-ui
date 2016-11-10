@@ -1,7 +1,7 @@
-module About exposing (init, InternalMsg, Model, MsgTranslation, MsgTranslator, translateMsg, update, view)
+module About exposing (..)
 
 import Authenticator.Model
-import Html exposing (a, br, div, h1, h2, h3, Html, img, input, label, li, p, span, text, ul)
+import Html exposing (..)
 
 
 -- MODEL

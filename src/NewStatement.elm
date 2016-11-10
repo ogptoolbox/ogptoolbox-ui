@@ -1,4 +1,4 @@
-module NewStatement exposing (init, Msg, Model, update, view)
+module NewStatement exposing (..)
 
 import Authenticator.Model
 import Dict exposing (Dict)

@@ -1,12 +1,4 @@
-module Routes
-    exposing
-        ( ExamplesNestedRoute(..)
-        , makeUrl
-        , Route(..)
-        , StatementsNestedRoute(..)
-        , ToolsNestedRoute(..)
-        , urlParser
-        )
+module Routes exposing (..)
 
 -- import Authenticator.Model
 

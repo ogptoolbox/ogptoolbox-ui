@@ -1,11 +1,10 @@
-module Statements exposing (init, InternalMsg, Model, MsgTranslation, MsgTranslator, translateMsg, update, urlUpdate,
-    view)
+module Statements exposing (..)
 
 import Authenticator.Model
 import Dict exposing (Dict)
 import Hop.Types
-import Html exposing (article, h1, Html, li, text, ul)
-import Html.Attributes exposing (class)
+import Html exposing (..)
+import Html.Attributes exposing (..)
 import Html.App
 import Http
 import Navigation

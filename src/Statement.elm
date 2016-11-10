@@ -1,10 +1,10 @@
-module Statement exposing (init, InternalMsg, Model, Msg, MsgTranslation, MsgTranslator, translateMsg, update, view)
+module Statement exposing (..)
 
 import Authenticator.Model
 import Dict exposing (Dict)
-import Html exposing (article, div, hr, Html, li, node, text, ul)
+import Html exposing (..)
 import Html.App
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (..)
 import Http
 import Navigation
 import NewGroundArgument

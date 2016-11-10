@@ -1,4 +1,4 @@
-module Authenticator.SignIn exposing (Model, init, Msg, update, viewModalBody)
+module Authenticator.SignIn exposing (..)
 
 import Configuration exposing (apiUrl)
 import Dict exposing (Dict)
@@ -148,7 +148,7 @@ viewModalBody model =
                                                 , onInput UsernameInput
                                                 ]
                                                 []
-                                            , span 
+                                            , span
                                                 [ class "help-block"
                                                 , id "username-error"
                                                 ]
@@ -189,7 +189,7 @@ viewModalBody model =
                                                 , onInput PasswordInput
                                                 ]
                                                 []
-                                            , span 
+                                            , span
                                                 [ class "help-block"
                                                 , id "password-error"
                                                 ]

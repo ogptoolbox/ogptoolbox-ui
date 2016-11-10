@@ -1,15 +1,4 @@
-module Tools
-    exposing
-        ( init
-        , InternalMsg
-        , Model
-        , MsgTranslation
-        , MsgTranslator
-        , translateMsg
-        , update
-        , urlUpdate
-        , view
-        )
+module Tools exposing (..)
 
 import Authenticator.Model
 import Browse exposing (PillType(..))

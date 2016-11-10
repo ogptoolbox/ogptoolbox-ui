@@ -1,4 +1,4 @@
-module Authenticator.View exposing (modalTitle, viewModalBody)
+module Authenticator.View exposing (..)
 
 import Authenticator.Model exposing (Model, Route(..))
 import Authenticator.SignIn as SignIn

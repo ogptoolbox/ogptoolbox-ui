@@ -1,4 +1,4 @@
-module Authenticator.Update exposing (Msg(..), update)
+module Authenticator.Update exposing (..)
 
 import Authenticator.Model exposing (Authentication, Model)
 import Authenticator.SignIn as SignIn

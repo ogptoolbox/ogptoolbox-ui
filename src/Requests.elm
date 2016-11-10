@@ -1,18 +1,4 @@
-module Requests
-    exposing
-        ( newTaskCreateStatement
-        , newTaskDeleteStatementRating
-        , newTaskFlagAbuse
-        , newTaskGetCard
-        , newTaskGetCards
-        , newTaskGetExample
-        , newTaskGetExamples
-        , newTaskGetStatements
-        , newTaskGetTool
-        , newTaskGetTools
-        , newTaskRateStatement
-        , updateFromDataId
-        )
+module Requests exposing (..)
 
 import Authenticator.Model
 import Configuration exposing (apiUrl)
