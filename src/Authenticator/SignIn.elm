@@ -1,4 +1,4 @@
-module Authenticator.SignIn exposing (Model, init, Msg, update, view)
+module Authenticator.SignIn exposing (Model, init, Msg, update, viewModalBody)
 
 import Configuration exposing (apiUrl)
 import Dict exposing (Dict)
@@ -121,84 +121,147 @@ update msg model =
 -- VIEW
 
 
-view : Model -> Html Msg
-view model =
-    Html.form [ onSubmit Submit ]
-        [
-            let
-                errorMaybe = Dict.get "username" model.errors
-            in
-                case errorMaybe of
-                    Just error ->
-                        div [ class "form-group has-error"]
-                            [ label [ class "control-label", for "username" ] [ text "Username" ]
-                            , input
-                                [ ariaDescribedby "username-error"
-                                , class "form-control"
-                                , id "username"
-                                , placeholder "John Doe"
-                                , type' "text"
-                                , value model.username
-                                , onInput UsernameInput
-                                ]
+viewModalBody : Model -> Html Msg
+viewModalBody model =
+    div [ class "modal-body" ]
+        [ div [ class "row" ]
+            [ div [ class "col-xs-6" ]
+                [ div [ class "well" ]
+                    [ Html.form [ onSubmit Submit ]
+                        [
+                            let
+                                errorMaybe = Dict.get "username" model.errors
+                            in
+                                case errorMaybe of
+                                    Just error ->
+                                        div [ class "form-group has-error"]
+                                            [ label [ class "control-label", for "username" ] [ text "Email" ]
+                                            , input
+                                                [ ariaDescribedby "username-error"
+                                                , class "form-control"
+                                                , id "username"
+                                                , placeholder "john.doe@ogptoolbox.org"
+                                                , required True
+                                                , title "Please enter you email"
+                                                , type' "text"
+                                                , value model.username
+                                                , onInput UsernameInput
+                                                ]
+                                                []
+                                            , span 
+                                                [ class "help-block"
+                                                , id "username-error"
+                                                ]
+                                                [ text error ]
+                                            ]
+                                    Nothing ->
+                                        div [ class "form-group"]
+                                            [ label [ class "control-label", for "username" ] [ text "Email" ]
+                                            , input
+                                                [ class "form-control"
+                                                , id "username"
+                                                , placeholder "john.doe@ogptoolbox.org"
+                                                , required True
+                                                , title "Please enter you email"
+                                                , type' "text"
+                                                , value model.username
+                                                , onInput UsernameInput
+                                                ]
+                                                []
+                                            ]
+                        ,
+                            let
+                                errorMaybe = Dict.get "password" model.errors
+                            in
+                                case errorMaybe of
+                                    Just error ->
+                                        div [ class "form-group has-error"]
+                                            [ label [ class "control-label", for "password" ] [ text "Password" ]
+                                            , input
+                                                [ ariaDescribedby "password-error"
+                                                , class "form-control"
+                                                , id "password"
+                                                , placeholder "John Doe"
+                                                , required True
+                                                , title "Please enter you password"
+                                                , type' "password"
+                                                , value model.password
+                                                , onInput PasswordInput
+                                                ]
+                                                []
+                                            , span 
+                                                [ class "help-block"
+                                                , id "password-error"
+                                                ]
+                                                [ text error ]
+                                            ]
+                                    Nothing ->
+                                        div [ class "form-group"]
+                                            [ label [ class "control-label", for "password" ] [ text "Password" ]
+                                            , input
+                                                [ class "form-control"
+                                                , id "password"
+                                                , placeholder "Your secret password"
+                                                , required True
+                                                , title "Please enter you password"
+                                                , type' "password"
+                                                , value model.password
+                                                , onInput PasswordInput
+                                                ]
+                                                []
+                                            ]
+                        -- , div [ class "alert alert-error hide", id "loginErrorMsg" ]
+                        --     [ text "Wrong username og password" ]
+                        -- , div [ class "checkbox" ]
+                        --     [ label []
+                        --         [ input [ id "remember", name "remember", type' "checkbox" ]
+                        --             []
+                        --         , text "Remember login                                  "
+                        --         ]
+                        --     ]
+                        , button
+                            [ class "btn btn-block btn-default grey", type' "submit" ]
+                            [ text "Sign In" ]
+                        ]
+                    ]
+                ]
+            , div [ class "col-xs-6" ]
+                [ div [ class "well well-right" ]
+                    [ p [ class "lead" ]
+                        [ text "Create your account now" ]
+                    , ul [ class "list-unstyled", attribute "style" "line-height: 2" ]
+                        [ li []
+                            [ span [ class "fa fa-check text-success" ]
                                 []
-                            , span 
-                                [ class "help-block"
-                                , id "username-error"
-                                ]
-                                [ text error ]
+                            , text "Improve existing content"
                             ]
-                    Nothing ->
-                        div [ class "form-group"]
-                            [ label [ class "control-label", for "username" ] [ text "Username" ]
-                            , input
-                                [ class "form-control"
-                                , id "username"
-                                , placeholder "John Doe"
-                                , type' "text"
-                                , value model.username
-                                , onInput UsernameInput
-                                ]
+                        , li []
+                            [ span [ class "fa fa-check text-success" ]
                                 []
+                            , text "Vote the best contributions"
                             ]
-        ,
-            let
-                errorMaybe = Dict.get "password" model.errors
-            in
-                case errorMaybe of
-                    Just error ->
-                        div [ class "form-group has-error"]
-                            [ label [ class "control-label", for "password" ] [ text "Password" ]
-                            , input
-                                [ ariaDescribedby "password-error"
-                                , class "form-control"
-                                , id "password"
-                                , placeholder "John Doe"
-                                , type' "password"
-                                , value model.password
-                                , onInput PasswordInput
-                                ]
+                        , li []
+                            [ span [ class "fa fa-check text-success" ]
                                 []
-                            , span 
-                                [ class "help-block"
-                                , id "password-error"
-                                ]
-                                [ text error ]
+                            , text "Add a new tool or usage"
                             ]
-                    Nothing ->
-                        div [ class "form-group"]
-                            [ label [ class "control-label", for "password" ] [ text "Password" ]
-                            , input
-                                [ class "form-control"
-                                , id "password"
-                                , placeholder "Your secret password"
-                                , type' "password"
-                                , value model.password
-                                , onInput PasswordInput
-                                ]
+                        , li []
+                            [ span [ class "fa fa-check text-success" ]
                                 []
+                            , text "Create a page for your organization "
                             ]
-        , button
-            [ class "btn btn-primary", type' "submit" ]
-            [ text "Sign In" ]
+                        , li []
+                            [ a [ href "/read-more/" ]
+                                [ u []
+                                    [ text "Read more" ]
+                                ]
+                            ]
+                        ]
+                    , p []
+                        [ a [ class "btn btn-block btn-default ", href "/new-customer/" ]
+                            [ text "Register now!" ]
+                        ]
+                    ]
+                ]
+            ]
         ]

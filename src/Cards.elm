@@ -1,4 +1,4 @@
-module Cards exposing (..)
+module Cards exposing (init, InternalMsg, Model, MsgTranslation, MsgTranslator, translateMsg, update, view)
 
 import Authenticator.Model
 import Card

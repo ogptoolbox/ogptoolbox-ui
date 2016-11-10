@@ -1,4 +1,4 @@
-module Authenticator.View exposing (view)
+module Authenticator.View exposing (modalTitle, viewModalBody)
 
 import Authenticator.Model exposing (Model, Route(..))
 import Authenticator.SignIn as SignIn
@@ -9,12 +9,23 @@ import Html exposing (Html)
 import Html.App
 
 
-view : Route -> Model -> Html Msg
-view route model =
+modalTitle : Route -> String
+modalTitle route =
     case route of
         SignInRoute ->
-            Html.App.map SignInMsg (SignIn.view model.signIn)
+            "Sign in to contribute"
         SignOutRoute ->
-            Html.App.map SignOutMsg (SignOut.view model.signOut)
+            "Sign out and contribute later"
         SignUpRoute ->
-            Html.App.map SignUpMsg (SignUp.view model.signUp)
+            "Sign up to contribute"
+
+
+viewModalBody : Route -> Model -> Html Msg
+viewModalBody route model =
+    case route of
+        SignInRoute ->
+            Html.App.map SignInMsg (SignIn.viewModalBody model.signIn)
+        SignOutRoute ->
+            Html.App.map SignOutMsg (SignOut.viewModalBody model.signOut)
+        SignUpRoute ->
+            Html.App.map SignUpMsg (SignUp.viewModalBody model.signUp)

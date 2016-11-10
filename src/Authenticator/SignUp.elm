@@ -1,4 +1,4 @@
-module Authenticator.SignUp exposing (Model, init, Msg, update, view)
+module Authenticator.SignUp exposing (Model, init, Msg, update, viewModalBody)
 
 import Configuration exposing (apiUrl)
 import Dict exposing (Dict)
@@ -134,121 +134,141 @@ update msg model =
 -- VIEW
 
 
-view : Model -> Html Msg
-view model =
-    Html.form [ onSubmit Submit ]
-        [
-            let
-                errorMaybe = Dict.get "username" model.errors
-            in
-                case errorMaybe of
-                    Just error ->
-                        div [ class "form-group has-error"]
-                            [ label [ class "control-label", for "username" ] [ text "Username" ]
-                            , input
-                                [ ariaDescribedby "username-error"
-                                , class "form-control"
-                                , id "username"
-                                , placeholder "John Doe"
-                                , type' "text"
-                                , value model.username
-                                , onInput UsernameInput
-                                ]
-                                []
-                            , span 
-                                [ class "help-block"
-                                , id "username-error"
-                                ]
-                                [ text error ]
-                            ]
-                    Nothing ->
-                        div [ class "form-group"]
-                            [ label [ class "control-label", for "username" ] [ text "Username" ]
-                            , input
-                                [ class "form-control"
-                                , id "username"
-                                , placeholder "John Doe"
-                                , type' "text"
-                                , value model.username
-                                , onInput UsernameInput
-                                ]
-                                []
-                            ]
-        ,
-            let
-                errorMaybe = Dict.get "email" model.errors
-            in
-                case errorMaybe of
-                    Just error ->
-                        div [ class "form-group has-error"]
-                            [ label [ class "control-label", for "email" ] [ text "Email" ]
-                            , input
-                                [ ariaDescribedby "email-error"
-                                , class "form-control"
-                                , id "email"
-                                , placeholder "john.doe@ogptoolbox.org"
-                                , type' "email"
-                                , value model.email
-                                , onInput EmailInput
-                                ]
-                                []
-                            , span 
-                                [ class "help-block"
-                                , id "email-error"
-                                ]
-                                [ text error ]
-                            ]
-                    Nothing ->
-                        div [ class "form-group"]
-                            [ label [ class "control-label", for "email" ] [ text "Email" ]
-                            , input
-                                [ class "form-control"
-                                , id "email"
-                                , placeholder "john.doe@ogptoolbox.org"
-                                , type' "email"
-                                , value model.email
-                                , onInput EmailInput
-                                ]
-                                []
-                            ]
-        ,
-            let
-                errorMaybe = Dict.get "password" model.errors
-            in
-                case errorMaybe of
-                    Just error ->
-                        div [ class "form-group has-error"]
-                            [ label [ class "control-label", for "password" ] [ text "Password" ]
-                            , input
-                                [ ariaDescribedby "password-error"
-                                , class "form-control"
-                                , id "password"
-                                , placeholder "Your secret password"
-                                , type' "password"
-                                , value model.password
-                                , onInput PasswordInput
-                                ]
-                                []
-                            , span 
-                                [ class "help-block"
-                                , id "password-error"
-                                ]
-                                [ text error ]
-                            ]
-                    Nothing ->
-                        div [ class "form-group"]
-                            [ label [ class "control-label", for "password" ] [ text "Password" ]
-                            , input
-                                [ class "form-control"
-                                , id "password"
-                                , placeholder "John Doe"
-                                , type' "password"
-                                , value model.password
-                                , onInput PasswordInput
-                                ]
-                                []
-                            ]
-        , button
-            [ class "btn btn-primary", type' "submit" ]
-            [ text "Sign Up" ]
+viewModalBody : Model -> Html Msg
+viewModalBody model =
+    div [ class "modal-body" ]
+        [ div [ class "row" ]
+            [ div [ class "col-xs-6" ]
+                [ div [ class "well" ]
+                    [ Html.form [ onSubmit Submit ]
+                        [
+                            let
+                                errorMaybe = Dict.get "username" model.errors
+                            in
+                                case errorMaybe of
+                                    Just error ->
+                                        div [ class "form-group has-error"]
+                                            [ label [ class "control-label", for "username" ] [ text "Username" ]
+                                            , input
+                                                [ ariaDescribedby "username-error"
+                                                , class "form-control"
+                                                , id "username"
+                                                , placeholder "John Doe"
+                                                , required True
+                                                , title "Please enter you username"
+                                                , type' "text"
+                                                , value model.username
+                                                , onInput UsernameInput
+                                                ]
+                                                []
+                                            , span 
+                                                [ class "help-block"
+                                                , id "username-error"
+                                                ]
+                                                [ text error ]
+                                            ]
+                                    Nothing ->
+                                        div [ class "form-group"]
+                                            [ label [ class "control-label", for "username" ] [ text "Username" ]
+                                            , input
+                                                [ class "form-control"
+                                                , id "username"
+                                                , placeholder "John Doe"
+                                                , required True
+                                                , title "Please enter you username"
+                                                , type' "text"
+                                                , value model.username
+                                                , onInput UsernameInput
+                                                ]
+                                                []
+                                            ]
+                        ,
+                            let
+                                errorMaybe = Dict.get "email" model.errors
+                            in
+                                case errorMaybe of
+                                    Just error ->
+                                        div [ class "form-group has-error"]
+                                            [ label [ class "control-label", for "email" ] [ text "Email" ]
+                                            , input
+                                                [ ariaDescribedby "email-error"
+                                                , class "form-control"
+                                                , id "email"
+                                                , placeholder "john.doe@ogptoolbox.org"
+                                                , required True
+                                                , title "Please enter you email"
+                                                , type' "email"
+                                                , value model.email
+                                                , onInput EmailInput
+                                                ]
+                                                []
+                                            , span 
+                                                [ class "help-block"
+                                                , id "email-error"
+                                                ]
+                                                [ text error ]
+                                            ]
+                                    Nothing ->
+                                        div [ class "form-group"]
+                                            [ label [ class "control-label", for "email" ] [ text "Email" ]
+                                            , input
+                                                [ class "form-control"
+                                                , id "email"
+                                                , placeholder "john.doe@ogptoolbox.org"
+                                                , required True
+                                                , title "Please enter you email"
+                                                , type' "email"
+                                                , value model.email
+                                                , onInput EmailInput
+                                                ]
+                                                []
+                                            ]
+                        ,
+                            let
+                                errorMaybe = Dict.get "password" model.errors
+                            in
+                                case errorMaybe of
+                                    Just error ->
+                                        div [ class "form-group has-error"]
+                                            [ label [ class "control-label", for "password" ] [ text "Password" ]
+                                            , input
+                                                [ ariaDescribedby "password-error"
+                                                , class "form-control"
+                                                , id "password"
+                                                , placeholder "Your secret password"
+                                                , required True
+                                                , title "Please enter you password"
+                                                , type' "password"
+                                                , value model.password
+                                                , onInput PasswordInput
+                                                ]
+                                                []
+                                            , span 
+                                                [ class "help-block"
+                                                , id "password-error"
+                                                ]
+                                                [ text error ]
+                                            ]
+                                    Nothing ->
+                                        div [ class "form-group"]
+                                            [ label [ class "control-label", for "password" ] [ text "Password" ]
+                                            , input
+                                                [ class "form-control"
+                                                , id "password"
+                                                , placeholder "John Doe"
+                                                , required True
+                                                , title "Please enter you password"
+                                                , type' "password"
+                                                , value model.password
+                                                , onInput PasswordInput
+                                                ]
+                                                []
+                                            ]
+                        , button
+                            [ class "btn btn-primary", type' "submit" ]
+                            [ text "Sign Up" ]
+                        ]
+                    ]
+                ]
+            ]
         ]

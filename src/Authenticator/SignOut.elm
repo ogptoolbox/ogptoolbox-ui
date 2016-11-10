@@ -1,4 +1,4 @@
-module Authenticator.SignOut exposing (Model, init, Msg, update, view)
+module Authenticator.SignOut exposing (Model, init, Msg, update, viewModalBody)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -32,10 +32,12 @@ update msg model =
 -- VIEW
 
 
-view : Model -> Html Msg
-view model =
-    Html.form [ onSubmit Submit ]
-        [ button
-            [ class "btn btn-primary", type' "submit" ]
-            [ text "Sign Out" ]
+viewModalBody : Model -> Html Msg
+viewModalBody model =
+    div [ class "modal-body" ]
+        [ Html.form [ onSubmit Submit ]
+            [ button
+                [ class "btn btn-primary", type' "submit" ]
+                [ text "Sign Out" ]
+            ]
         ]

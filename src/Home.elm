@@ -1,4 +1,4 @@
-module Home exposing (..)
+module Home exposing (init, InternalMsg(..), Model, Msg(..), MsgTranslation, MsgTranslator, translateMsg, update, view)
 
 import Authenticator.Model
 import Dict
@@ -7,7 +7,6 @@ import Html.Attributes exposing (alt, attribute, class, href, id, name, src, typ
 import Html.Events exposing (onClick)
 import Http
 import Task
-import Footer
 import Types exposing (Card, DataIdsBody, Statement, StatementCustom(..))
 import Requests exposing (newTaskGetCards)
 import Views exposing (aForPath)
@@ -121,7 +120,6 @@ view authenticationMaybe model =
         , viewExamples authenticationMaybe model
         , viewTools authenticationMaybe model
         , viewOrganizations authenticationMaybe model
-        , Footer.view
         ]
 
 
@@ -498,3 +496,8 @@ viewToolThumbnail statement card =
                     ]
                 ]
             ]
+
+
+viewModalTitle : Model -> Html Msg
+viewModalTitle model =
+    text "Sign up to contribute"

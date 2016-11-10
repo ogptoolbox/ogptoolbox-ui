@@ -1,18 +1,23 @@
-module Main exposing (..)
+module Main exposing (main)
 
 import About
 import Authenticator.Model
 import Authenticator.Update
 import Authenticator.View
+import Footer
 
 
 -- import Cards
 
 import Examples
 import Help
-import Home exposing (Msg(..))
+import Home
 import Hop.Types
-import Html exposing (a, button, div, form, header, Html, img, input, li, nav, p, span, text, ul)
+import Json.Decode
+import Html exposing (a, button, div, form, header, h4, Html, img, input, li, nav, p, span, text, ul)
+import Html.Attributes exposing (classList, style)
+import Html.Attributes.Aria exposing (ariaHidden, ariaLabelledby)
+import Html.Events exposing (onWithOptions)
 import Html.App
 import Html.Attributes exposing (attribute, class, href, id, placeholder, src, type')
 
@@ -45,8 +50,8 @@ main =
 type alias Model =
     { aboutModel : About.Model
     , authenticationMaybe : Maybe Authenticator.Model.Authentication
-    , authenticatorModel :
-        Authenticator.Model.Model
+    , authenticatorModel : Authenticator.Model.Model
+    , authenticatorRouteMaybe : Maybe Authenticator.Model.Route
         -- , cardsModel : Cards.Model
     , examplesModel : Examples.Model
     , helpModel : Help.Model
@@ -67,6 +72,7 @@ init ( route, location ) =
     , authenticatorModel =
         Authenticator.Model.init
         -- , cardsModel = Cards.init
+    , authenticatorRouteMaybe = Nothing
     , examplesModel = Examples.init
     , helpModel = Help.init
     , homeModel = Home.init
@@ -97,8 +103,8 @@ urlUpdate ( route, location ) model =
             AboutRoute ->
                 ( model', Cmd.none )
 
-            AuthenticatorRoute _ ->
-                ( model', Cmd.none )
+            -- AuthenticatorRoute _ ->
+            --     ( model', Cmd.none )
 
             -- CardsRoute childRoute ->
             --     let
@@ -148,6 +154,7 @@ urlUpdate ( route, location ) model =
 type Msg
     = AboutMsg About.InternalMsg
     | AuthenticatorMsg Authenticator.Update.Msg
+    | AuthenticatorRouteMsg (Maybe Authenticator.Model.Route)
       -- | CardsMsg Cards.InternalMsg
     | ExamplesMsg Examples.InternalMsg
     | HelpMsg Help.InternalMsg
@@ -265,14 +272,6 @@ update msg model =
             in
                 ( { model | aboutModel = aboutModel }, Cmd.map translateAboutMsg childEffect )
 
-        Navigate path ->
-            let
-                command =
-                    makeUrl path
-                        |> Navigation.newUrl
-            in
-                ( model, command )
-
         AuthenticatorMsg childMsg ->
             let
                 ( authenticatorModel, childEffect ) =
@@ -291,6 +290,11 @@ update msg model =
                             --         Cards.init
                             --     else
                             --         model.cardsModel
+                        , authenticatorRouteMaybe =
+                            if changed then
+                                Nothing
+                            else
+                                model.authenticatorRouteMaybe
                         , statementsModel =
                             if changed then
                                 Statements.init
@@ -305,6 +309,9 @@ update msg model =
                         ( model', Cmd.none )
             in
                 model'' ! [ Cmd.map AuthenticatorMsg childEffect, effect'' ]
+
+        AuthenticatorRouteMsg authenticatorRouteMaybe ->
+            ( { model | authenticatorRouteMaybe = authenticatorRouteMaybe }, Cmd.none)
 
         -- CardsMsg childMsg ->
         --     let
@@ -333,6 +340,14 @@ update msg model =
             in
                 ( { model | homeModel = homeModel }, Cmd.map translateHomeMsg childEffect )
 
+        Navigate path ->
+            let
+                command =
+                    makeUrl path
+                        |> Navigation.newUrl
+            in
+                ( model, command )
+
         OrganizationsMsg childMsg ->
             let
                 ( organizationsModel, childEffect ) =
@@ -355,12 +370,105 @@ update msg model =
                 ( { model | toolsModel = toolsModel }, Cmd.map translateToolsMsg childEffect )
 
 
-
 -- VIEW
 
 
 view : Model -> Html Msg
 view model =
+    div []
+        [ viewHeader model
+        , viewContent model
+        , Footer.view
+        , viewAuthenticatorModal model
+        , viewBackdrop model
+        ]
+
+
+viewAuthenticatorModal : Model -> Html Msg
+viewAuthenticatorModal model =
+    case model.authenticatorRouteMaybe of
+        Just authenticatorRoute ->
+            div
+                [ ariaLabelledby "modal-title"
+                , attribute "role" "dialog"
+                , attribute "tabindex" "-1"
+                , class "modal fade in"
+                , style [ ("display", "block") ]
+                ]
+                [ div [ class "modal-dialog", id "login-overlay" ]
+                    [ div [ class "modal-content" ]
+                        [ div [ class "modal-header" ]
+                            [ button
+                                [ attribute "data-dismiss" "modal"
+                                , class "close"
+                                , onWithOptions
+                                    "click"
+                                    { preventDefault = True, stopPropagation = False }
+                                    (Json.Decode.succeed (AuthenticatorRouteMsg Nothing))
+                                , type' "button"
+                                ]
+                                [ span [ ariaHidden True ]
+                                    [ text "×" ]
+                                , span [ class "sr-only" ]
+                                    [ text "Close" ]
+                                ]
+                            , h4 [ class "modal-title", id "modal-title" ]
+                                [ text (Authenticator.View.modalTitle authenticatorRoute) ]
+                            ]
+                        , Html.App.map
+                            AuthenticatorMsg
+                            (Authenticator.View.viewModalBody authenticatorRoute model.authenticatorModel)
+                        ]
+                    ]
+                ]
+        Nothing ->
+            text ""
+
+
+viewBackdrop : Model -> Html Msg
+viewBackdrop model =
+    div [ classList [ ( "modal-backdrop in", model.authenticatorRouteMaybe /= Nothing ) ] ]
+        []
+
+
+viewContent : Model -> Html Msg
+viewContent model =
+    case model.route of
+        AboutRoute ->
+            Html.App.map translateAboutMsg (About.view model.authenticationMaybe model.aboutModel)
+
+        -- AuthenticatorRoute subRoute ->
+        --     Html.App.map AuthenticatorMsg (Authenticator.View.view subRoute model.authenticatorModel)
+
+        -- CardsRoute nestedRoute ->
+        --     Html.App.map translateCardsMsg (Cards.view model.authenticationMaybe model.cardsModel)
+        ExamplesRoute ->
+            Html.App.map translateExamplesMsg (Examples.view model.authenticationMaybe model.examplesModel)
+
+        HelpRoute ->
+            Html.App.map translateHelpMsg (Help.view model.authenticationMaybe model.helpModel)
+
+        HomeRoute ->
+            Html.App.map translateHomeMsg (Home.view model.authenticationMaybe model.homeModel)
+
+        NotFoundRoute ->
+            viewNotFound
+
+        OrganizationsRoute ->
+            Html.App.map translateOrganizationsMsg
+                (Organizations.view model.authenticationMaybe model.organizationsModel)
+
+        StatementsRoute _ ->
+            Html.App.map translateStatementsMsg
+                (Statements.view model.authenticationMaybe model.statementsModel)
+
+        ToolsRoute _ ->
+            Html.App.map translateToolsMsg
+                (Tools.view model.authenticationMaybe model.toolsModel)
+
+
+viewHeader : Model -> Html Msg
+viewHeader model =
     let
         profileNavItem =
             case model.authenticationMaybe of
@@ -373,10 +481,28 @@ view model =
         signInOrOutNavItem =
             case model.authenticationMaybe of
                 Just authentication ->
-                    li [] [ aForPath Navigate "/sign_out" [] [ text "Sign Out" ] ]
+                    li []
+                        [ a
+                            [ href "#"
+                            , onWithOptions
+                                "click"
+                                { preventDefault = True, stopPropagation = False }
+                                (Json.Decode.succeed (AuthenticatorRouteMsg (Just Authenticator.Model.SignOutRoute)))
+                            ]
+                            [ text "Sign Out" ]
+                        ]
 
                 Nothing ->
-                    li [] [ aForPath Navigate "/sign_in" [] [ text "Sign In" ] ]
+                    li []
+                        [ a
+                            [ href "#"
+                            , onWithOptions
+                                "click"
+                                { preventDefault = True, stopPropagation = False }
+                                (Json.Decode.succeed (AuthenticatorRouteMsg (Just Authenticator.Model.SignInRoute)))
+                            ]
+                            [ text "Sign In" ]
+                        ]
 
         signUpNavItem =
             case model.authenticationMaybe of
@@ -384,14 +510,30 @@ view model =
                     text ""
 
                 Nothing ->
-                    li [] [ aForPath Navigate "/sign_up" [] [ text "Sign Up" ] ]
+                    li []
+                        [ a
+                            [ href "#"
+                            , onWithOptions
+                                "click"
+                                { preventDefault = True, stopPropagation = False }
+                                (Json.Decode.succeed (AuthenticatorRouteMsg (Just Authenticator.Model.SignUpRoute)))
+                            ]
+                            [ text "Sign Up" ]
+                        ]
     in
         div []
-            ([ header []
+            [ header []
                 [ nav [ class "navbar navbar-default navbar-fixed-top", attribute "role" "navigation" ]
                     [ div [ class "container" ]
                         [ div [ class "navbar-header" ]
-                            [ button [ attribute "aria-controls" "navbar", attribute "aria-expanded" "false", class "navbar-toggle collapsed", attribute "data-target" "#navbar", attribute "data-toggle" "collapse", type' "button" ]
+                            [ button
+                                [ attribute "aria-controls" "navbar"
+                                , attribute "aria-expanded" "false"
+                                , class "navbar-toggle collapsed"
+                                , attribute "data-target" "#navbar"
+                                , attribute "data-toggle" "collapse"
+                                , type' "button"
+                                ]
                                 [ span [ class "sr-only" ]
                                     [ text "Toggle navigation" ]
                                 , span [ class "icon-bar" ]
@@ -451,45 +593,6 @@ view model =
                     ]
                 ]
              ]
-                ++ [ viewContent model ]
-            )
-
-
-viewContent : Model -> Html Msg
-viewContent model =
-    case model.route of
-        AboutRoute ->
-            Html.App.map translateAboutMsg (About.view model.authenticationMaybe model.aboutModel)
-
-        AuthenticatorRoute subRoute ->
-            Html.App.map AuthenticatorMsg (Authenticator.View.view subRoute model.authenticatorModel)
-
-        -- CardsRoute nestedRoute ->
-        --     Html.App.map translateCardsMsg (Cards.view model.authenticationMaybe model.cardsModel)
-        ExamplesRoute ->
-            Html.App.map translateExamplesMsg (Examples.view model.authenticationMaybe model.examplesModel)
-
-        HelpRoute ->
-            Html.App.map translateHelpMsg (Help.view model.authenticationMaybe model.helpModel)
-
-        HomeRoute ->
-            Html.App.map translateHomeMsg (Home.view model.authenticationMaybe model.homeModel)
-
-        NotFoundRoute ->
-            viewNotFound
-
-        OrganizationsRoute ->
-            Html.App.map translateOrganizationsMsg
-                (Organizations.view model.authenticationMaybe model.organizationsModel)
-
-        StatementsRoute _ ->
-            Html.App.map translateStatementsMsg
-                (Statements.view model.authenticationMaybe model.statementsModel)
-
-        ToolsRoute _ ->
-            Html.App.map translateToolsMsg
-                (Tools.view model.authenticationMaybe model.toolsModel)
-
 
 
 -- SUBSCRIPTIONS

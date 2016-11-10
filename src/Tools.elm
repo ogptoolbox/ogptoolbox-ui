@@ -1,4 +1,4 @@
-module Tools exposing (..)
+module Tools exposing (init, InternalMsg, Model, MsgTranslation, MsgTranslator, translateMsg, update, urlUpdate, view)
 
 import Authenticator.Model
 import Dict exposing (Dict)
@@ -8,7 +8,6 @@ import Html.Attributes exposing (..)
 import Html.App
 import Http
 import Task
-import Footer
 import Types exposing (DataIdsBody, Statement, StatementCustom(..))
 import Requests exposing (newTaskGetCards)
 import Routes exposing (ToolsNestedRoute(..))
@@ -200,7 +199,6 @@ view authenticationMaybe model =
     div []
         [ viewBreadcrumb
         , viewContainer authenticationMaybe model
-        , Footer.view
         ]
 
 

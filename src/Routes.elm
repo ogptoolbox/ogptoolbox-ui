@@ -7,7 +7,7 @@ module Routes
         , urlParser
         )
 
-import Authenticator.Model
+-- import Authenticator.Model
 import Combine exposing (Parser)
 import Hop
 import Hop.Matchers exposing (match1, match2, nested1)
@@ -17,7 +17,7 @@ import Navigation
 
 type Route
     = AboutRoute
-    | AuthenticatorRoute Authenticator.Model.Route
+    -- | AuthenticatorRoute Authenticator.Model.Route
     | ExamplesRoute
     | HelpRoute
     | HomeRoute
@@ -48,9 +48,9 @@ matchers : List (Hop.Types.PathMatcher Route)
 matchers =
     [ match1 HomeRoute ""
     , match1 AboutRoute "/about"
-    , match1 (AuthenticatorRoute Authenticator.Model.SignInRoute) "/sign_in"
-    , match1 (AuthenticatorRoute Authenticator.Model.SignOutRoute) "/sign_out"
-    , match1 (AuthenticatorRoute Authenticator.Model.SignUpRoute) "/sign_up"
+    -- , match1 (AuthenticatorRoute Authenticator.Model.SignInRoute) "/sign_in"
+    -- , match1 (AuthenticatorRoute Authenticator.Model.SignOutRoute) "/sign_out"
+    -- , match1 (AuthenticatorRoute Authenticator.Model.SignUpRoute) "/sign_up"
     , match1 ExamplesRoute "/examples"
     , match1 HelpRoute "/help"
     , match1 OrganizationsRoute "/organizations"
