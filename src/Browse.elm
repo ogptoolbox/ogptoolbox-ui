@@ -14,7 +14,7 @@ type PillType
 
 
 view : PillType -> List Statement -> (String -> msg) -> Html msg
-view activeBadge statements navigate =
+view activePill statements navigate =
     div [ class "main-container" ]
         [ div [ class "browse-tag" ]
             [ div [ class "row" ]
@@ -53,7 +53,7 @@ view activeBadge statements navigate =
                                 [ li
                                     [ classList
                                         [ ( "active"
-                                          , case activeBadge of
+                                          , case activePill of
                                                 Examples ->
                                                     True
 
@@ -74,7 +74,7 @@ view activeBadge statements navigate =
                                 , li
                                     [ classList
                                         [ ( "active"
-                                          , case activeBadge of
+                                          , case activePill of
                                                 Tools ->
                                                     True
 
@@ -95,7 +95,7 @@ view activeBadge statements navigate =
                                 , li
                                     [ classList
                                         [ ( "active"
-                                          , case activeBadge of
+                                          , case activePill of
                                                 Organizations ->
                                                     True
 
@@ -117,7 +117,7 @@ view activeBadge statements navigate =
                             ]
                         ]
                     , div [ class "row list" ]
-                        (viewTools statements navigate
+                        (viewStatements activePill statements navigate
                             ++ [ div [ class "col-sm-12 text-center" ]
                                     [ a [ class "show-more" ]
                                         [ text "Show all 398"
@@ -133,13 +133,13 @@ view activeBadge statements navigate =
         ]
 
 
-viewTools : List Statement -> (String -> msg) -> List (Html msg)
-viewTools statements navigate =
+viewStatements : PillType -> List Statement -> (String -> msg) -> List (Html msg)
+viewStatements activePill statements navigate =
     List.map
         (\statement ->
             case statement.custom of
                 CardCustom card ->
-                    viewTool statement card navigate
+                    viewTool activePill statement card navigate
 
                 _ ->
                     text "statement.custom is not a Card"
@@ -147,36 +147,47 @@ viewTools statements navigate =
         statements
 
 
-viewTool : Statement -> Card -> (String -> msg) -> Html msg
-viewTool statement card navigate =
+viewTool : PillType -> Statement -> Card -> (String -> msg) -> Html msg
+viewTool activePill statement card navigate =
     let
-        toolUrl =
-            "/tools/" ++ statement.id
+        statementUrl =
+            (case activePill of
+                Examples ->
+                    "/examples/"
+
+                Organizations ->
+                    "/organizations/"
+
+                Tools ->
+                    "/tools/"
+            )
+                ++ statement.id
     in
         div [ class "col-xs-12" ]
-            [ div [ class "thumbnail example", onClick (navigate toolUrl) ]
+            [ div [ class "thumbnail example", onClick (navigate statementUrl) ]
                 [ div [ class "visual" ]
                     [ img [ alt "screen", src "img/screen1.png" ]
                         []
                     ]
                 , div [ class "caption" ]
                     ([ h4 []
-                        [ aForPath navigate toolUrl [] [ text card.name ]
+                        [ aForPath navigate statementUrl [] [ text card.name ]
                         , small []
                             [ text "Software" ]
                         ]
-                    , div [ class "example-author" ]
+                     , div [ class "example-author" ]
                         [ img [ alt "screen", src "img/whitehouse.png" ]
                             []
                         , text "The White House"
                         ]
-                    , text card.description
-                    , span [ class "label label-default label-tool" ]
-                            [ text "Default" ]
-                       , span [ class "label label-default label-tool" ]
-                            [ text "Default" ]
-                       , span [ class "label label-default label-tool" ]
-                            [ text "Default" ]
-                       ])
+                     , text card.description
+                     , span [ class "label label-default label-tool" ]
+                        [ text "Default" ]
+                     , span [ class "label label-default label-tool" ]
+                        [ text "Default" ]
+                     , span [ class "label label-default label-tool" ]
+                        [ text "Default" ]
+                     ]
+                    )
                 ]
             ]
