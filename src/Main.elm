@@ -8,7 +8,6 @@ import Authenticator.Model
 import Authenticator.Update
 import Authenticator.View
 import Examples
-import Footer
 import Help
 import Home
 import Hop.Types
@@ -373,7 +372,7 @@ view model =
     div []
         [ viewHeader model
         , viewContent model
-        , Footer.view
+        , viewFooter
         , viewAuthenticatorModal model
         , viewBackdrop model
         ]
@@ -460,6 +459,101 @@ viewContent model =
         ToolsRoute _ ->
             Html.App.map translateToolsMsg
                 (Tools.view model.authenticationMaybe model.toolsModel)
+
+
+viewFooter : Html msg
+viewFooter =
+    footer []
+        [ div [ class "row section footer" ]
+            [ div [ class "container" ]
+                [ div [ class "row" ]
+                    [ div [ class "col-xs-12 col-md-6" ]
+                        [ div [ class "row" ]
+                            [ div [ class "col-xs-6" ]
+                                [ img [ alt "Toolname", class "footer-logo", src "img/ogp-logo.png" ]
+                                    []
+                                ]
+                            , div [ class "col-xs-6" ]
+                                [ h4 []
+                                    [ text "Language" ]
+                                , div [ class "dropdown dropdown-language" ]
+                                    [ button [ attribute "aria-expanded" "true", attribute "aria-haspopup" "true", class "btn btn-default dropdown-toggle", attribute "data-toggle" "dropdown", id "dropdownMenu1", type' "button" ]
+                                        [ text "English                  "
+                                        , span [ class "caret" ]
+                                            []
+                                        ]
+                                    , ul [ attribute "aria-labelledby" "dropdownMenu1", class "dropdown-menu" ]
+                                        [ li []
+                                            [ a [ href "#" ]
+                                                [ text "Français" ]
+                                            ]
+                                        , li []
+                                            [ a [ href "#" ]
+                                                [ text "Espanol" ]
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        , p [ class "info-box" ]
+                            [ text "The Open Government Partnership is a multilateral initiative that aims to secure concrete commitments from governments to promote transparency, empower citizens, fight corruption, and harness new technologies to strengthen governance. In the spirit of multi-stakeholder collaboration, OGP is overseen by a Steering Committee including representatives of governments and civil society organizations." ]
+                        ]
+                    , div [ class "col-xs-6 col-md-3" ]
+                        [ h4 []
+                            [ text "About" ]
+                        , ul [ class "footer-menu" ]
+                            [ li []
+                                [ a [ href "#" ]
+                                    [ text "Eligibility Criteria" ]
+                                ]
+                            , li []
+                                [ a [ href "#" ]
+                                    [ text "Develop a National Action Plan" ]
+                                ]
+                            , li []
+                                [ a [ href "#" ]
+                                    [ text "Self-Assessment Process" ]
+                                ]
+                            , li []
+                                [ a [ href "#" ]
+                                    [ text "Response Policy" ]
+                                ]
+                            , li []
+                                [ a [ href "#" ]
+                                    [ text "Civil Society Engagement" ]
+                                ]
+                            , li []
+                                [ a [ href "#" ]
+                                    [ text "Calendars and Deadlines" ]
+                                ]
+                            ]
+                        ]
+                    , div [ class "col-xs-6 col-md-3" ]
+                        [ h4 []
+                            [ text "How it works" ]
+                        , ul [ class "footer-menu" ]
+                            [ li []
+                                [ a [ href "#" ]
+                                    [ text "Home" ]
+                                ]
+                            , li []
+                                [ a [ href "#" ]
+                                    [ text "Profile" ]
+                                ]
+                            , li []
+                                [ a [ href "#" ]
+                                    [ text "Messages" ]
+                                ]
+                            ]
+                        ]
+                    ]
+                , div [ class "row copyright" ]
+                    [ div [ class "col-md-12" ]
+                        [ text "© 2016 Open Government Partnership" ]
+                    ]
+                ]
+            ]
+        ]
 
 
 viewHeader : Model -> Html Msg
