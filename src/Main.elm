@@ -477,7 +477,14 @@ viewFooter =
                                 [ h4 []
                                     [ text "Language" ]
                                 , div [ class "dropdown dropdown-language" ]
-                                    [ button [ attribute "aria-expanded" "true", attribute "aria-haspopup" "true", class "btn btn-default dropdown-toggle", attribute "data-toggle" "dropdown", id "dropdownMenu1", type' "button" ]
+                                    [ button
+                                        [ attribute "aria-expanded" "true"
+                                        , attribute "aria-haspopup" "true"
+                                        , class "btn btn-default dropdown-toggle"
+                                        , attribute "data-toggle" "dropdown"
+                                        , id "dropdownMenu1"
+                                        , type' "button"
+                                        ]
                                         [ text "English                  "
                                         , span [ class "caret" ]
                                             []
@@ -496,7 +503,12 @@ viewFooter =
                                 ]
                             ]
                         , p [ class "info-box" ]
-                            [ text "The Open Government Partnership is a multilateral initiative that aims to secure concrete commitments from governments to promote transparency, empower citizens, fight corruption, and harness new technologies to strengthen governance. In the spirit of multi-stakeholder collaboration, OGP is overseen by a Steering Committee including representatives of governments and civil society organizations." ]
+                            [ text """
+The Open Government Partnership is a multilateral initiative that aims to secure concrete commitments
+from governments to promote transparency, empower citizens, fight corruption, and harness new technologies
+to strengthen governance. In the spirit of multi-stakeholder collaboration, OGP is overseen by a Steering Committee
+including representatives of governments and civil society organizations.
+""" ]
                         ]
                     , div [ class "col-xs-6 col-md-3" ]
                         [ h4 []
