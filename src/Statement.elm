@@ -123,7 +123,7 @@ update msg authenticationMaybe model =
                         | claimId = model.statementId
                     }
 
-                ( newGroundArgumentModel'', childEffect, dataMaybe ) =
+                ( newGroundArgumentModel'', childCmd, dataMaybe ) =
                     NewGroundArgument.update childMsg authenticationMaybe newGroundArgumentModel'
 
                 model' =
@@ -183,7 +183,7 @@ update msg authenticationMaybe model =
                                 | newGroundArgumentModel = newGroundArgumentModel''
                             }
             in
-                ( model', Cmd.map (\msg -> ForSelf (NewGroundArgumentMsg msg)) childEffect )
+                ( model', Cmd.map (\msg -> ForSelf (NewGroundArgumentMsg msg)) childCmd )
 
         Rated body ->
             let

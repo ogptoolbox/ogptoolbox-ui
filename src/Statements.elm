@@ -219,7 +219,7 @@ update msg authenticationMaybe model =
 
         NewStatementMsg childMsg ->
             let
-                ( newStatementModel, childEffect, dataMaybe ) =
+                ( newStatementModel, childCmd, dataMaybe ) =
                     NewStatement.update childMsg authenticationMaybe model.newStatementModel
 
                 model' =
@@ -231,7 +231,7 @@ update msg authenticationMaybe model =
                             model
             in
                 ( { model' | newStatementModel = newStatementModel }
-                , Cmd.map (\msg -> ForSelf (NewStatementMsg msg)) childEffect
+                , Cmd.map (\msg -> ForSelf (NewStatementMsg msg)) childCmd
                 )
 
         Rated body ->
@@ -279,7 +279,7 @@ update msg authenticationMaybe model =
                         , statementIds = model.statementIds
                     }
 
-                ( statementModel'', childEffect ) =
+                ( statementModel'', childCmd ) =
                     Statement.update childMsg authenticationMaybe statementModel'
 
                 model' =
@@ -290,7 +290,7 @@ update msg authenticationMaybe model =
                         , statementModel = statementModel''
                     }
             in
-                ( model', Cmd.map translateStatementMsg childEffect )
+                ( model', Cmd.map translateStatementMsg childCmd )
 
 
 

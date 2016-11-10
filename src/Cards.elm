@@ -219,7 +219,7 @@ update msg authenticationMaybe model =
 
         NewCardMsg childMsg ->
             let
-                ( newCardModel, childEffect, dataMaybe ) =
+                ( newCardModel, childCmd, dataMaybe ) =
                     NewCard.update childMsg authenticationMaybe model.newCardModel
 
                 model' =
@@ -231,7 +231,7 @@ update msg authenticationMaybe model =
                             model
             in
                 ( { model' | newCardModel = newCardModel }
-                , Cmd.map (\msg -> ForSelf (NewCardMsg msg)) childEffect
+                , Cmd.map (\msg -> ForSelf (NewCardMsg msg)) childCmd
                 )
 
         Rated body ->
@@ -279,7 +279,7 @@ update msg authenticationMaybe model =
                         , cardIds = model.cardIds
                     }
 
-                ( cardModel'', childEffect ) =
+                ( cardModel'', childCmd ) =
                     Card.update childMsg authenticationMaybe cardModel'
 
                 model' =
@@ -290,7 +290,7 @@ update msg authenticationMaybe model =
                         , cardModel = cardModel''
                     }
             in
-                ( model', Cmd.map translateCardMsg childEffect )
+                ( model', Cmd.map translateCardMsg childCmd )
 
 
 

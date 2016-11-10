@@ -7,6 +7,7 @@ import About
 import Authenticator.Model
 import Authenticator.Update
 import Authenticator.View
+import Dom.Scroll
 import Examples
 import Help
 import Home
@@ -21,6 +22,7 @@ import Navigation
 import Organizations
 import Routes exposing (makeUrl, Route(..), urlParser)
 import Statements
+import Task
 import Tools
 import Views exposing (aForPath, viewNotFound)
 
@@ -92,56 +94,65 @@ urlUpdate ( route, location ) model =
                 | location = location
                 , route = route
             }
+
+        ( model'', cmd ) =
+            case route of
+                AboutRoute ->
+                    ( model', Cmd.none )
+
+                -- AuthenticatorRoute _ ->
+                --     ( model', Cmd.none )
+                -- CardsRoute childRoute ->
+                --     let
+                --         -- Cmd.map translateCardsMsg Cards.load
+                --         (cardsModel, childCmd) = Cards.urlUpdate (childRoute, location) model'.cardsModel
+                --     in
+                --         ({ model' | cardsModel = cardsModel }, Cmd.map translateCardsMsg childCmd)
+                ExamplesRoute childRoute ->
+                    let
+                        ( examplesModel, childCmd ) =
+                            Examples.urlUpdate ( childRoute, location ) model'.examplesModel
+                    in
+                        ( { model' | examplesModel = examplesModel }, Cmd.map translateExamplesMsg childCmd )
+
+                HelpRoute ->
+                    ( model', Cmd.none )
+
+                HomeRoute ->
+                    let
+                        ( homeModel, childCmd ) =
+                            Home.update Home.Load model.authenticationMaybe model'.homeModel
+                    in
+                        ( { model' | homeModel = homeModel }, Cmd.map translateHomeMsg childCmd )
+
+                NotFoundRoute ->
+                    ( model', Cmd.none )
+
+                OrganizationsRoute ->
+                    ( model', Cmd.none )
+
+                StatementsRoute childRoute ->
+                    let
+                        -- Cmd.map translateStatementsMsg Statements.load
+                        ( statementsModel, childCmd ) =
+                            Statements.urlUpdate ( childRoute, location ) model'.statementsModel
+                    in
+                        ( { model' | statementsModel = statementsModel }, Cmd.map translateStatementsMsg childCmd )
+
+                ToolsRoute childRoute ->
+                    let
+                        ( toolsModel, childCmd ) =
+                            Tools.urlUpdate ( childRoute, location ) model'.toolsModel
+                    in
+                        ( { model' | toolsModel = toolsModel }, Cmd.map translateToolsMsg childCmd )
     in
-        case route of
-            AboutRoute ->
-                ( model', Cmd.none )
-
-            -- AuthenticatorRoute _ ->
-            --     ( model', Cmd.none )
-            -- CardsRoute childRoute ->
-            --     let
-            --         -- Cmd.map translateCardsMsg Cards.load
-            --         (cardsModel, childEffect) = Cards.urlUpdate (childRoute, location) model'.cardsModel
-            --     in
-            --         ({ model' | cardsModel = cardsModel }, Cmd.map translateCardsMsg childEffect)
-            ExamplesRoute childRoute ->
-                let
-                    ( examplesModel, childEffect ) =
-                        Examples.urlUpdate ( childRoute, location ) model'.examplesModel
-                in
-                    ( { model' | examplesModel = examplesModel }, Cmd.map translateExamplesMsg childEffect )
-
-            HelpRoute ->
-                ( model', Cmd.none )
-
-            HomeRoute ->
-                let
-                    ( homeModel, childEffect ) =
-                        Home.update Home.Load model.authenticationMaybe model'.homeModel
-                in
-                    ( { model' | homeModel = homeModel }, Cmd.map translateHomeMsg childEffect )
-
-            NotFoundRoute ->
-                ( model', Cmd.none )
-
-            OrganizationsRoute ->
-                ( model', Cmd.none )
-
-            StatementsRoute childRoute ->
-                let
-                    -- Cmd.map translateStatementsMsg Statements.load
-                    ( statementsModel, childEffect ) =
-                        Statements.urlUpdate ( childRoute, location ) model'.statementsModel
-                in
-                    ( { model' | statementsModel = statementsModel }, Cmd.map translateStatementsMsg childEffect )
-
-            ToolsRoute childRoute ->
-                let
-                    ( toolsModel, childEffect ) =
-                        Tools.urlUpdate ( childRoute, location ) model'.toolsModel
-                in
-                    ( { model' | toolsModel = toolsModel }, Cmd.map translateToolsMsg childEffect )
+        model''
+            ! [ Task.perform
+                    (\_ -> Debug.crash "Dom.Scroll.toTop \"main\"")
+                    (always NoOp)
+                    (Dom.Scroll.toTop "main")
+              , cmd
+              ]
 
 
 
@@ -157,6 +168,7 @@ type Msg
     | HelpMsg Help.InternalMsg
     | HomeMsg Home.InternalMsg
     | Navigate String
+    | NoOp
     | OrganizationsMsg Organizations.InternalMsg
     | StatementsMsg Statements.InternalMsg
     | ToolsMsg Tools.InternalMsg
@@ -264,14 +276,14 @@ update msg model =
     case msg of
         AboutMsg childMsg ->
             let
-                ( aboutModel, childEffect ) =
+                ( aboutModel, childCmd ) =
                     About.update childMsg model.authenticationMaybe model.aboutModel
             in
-                ( { model | aboutModel = aboutModel }, Cmd.map translateAboutMsg childEffect )
+                ( { model | aboutModel = aboutModel }, Cmd.map translateAboutMsg childCmd )
 
         AuthenticatorMsg childMsg ->
             let
-                ( authenticatorModel, childEffect ) =
+                ( authenticatorModel, childCmd ) =
                     Authenticator.Update.update childMsg model.authenticatorModel
 
                 changed =
@@ -305,37 +317,37 @@ update msg model =
                     else
                         ( model', Cmd.none )
             in
-                model'' ! [ Cmd.map AuthenticatorMsg childEffect, effect'' ]
+                model'' ! [ Cmd.map AuthenticatorMsg childCmd, effect'' ]
 
         AuthenticatorRouteMsg authenticatorRouteMaybe ->
             ( { model | authenticatorRouteMaybe = authenticatorRouteMaybe }, Cmd.none )
 
         -- CardsMsg childMsg ->
         --     let
-        --         ( cardsModel, childEffect ) =
+        --         ( cardsModel, childCmd ) =
         --             Cards.update childMsg model.authenticationMaybe model.cardsModel
         --     in
-        --         ( { model | cardsModel = cardsModel }, Cmd.map translateCardsMsg childEffect )
+        --         ( { model | cardsModel = cardsModel }, Cmd.map translateCardsMsg childCmd )
         ExamplesMsg childMsg ->
             let
-                ( examplesModel, childEffect ) =
+                ( examplesModel, childCmd ) =
                     Examples.update childMsg model.authenticationMaybe model.examplesModel
             in
-                ( { model | examplesModel = examplesModel }, Cmd.map translateExamplesMsg childEffect )
+                ( { model | examplesModel = examplesModel }, Cmd.map translateExamplesMsg childCmd )
 
         HelpMsg childMsg ->
             let
-                ( helpModel, childEffect ) =
+                ( helpModel, childCmd ) =
                     Help.update childMsg model.authenticationMaybe model.helpModel
             in
-                ( { model | helpModel = helpModel }, Cmd.map translateHelpMsg childEffect )
+                ( { model | helpModel = helpModel }, Cmd.map translateHelpMsg childCmd )
 
         HomeMsg childMsg ->
             let
-                ( homeModel, childEffect ) =
+                ( homeModel, childCmd ) =
                     Home.update childMsg model.authenticationMaybe model.homeModel
             in
-                ( { model | homeModel = homeModel }, Cmd.map translateHomeMsg childEffect )
+                ( { model | homeModel = homeModel }, Cmd.map translateHomeMsg childCmd )
 
         Navigate path ->
             let
@@ -345,26 +357,29 @@ update msg model =
             in
                 ( model, command )
 
+        NoOp ->
+            ( model, Cmd.none )
+
         OrganizationsMsg childMsg ->
             let
-                ( organizationsModel, childEffect ) =
+                ( organizationsModel, childCmd ) =
                     Organizations.update childMsg model.authenticationMaybe model.organizationsModel
             in
-                ( { model | organizationsModel = organizationsModel }, Cmd.map translateOrganizationsMsg childEffect )
+                ( { model | organizationsModel = organizationsModel }, Cmd.map translateOrganizationsMsg childCmd )
 
         StatementsMsg childMsg ->
             let
-                ( statementsModel, childEffect ) =
+                ( statementsModel, childCmd ) =
                     Statements.update childMsg model.authenticationMaybe model.statementsModel
             in
-                ( { model | statementsModel = statementsModel }, Cmd.map translateStatementsMsg childEffect )
+                ( { model | statementsModel = statementsModel }, Cmd.map translateStatementsMsg childCmd )
 
         ToolsMsg childMsg ->
             let
-                ( toolsModel, childEffect ) =
+                ( toolsModel, childCmd ) =
                     Tools.update childMsg model.authenticationMaybe model.toolsModel
             in
-                ( { model | toolsModel = toolsModel }, Cmd.map translateToolsMsg childEffect )
+                ( { model | toolsModel = toolsModel }, Cmd.map translateToolsMsg childCmd )
 
 
 
