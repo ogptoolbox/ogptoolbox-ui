@@ -431,34 +431,10 @@ viewBanner authenticationMaybe model =
 viewExampleThumbnail : Statement -> Card -> Html Msg
 viewExampleThumbnail statement card =
     let
-        exampleUrl =
+        url =
             "/examples/" ++ statement.id
     in
-        div [ class "col-xs-6 col-md-3" ]
-            [ div [ class "thumbnail example grey", onClick (navigate exampleUrl) ]
-                [ div [ class "visual" ]
-                    [ img [ alt "screen", src "img/screen1.png" ]
-                        []
-                    ]
-                , div [ class "caption" ]
-                    ([ div [ class "example-author-thumb" ]
-                        [ img [ alt "screen", src "img/whitehouse.png" ]
-                            []
-                        ]
-                     , h4 []
-                        [ aForPath navigate exampleUrl [] [ text card.name ] ]
-                     , p []
-                        [ text card.description ]
-                     , span [ class "label label-default label-tool" ]
-                        [ text "Default" ]
-                     , span [ class "label label-default label-tool" ]
-                        [ text "Default" ]
-                     , span [ class "label label-default label-tool" ]
-                        [ text "Default" ]
-                     ]
-                    )
-                ]
-            ]
+        viewThumbnail url card "example grey"
 
 
 viewExamples : Maybe Authenticator.Model.Authentication -> Model -> Html Msg
@@ -558,23 +534,35 @@ viewOrganizations authenticationMaybe model =
 viewOrganizationThumbnail : Statement -> Card -> Html Msg
 viewOrganizationThumbnail statement card =
     let
-        organizationUrl =
+        url =
             "/organizations/" ++ statement.id
     in
-        div [ class "col-xs-6 col-md-3 " ]
-            [ div [ class "thumbnail orga grey", onClick (navigate organizationUrl) ]
-                [ div [ class "visual" ]
-                    [ img [ alt "logo", src "img/hackpad.png" ]
-                        []
-                    ]
-                , div [ class "caption" ]
-                    [ h4 []
-                        [ aForPath navigate organizationUrl [] [ text card.name ] ]
-                    , p []
-                        [ text card.description ]
-                    ]
+        viewThumbnail url card "orga grey"
+
+
+viewThumbnail : String -> Card -> String -> Html Msg
+viewThumbnail url card extraClass =
+    div [ class "col-xs-6 col-md-3" ]
+        [ div [ class ("thumbnail " ++ extraClass), onClick (navigate url) ]
+            [ div [ class "visual" ]
+                [ img [ alt "logo", src "img/TODO.png" ]
+                    []
                 ]
+            , div [ class "caption" ]
+                ([ h4 []
+                    [ aForPath navigate url [] [ text card.name ] ]
+                 , p []
+                    [ text card.description ]
+                 , span [ class "label label-default label-tool" ]
+                    [ text "Default" ]
+                 , span [ class "label label-default label-tool" ]
+                    [ text "Default" ]
+                 , span [ class "label label-default label-tool" ]
+                    [ text "Default" ]
+                 ]
+                )
             ]
+        ]
 
 
 viewTools : Maybe Authenticator.Model.Authentication -> Model -> Html Msg
@@ -615,30 +603,10 @@ viewTools authenticationMaybe model =
 viewToolThumbnail : Statement -> Card -> Html Msg
 viewToolThumbnail statement card =
     let
-        toolUrl =
+        url =
             "/tools/" ++ statement.id
     in
-        div [ class "col-xs-6 col-md-3 " ]
-            [ div [ class "thumbnail tool", onClick (navigate toolUrl) ]
-                [ div [ class "visual" ]
-                    [ img [ alt "logo", src "img/TODO.png" ]
-                        []
-                    ]
-                , div [ class "caption" ]
-                    ([ h4 []
-                        [ aForPath navigate toolUrl [] [ text card.name ] ]
-                     , p []
-                        [ text card.description ]
-                     , span [ class "label label-default label-tool" ]
-                        [ text "Default" ]
-                     , span [ class "label label-default label-tool" ]
-                        [ text "Default" ]
-                     , span [ class "label label-default label-tool" ]
-                        [ text "Default" ]
-                     ]
-                    )
-                ]
-            ]
+        viewThumbnail url card "tool"
 
 
 viewModalTitle : Model -> Html Msg
