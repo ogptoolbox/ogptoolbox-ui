@@ -5,6 +5,7 @@ import Configuration exposing (apiUrl)
 import Dict exposing (Dict)
 import Http
 import Json.Encode
+import String
 import Types
     exposing
         ( Ballot
@@ -162,6 +163,39 @@ newTaskGetCards authenticationMaybe =
             )
 
 
+newTaskGetCardsOfType : Maybe Authenticator.Model.Authentication -> List String -> String -> Task Http.Error DataIdsBody
+newTaskGetCardsOfType authenticationMaybe cardTypes searchQuery =
+    let
+        authenticationHeaders =
+            case authenticationMaybe of
+                Just authentication ->
+                    [ ( "Retruco-API-Key", authentication.apiKey )
+                    ]
+
+                Nothing ->
+                    []
+    in
+        Http.fromJson decodeDataIdsBody
+            (Http.send Http.defaultSettings
+                { verb = "GET"
+                , url =
+                    apiUrl
+                        ++ "statements?"
+                        ++ (cardTypes
+                                |> List.map (\cardType -> "type=" ++ cardType)
+                                |> String.join "&"
+                           )
+                        ++ "&term="
+                        ++ searchQuery
+                , headers =
+                    [ ( "Accept", "application/json" )
+                    ]
+                        ++ authenticationHeaders
+                , body = Http.empty
+                }
+            )
+
+
 newTaskGetExample : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
 newTaskGetExample authenticationMaybe statementId =
     let
@@ -188,30 +222,9 @@ newTaskGetExample authenticationMaybe statementId =
             )
 
 
-newTaskGetExamples : Maybe Authenticator.Model.Authentication -> Task Http.Error DataIdsBody
-newTaskGetExamples authenticationMaybe =
-    let
-        authenticationHeaders =
-            case authenticationMaybe of
-                Just authentication ->
-                    [ ( "Retruco-API-Key", authentication.apiKey )
-                    ]
-
-                Nothing ->
-                    []
-    in
-        Http.fromJson decodeDataIdsBody
-            (Http.send Http.defaultSettings
-                { verb = "GET"
-                , url =
-                    apiUrl ++ "statements?type=Usage"
-                , headers =
-                    [ ( "Accept", "application/json" )
-                    ]
-                        ++ authenticationHeaders
-                , body = Http.empty
-                }
-            )
+newTaskGetExamples : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdsBody
+newTaskGetExamples authenticationMaybe searchQuery =
+    newTaskGetCardsOfType authenticationMaybe [ "Usage" ] searchQuery
 
 
 newTaskGetOrganization : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
@@ -240,30 +253,9 @@ newTaskGetOrganization authenticationMaybe statementId =
             )
 
 
-newTaskGetOrganizations : Maybe Authenticator.Model.Authentication -> Task Http.Error DataIdsBody
-newTaskGetOrganizations authenticationMaybe =
-    let
-        authenticationHeaders =
-            case authenticationMaybe of
-                Just authentication ->
-                    [ ( "Retruco-API-Key", authentication.apiKey )
-                    ]
-
-                Nothing ->
-                    []
-    in
-        Http.fromJson decodeDataIdsBody
-            (Http.send Http.defaultSettings
-                { verb = "GET"
-                , url =
-                    apiUrl ++ "statements?type=Organization"
-                , headers =
-                    [ ( "Accept", "application/json" )
-                    ]
-                        ++ authenticationHeaders
-                , body = Http.empty
-                }
-            )
+newTaskGetOrganizations : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdsBody
+newTaskGetOrganizations authenticationMaybe searchQuery =
+    newTaskGetCardsOfType authenticationMaybe [ "Organization" ] searchQuery
 
 
 newTaskGetStatements : Maybe Authenticator.Model.Authentication -> Task Http.Error DataIdsBody
@@ -321,30 +313,9 @@ newTaskGetTool authenticationMaybe statementId =
             )
 
 
-newTaskGetTools : Maybe Authenticator.Model.Authentication -> Task Http.Error DataIdsBody
-newTaskGetTools authenticationMaybe =
-    let
-        authenticationHeaders =
-            case authenticationMaybe of
-                Just authentication ->
-                    [ ( "Retruco-API-Key", authentication.apiKey )
-                    ]
-
-                Nothing ->
-                    []
-    in
-        Http.fromJson decodeDataIdsBody
-            (Http.send Http.defaultSettings
-                { verb = "GET"
-                , url =
-                    apiUrl ++ "statements?type=Software&type=Platform"
-                , headers =
-                    [ ( "Accept", "application/json" )
-                    ]
-                        ++ authenticationHeaders
-                , body = Http.empty
-                }
-            )
+newTaskGetTools : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdsBody
+newTaskGetTools authenticationMaybe searchQuery =
+    newTaskGetCardsOfType authenticationMaybe [ "Software", "Platform" ] searchQuery
 
 
 newTaskRateStatement : Authenticator.Model.Authentication -> Int -> String -> Task Http.Error DataIdBody

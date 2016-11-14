@@ -6,6 +6,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Http
+import String
 import Task
 import Types exposing (Card, DataIdsBody, Statement, StatementCustom(..))
 import Requests exposing (newTaskGetExamples, newTaskGetOrganizations, newTaskGetTools)
@@ -40,7 +41,7 @@ type ExternalMsg
 
 type InternalMsg
     = Error Http.Error
-    | Load
+    | Load String
     | LoadedExamples DataIdsBody
     | LoadedOrganizations DataIdsBody
     | LoadedTools DataIdsBody
@@ -86,21 +87,21 @@ update msg authenticationMaybe model =
             in
                 ( model, Cmd.none )
 
-        Load ->
+        Load searchQuery ->
             let
                 cmds =
                     [ Task.perform
                         (\msg -> ForSelf (Error msg))
                         (\msg -> ForSelf (LoadedExamples msg))
-                        (newTaskGetExamples authenticationMaybe)
+                        (newTaskGetExamples authenticationMaybe searchQuery)
                     , Task.perform
                         (\msg -> ForSelf (Error msg))
                         (\msg -> ForSelf (LoadedOrganizations msg))
-                        (newTaskGetOrganizations authenticationMaybe)
+                        (newTaskGetOrganizations authenticationMaybe searchQuery)
                     , Task.perform
                         (\msg -> ForSelf (Error msg))
                         (\msg -> ForSelf (LoadedTools msg))
-                        (newTaskGetTools authenticationMaybe)
+                        (newTaskGetTools authenticationMaybe searchQuery)
                     ]
             in
                 model ! cmds
@@ -125,15 +126,22 @@ update msg authenticationMaybe model =
 -- VIEW
 
 
-view : Maybe Authenticator.Model.Authentication -> Model -> Html Msg
-view authenticationMaybe model =
+view : Maybe Authenticator.Model.Authentication -> Model -> String -> Html Msg
+view authenticationMaybe model searchQuery =
     div []
-        [ viewBanner authenticationMaybe model
-        , viewMetrics authenticationMaybe model
-        , viewExamples authenticationMaybe model
-        , viewTools authenticationMaybe model
-        , viewOrganizations authenticationMaybe model
-        ]
+        ([ viewBanner authenticationMaybe model
+         , viewMetrics authenticationMaybe model
+         ]
+            ++ (if String.isEmpty searchQuery then
+                    []
+                else
+                    [ h2 [] [ text ("Search results for \"" ++ searchQuery ++ "\"") ] ]
+               )
+            ++ [ viewExamples authenticationMaybe model
+               , viewTools authenticationMaybe model
+               , viewOrganizations authenticationMaybe model
+               ]
+        )
 
 
 viewBanner : Maybe Authenticator.Model.Authentication -> Model -> Html Msg

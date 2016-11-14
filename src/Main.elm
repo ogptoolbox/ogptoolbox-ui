@@ -7,23 +7,26 @@ import About
 import Authenticator.Model
 import Authenticator.Update
 import Authenticator.View
+import Dict
 import Dom.Scroll
 import Examples
 import Help
 import Home
+import Hop
 import Hop.Types
-import Json.Decode
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Attributes.Aria exposing (ariaHidden, ariaLabelledby)
-import Html.Events exposing (onWithOptions)
+import Html.Events exposing (onInput, onSubmit, onWithOptions)
 import Html.App
+import Json.Decode
 import Navigation
 import Organizations
 import Routes
     exposing
         ( ExamplesNestedRoute(..)
         , makeUrl
+        , makeUrlFromLocation
         , OrganizationsNestedRoute(..)
         , Route(..)
         , ToolsNestedRoute(..)
@@ -64,6 +67,7 @@ type alias Model =
     , organizationsModel : Organizations.Model
     , page : String
     , route : Route
+    , searchQuery : String
     , statementsModel : Statements.Model
     , toolsModel : Tools.Model
     }
@@ -84,6 +88,7 @@ init ( route, location ) =
     , location = location
     , page = "reference"
     , route = route
+    , searchQuery = ""
     , statementsModel = Statements.init
     , toolsModel = Tools.init
     }
@@ -130,10 +135,19 @@ urlUpdate ( route, location ) model =
 
                 HomeRoute ->
                     let
+                        searchQuery =
+                            Dict.get "q" location.query
+                                |> Maybe.withDefault ""
+
                         ( homeModel, childCmd ) =
-                            Home.update Home.Load model.authenticationMaybe model'.homeModel
+                            Home.update (Home.Load model'.searchQuery) model.authenticationMaybe model'.homeModel
                     in
-                        ( { model' | homeModel = homeModel }, Cmd.map translateHomeMsg childCmd )
+                        ( { model'
+                            | homeModel = homeModel
+                            , searchQuery = searchQuery
+                          }
+                        , Cmd.map translateHomeMsg childCmd
+                        )
 
                 NotFoundRoute ->
                     ( model', Cmd.none )
@@ -190,6 +204,8 @@ type Msg
     | Navigate String
     | NoOp
     | OrganizationsMsg Organizations.InternalMsg
+    | SearchForQuery
+    | SetSearchQuery String
     | StatementsMsg Statements.InternalMsg
     | ToolsMsg Tools.InternalMsg
 
@@ -387,6 +403,18 @@ update msg model =
             in
                 ( { model | organizationsModel = organizationsModel }, Cmd.map translateOrganizationsMsg childCmd )
 
+        SearchForQuery ->
+            let
+                command =
+                    Hop.addQuery (Dict.singleton "q" model.searchQuery) model.location
+                        |> makeUrlFromLocation
+                        |> Navigation.newUrl
+            in
+                ( model, command )
+
+        SetSearchQuery query ->
+            ( { model | searchQuery = query }, Cmd.none )
+
         StatementsMsg childMsg ->
             let
                 ( statementsModel, childCmd ) =
@@ -457,7 +485,15 @@ view model =
                 standardLayout [ Html.App.map translateHelpMsg (Help.view model.authenticationMaybe model.helpModel) ]
 
             HomeRoute ->
-                standardLayout [ Html.App.map translateHomeMsg (Home.view model.authenticationMaybe model.homeModel) ]
+                let
+                    term =
+                        Dict.get "q" model.location.query
+                            |> Maybe.withDefault ""
+                in
+                    standardLayout
+                        [ Html.App.map translateHomeMsg
+                            (Home.view model.authenticationMaybe model.homeModel term)
+                        ]
 
             NotFoundRoute ->
                 viewNotFound
@@ -767,14 +803,19 @@ viewHeader model containerClass =
                             , li [] [ aForPath Navigate "/organizations" [] [ text "Organizations" ] ]
                             , li [] [ aForPath Navigate "/help" [] [ text "Help" ] ]
                             ]
-                        , Html.form [ class "navbar-form navbar-right" ]
+                        , Html.form
+                            [ class "navbar-form navbar-right"
+                            , onSubmit SearchForQuery
+                            ]
                             [ div [ class "form-group search-bar" ]
                                 [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-search" ]
                                     []
                                 , input
                                     [ class "form-control"
+                                    , onInput SetSearchQuery
                                     , placeholder "Search for a tool, example or organization"
-                                    , type' "text"
+                                    , type' "search"
+                                    , value model.searchQuery
                                     ]
                                     []
                                 ]

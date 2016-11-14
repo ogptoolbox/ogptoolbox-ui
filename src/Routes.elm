@@ -5,7 +5,7 @@ module Routes exposing (..)
 import Combine exposing (Parser)
 import Hop
 import Hop.Matchers exposing (match1, match2, nested1)
-import Hop.Types
+import Hop.Types exposing (Location)
 import Navigation
 
 
@@ -55,6 +55,11 @@ type ToolsNestedRoute
 makeUrl : String -> String
 makeUrl path =
     Hop.makeUrl routerConfig path
+
+
+makeUrlFromLocation : Location -> String
+makeUrlFromLocation location =
+    Hop.makeUrlFromLocation routerConfig location
 
 
 matchers : List (Hop.Types.PathMatcher Route)
