@@ -56,7 +56,7 @@ aForPath navigate path attributes children =
         ([ href (makeUrl path)
          , onWithOptions
             "click"
-            { stopPropagation = False, preventDefault = True }
+            { stopPropagation = True, preventDefault = True }
             (Json.Decode.succeed (navigate path))
          ]
             ++ attributes
