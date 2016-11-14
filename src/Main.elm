@@ -460,7 +460,7 @@ view model =
                 standardLayout [ Html.App.map translateHomeMsg (Home.view model.authenticationMaybe model.homeModel) ]
 
             NotFoundRoute ->
-                standardLayout [ viewNotFound ]
+                viewNotFound
 
             OrganizationsRoute childRoute ->
                 Organizations.view model.authenticationMaybe model.organizationsModel

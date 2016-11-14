@@ -266,9 +266,25 @@ viewName name errorMaybe nameChanged =
 
 viewNotFound : Html msg
 viewNotFound =
-    p
-        []
-        [ text "Page not found!"
+    div
+        [ style
+            [ ( "justify-content", "center" )
+            , ( "flex-direction", "column" )
+            , ( "display", "flex" )
+            , ( "align-items", "center" )
+            , ( "height", "100%" )
+            , ( "margin", "1em" )
+            , ( "font-family", "sans-serif" )
+            ]
+        ]
+        [ h1 []
+            [ text "Page Not Found" ]
+        , p
+            [ style
+                [ ( "color", "rgb(136, 136, 136)" )
+                ]
+            ]
+            [ text "Sorry, but the page you were trying to view does not exist." ]
         ]
 
 
