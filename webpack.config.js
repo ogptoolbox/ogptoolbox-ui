@@ -50,6 +50,7 @@ if (TARGET_ENV === 'development') {
       path.join(__dirname, 'static/index.js')
     ],
     devServer: {
+      historyApiFallback: true,
       inline: true,
       progress: true
     },

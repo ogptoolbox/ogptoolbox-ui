@@ -97,7 +97,9 @@ routerConfig =
     -- , notFound = NotFoundRoute
     -- }
     -- Development:
-    { hash = True
+    { hash =
+        -- Use with "devServer.historyApiFallback = true" in webpack config.
+        False
     , basePath = ""
     , matchers = matchers
     , notFound = NotFoundRoute
