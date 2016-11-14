@@ -447,7 +447,8 @@ viewExampleThumbnail statement card =
                         ]
                      , h4 []
                         [ aForPath navigate exampleUrl [] [ text card.name ] ]
-                     , text card.description
+                     , p []
+                        [ text card.description ]
                      , span [ class "label label-default label-tool" ]
                         [ text "Default" ]
                      , span [ class "label label-default label-tool" ]
@@ -626,7 +627,8 @@ viewToolThumbnail statement card =
                 , div [ class "caption" ]
                     ([ h4 []
                         [ aForPath navigate toolUrl [] [ text card.name ] ]
-                     , text card.description
+                     , p []
+                        [ text card.description ]
                      , span [ class "label label-default label-tool" ]
                         [ text "Default" ]
                      , span [ class "label label-default label-tool" ]
