@@ -123,7 +123,7 @@ update msg authenticationMaybe model =
                     Task.perform
                         (\msg -> ForSelf (Error msg))
                         (\msg -> ForSelf (LoadedAll msg))
-                        (newTaskGetTools authenticationMaybe)
+                        (newTaskGetTools authenticationMaybe "")
             in
                 ( model, cmd )
 
