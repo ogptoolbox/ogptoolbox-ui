@@ -152,16 +152,17 @@ update msg authenticationMaybe model =
 -- VIEW
 
 
-view : Maybe Authenticator.Model.Authentication -> Model -> Html Msg
+view : Maybe Authenticator.Model.Authentication -> Model -> List (Html Msg)
 view authenticationMaybe model =
     case model.route of
         OrganizationRoute organizationId ->
-            case Dict.get organizationId model.organizationById of
+            [ case Dict.get organizationId model.organizationById of
                 Nothing ->
                     text "Loading..."
 
                 Just organization ->
                     Organization.view organization
+            ]
 
         OrganizationsIndexRoute ->
             let
@@ -171,4 +172,4 @@ view authenticationMaybe model =
                 Browse.view Organizations organizations navigate
 
         OrganizationsNotFoundRoute ->
-            viewNotFound
+            [ viewNotFound ]

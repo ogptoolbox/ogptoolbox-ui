@@ -20,7 +20,15 @@ import Html.Events exposing (onWithOptions)
 import Html.App
 import Navigation
 import Organizations
-import Routes exposing (makeUrl, Route(..), urlParser)
+import Routes
+    exposing
+        ( ExamplesNestedRoute(..)
+        , makeUrl
+        , OrganizationsNestedRoute(..)
+        , Route(..)
+        , ToolsNestedRoute(..)
+        , urlParser
+        )
 import Statements
 import Task
 import Tools
@@ -400,13 +408,91 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ viewHeader model
-        , viewContent model
-        , viewFooter
-        , viewAuthenticatorModal model
-        , viewBackdrop model
-        ]
+    let
+        standardLayout content =
+            div []
+                ([ viewHeader model "container" ]
+                    ++ content
+                    ++ [ viewFooter
+                       , viewAuthenticatorModal model
+                       , viewBackdrop model
+                       ]
+                )
+
+        fullscreenLayout content =
+            div [ class "main-container" ]
+                ([ div [ class "fixed-header" ]
+                    [ viewHeader model "container-fluid" ]
+                 ]
+                    ++ content
+                    ++ [ div [ class "fixed-footer" ]
+                            [ text "© 2016 Open Government Partnership" ]
+                       , viewAuthenticatorModal model
+                       , viewBackdrop model
+                       ]
+                )
+    in
+        case model.route of
+            AboutRoute ->
+                standardLayout [ Html.App.map translateAboutMsg (About.view model.authenticationMaybe model.aboutModel) ]
+
+            -- AuthenticatorRoute subRoute ->
+            --     Html.App.map AuthenticatorMsg (Authenticator.View.view subRoute model.authenticatorModel)
+            -- CardsRoute nestedRoute ->
+            --     Html.App.map translateCardsMsg (Cards.view model.authenticationMaybe model.cardsModel)
+            ExamplesRoute childRoute ->
+                Examples.view model.authenticationMaybe model.examplesModel
+                    |> List.map (Html.App.map translateExamplesMsg)
+                    |> case childRoute of
+                        ExampleRoute _ ->
+                            standardLayout
+
+                        ExamplesIndexRoute ->
+                            fullscreenLayout
+
+                        ExamplesNotFoundRoute ->
+                            standardLayout
+
+            HelpRoute ->
+                standardLayout [ Html.App.map translateHelpMsg (Help.view model.authenticationMaybe model.helpModel) ]
+
+            HomeRoute ->
+                standardLayout [ Html.App.map translateHomeMsg (Home.view model.authenticationMaybe model.homeModel) ]
+
+            NotFoundRoute ->
+                standardLayout [ viewNotFound ]
+
+            OrganizationsRoute childRoute ->
+                Organizations.view model.authenticationMaybe model.organizationsModel
+                    |> List.map (Html.App.map translateOrganizationsMsg)
+                    |> case childRoute of
+                        OrganizationRoute _ ->
+                            standardLayout
+
+                        OrganizationsIndexRoute ->
+                            fullscreenLayout
+
+                        OrganizationsNotFoundRoute ->
+                            standardLayout
+
+            StatementsRoute _ ->
+                standardLayout
+                    [ Html.App.map translateStatementsMsg
+                        (Statements.view model.authenticationMaybe model.statementsModel)
+                    ]
+
+            ToolsRoute childRoute ->
+                Tools.view model.authenticationMaybe model.toolsModel
+                    |> List.map (Html.App.map translateToolsMsg)
+                    |> case childRoute of
+                        ToolRoute _ ->
+                            standardLayout
+
+                        ToolsIndexRoute ->
+                            fullscreenLayout
+
+                        ToolsNotFoundRoute ->
+                            standardLayout
 
 
 viewAuthenticatorModal : Model -> Html Msg
@@ -455,41 +541,6 @@ viewBackdrop : Model -> Html Msg
 viewBackdrop model =
     div [ classList [ ( "modal-backdrop in", model.authenticatorRouteMaybe /= Nothing ) ] ]
         []
-
-
-viewContent : Model -> Html Msg
-viewContent model =
-    case model.route of
-        AboutRoute ->
-            Html.App.map translateAboutMsg (About.view model.authenticationMaybe model.aboutModel)
-
-        -- AuthenticatorRoute subRoute ->
-        --     Html.App.map AuthenticatorMsg (Authenticator.View.view subRoute model.authenticatorModel)
-        -- CardsRoute nestedRoute ->
-        --     Html.App.map translateCardsMsg (Cards.view model.authenticationMaybe model.cardsModel)
-        ExamplesRoute _ ->
-            Html.App.map translateExamplesMsg (Examples.view model.authenticationMaybe model.examplesModel)
-
-        HelpRoute ->
-            Html.App.map translateHelpMsg (Help.view model.authenticationMaybe model.helpModel)
-
-        HomeRoute ->
-            Html.App.map translateHomeMsg (Home.view model.authenticationMaybe model.homeModel)
-
-        NotFoundRoute ->
-            viewNotFound
-
-        OrganizationsRoute _ ->
-            Html.App.map translateOrganizationsMsg
-                (Organizations.view model.authenticationMaybe model.organizationsModel)
-
-        StatementsRoute _ ->
-            Html.App.map translateStatementsMsg
-                (Statements.view model.authenticationMaybe model.statementsModel)
-
-        ToolsRoute _ ->
-            Html.App.map translateToolsMsg
-                (Tools.view model.authenticationMaybe model.toolsModel)
 
 
 viewFooter : Html msg
@@ -599,8 +650,8 @@ including representatives of governments and civil society organizations.
         ]
 
 
-viewHeader : Model -> Html Msg
-viewHeader model =
+viewHeader : Model -> String -> Html Msg
+viewHeader model containerClass =
     let
         profileNavItem =
             case model.authenticationMaybe of
@@ -655,7 +706,7 @@ viewHeader model =
     in
         header []
             [ nav [ class "navbar navbar-default navbar-fixed-top", attribute "role" "navigation" ]
-                [ div [ class "container" ]
+                [ div [ class containerClass ]
                     [ div [ class "navbar-header" ]
                         [ button
                             [ attribute "aria-controls" "navbar"
@@ -688,7 +739,7 @@ viewHeader model =
                     ]
                 ]
             , nav [ class "navbar navbar-inverse" ]
-                [ div [ class "container" ]
+                [ div [ class containerClass ]
                     [ div [ class "navbar-header" ]
                         [ button
                             [ attribute "aria-expanded" "false"

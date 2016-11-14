@@ -13,124 +13,123 @@ type PillType
     | Organizations
 
 
-view : PillType -> List Statement -> (String -> msg) -> Html msg
+view : PillType -> List Statement -> (String -> msg) -> List (Html msg)
 view activePill statements navigate =
-    div [ class "main-container" ]
-        [ div [ class "browse-tag" ]
-            [ div [ class "row" ]
-                [ div [ class "container-fluid" ]
-                    [ img [ src "img/bubbles2.png" ]
-                        []
-                    , div [ class "row filters" ]
-                        [ div [ class "col-md-12 text-center" ]
-                            [ text "Showing results suited for                    "
-                            , a
-                                [ class "btn btn-default dropdown-toggle"
-                                , attribute "data-slide-to" "2"
-                                , href "#carousel-example-generic"
-                                , attribute "role" "button"
-                                ]
-                                [ text "all organizations                    " ]
-                            , text "and available in                     "
-                            , a
-                                [ class "btn btn-default dropdown-toggle"
-                                , attribute "data-slide-to" "3"
-                                , href "#carousel-example-generic"
-                                , attribute "role" "button"
-                                ]
-                                [ text "English                    " ]
+    [ div [ class "browse-tag" ]
+        [ div [ class "row" ]
+            [ div [ class "container-fluid" ]
+                [ img [ src "img/bubbles2.png" ]
+                    []
+                , div [ class "row filters" ]
+                    [ div [ class "col-md-12 text-center" ]
+                        [ text "Showing results suited for                    "
+                        , a
+                            [ class "btn btn-default dropdown-toggle"
+                            , attribute "data-slide-to" "2"
+                            , href "#carousel-example-generic"
+                            , attribute "role" "button"
                             ]
-                        ]
-                    ]
-                ]
-            ]
-        , div [ class "scroll-content" ]
-            [ div [ class "row browse" ]
-                [ div [ class "container-fluid" ]
-                    [ div [ class "row fixed" ]
-                        [ div [ class "col-xs-12" ]
-                            [ ul [ class "nav nav-pills nav-justified", attribute "role" "tablist" ]
-                                [ li
-                                    [ classList
-                                        [ ( "active"
-                                          , case activePill of
-                                                Examples ->
-                                                    True
-
-                                                _ ->
-                                                    False
-                                          )
-                                        ]
-                                    , attribute "role" "presentation"
-                                    ]
-                                    [ aForPath navigate
-                                        "/examples"
-                                        []
-                                        [ text "Examples "
-                                        , span [ class "badge" ]
-                                            [ text "42" ]
-                                        ]
-                                    ]
-                                , li
-                                    [ classList
-                                        [ ( "active"
-                                          , case activePill of
-                                                Tools ->
-                                                    True
-
-                                                _ ->
-                                                    False
-                                          )
-                                        ]
-                                    , attribute "role" "presentation"
-                                    ]
-                                    [ aForPath navigate
-                                        "/tools"
-                                        []
-                                        [ text "Tools "
-                                        , span [ class "badge" ]
-                                            [ text "42" ]
-                                        ]
-                                    ]
-                                , li
-                                    [ classList
-                                        [ ( "active"
-                                          , case activePill of
-                                                Organizations ->
-                                                    True
-
-                                                _ ->
-                                                    False
-                                          )
-                                        ]
-                                    , attribute "role" "presentation"
-                                    ]
-                                    [ aForPath navigate
-                                        "/organizations"
-                                        []
-                                        [ text "Organizations "
-                                        , span [ class "badge" ]
-                                            [ text "42" ]
-                                        ]
-                                    ]
-                                ]
+                            [ text "all organizations                    " ]
+                        , text "and available in                     "
+                        , a
+                            [ class "btn btn-default dropdown-toggle"
+                            , attribute "data-slide-to" "3"
+                            , href "#carousel-example-generic"
+                            , attribute "role" "button"
                             ]
+                            [ text "English                    " ]
                         ]
-                    , div [ class "row list" ]
-                        (viewStatements activePill statements navigate
-                            ++ [ div [ class "col-sm-12 text-center" ]
-                                    [ a [ class "show-more" ]
-                                        [ text "Show all 398"
-                                        , span [ class "glyphicon glyphicon-menu-down" ]
-                                            []
-                                        ]
-                                    ]
-                               ]
-                        )
                     ]
                 ]
             ]
         ]
+    , div [ class "scroll-content" ]
+        [ div [ class "row browse" ]
+            [ div [ class "container-fluid" ]
+                [ div [ class "row fixed" ]
+                    [ div [ class "col-xs-12" ]
+                        [ ul [ class "nav nav-pills nav-justified", attribute "role" "tablist" ]
+                            [ li
+                                [ classList
+                                    [ ( "active"
+                                      , case activePill of
+                                            Examples ->
+                                                True
+
+                                            _ ->
+                                                False
+                                      )
+                                    ]
+                                , attribute "role" "presentation"
+                                ]
+                                [ aForPath navigate
+                                    "/examples"
+                                    []
+                                    [ text "Examples "
+                                    , span [ class "badge" ]
+                                        [ text "42" ]
+                                    ]
+                                ]
+                            , li
+                                [ classList
+                                    [ ( "active"
+                                      , case activePill of
+                                            Tools ->
+                                                True
+
+                                            _ ->
+                                                False
+                                      )
+                                    ]
+                                , attribute "role" "presentation"
+                                ]
+                                [ aForPath navigate
+                                    "/tools"
+                                    []
+                                    [ text "Tools "
+                                    , span [ class "badge" ]
+                                        [ text "42" ]
+                                    ]
+                                ]
+                            , li
+                                [ classList
+                                    [ ( "active"
+                                      , case activePill of
+                                            Organizations ->
+                                                True
+
+                                            _ ->
+                                                False
+                                      )
+                                    ]
+                                , attribute "role" "presentation"
+                                ]
+                                [ aForPath navigate
+                                    "/organizations"
+                                    []
+                                    [ text "Organizations "
+                                    , span [ class "badge" ]
+                                        [ text "42" ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                , div [ class "row list" ]
+                    (viewStatements activePill statements navigate
+                        ++ [ div [ class "col-sm-12 text-center" ]
+                                [ a [ class "show-more" ]
+                                    [ text "Show all 398"
+                                    , span [ class "glyphicon glyphicon-menu-down" ]
+                                        []
+                                    ]
+                                ]
+                           ]
+                    )
+                ]
+            ]
+        ]
+    ]
 
 
 viewStatements : PillType -> List Statement -> (String -> msg) -> List (Html msg)

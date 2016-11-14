@@ -152,21 +152,18 @@ update msg authenticationMaybe model =
 -- VIEW
 
 
-view : Maybe Authenticator.Model.Authentication -> Model -> Html Msg
+view : Maybe Authenticator.Model.Authentication -> Model -> List (Html Msg)
 view authenticationMaybe model =
     case model.route of
         ToolRoute toolId ->
-            case Dict.get toolId model.toolById of
+            [ case Dict.get toolId model.toolById of
                 Nothing ->
                     text "Loading..."
 
                 Just tool ->
                     Tool.view tool
+            ]
 
-        -- div []
-        --     [ viewBreadcrumb
-        --     ,
-        --     ]
         ToolsIndexRoute ->
             let
                 tools =
@@ -175,33 +172,4 @@ view authenticationMaybe model =
                 Browse.view Tools tools navigate
 
         ToolsNotFoundRoute ->
-            viewNotFound
-
-
-
--- div []
---     [ viewBreadcrumb
---     ,
---     ]
--- viewBreadcrumb : Html msg
--- viewBreadcrumb =
---     div [ class "row" ]
---         [ div [ class "container" ]
---             [ div [ class "row" ]
---                 [ div [ class "col-xs-12" ]
---                     [ ol [ class "breadcrumb" ]
---                         [ li []
---                             [ a [ href "#" ]
---                                 [ text "Home" ]
---                             ]
---                         , li []
---                             [ a [ href "#" ]
---                                 [ text "Library" ]
---                             ]
---                         , li [ class "active" ]
---                             [ text "Data" ]
---                         ]
---                     ]
---                 ]
---             ]
---         ]
+            [ viewNotFound ]

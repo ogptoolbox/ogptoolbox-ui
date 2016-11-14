@@ -152,17 +152,18 @@ update msg authenticationMaybe model =
 -- VIEW
 
 
-view : Maybe Authenticator.Model.Authentication -> Model -> Html Msg
+view : Maybe Authenticator.Model.Authentication -> Model -> List (Html Msg)
 view authenticationMaybe model =
     case model.route of
         ExampleRoute exampleId ->
-            case Dict.get exampleId model.exampleById of
+            [ case Dict.get exampleId model.exampleById of
                 Nothing ->
                     text "Loading..."
 
                 Just example ->
                     -- TODO Use Example.view, or rename Tool to Card
                     Tool.view example
+            ]
 
         ExamplesIndexRoute ->
             let
@@ -172,4 +173,4 @@ view authenticationMaybe model =
                 Browse.view Examples examples navigate
 
         ExamplesNotFoundRoute ->
-            viewNotFound
+            [ viewNotFound ]
