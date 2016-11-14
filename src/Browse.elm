@@ -180,7 +180,8 @@ viewTool activePill statement card navigate =
                             []
                         , text "The White House"
                         ]
-                     , text card.description
+                     , p []
+                        [ text card.description ]
                      , span [ class "label label-default label-tool" ]
                         [ text "Default" ]
                      , span [ class "label label-default label-tool" ]
