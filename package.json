@@ -1,4 +1,6 @@
 {
+  "name": "ogptoolbox-ui",
+  "version": "0.0.1",
   "scripts": {
     "start": "webpack-dev-server --hot --inline --content-base static/ --port 3011",
     "build": "rimraf dist && webpack",
