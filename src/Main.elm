@@ -1,8 +1,5 @@
 module Main exposing (..)
 
--- import Cards
--- import Html.Attributes.Aria exposing (..)
-
 import About
 import Authenticator.Model
 import Authenticator.Update
@@ -32,7 +29,6 @@ import Routes
         , ToolsNestedRoute(..)
         , urlParser
         )
-import Statements
 import Task
 import Tools
 import Views exposing (aForPath, viewNotFound)
@@ -59,7 +55,6 @@ type alias Model =
     , authenticatorModel : Authenticator.Model.Model
     , authenticatorRouteMaybe :
         Maybe Authenticator.Model.Route
-        -- , cardsModel : Cards.Model
     , examplesModel : Examples.Model
     , helpModel : Help.Model
     , homeModel : Home.Model
@@ -68,7 +63,6 @@ type alias Model =
     , page : String
     , route : Route
     , searchInputValue : String
-    , statementsModel : Statements.Model
     , toolsModel : Tools.Model
     }
 
@@ -77,9 +71,7 @@ init : ( Route, Hop.Types.Location ) -> ( Model, Cmd Msg )
 init ( route, location ) =
     { aboutModel = About.init
     , authenticationMaybe = Nothing
-    , authenticatorModel =
-        Authenticator.Model.init
-        -- , cardsModel = Cards.init
+    , authenticatorModel = Authenticator.Model.init
     , authenticatorRouteMaybe = Nothing
     , examplesModel = Examples.init
     , helpModel = Help.init
@@ -89,7 +81,6 @@ init ( route, location ) =
     , page = "reference"
     , route = route
     , searchInputValue = ""
-    , statementsModel = Statements.init
     , toolsModel = Tools.init
     }
         |> urlUpdate ( route, location )
@@ -116,14 +107,6 @@ urlUpdate ( route, location ) model =
                 AboutRoute ->
                     ( model', Cmd.none )
 
-                -- AuthenticatorRoute _ ->
-                --     ( model', Cmd.none )
-                -- CardsRoute childRoute ->
-                --     let
-                --         -- Cmd.map translateCardsMsg Cards.load
-                --         (cardsModel, childCmd) = Cards.urlUpdate (childRoute, location) model'.cardsModel
-                --     in
-                --         ({ model' | cardsModel = cardsModel }, Cmd.map translateCardsMsg childCmd)
                 ExamplesRoute childRoute ->
                     let
                         ( examplesModel, childCmd ) =
@@ -166,16 +149,6 @@ urlUpdate ( route, location ) model =
                         , Cmd.map translateOrganizationsMsg childCmd
                         )
 
-                StatementsRoute childRoute ->
-                    let
-                        -- Cmd.map translateStatementsMsg Statements.load
-                        ( statementsModel, childCmd ) =
-                            Statements.urlUpdate ( childRoute, location ) model'.statementsModel
-                    in
-                        ( { model' | statementsModel = statementsModel }
-                        , Cmd.map translateStatementsMsg childCmd
-                        )
-
                 ToolsRoute childRoute ->
                     let
                         ( toolsModel, childCmd ) =
@@ -205,7 +178,6 @@ type Msg
     = AboutMsg About.InternalMsg
     | AuthenticatorMsg Authenticator.Update.Msg
     | AuthenticatorRouteMsg (Maybe Authenticator.Model.Route)
-      -- | CardsMsg Cards.InternalMsg
     | ExamplesMsg Examples.InternalMsg
     | HelpMsg Help.InternalMsg
     | HomeMsg Home.InternalMsg
@@ -214,7 +186,6 @@ type Msg
     | OrganizationsMsg Organizations.InternalMsg
     | Search
     | SearchInputChanged String
-    | StatementsMsg Statements.InternalMsg
     | ToolsMsg Tools.InternalMsg
 
 
@@ -223,14 +194,6 @@ aboutMsgTranslation =
     { onInternalMsg = AboutMsg
     , onNavigate = Navigate
     }
-
-
-
--- cardsMsgTranslation : Cards.MsgTranslation Msg
--- cardsMsgTranslation =
---     { onInternalMsg = CardsMsg
---     , onNavigate = Navigate
---     }
 
 
 examplesMsgTranslation : Examples.MsgTranslation Msg
@@ -261,13 +224,6 @@ organizationsMsgTranslation =
     }
 
 
-statementsMsgTranslation : Statements.MsgTranslation Msg
-statementsMsgTranslation =
-    { onInternalMsg = StatementsMsg
-    , onNavigate = Navigate
-    }
-
-
 toolsMsgTranslation : Tools.MsgTranslation Msg
 toolsMsgTranslation =
     { onInternalMsg = ToolsMsg
@@ -278,11 +234,6 @@ toolsMsgTranslation =
 translateAboutMsg : About.MsgTranslator Msg
 translateAboutMsg =
     About.translateMsg aboutMsgTranslation
-
-
-
--- translateCardsMsg : Cards.MsgTranslator Msg
--- translateCardsMsg = Cards.translateMsg cardsMsgTranslation
 
 
 translateExamplesMsg : Examples.MsgTranslator Msg
@@ -303,11 +254,6 @@ translateHomeMsg =
 translateOrganizationsMsg : Organizations.MsgTranslator Msg
 translateOrganizationsMsg =
     Organizations.translateMsg organizationsMsgTranslation
-
-
-translateStatementsMsg : Statements.MsgTranslator Msg
-translateStatementsMsg =
-    Statements.translateMsg statementsMsgTranslation
 
 
 translateToolsMsg : Tools.MsgTranslator Msg
@@ -336,23 +282,12 @@ update msg model =
                 model' =
                     { model
                         | authenticationMaybe = authenticatorModel.authenticationMaybe
-                        , authenticatorModel =
-                            authenticatorModel
-                            -- , cardsModel = if changed
-                            --     then
-                            --         Cards.init
-                            --     else
-                            --         model.cardsModel
+                        , authenticatorModel = authenticatorModel
                         , authenticatorRouteMaybe =
                             if changed then
                                 Nothing
                             else
                                 model.authenticatorRouteMaybe
-                        , statementsModel =
-                            if changed then
-                                Statements.init
-                            else
-                                model.statementsModel
                     }
 
                 ( model'', effect'' ) =
@@ -366,12 +301,6 @@ update msg model =
         AuthenticatorRouteMsg authenticatorRouteMaybe ->
             ( { model | authenticatorRouteMaybe = authenticatorRouteMaybe }, Cmd.none )
 
-        -- CardsMsg childMsg ->
-        --     let
-        --         ( cardsModel, childCmd ) =
-        --             Cards.update childMsg model.authenticationMaybe model.cardsModel
-        --     in
-        --         ( { model | cardsModel = cardsModel }, Cmd.map translateCardsMsg childCmd )
         ExamplesMsg childMsg ->
             let
                 ( examplesModel, childCmd ) =
@@ -416,13 +345,6 @@ update msg model =
 
         SearchInputChanged searchInputValue ->
             ( { model | searchInputValue = searchInputValue }, Cmd.none )
-
-        StatementsMsg childMsg ->
-            let
-                ( statementsModel, childCmd ) =
-                    Statements.update childMsg model.authenticationMaybe model.statementsModel
-            in
-                ( { model | statementsModel = statementsModel }, Cmd.map translateStatementsMsg childCmd )
 
         ToolsMsg childMsg ->
             let
@@ -469,10 +391,6 @@ view model =
             AboutRoute ->
                 standardLayout [ Html.App.map translateAboutMsg (About.view model.authenticationMaybe model.aboutModel) ]
 
-            -- AuthenticatorRoute subRoute ->
-            --     Html.App.map AuthenticatorMsg (Authenticator.View.view subRoute model.authenticatorModel)
-            -- CardsRoute nestedRoute ->
-            --     Html.App.map translateCardsMsg (Cards.view model.authenticationMaybe model.cardsModel)
             ExamplesRoute childRoute ->
                 Examples.view model.authenticationMaybe model.examplesModel searchQuery
                     |> List.map (Html.App.map translateExamplesMsg)
@@ -510,12 +428,6 @@ view model =
 
                         OrganizationsIndexRoute ->
                             fullscreenLayout
-
-            StatementsRoute _ ->
-                standardLayout
-                    [ Html.App.map translateStatementsMsg
-                        (Statements.view model.authenticationMaybe model.statementsModel)
-                    ]
 
             ToolsRoute childRoute ->
                 Tools.view model.authenticationMaybe model.toolsModel searchQuery

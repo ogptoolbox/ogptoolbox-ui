@@ -21,7 +21,6 @@ type Route
     | HomeRoute
     | NotFoundRoute
     | OrganizationsRoute OrganizationsNestedRoute
-    | StatementsRoute StatementsNestedRoute
     | ToolsRoute ToolsNestedRoute
 
 
@@ -37,11 +36,6 @@ type ExamplesNestedRoute
 type OrganizationsNestedRoute
     = OrganizationRoute String
     | OrganizationsIndexRoute
-
-
-type StatementsNestedRoute
-    = StatementRoute String
-    | StatementsIndexRoute
 
 
 type ToolsNestedRoute
@@ -76,11 +70,6 @@ matchers =
         "/organizations"
         [ match1 OrganizationsIndexRoute ""
         , match2 OrganizationRoute "/" idParser
-        ]
-    , nested1 StatementsRoute
-        "/statements"
-        [ match1 StatementsIndexRoute ""
-        , match2 StatementRoute "/" idParser
         ]
     , nested1 ToolsRoute
         "/tools"
