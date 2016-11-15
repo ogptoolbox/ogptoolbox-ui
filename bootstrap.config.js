@@ -1,8 +1,7 @@
 module.exports = {
 
-  // Default for the style loading
-  styleLoader: 'style-loader!css-loader!less-loader',
-    
+  styleLoader: require('extract-text-webpack-plugin').extract('style-loader', 'css-loader!postcss-loader!less-loader'),
+
   scripts: {
     'transition': true,
     'alert': true,
