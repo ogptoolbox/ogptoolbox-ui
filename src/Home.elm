@@ -135,7 +135,11 @@ view authenticationMaybe model searchQuery =
             ++ (if String.isEmpty searchQuery then
                     []
                 else
-                    [ h2 [] [ text ("Search results for \"" ++ searchQuery ++ "\"") ] ]
+                    [ div [ class "row section" ]
+                        [ div [ class "container" ]
+                            [ h1 [] [ text ("Search results for \"" ++ searchQuery ++ "\"") ] ]
+                        ]
+                    ]
                )
             ++ [ viewExamples authenticationMaybe model
                , viewTools authenticationMaybe model
