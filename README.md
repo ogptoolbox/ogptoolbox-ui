@@ -2,6 +2,12 @@
 
 Web user interface for OGP toolbox
 
+## Install dependencies
+
+    npm install
+
+This will install npm dependencies in `node_modules` and Elm dependencies in `elm-stuff`.
+
 ## Development
 
 Start the hot-reloading webpack dev server:

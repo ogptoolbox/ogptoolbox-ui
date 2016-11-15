@@ -4,6 +4,7 @@
   "scripts": {
     "start": "webpack-dev-server --hot --inline --content-base static/ --port 3011",
     "build": "rimraf dist && webpack",
+    "postinstall": "elm package install",
     "serve": "static dist",
   },
   "devDependencies": {
