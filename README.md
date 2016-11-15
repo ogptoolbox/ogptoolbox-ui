@@ -25,11 +25,21 @@ When you're ready to deploy:
 
     npm run build
 
-This will create a `dist` folder:
+This will create a `dist` folder (after removing the old one if present):
 
     .
     ├── dist
-    │   ├── index.html 
+    │   ├── index.html
     │   ├── 5df766af1ced8ff1fe0a.css
     │   └── 5df766af1ced8ff1fe0a.js
 
+To test the production build locally:
+
+    npm run serve
+    > ogptoolbox-ui@0.0.1 serve /home/cbenz/Dev/ogptoolbox/ogptoolbox-ui
+    > static --spa dist
+
+    serving "." at http://127.0.0.1:3012
+    serving as a single page app (all non-file requests redirect to index.html)
+
+Navigate to <http://localhost:3012>.

@@ -2,10 +2,10 @@
   "name": "ogptoolbox-ui",
   "version": "0.0.1",
   "scripts": {
-    "start": "webpack-dev-server --hot --inline --content-base static/ --port 3011",
     "build": "rimraf dist && webpack",
     "postinstall": "elm package install",
-    "serve": "static dist",
+    "serve": "static --spa --port 3012 dist",
+    "start": "webpack-dev-server --hot --inline --content-base static/ --port 3011"
   },
   "devDependencies": {
     "autoprefixer": "^6.4.0",
