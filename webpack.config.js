@@ -77,7 +77,7 @@ if (TARGET_ENV === 'production') {
   module.exports = merge(commonConfig, {
     entry: [
       'expose?$!expose?jQuery!jquery',
-      'bootstrap-webpack!./bootstrap.config.js',
+      'bootstrap-webpack!./bootstrap.config.prod.js',
       path.join(__dirname, 'static/index.js')
     ],
     module: {
