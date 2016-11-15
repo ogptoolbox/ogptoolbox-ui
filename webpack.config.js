@@ -63,7 +63,7 @@ if (TARGET_ENV === 'development') {
           loader: 'elm-hot!elm-webpack?verbose=true&warn=true'
         },
         {
-          test: /\.(css|less)$/, 
+          test: /\.(css|less)$/,
           loaders: ['style', 'css', 'postcss', 'less']
         }
       ]
