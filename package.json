@@ -5,7 +5,6 @@
     "start": "webpack-dev-server --hot --inline --content-base static/ --port 3011",
     "build": "rimraf dist && webpack",
     "serve": "static dist",
-    "watch": "webpack --watch"
   },
   "devDependencies": {
     "autoprefixer": "^6.4.0",
