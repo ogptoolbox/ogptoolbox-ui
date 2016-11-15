@@ -67,7 +67,7 @@ type alias Model =
     , organizationsModel : Organizations.Model
     , page : String
     , route : Route
-    , searchQuery : String
+    , searchInputValue : String
     , statementsModel : Statements.Model
     , toolsModel : Tools.Model
     }
@@ -88,7 +88,7 @@ init ( route, location ) =
     , location = location
     , page = "reference"
     , route = route
-    , searchQuery = ""
+    , searchInputValue = ""
     , statementsModel = Statements.init
     , toolsModel = Tools.init
     }
@@ -140,11 +140,11 @@ urlUpdate ( route, location ) model =
                                 |> Maybe.withDefault ""
 
                         ( homeModel, childCmd ) =
-                            Home.update (Home.Load model'.searchQuery) model.authenticationMaybe model'.homeModel
+                            Home.update (Home.Load searchQuery) model.authenticationMaybe model'.homeModel
                     in
                         ( { model'
                             | homeModel = homeModel
-                            , searchQuery = searchQuery
+                            , searchInputValue = searchQuery
                           }
                         , Cmd.map translateHomeMsg childCmd
                         )
@@ -204,8 +204,8 @@ type Msg
     | Navigate String
     | NoOp
     | OrganizationsMsg Organizations.InternalMsg
-    | SearchForQuery
-    | SetSearchQuery String
+    | Search
+    | SearchInputChanged String
     | StatementsMsg Statements.InternalMsg
     | ToolsMsg Tools.InternalMsg
 
@@ -403,17 +403,17 @@ update msg model =
             in
                 ( { model | organizationsModel = organizationsModel }, Cmd.map translateOrganizationsMsg childCmd )
 
-        SearchForQuery ->
+        Search ->
             let
                 command =
-                    Hop.addQuery (Dict.singleton "q" model.searchQuery) model.location
+                    Hop.addQuery (Dict.singleton "q" model.searchInputValue) model.location
                         |> makeUrlFromLocation
                         |> Navigation.newUrl
             in
                 ( model, command )
 
-        SetSearchQuery query ->
-            ( { model | searchQuery = query }, Cmd.none )
+        SearchInputChanged searchInputValue ->
+            ( { model | searchInputValue = searchInputValue }, Cmd.none )
 
         StatementsMsg childMsg ->
             let
@@ -805,17 +805,17 @@ viewHeader model containerClass =
                             ]
                         , Html.form
                             [ class "navbar-form navbar-right"
-                            , onSubmit SearchForQuery
+                            , onSubmit Search
                             ]
                             [ div [ class "form-group search-bar" ]
                                 [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-search" ]
                                     []
                                 , input
                                     [ class "form-control"
-                                    , onInput SetSearchQuery
+                                    , onInput SearchInputChanged
                                     , placeholder "Search for a tool, example or organization"
                                     , type' "search"
-                                    , value model.searchQuery
+                                    , value model.searchInputValue
                                     ]
                                     []
                                 ]
