@@ -14,6 +14,7 @@ var TARGET_ENV = process.env.npm_lifecycle_event === 'build' ? 'production' : 'd
 var commonConfig = {
   output: {
     path: path.resolve(__dirname, 'dist/'),
+    publicPath: '/',
     filename: '[hash].js',
   },
   resolve: {
