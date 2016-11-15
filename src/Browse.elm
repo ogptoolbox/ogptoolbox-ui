@@ -4,7 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Types exposing (Card, Statement, StatementCustom(..))
-import Views exposing (aForPath)
+import Views exposing (aForPath, viewLoading)
 
 
 type PillType
@@ -13,8 +13,8 @@ type PillType
     | Organizations
 
 
-view : PillType -> List Statement -> (String -> msg) -> List (Html msg)
-view activePill statements navigate =
+view : PillType -> List Statement -> (String -> msg) -> String -> List (Html msg)
+view activePill statements navigate searchQuery =
     [ div [ class "browse-tag" ]
         [ div [ class "row" ]
             [ div [ class "container-fluid" ]
@@ -46,7 +46,9 @@ view activePill statements navigate =
     , div [ class "scroll-content" ]
         [ div [ class "row browse" ]
             [ div [ class "container-fluid" ]
-                [ div [ class "row fixed" ]
+                [ div [ class "row" ]
+                    [ h1 [] [ text ("Search results for \"" ++ searchQuery ++ "\"") ] ]
+                , div [ class "row fixed" ]
                     [ div [ class "col-xs-12" ]
                         [ ul [ class "nav nav-pills nav-justified", attribute "role" "tablist" ]
                             [ li
@@ -63,7 +65,7 @@ view activePill statements navigate =
                                 , attribute "role" "presentation"
                                 ]
                                 [ aForPath navigate
-                                    "/examples"
+                                    ("/examples?q=" ++ searchQuery)
                                     []
                                     [ text "Examples "
                                     , span [ class "badge" ]
@@ -84,7 +86,7 @@ view activePill statements navigate =
                                 , attribute "role" "presentation"
                                 ]
                                 [ aForPath navigate
-                                    "/tools"
+                                    ("/tools?q=" ++ searchQuery)
                                     []
                                     [ text "Tools "
                                     , span [ class "badge" ]
@@ -105,7 +107,7 @@ view activePill statements navigate =
                                 , attribute "role" "presentation"
                                 ]
                                 [ aForPath navigate
-                                    "/organizations"
+                                    ("/organizations?q=" ++ searchQuery)
                                     []
                                     [ text "Organizations "
                                     , span [ class "badge" ]

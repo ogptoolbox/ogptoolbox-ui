@@ -1,33 +1,33 @@
 module Home exposing (..)
 
 import Authenticator.Model
-import Dict
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Http
+import RemoteData exposing (RemoteData(..), WebData)
 import String
 import Task
-import Types exposing (Card, DataIdsBody, Statement, StatementCustom(..))
+import Types exposing (Card, Statement, StatementCustom(..))
 import Requests exposing (newTaskGetExamples, newTaskGetOrganizations, newTaskGetTools)
-import Views exposing (aForPath)
+import Views exposing (aForPath, viewWebData)
 
 
 -- MODEL
 
 
 type alias Model =
-    { examples : List Statement
-    , organizations : List Statement
-    , tools : List Statement
+    { examples : WebData (List Statement)
+    , organizations : WebData (List Statement)
+    , tools : WebData (List Statement)
     }
 
 
 init : Model
 init =
-    { examples = []
-    , organizations = []
-    , tools = []
+    { examples = NotAsked
+    , organizations = NotAsked
+    , tools = NotAsked
     }
 
 
@@ -40,11 +40,13 @@ type ExternalMsg
 
 
 type InternalMsg
-    = Error Http.Error
+    = ErrorExamples Http.Error
+    | ErrorOrganizations Http.Error
+    | ErrorTools Http.Error
     | Load String
-    | LoadedExamples DataIdsBody
-    | LoadedOrganizations DataIdsBody
-    | LoadedTools DataIdsBody
+    | LoadedExamples (List Statement)
+    | LoadedOrganizations (List Statement)
+    | LoadedTools (List Statement)
 
 
 type Msg
@@ -80,44 +82,74 @@ translateMsg { onInternalMsg, onNavigate } msg =
 update : InternalMsg -> Maybe Authenticator.Model.Authentication -> Model -> ( Model, Cmd Msg )
 update msg authenticationMaybe model =
     case msg of
-        Error err ->
+        ErrorExamples err ->
             let
                 _ =
-                    Debug.log "Home Error" err
+                    Debug.log "Home ErrorExamples" err
+
+                model' =
+                    { model | examples = Failure err }
             in
-                ( model, Cmd.none )
+                ( model', Cmd.none )
+
+        ErrorOrganizations err ->
+            let
+                _ =
+                    Debug.log "Home ErrorOrganizations" err
+
+                model' =
+                    { model | organizations = Failure err }
+            in
+                ( model', Cmd.none )
+
+        ErrorTools err ->
+            let
+                _ =
+                    Debug.log "Home ErrorTools" err
+
+                model' =
+                    { model | tools = Failure err }
+            in
+                ( model', Cmd.none )
 
         Load searchQuery ->
             let
+                model' =
+                    { model
+                        | examples = Loading
+                        , organizations = Loading
+                        , tools = Loading
+                    }
+
                 cmds =
                     [ Task.perform
-                        (\msg -> ForSelf (Error msg))
-                        (\msg -> ForSelf (LoadedExamples msg))
+                        (ForSelf << ErrorExamples)
+                        (ForSelf << LoadedExamples)
                         (newTaskGetExamples authenticationMaybe searchQuery)
                     , Task.perform
-                        (\msg -> ForSelf (Error msg))
-                        (\msg -> ForSelf (LoadedOrganizations msg))
+                        (ForSelf << ErrorOrganizations)
+                        (ForSelf << LoadedOrganizations)
                         (newTaskGetOrganizations authenticationMaybe searchQuery)
                     , Task.perform
-                        (\msg -> ForSelf (Error msg))
-                        (\msg -> ForSelf (LoadedTools msg))
+                        (ForSelf << ErrorTools)
+                        (ForSelf << LoadedTools)
                         (newTaskGetTools authenticationMaybe searchQuery)
                     ]
             in
-                model ! cmds
+                model' ! cmds
 
-        LoadedExamples body ->
-            ( { model | examples = Dict.values body.data.statements }
+        LoadedExamples statements ->
+            ( { model | examples = Success statements }
             , Cmd.none
             )
 
-        LoadedOrganizations body ->
-            ( { model | organizations = Dict.values body.data.statements }
+        LoadedOrganizations statements ->
+            ( { model | organizations = Success statements }
             , Cmd.none
             )
 
-        LoadedTools body ->
-            ( { model | tools = Dict.values body.data.statements }
+        LoadedTools statements ->
+            ( { model | tools = Success statements }
             , Cmd.none
             )
 
@@ -126,11 +158,11 @@ update msg authenticationMaybe model =
 -- VIEW
 
 
-view : Maybe Authenticator.Model.Authentication -> Model -> String -> Html Msg
-view authenticationMaybe model searchQuery =
+view : Model -> String -> Html Msg
+view model searchQuery =
     div []
-        ([ viewBanner authenticationMaybe model
-         , viewMetrics authenticationMaybe model
+        ([ viewBanner
+         , viewMetrics model
          ]
             ++ (if String.isEmpty searchQuery then
                     []
@@ -141,15 +173,23 @@ view authenticationMaybe model searchQuery =
                         ]
                     ]
                )
-            ++ [ viewExamples authenticationMaybe model
-               , viewTools authenticationMaybe model
-               , viewOrganizations authenticationMaybe model
-               ]
+            ++ (viewWebData
+                    (\examples -> [ viewExamples examples searchQuery ])
+                    model.examples
+               )
+            ++ (viewWebData
+                    (\tools -> [ viewTools tools searchQuery ])
+                    model.tools
+               )
+            ++ (viewWebData
+                    (\organizations -> [ viewOrganizations organizations searchQuery ])
+                    model.organizations
+               )
         )
 
 
-viewBanner : Maybe Authenticator.Model.Authentication -> Model -> Html Msg
-viewBanner authenticationMaybe model =
+viewBanner : Html Msg
+viewBanner =
     div [ class "banner" ]
         [ div [ class "row " ]
             [ div [ class "carousel slide ", attribute "data-ride" "", id "carousel-example-generic" ]
@@ -270,7 +310,7 @@ viewBanner authenticationMaybe model =
                                                 , value "option1"
                                                 ]
                                                 []
-                                            , text "All organiations                    "
+                                            , text "All organizations                    "
                                             ]
                                         ]
                                     ]
@@ -449,14 +489,14 @@ viewExampleThumbnail statement card =
         viewThumbnail url card "example grey"
 
 
-viewExamples : Maybe Authenticator.Model.Authentication -> Model -> Html Msg
-viewExamples authenticationMaybe model =
+viewExamples : List Statement -> String -> Html Msg
+viewExamples examples searchQuery =
     div [ class "row section" ]
         [ div [ class "container" ]
             [ h3 [ class "zone-label" ]
                 [ text "Examples" ]
             , div [ class "row" ]
-                ((model.examples
+                ((examples
                     |> List.take 8
                     |> List.map
                         (\statement ->
@@ -470,7 +510,7 @@ viewExamples authenticationMaybe model =
                  )
                     ++ [ div [ class "col-sm-12 text-center" ]
                             [ aForPath navigate
-                                "/examples"
+                                ("/examples?q=" ++ searchQuery)
                                 [ class "show-more" ]
                                 [ text "Show all 398"
                                 , span [ class "glyphicon glyphicon-menu-down" ]
@@ -483,40 +523,54 @@ viewExamples authenticationMaybe model =
         ]
 
 
-viewMetrics : Maybe Authenticator.Model.Authentication -> Model -> Html Msg
-viewMetrics authenticationMaybe model =
+viewMetric : WebData (List Statement) -> Html msg
+viewMetric webData =
+    text <|
+        case webData of
+            Success statements ->
+                toString (List.length statements)
+
+            _ ->
+                "Error"
+
+
+viewMetrics : Model -> Html msg
+viewMetrics model =
     div [ class "row metrics" ]
         [ div [ class "container" ]
             [ div [ class "col-xs-4 text-center" ]
                 [ span [ class "metric-label" ]
                     [ text "Examples" ]
                 , h3 []
-                    [ text "5891" ]
+                    [ viewMetric model.examples
+                    ]
                 ]
             , div [ class "col-xs-4 text-center" ]
                 [ span [ class "metric-label" ]
                     [ text "Tools" ]
                 , h3 []
-                    [ List.length model.tools |> toString |> text ]
+                    [ viewMetric model.tools
+                    ]
                 ]
             , div [ class "col-xs-4 text-center" ]
                 [ span [ class "metric-label" ]
                     [ text "Organizations" ]
                 , h3 []
-                    [ text "127" ]
+                    [ viewMetric model.organizations
+                    ]
                 ]
             ]
         ]
 
 
-viewOrganizations : Maybe Authenticator.Model.Authentication -> Model -> Html Msg
-viewOrganizations authenticationMaybe model =
+viewOrganizations : List Statement -> String -> Html Msg
+viewOrganizations organizations searchQuery =
     div [ class "row section" ]
         [ div [ class "container" ]
             [ h3 [ class "zone-label" ]
                 [ text "Organizations" ]
             , div [ class "row" ]
-                ((model.organizations
+                ((organizations
                     |> List.take 8
                     |> List.map
                         (\statement ->
@@ -530,7 +584,7 @@ viewOrganizations authenticationMaybe model =
                  )
                     ++ [ div [ class "col-sm-12 text-center" ]
                             [ aForPath navigate
-                                "/organizations"
+                                ("/organizations?q=" ++ searchQuery)
                                 [ class "show-more" ]
                                 [ text "Show all 398"
                                 , span [ class "glyphicon glyphicon-menu-down" ]
@@ -577,14 +631,14 @@ viewThumbnail url card extraClass =
         ]
 
 
-viewTools : Maybe Authenticator.Model.Authentication -> Model -> Html Msg
-viewTools authenticationMaybe model =
+viewTools : List Statement -> String -> Html Msg
+viewTools tools searchQuery =
     div [ class "row section grey" ]
         [ div [ class "container" ]
             [ h3 [ class "zone-label" ]
                 [ text "Tools" ]
             , div [ class "row" ]
-                ((model.tools
+                ((tools
                     |> List.take 8
                     |> List.map
                         (\statement ->
@@ -598,10 +652,10 @@ viewTools authenticationMaybe model =
                  )
                     ++ [ div [ class "col-sm-12 text-center" ]
                             [ aForPath navigate
-                                "/tools"
+                                ("/tools?q=" ++ searchQuery)
                                 [ class "show-more" ]
                                 -- TODO Store total count in model since model.tools contains only some pages.
-                                [ text ("Show all " ++ (model.tools |> List.length |> toString))
+                                [ text ("Show all " ++ (tools |> List.length |> toString))
                                 , span [ class "glyphicon glyphicon-menu-down" ]
                                     []
                                 ]

@@ -2,32 +2,30 @@ module Organizations exposing (..)
 
 import Authenticator.Model
 import Browse exposing (PillType(..))
-import Dict exposing (Dict)
 import Hop.Types
 import Html exposing (..)
+import Html.Attributes exposing (..)
 import Http
 import Organization
+import RemoteData exposing (RemoteData(..), WebData)
 import Requests exposing (newTaskGetOrganization, newTaskGetOrganizations)
-import Routes exposing (OrganizationsNestedRoute(..))
+import Routes exposing (getSearchQuery, OrganizationsNestedRoute(..))
 import Task
-import Types exposing (DataIdBody, DataIdsBody, Statement, StatementCustom(..))
-import Views exposing (viewNotFound)
+import Types exposing (Statement, StatementCustom(..))
+import Views exposing (viewWebData)
 
 
 -- MODEL
 
 
-type alias Model =
-    { route : OrganizationsNestedRoute
-    , organizationById : Dict String Statement
-    }
+type Model
+    = Organizations (WebData (List Statement))
+    | Organization (WebData Statement)
 
 
 init : Model
 init =
-    { route = OrganizationsNotFoundRoute
-    , organizationById = Dict.empty
-    }
+    Organizations NotAsked
 
 
 
@@ -37,18 +35,15 @@ init =
 urlUpdate : ( OrganizationsNestedRoute, Hop.Types.Location ) -> Model -> ( Model, Cmd Msg )
 urlUpdate ( route, location ) model =
     let
-        model' =
-            { model | route = route }
+        searchQuery =
+            getSearchQuery location
     in
         case route of
             OrganizationRoute organizationId ->
-                ( model', loadOne organizationId )
+                ( Organization NotAsked, loadOne organizationId )
 
             OrganizationsIndexRoute ->
-                ( model', loadAll )
-
-            OrganizationsNotFoundRoute ->
-                ( model', Cmd.none )
+                ( Organizations NotAsked, loadAll searchQuery )
 
 
 
@@ -61,10 +56,10 @@ type ExternalMsg
 
 type InternalMsg
     = Error Http.Error
-    | LoadAll
+    | LoadAll String
     | LoadOne String
-    | LoadedAll DataIdsBody
-    | LoadedOne DataIdBody
+    | LoadedAll (List Statement)
+    | LoadedOne Statement
 
 
 type Msg
@@ -82,9 +77,9 @@ type alias MsgTranslator parentMsg =
     Msg -> parentMsg
 
 
-loadAll : Cmd Msg
-loadAll =
-    Task.perform (\_ -> Debug.crash "") (\_ -> ForSelf LoadAll) (Task.succeed "")
+loadAll : String -> Cmd Msg
+loadAll searchQuery =
+    Task.perform (\_ -> Debug.crash "") (\_ -> ForSelf (LoadAll searchQuery)) (Task.succeed "")
 
 
 loadOne : String -> Cmd Msg
@@ -114,62 +109,58 @@ update msg authenticationMaybe model =
             let
                 _ =
                     Debug.log "Organizations Error" err
-            in
-                ( model, Cmd.none )
 
-        LoadAll ->
-            let
-                cmd =
-                    Task.perform
-                        (\msg -> ForSelf (Error msg))
-                        (\msg -> ForSelf (LoadedAll msg))
-                        (newTaskGetOrganizations authenticationMaybe "")
-            in
-                ( model, cmd )
+                model' =
+                    case model of
+                        Organization _ ->
+                            Organization (Failure err)
 
-        LoadOne organizationId ->
-            let
-                cmd =
-                    Task.perform
-                        (\msg -> ForSelf (Error msg))
-                        (\msg -> ForSelf (LoadedOne msg))
-                        (newTaskGetOrganization authenticationMaybe organizationId)
+                        Organizations _ ->
+                            Organizations (Failure err)
             in
-                ( model, cmd )
+                ( model', Cmd.none )
 
-        LoadedAll body ->
-            ( { model | organizationById = body.data.statements }
-            , Cmd.none
+        LoadAll searchQuery ->
+            ( Organizations Loading
+            , Task.perform
+                (ForSelf << Error)
+                (ForSelf << LoadedAll)
+                (newTaskGetOrganizations authenticationMaybe searchQuery)
             )
 
-        LoadedOne body ->
-            ( { model | organizationById = body.data.statements }
-            , Cmd.none
+        LoadOne toolId ->
+            ( Organization Loading
+            , Task.perform
+                (ForSelf << Error)
+                (ForSelf << LoadedOne)
+                (newTaskGetOrganization authenticationMaybe toolId)
             )
+
+        LoadedAll statements ->
+            ( Organizations (Success statements), Cmd.none )
+
+        LoadedOne statement ->
+            ( Organization (Success statement), Cmd.none )
 
 
 
 -- VIEW
 
 
-view : Maybe Authenticator.Model.Authentication -> Model -> List (Html Msg)
-view authenticationMaybe model =
-    case model.route of
-        OrganizationRoute organizationId ->
-            [ case Dict.get organizationId model.organizationById of
-                Nothing ->
-                    text "Loading..."
-
-                Just organization ->
-                    Organization.view organization
+view : Maybe Authenticator.Model.Authentication -> Model -> String -> List (Html Msg)
+view authenticationMaybe model searchQuery =
+    case model of
+        Organization webData ->
+            [ div [ class "row section" ]
+                [ div [ class "container" ]
+                    (viewWebData
+                        (\organization -> [ Organization.view organization ])
+                        webData
+                    )
+                ]
             ]
 
-        OrganizationsIndexRoute ->
-            let
-                organizations =
-                    Dict.values model.organizationById
-            in
-                Browse.view Organizations organizations navigate
-
-        OrganizationsNotFoundRoute ->
-            [ viewNotFound ]
+        Organizations webData ->
+            viewWebData
+                (\organizations -> Browse.view Browse.Organizations organizations navigate searchQuery)
+                webData

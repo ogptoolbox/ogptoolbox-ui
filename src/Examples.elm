@@ -2,32 +2,30 @@ module Examples exposing (..)
 
 import Authenticator.Model
 import Browse exposing (PillType(..))
-import Dict exposing (Dict)
 import Hop.Types
 import Html exposing (..)
+import Html.Attributes exposing (..)
 import Http
+import RemoteData exposing (RemoteData(..), WebData)
 import Requests exposing (newTaskGetExample, newTaskGetExamples)
-import Routes exposing (ExamplesNestedRoute(..))
+import Routes exposing (getSearchQuery, ExamplesNestedRoute(..))
 import Task
 import Tool
-import Types exposing (DataIdBody, DataIdsBody, Statement, StatementCustom(..))
-import Views exposing (viewNotFound)
+import Types exposing (Statement, StatementCustom(..))
+import Views exposing (viewWebData)
 
 
 -- MODEL
 
 
-type alias Model =
-    { route : ExamplesNestedRoute
-    , exampleById : Dict String Statement
-    }
+type Model
+    = Examples (WebData (List Statement))
+    | Example (WebData Statement)
 
 
 init : Model
 init =
-    { route = ExamplesNotFoundRoute
-    , exampleById = Dict.empty
-    }
+    Examples NotAsked
 
 
 
@@ -37,18 +35,15 @@ init =
 urlUpdate : ( ExamplesNestedRoute, Hop.Types.Location ) -> Model -> ( Model, Cmd Msg )
 urlUpdate ( route, location ) model =
     let
-        model' =
-            { model | route = route }
+        searchQuery =
+            getSearchQuery location
     in
         case route of
             ExampleRoute exampleId ->
-                ( model', loadOne exampleId )
+                ( Example NotAsked, loadOne exampleId )
 
             ExamplesIndexRoute ->
-                ( model', loadAll )
-
-            ExamplesNotFoundRoute ->
-                ( model', Cmd.none )
+                ( Examples NotAsked, loadAll searchQuery )
 
 
 
@@ -61,10 +56,10 @@ type ExternalMsg
 
 type InternalMsg
     = Error Http.Error
-    | LoadAll
+    | LoadAll String
     | LoadOne String
-    | LoadedAll DataIdsBody
-    | LoadedOne DataIdBody
+    | LoadedAll (List Statement)
+    | LoadedOne Statement
 
 
 type Msg
@@ -82,9 +77,9 @@ type alias MsgTranslator parentMsg =
     Msg -> parentMsg
 
 
-loadAll : Cmd Msg
-loadAll =
-    Task.perform (\_ -> Debug.crash "") (\_ -> ForSelf LoadAll) (Task.succeed "")
+loadAll : String -> Cmd Msg
+loadAll searchQuery =
+    Task.perform (\_ -> Debug.crash "") (\_ -> ForSelf (LoadAll searchQuery)) (Task.succeed "")
 
 
 loadOne : String -> Cmd Msg
@@ -114,63 +109,59 @@ update msg authenticationMaybe model =
             let
                 _ =
                     Debug.log "Examples Error" err
-            in
-                ( model, Cmd.none )
 
-        LoadAll ->
-            let
-                cmd =
-                    Task.perform
-                        (\msg -> ForSelf (Error msg))
-                        (\msg -> ForSelf (LoadedAll msg))
-                        (newTaskGetExamples authenticationMaybe "")
+                model' =
+                    case model of
+                        Example _ ->
+                            Example (Failure err)
+
+                        Examples _ ->
+                            Examples (Failure err)
             in
-                ( model, cmd )
+                ( model', Cmd.none )
+
+        LoadAll searchQuery ->
+            ( Examples Loading
+            , Task.perform
+                (ForSelf << Error)
+                (ForSelf << LoadedAll)
+                (newTaskGetExamples authenticationMaybe searchQuery)
+            )
 
         LoadOne toolId ->
-            let
-                cmd =
-                    Task.perform
-                        (\msg -> ForSelf (Error msg))
-                        (\msg -> ForSelf (LoadedOne msg))
-                        (newTaskGetExample authenticationMaybe toolId)
-            in
-                ( model, cmd )
-
-        LoadedAll body ->
-            ( { model | exampleById = body.data.statements }
-            , Cmd.none
+            ( Example Loading
+            , Task.perform
+                (ForSelf << Error)
+                (ForSelf << LoadedOne)
+                (newTaskGetExample authenticationMaybe toolId)
             )
 
-        LoadedOne body ->
-            ( { model | exampleById = body.data.statements }
-            , Cmd.none
-            )
+        LoadedAll statements ->
+            ( Examples (Success statements), Cmd.none )
+
+        LoadedOne statement ->
+            ( Example (Success statement), Cmd.none )
 
 
 
 -- VIEW
 
 
-view : Maybe Authenticator.Model.Authentication -> Model -> List (Html Msg)
-view authenticationMaybe model =
-    case model.route of
-        ExampleRoute exampleId ->
-            [ case Dict.get exampleId model.exampleById of
-                Nothing ->
-                    text "Loading..."
-
-                Just example ->
-                    -- TODO Use Example.view, or rename Tool to Card
-                    Tool.view example
+view : Maybe Authenticator.Model.Authentication -> Model -> String -> List (Html Msg)
+view authenticationMaybe model searchQuery =
+    case model of
+        Example webData ->
+            [ div [ class "row section" ]
+                [ div [ class "container" ]
+                    (viewWebData
+                        -- TODO Use Example.view, or rename Tool to Card
+                        (\example -> [ Tool.view example ])
+                        webData
+                    )
+                ]
             ]
 
-        ExamplesIndexRoute ->
-            let
-                examples =
-                    Dict.values model.exampleById
-            in
-                Browse.view Examples examples navigate
-
-        ExamplesNotFoundRoute ->
-            [ viewNotFound ]
+        Examples webData ->
+            viewWebData
+                (\examples -> Browse.view Browse.Examples examples navigate searchQuery)
+                webData

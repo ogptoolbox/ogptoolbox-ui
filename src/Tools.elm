@@ -2,32 +2,30 @@ module Tools exposing (..)
 
 import Authenticator.Model
 import Browse exposing (PillType(..))
-import Dict exposing (Dict)
 import Hop.Types
 import Html exposing (..)
+import Html.Attributes exposing (..)
 import Http
+import RemoteData exposing (RemoteData(..), WebData)
 import Requests exposing (newTaskGetTool, newTaskGetTools)
-import Routes exposing (ToolsNestedRoute(..))
+import Routes exposing (getSearchQuery, ToolsNestedRoute(..))
 import Task
 import Tool
-import Types exposing (DataIdBody, DataIdsBody, Statement, StatementCustom(..))
-import Views exposing (viewNotFound)
+import Types exposing (Statement, StatementCustom(..))
+import Views exposing (viewWebData)
 
 
 -- MODEL
 
 
-type alias Model =
-    { route : ToolsNestedRoute
-    , toolById : Dict String Statement
-    }
+type Model
+    = Tools (WebData (List Statement))
+    | Tool (WebData Statement)
 
 
 init : Model
 init =
-    { route = ToolsNotFoundRoute
-    , toolById = Dict.empty
-    }
+    Tools NotAsked
 
 
 
@@ -37,18 +35,15 @@ init =
 urlUpdate : ( ToolsNestedRoute, Hop.Types.Location ) -> Model -> ( Model, Cmd Msg )
 urlUpdate ( route, location ) model =
     let
-        model' =
-            { model | route = route }
+        searchQuery =
+            getSearchQuery location
     in
         case route of
             ToolRoute toolId ->
-                ( model', loadOne toolId )
+                ( Tool NotAsked, loadOne toolId )
 
             ToolsIndexRoute ->
-                ( model', loadAll )
-
-            ToolsNotFoundRoute ->
-                ( model', Cmd.none )
+                ( Tools NotAsked, loadAll searchQuery )
 
 
 
@@ -61,10 +56,10 @@ type ExternalMsg
 
 type InternalMsg
     = Error Http.Error
-    | LoadAll
+    | LoadAll String
     | LoadOne String
-    | LoadedAll DataIdsBody
-    | LoadedOne DataIdBody
+    | LoadedAll (List Statement)
+    | LoadedOne Statement
 
 
 type Msg
@@ -82,9 +77,9 @@ type alias MsgTranslator parentMsg =
     Msg -> parentMsg
 
 
-loadAll : Cmd Msg
-loadAll =
-    Task.perform (\_ -> Debug.crash "") (\_ -> ForSelf LoadAll) (Task.succeed "")
+loadAll : String -> Cmd Msg
+loadAll searchQuery =
+    Task.perform (\_ -> Debug.crash "") (\_ -> ForSelf (LoadAll searchQuery)) (Task.succeed "")
 
 
 loadOne : String -> Cmd Msg
@@ -114,62 +109,58 @@ update msg authenticationMaybe model =
             let
                 _ =
                     Debug.log "Tools Error" err
-            in
-                ( model, Cmd.none )
 
-        LoadAll ->
-            let
-                cmd =
-                    Task.perform
-                        (\msg -> ForSelf (Error msg))
-                        (\msg -> ForSelf (LoadedAll msg))
-                        (newTaskGetTools authenticationMaybe "")
+                model' =
+                    case model of
+                        Tool _ ->
+                            Tool (Failure err)
+
+                        Tools _ ->
+                            Tools (Failure err)
             in
-                ( model, cmd )
+                ( model', Cmd.none )
+
+        LoadAll searchQuery ->
+            ( Tools Loading
+            , Task.perform
+                (ForSelf << Error)
+                (ForSelf << LoadedAll)
+                (newTaskGetTools authenticationMaybe searchQuery)
+            )
 
         LoadOne toolId ->
-            let
-                cmd =
-                    Task.perform
-                        (\msg -> ForSelf (Error msg))
-                        (\msg -> ForSelf (LoadedOne msg))
-                        (newTaskGetTool authenticationMaybe toolId)
-            in
-                ( model, cmd )
-
-        LoadedAll body ->
-            ( { model | toolById = body.data.statements }
-            , Cmd.none
+            ( Tool Loading
+            , Task.perform
+                (ForSelf << Error)
+                (ForSelf << LoadedOne)
+                (newTaskGetTool authenticationMaybe toolId)
             )
 
-        LoadedOne body ->
-            ( { model | toolById = body.data.statements }
-            , Cmd.none
-            )
+        LoadedAll statements ->
+            ( Tools (Success statements), Cmd.none )
+
+        LoadedOne statement ->
+            ( Tool (Success statement), Cmd.none )
 
 
 
 -- VIEW
 
 
-view : Maybe Authenticator.Model.Authentication -> Model -> List (Html Msg)
-view authenticationMaybe model =
-    case model.route of
-        ToolRoute toolId ->
-            [ case Dict.get toolId model.toolById of
-                Nothing ->
-                    text "Loading..."
-
-                Just tool ->
-                    Tool.view tool
+view : Maybe Authenticator.Model.Authentication -> Model -> String -> List (Html Msg)
+view authenticationMaybe model searchQuery =
+    case model of
+        Tool webData ->
+            [ div [ class "row section" ]
+                [ div [ class "container" ]
+                    (viewWebData
+                        (\tool -> [ Tool.view tool ])
+                        webData
+                    )
+                ]
             ]
 
-        ToolsIndexRoute ->
-            let
-                tools =
-                    Dict.values model.toolById
-            in
-                Browse.view Tools tools navigate
-
-        ToolsNotFoundRoute ->
-            [ viewNotFound ]
+        Tools webData ->
+            viewWebData
+                (\tools -> Browse.view Browse.Tools tools navigate searchQuery)
+                webData

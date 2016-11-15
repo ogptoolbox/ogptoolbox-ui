@@ -3,6 +3,7 @@ module Routes exposing (..)
 -- import Authenticator.Model
 
 import Combine exposing (Parser)
+import Dict
 import Hop
 import Hop.Matchers exposing (match1, match2, nested1)
 import Hop.Types exposing (Location)
@@ -31,25 +32,21 @@ type Route
 type ExamplesNestedRoute
     = ExampleRoute String
     | ExamplesIndexRoute
-    | ExamplesNotFoundRoute
 
 
 type OrganizationsNestedRoute
     = OrganizationRoute String
     | OrganizationsIndexRoute
-    | OrganizationsNotFoundRoute
 
 
 type StatementsNestedRoute
     = StatementRoute String
     | StatementsIndexRoute
-    | StatementsNotFoundRoute
 
 
 type ToolsNestedRoute
     = ToolRoute String
     | ToolsIndexRoute
-    | ToolsNotFoundRoute
 
 
 makeUrl : String -> String
@@ -119,3 +116,19 @@ idParser =
 urlParser : Navigation.Parser ( Route, Hop.Types.Location )
 urlParser =
     Navigation.makeParser (.href >> Hop.matchUrl routerConfig)
+
+
+
+-- QUERY STRING
+
+
+addSearchQueryToLocation : String -> Location -> Cmd msg
+addSearchQueryToLocation searchQuery location =
+    Hop.addQuery (Dict.singleton "q" searchQuery) location
+        |> makeUrlFromLocation
+        |> Navigation.newUrl
+
+
+getSearchQuery : Location -> String
+getSearchQuery location =
+    Dict.get "q" location.query |> Maybe.withDefault ""

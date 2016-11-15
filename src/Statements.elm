@@ -47,7 +47,7 @@ init =
         False
         -- , location = Hop.Types.newLocation
     , newStatementModel = NewStatement.init
-    , route = StatementsNotFoundRoute
+    , route = StatementsIndexRoute
     , statementModel = Statement.init
     , statementById = Dict.empty
     , statementIds = []
@@ -85,9 +85,6 @@ urlUpdate ( route, location ) model =
 
             StatementsIndexRoute ->
                 ( model', load )
-
-            StatementsNotFoundRoute ->
-                ( model', Cmd.none )
 
 
 
@@ -201,8 +198,8 @@ update msg authenticationMaybe model =
                         Cmd.none
                     else
                         Task.perform
-                            (\msg -> ForSelf (Error msg))
-                            (\msg -> ForSelf (Loaded msg))
+                            (ForSelf << Error)
+                            (ForSelf << Loaded)
                             (newTaskGetStatements authenticationMaybe)
             in
                 ( model, cmd )
@@ -231,7 +228,7 @@ update msg authenticationMaybe model =
                             model
             in
                 ( { model' | newStatementModel = newStatementModel }
-                , Cmd.map (\msg -> ForSelf (NewStatementMsg msg)) childCmd
+                , Cmd.map (ForSelf << NewStatementMsg) childCmd
                 )
 
         Rated body ->
@@ -336,11 +333,8 @@ view authenticationMaybe model =
                     )
                 , case authenticationMaybe of
                     Just authentication ->
-                        Html.App.map (\msg -> ForSelf (NewStatementMsg msg)) (NewStatement.view model.newStatementModel)
+                        Html.App.map (ForSelf << NewStatementMsg) (NewStatement.view model.newStatementModel)
 
                     Nothing ->
                         text ""
                 ]
-
-        StatementsNotFoundRoute ->
-            viewNotFound

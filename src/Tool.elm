@@ -12,14 +12,10 @@ view : Statement -> Html msg
 view tool =
     case tool.custom of
         CardCustom card ->
-            div [ class "row section" ]
-                [ div [ class "container" ]
-                    [ div [ class "row" ]
+            div [ class "row" ]
                         [ viewSidebar card
                         , viewCard card
                         ]
-                    ]
-                ]
 
         _ ->
             Debug.crash "StatementCustom constructor not supported"

@@ -7,6 +7,8 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Attributes.Aria exposing (ariaDescribedby, ariaHidden, ariaLabel, ariaPressed, role)
 import Html.Events exposing (on, onClick, onInput, onWithOptions, targetValue)
+import Http exposing (Error(..))
+import RemoteData exposing (RemoteData(..), WebData)
 import Routes exposing (makeUrl)
 import String
 import Types exposing (Ballot, convertArgumentTypeToString, ModelFragment, Statement, StatementCustom(..))
@@ -225,6 +227,32 @@ viewLanguageCode languageCode errorMaybe languageCodeChanged =
              ]
                 ++ errorBlock
             )
+
+
+viewHttpError : Http.Error -> Html msg
+viewHttpError err =
+    div []
+        [ case err of
+            Timeout ->
+                text "The server was too slow to respond (timeout)."
+
+            NetworkError ->
+                text "There was a network error."
+
+            UnexpectedPayload string ->
+                text "The server returned an unexpected payload."
+
+            BadResponse code string ->
+                if code == 404 then
+                    viewNotFound
+                else
+                    text string
+        ]
+
+
+viewLoading : Html msg
+viewLoading =
+    text "Data is loading and should be displayed quite soon."
 
 
 viewName : String -> Maybe String -> (String -> msg) -> Html msg
@@ -633,3 +661,19 @@ viewStatementLinePanel authenticationMaybe statementId ratingChanged flagAbuse m
                                 ]
                             ]
                         ]
+
+
+viewWebData : (a -> List (Html msg)) -> WebData a -> List (Html msg)
+viewWebData viewSuccess webData =
+    case webData of
+        NotAsked ->
+            [ text "" ]
+
+        Loading ->
+            [ viewLoading ]
+
+        Failure err ->
+            [ viewHttpError err ]
+
+        Success data ->
+            viewSuccess data

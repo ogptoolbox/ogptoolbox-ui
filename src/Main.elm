@@ -7,13 +7,11 @@ import About
 import Authenticator.Model
 import Authenticator.Update
 import Authenticator.View
-import Dict
 import Dom.Scroll
 import Examples
 import Help
 import Home
-import Hop
-import Hop.Types
+import Hop.Types exposing (Location)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Attributes.Aria exposing (ariaHidden, ariaLabelledby)
@@ -24,7 +22,9 @@ import Navigation
 import Organizations
 import Routes
     exposing
-        ( ExamplesNestedRoute(..)
+        ( addSearchQueryToLocation
+        , ExamplesNestedRoute(..)
+        , getSearchQuery
         , makeUrl
         , makeUrlFromLocation
         , OrganizationsNestedRoute(..)
@@ -102,6 +102,9 @@ init ( route, location ) =
 urlUpdate : ( Route, Hop.Types.Location ) -> Model -> ( Model, Cmd Msg )
 urlUpdate ( route, location ) model =
     let
+        searchQuery =
+            getSearchQuery location
+
         model' =
             { model
                 | location = location
@@ -126,7 +129,10 @@ urlUpdate ( route, location ) model =
                         ( examplesModel, childCmd ) =
                             Examples.urlUpdate ( childRoute, location ) model'.examplesModel
                     in
-                        ( { model' | examplesModel = examplesModel }
+                        ( { model'
+                            | examplesModel = examplesModel
+                            , searchInputValue = searchQuery
+                          }
                         , Cmd.map translateExamplesMsg childCmd
                         )
 
@@ -135,10 +141,6 @@ urlUpdate ( route, location ) model =
 
                 HomeRoute ->
                     let
-                        searchQuery =
-                            Dict.get "q" location.query
-                                |> Maybe.withDefault ""
-
                         ( homeModel, childCmd ) =
                             Home.update (Home.Load searchQuery) model.authenticationMaybe model'.homeModel
                     in
@@ -157,7 +159,10 @@ urlUpdate ( route, location ) model =
                         ( organizationsModel, childCmd ) =
                             Organizations.urlUpdate ( childRoute, location ) model'.organizationsModel
                     in
-                        ( { model' | organizationsModel = organizationsModel }
+                        ( { model'
+                            | organizationsModel = organizationsModel
+                            , searchInputValue = searchQuery
+                          }
                         , Cmd.map translateOrganizationsMsg childCmd
                         )
 
@@ -176,7 +181,10 @@ urlUpdate ( route, location ) model =
                         ( toolsModel, childCmd ) =
                             Tools.urlUpdate ( childRoute, location ) model'.toolsModel
                     in
-                        ( { model' | toolsModel = toolsModel }
+                        ( { model'
+                            | toolsModel = toolsModel
+                            , searchInputValue = searchQuery
+                          }
                         , Cmd.map translateToolsMsg childCmd
                         )
     in
@@ -404,13 +412,7 @@ update msg model =
                 ( { model | organizationsModel = organizationsModel }, Cmd.map translateOrganizationsMsg childCmd )
 
         Search ->
-            let
-                command =
-                    Hop.addQuery (Dict.singleton "q" model.searchInputValue) model.location
-                        |> makeUrlFromLocation
-                        |> Navigation.newUrl
-            in
-                ( model, command )
+            ( model, addSearchQueryToLocation model.searchInputValue model.location )
 
         SearchInputChanged searchInputValue ->
             ( { model | searchInputValue = searchInputValue }, Cmd.none )
@@ -459,6 +461,9 @@ view model =
                        , viewBackdrop model
                        ]
                 )
+
+        searchQuery =
+            getSearchQuery model.location
     in
         case model.route of
             AboutRoute ->
@@ -469,7 +474,7 @@ view model =
             -- CardsRoute nestedRoute ->
             --     Html.App.map translateCardsMsg (Cards.view model.authenticationMaybe model.cardsModel)
             ExamplesRoute childRoute ->
-                Examples.view model.authenticationMaybe model.examplesModel
+                Examples.view model.authenticationMaybe model.examplesModel searchQuery
                     |> List.map (Html.App.map translateExamplesMsg)
                     |> case childRoute of
                         ExampleRoute _ ->
@@ -478,28 +483,26 @@ view model =
                         ExamplesIndexRoute ->
                             fullscreenLayout
 
-                        ExamplesNotFoundRoute ->
-                            standardLayout
-
             HelpRoute ->
                 standardLayout [ Html.App.map translateHelpMsg (Help.view model.authenticationMaybe model.helpModel) ]
 
             HomeRoute ->
-                let
-                    term =
-                        Dict.get "q" model.location.query
-                            |> Maybe.withDefault ""
-                in
-                    standardLayout
-                        [ Html.App.map translateHomeMsg
-                            (Home.view model.authenticationMaybe model.homeModel term)
-                        ]
+                standardLayout
+                    [ Html.App.map translateHomeMsg
+                        (Home.view model.homeModel (getSearchQuery model.location))
+                    ]
 
             NotFoundRoute ->
-                viewNotFound
+                standardLayout
+                    [ div [ class "row section" ]
+                        [ div [ class "container" ]
+                            [ viewNotFound
+                            ]
+                        ]
+                    ]
 
             OrganizationsRoute childRoute ->
-                Organizations.view model.authenticationMaybe model.organizationsModel
+                Organizations.view model.authenticationMaybe model.organizationsModel searchQuery
                     |> List.map (Html.App.map translateOrganizationsMsg)
                     |> case childRoute of
                         OrganizationRoute _ ->
@@ -508,9 +511,6 @@ view model =
                         OrganizationsIndexRoute ->
                             fullscreenLayout
 
-                        OrganizationsNotFoundRoute ->
-                            standardLayout
-
             StatementsRoute _ ->
                 standardLayout
                     [ Html.App.map translateStatementsMsg
@@ -518,7 +518,7 @@ view model =
                     ]
 
             ToolsRoute childRoute ->
-                Tools.view model.authenticationMaybe model.toolsModel
+                Tools.view model.authenticationMaybe model.toolsModel searchQuery
                     |> List.map (Html.App.map translateToolsMsg)
                     |> case childRoute of
                         ToolRoute _ ->
@@ -526,9 +526,6 @@ view model =
 
                         ToolsIndexRoute ->
                             fullscreenLayout
-
-                        ToolsNotFoundRoute ->
-                            standardLayout
 
 
 viewAuthenticatorModal : Model -> Html Msg

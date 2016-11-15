@@ -16,6 +16,8 @@ import Types
         , DataIdsBody
         , decodeDataIdBody
         , decodeDataIdsBody
+        , decodeStatementFromId
+        , decodeStatements
         , ModelFragment
         , Statement
         , StatementCustom(..)
@@ -137,6 +139,39 @@ newTaskGetCard authenticationMaybe statementId =
             )
 
 
+newTaskGetCardOfType : Maybe Authenticator.Model.Authentication -> List String -> String -> Task Http.Error Statement
+newTaskGetCardOfType authenticationMaybe cardTypes statementId =
+    let
+        authenticationHeaders =
+            case authenticationMaybe of
+                Just authentication ->
+                    [ ( "Retruco-API-Key", authentication.apiKey )
+                    ]
+
+                Nothing ->
+                    []
+    in
+        Http.fromJson (decodeStatementFromId statementId)
+            (Http.send Http.defaultSettings
+                { verb = "GET"
+                , url =
+                    apiUrl
+                        ++ "statements/"
+                        ++ statementId
+                        ++ "?"
+                        ++ (cardTypes
+                                |> List.map (\cardType -> "type=" ++ cardType)
+                                |> String.join "&"
+                           )
+                , headers =
+                    [ ( "Accept", "application/json" )
+                    ]
+                        ++ authenticationHeaders
+                , body = Http.empty
+                }
+            )
+
+
 newTaskGetCards : Maybe Authenticator.Model.Authentication -> Task Http.Error DataIdsBody
 newTaskGetCards authenticationMaybe =
     let
@@ -163,7 +198,11 @@ newTaskGetCards authenticationMaybe =
             )
 
 
-newTaskGetCardsOfType : Maybe Authenticator.Model.Authentication -> List String -> String -> Task Http.Error DataIdsBody
+newTaskGetCardsOfType :
+    Maybe Authenticator.Model.Authentication
+    -> List String
+    -> String
+    -> Task Http.Error (List Statement)
 newTaskGetCardsOfType authenticationMaybe cardTypes searchQuery =
     let
         authenticationHeaders =
@@ -175,7 +214,7 @@ newTaskGetCardsOfType authenticationMaybe cardTypes searchQuery =
                 Nothing ->
                     []
     in
-        Http.fromJson decodeDataIdsBody
+        Http.fromJson decodeStatements
             (Http.send Http.defaultSettings
                 { verb = "GET"
                 , url =
@@ -196,64 +235,22 @@ newTaskGetCardsOfType authenticationMaybe cardTypes searchQuery =
             )
 
 
-newTaskGetExample : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
+newTaskGetExample : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error Statement
 newTaskGetExample authenticationMaybe statementId =
-    let
-        authenticationHeaders =
-            case authenticationMaybe of
-                Just authentication ->
-                    [ ( "Retruco-API-Key", authentication.apiKey )
-                    ]
-
-                Nothing ->
-                    []
-    in
-        Http.fromJson decodeDataIdBody
-            (Http.send Http.defaultSettings
-                { verb = "GET"
-                , url =
-                    apiUrl ++ "statements/" ++ statementId ++ "?type=Usage"
-                , headers =
-                    [ ( "Accept", "application/json" )
-                    ]
-                        ++ authenticationHeaders
-                , body = Http.empty
-                }
-            )
+    newTaskGetCardOfType authenticationMaybe [ "Usage" ] statementId
 
 
-newTaskGetExamples : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdsBody
+newTaskGetExamples : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error (List Statement)
 newTaskGetExamples authenticationMaybe searchQuery =
     newTaskGetCardsOfType authenticationMaybe [ "Usage" ] searchQuery
 
 
-newTaskGetOrganization : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
+newTaskGetOrganization : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error Statement
 newTaskGetOrganization authenticationMaybe statementId =
-    let
-        authenticationHeaders =
-            case authenticationMaybe of
-                Just authentication ->
-                    [ ( "Retruco-API-Key", authentication.apiKey )
-                    ]
-
-                Nothing ->
-                    []
-    in
-        Http.fromJson decodeDataIdBody
-            (Http.send Http.defaultSettings
-                { verb = "GET"
-                , url =
-                    apiUrl ++ "statements/" ++ statementId ++ "?type=Organization"
-                , headers =
-                    [ ( "Accept", "application/json" )
-                    ]
-                        ++ authenticationHeaders
-                , body = Http.empty
-                }
-            )
+    newTaskGetCardOfType authenticationMaybe [ "Organization" ] statementId
 
 
-newTaskGetOrganizations : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdsBody
+newTaskGetOrganizations : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error (List Statement)
 newTaskGetOrganizations authenticationMaybe searchQuery =
     newTaskGetCardsOfType authenticationMaybe [ "Organization" ] searchQuery
 
@@ -287,33 +284,12 @@ newTaskGetStatements authenticationMaybe =
             )
 
 
-newTaskGetTool : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
+newTaskGetTool : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error Statement
 newTaskGetTool authenticationMaybe statementId =
-    let
-        authenticationHeaders =
-            case authenticationMaybe of
-                Just authentication ->
-                    [ ( "Retruco-API-Key", authentication.apiKey )
-                    ]
-
-                Nothing ->
-                    []
-    in
-        Http.fromJson decodeDataIdBody
-            (Http.send Http.defaultSettings
-                { verb = "GET"
-                , url =
-                    apiUrl ++ "statements/" ++ statementId ++ "?type=Software&type=Platform"
-                , headers =
-                    [ ( "Accept", "application/json" )
-                    ]
-                        ++ authenticationHeaders
-                , body = Http.empty
-                }
-            )
+    newTaskGetCardOfType authenticationMaybe [ "Software", "Platform" ] statementId
 
 
-newTaskGetTools : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdsBody
+newTaskGetTools : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error (List Statement)
 newTaskGetTools authenticationMaybe searchQuery =
     newTaskGetCardsOfType authenticationMaybe [ "Software", "Platform" ] searchQuery
 

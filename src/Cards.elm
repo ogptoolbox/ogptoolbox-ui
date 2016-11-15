@@ -201,8 +201,8 @@ update msg authenticationMaybe model =
                         Cmd.none
                     else
                         Task.perform
-                            (\msg -> ForSelf (Error msg))
-                            (\msg -> ForSelf (Loaded msg))
+                            (ForSelf << Error)
+                            (ForSelf << Loaded)
                             (newTaskGetCards authenticationMaybe)
             in
                 ( model, cmd )
@@ -231,7 +231,7 @@ update msg authenticationMaybe model =
                             model
             in
                 ( { model' | newCardModel = newCardModel }
-                , Cmd.map (\msg -> ForSelf (NewCardMsg msg)) childCmd
+                , Cmd.map (ForSelf << NewCardMsg) childCmd
                 )
 
         Rated body ->
@@ -336,7 +336,7 @@ view authenticationMaybe model =
                     )
                 , case authenticationMaybe of
                     Just authentication ->
-                        Html.App.map (\msg -> ForSelf (NewCardMsg msg)) (NewCard.view model.newCardModel)
+                        Html.App.map (ForSelf << NewCardMsg) (NewCard.view model.newCardModel)
 
                     Nothing ->
                         text ""

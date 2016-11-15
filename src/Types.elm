@@ -338,7 +338,7 @@ decodeStatementCustomFromType statementType =
                 |: oneOf [ at [ "values", "Card Type" ] (list string), succeed [] ]
                 |: oneOf
                     [ at [ "values", "Description-EN" ] (list string)
-                        |> Decode.map (List.head >> (Maybe.withDefault ""))
+                        |> map (List.head >> (Maybe.withDefault ""))
                     , succeed ""
                     ]
                 |: oneOf [ at [ "values", "Name" ] string, succeed "" ]
@@ -359,6 +359,24 @@ decodeStatementCustomFromType statementType =
 
         _ ->
             fail ("Unkown statement type: " ++ statementType)
+
+
+decodeStatementFromId : String -> Decoder Statement
+decodeStatementFromId statementId =
+    decodeDataIdBody
+        `andThen`
+            \body ->
+                case Dict.get statementId body.data.statements of
+                    Nothing ->
+                        fail ("Statement ID \"" ++ statementId ++ "\" is not in body.data.statements")
+
+                    Just statement ->
+                        succeed statement
+
+
+decodeStatements : Decoder (List Statement)
+decodeStatements =
+    decodeDataIdsBody |> map (\body -> Dict.values body.data.statements)
 
 
 decodeUser : Decoder User
