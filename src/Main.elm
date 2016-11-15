@@ -182,9 +182,9 @@ urlUpdate ( route, location ) model =
     in
         model''
             ! [ Task.perform
-                    (\_ -> Debug.crash "Dom.Scroll.toTop \"main\"")
+                    (\_ -> Debug.crash "Dom.Scroll.toTop \"html-element\"")
                     (always NoOp)
-                    (Dom.Scroll.toTop "main")
+                    (Dom.Scroll.toTop "html-element")
               , cmd
               ]
 
