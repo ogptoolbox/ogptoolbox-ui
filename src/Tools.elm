@@ -167,7 +167,11 @@ update msg authenticationMaybe model =
             ( Tools (Data (Loaded statements)), Cmd.none )
 
         LoadedOne statement ->
-            ( Tool (Data (Loaded statement)), Cmd.none )
+            let
+                _ =
+                    Debug.log "statement" statement
+            in
+                ( Tool (Data (Loaded statement)), Cmd.none )
 
 
 

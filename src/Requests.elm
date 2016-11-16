@@ -4,7 +4,6 @@ import Authenticator.Model
 import Configuration exposing (apiUrl)
 import Dict exposing (Dict)
 import Http
-import Json.Decode
 import Json.Encode
 import String
 import Types exposing (..)

@@ -1,25 +1,7 @@
 module Types exposing (..)
 
 import Dict exposing (Dict)
-import Json.Decode as Decode
-    exposing
-        ( (:=)
-        , andThen
-        , at
-        , bool
-        , customDecoder
-        , Decoder
-        , dict
-        , fail
-        , int
-        , list
-        , map
-        , maybe
-        , null
-        , oneOf
-        , string
-        , succeed
-        )
+import Json.Decode as Decode exposing (..)
 import Json.Decode.Extra as Json exposing ((|:))
 import Set
 
@@ -58,7 +40,9 @@ type alias Card =
     , descriptions : List String
     , name : String
     , tags : List String
-    , urls : List String
+    , urls :
+        List String
+        -- , values : Dict String ValuesValue
     }
 
 
@@ -116,6 +100,7 @@ type alias Statement =
     , isAbuse : Bool
     , ratingCount : Int
     , ratingSum : Int
+    , schemas : Dict String StatementSchema
     }
 
 
@@ -156,6 +141,31 @@ type alias User =
 type alias UserBody =
     { data : User
     }
+
+
+type ValuesValue
+    = String
+    | List String
+
+
+
+-- SCHEMA TYPES
+
+
+type StatementSchema
+    = StringSchema (Maybe StringFormat)
+    | ArraySchema ArrayItemsSchema
+
+
+type StringFormat
+    = UriReference
+    | Uri
+    | Email
+
+
+type ArrayItemsSchema
+    = ArrayItemSchema StatementSchema
+    | ArrayItemsArraySchema (List StatementSchema)
 
 
 convertArgumentTypeToString : ArgumentType -> String
@@ -293,8 +303,10 @@ decodeDataId =
     succeed DataId
         |: oneOf [ ("ballots" := dict decodeBallot), succeed Dict.empty ]
         |: ("id" := string)
-        |: oneOf [ ("statements" := dict decodeStatement), succeed Dict.empty ]
-        |: oneOf [ ("users" := dict decodeUser), succeed Dict.empty ]
+        |: ("statements" := dict decodeStatement)
+        -- |: oneOf [ ("statements" := dict decodeStatement), succeed Dict.empty ]
+        |:
+            oneOf [ ("users" := dict decodeUser), succeed Dict.empty ]
 
 
 decodeDataIds : Decoder DataIds
@@ -330,6 +342,9 @@ decodeStatement =
         |: oneOf [ ("isAbuse" := bool), succeed False ]
         |: oneOf [ ("ratingCount" := int), succeed 0 ]
         |: oneOf [ ("ratingSum" := int), succeed 0 ]
+        -- |: oneOf [ ("schemas" := dict decodeStatementSchema), succeed Dict.empty ]
+        |:
+            ("schemas" := dict decodeStatementSchema)
 
 
 decodeStatementCustomFromType : String -> Decoder StatementCustom
@@ -377,6 +392,53 @@ decodeStatements =
     decodeDataIdsBody |> map (\body -> Dict.values body.data.statements)
 
 
+decodeStatementSchema : Decoder StatementSchema
+decodeStatementSchema =
+    ("type" := string)
+        `andThen` decodeStatementSchemaFromType
+
+
+decodeStatementSchemaFromType : String -> Decoder StatementSchema
+decodeStatementSchemaFromType type_ =
+    case type_ of
+        "array" ->
+            succeed ArraySchema
+                |: ("items"
+                        := oneOf
+                            [ decodeStatementSchema |> map ArrayItemSchema
+                              -- TODO ArrayItemsArraySchema
+                            ]
+                   )
+
+        "string" ->
+            succeed StringSchema
+                |: (maybe ("format" := string)
+                        `andThen`
+                            (\format ->
+                                case format of
+                                    Nothing ->
+                                        succeed Nothing
+
+                                    Just format ->
+                                        case format of
+                                            "email" ->
+                                                succeed (Just Email)
+
+                                            "uri" ->
+                                                succeed (Just Uri)
+
+                                            "uriref" ->
+                                                succeed (Just UriReference)
+
+                                            _ ->
+                                                fail ("Unkown statement schema format type: " ++ format)
+                            )
+                   )
+
+        _ ->
+            fail ("Unkown statement schema type: " ++ type_)
+
+
 decodeUser : Decoder User
 decodeUser =
     succeed User
@@ -407,12 +469,21 @@ getStatementOfId :
     -> { a | data : { b | statements : Dict String Statement } }
     -> Decoder Statement
 getStatementOfId statementId body =
-    case Dict.get statementId body.data.statements of
-        Nothing ->
-            fail ("Statement ID \"" ++ statementId ++ "\" is not in body.data.statements")
+    let
+        statements =
+            body.data.statements
+    in
+        case Dict.get statementId statements of
+            Nothing ->
+                fail
+                    ("Statement ID \""
+                        ++ statementId
+                        ++ "\" is not in body.data.statements; received "
+                        ++ (toString (Dict.keys statements))
+                    )
 
-        Just statement ->
-            succeed statement
+            Just statement ->
+                succeed statement
 
 
 initStatementForm : StatementForm
