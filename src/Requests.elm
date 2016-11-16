@@ -4,24 +4,10 @@ import Authenticator.Model
 import Configuration exposing (apiUrl)
 import Dict exposing (Dict)
 import Http
+import Json.Decode
 import Json.Encode
 import String
-import Types
-    exposing
-        ( Ballot
-        , convertArgumentTypeToString
-        , convertStatementCustomToKind
-        , DataId
-        , DataIdBody
-        , DataIdsBody
-        , decodeDataIdBody
-        , decodeDataIdsBody
-        , decodeStatementFromId
-        , decodeStatements
-        , ModelFragment
-        , Statement
-        , StatementCustom(..)
-        )
+import Types exposing (..)
 import Task exposing (Task)
 
 
@@ -141,7 +127,6 @@ newTaskGetCard authenticationMaybe statementId =
 
 newTaskGetCardOfType : Maybe Authenticator.Model.Authentication -> List String -> String -> Task Http.Error Statement
 newTaskGetCardOfType authenticationMaybe cardTypes statementId =
-    -- TODO Check that the returned "Card Type" matches cardTypes.
     let
         authenticationHeaders =
             case authenticationMaybe of
@@ -152,18 +137,11 @@ newTaskGetCardOfType authenticationMaybe cardTypes statementId =
                 Nothing ->
                     []
     in
-        Http.fromJson (decodeStatementFromId statementId)
+        Http.fromJson
+            (decodeAndValidateStatement statementId cardTypes)
             (Http.send Http.defaultSettings
                 { verb = "GET"
-                , url =
-                    apiUrl
-                        ++ "statements/"
-                        ++ statementId
-                        ++ "?"
-                        ++ (cardTypes
-                                |> List.map (\cardType -> "type=" ++ cardType)
-                                |> String.join "&"
-                           )
+                , url = apiUrl ++ "statements/" ++ statementId
                 , headers =
                     [ ( "Accept", "application/json" )
                     ]

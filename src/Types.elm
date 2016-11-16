@@ -21,6 +21,7 @@ import Json.Decode as Decode
         , succeed
         )
 import Json.Decode.Extra as Json exposing ((|:))
+import Set
 
 
 type alias Abuse =
@@ -242,6 +243,18 @@ convertStatementFormToCustom form =
                 }
 
 
+decodeAndValidateStatement : String -> List String -> Decoder Statement
+decodeAndValidateStatement statementId cardTypes =
+    decodeDataIdBody
+        `andThen` getStatementOfId statementId
+        `andThen`
+            (\statement ->
+                getCard statement
+                    `andThen` validateHasOneOfCardTypes cardTypes
+                    |> map (always statement)
+            )
+
+
 decodeArgumentType : Decoder ArgumentType
 decodeArgumentType =
     customDecoder string
@@ -359,19 +372,6 @@ decodeStatementCustomFromType statementType =
             fail ("Unkown statement type: " ++ statementType)
 
 
-decodeStatementFromId : String -> Decoder Statement
-decodeStatementFromId statementId =
-    decodeDataIdBody
-        `andThen`
-            \body ->
-                case Dict.get statementId body.data.statements of
-                    Nothing ->
-                        fail ("Statement ID \"" ++ statementId ++ "\" is not in body.data.statements")
-
-                    Just statement ->
-                        succeed statement
-
-
 decodeStatements : Decoder (List Statement)
 decodeStatements =
     decodeDataIdsBody |> map (\body -> Dict.values body.data.statements)
@@ -392,6 +392,29 @@ decodeUserBody =
         |: ("data" := decodeUser)
 
 
+getCard : Statement -> Decoder Card
+getCard statement =
+    case statement.custom of
+        CardCustom card ->
+            succeed card
+
+        _ ->
+            fail ("statement.custom is not a Card")
+
+
+getStatementOfId :
+    String
+    -> { a | data : { b | statements : Dict String Statement } }
+    -> Decoder Statement
+getStatementOfId statementId body =
+    case Dict.get statementId body.data.statements of
+        Nothing ->
+            fail ("Statement ID \"" ++ statementId ++ "\" is not in body.data.statements")
+
+        Just statement ->
+            succeed statement
+
+
 initStatementForm : StatementForm
 initStatementForm =
     { argumentType = ""
@@ -403,3 +426,21 @@ initStatementForm =
     , name = ""
     , statementId = ""
     }
+
+
+validateHasOneOfCardTypes : List String -> Card -> Decoder Card
+validateHasOneOfCardTypes cardTypes card =
+    let
+        set1 =
+            Set.fromList card.cardTypes
+
+        set2 =
+            Set.fromList cardTypes
+
+        intersection =
+            Set.intersect set1 set2
+    in
+        if Set.isEmpty intersection then
+            fail ("Expected one card type of " ++ (toString cardTypes) ++ " but found " ++ (toString card.cardTypes))
+        else
+            succeed card
