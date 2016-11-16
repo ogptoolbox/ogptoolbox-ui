@@ -10,10 +10,11 @@ import Help
 import Home
 import Hop.Types exposing (Location)
 import Html exposing (..)
+import Html.App
 import Html.Attributes exposing (..)
 import Html.Attributes.Aria exposing (ariaHidden, ariaLabelledby)
 import Html.Events exposing (onInput, onSubmit, onWithOptions)
-import Html.App
+import Html.Helpers exposing (aForPath)
 import Json.Decode
 import Navigation
 import Organizations
@@ -31,7 +32,7 @@ import Routes
         )
 import Task
 import Tools
-import Views exposing (aForPath, viewNotFound)
+import Views exposing (viewNotFound)
 
 
 main : Program Never

@@ -6,9 +6,9 @@ import Json.Decode
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Attributes.Aria exposing (ariaDescribedby, ariaHidden, ariaLabel, ariaPressed, role)
-import Html.Events exposing (on, onClick, onInput, onWithOptions, targetValue)
+import Html.Events exposing (on, onClick, onInput, targetValue)
+import Html.Helpers exposing (aForPath)
 import Http exposing (Error(..))
-import Routes exposing (makeUrl)
 import String
 import Types exposing (Ballot, convertArgumentTypeToString, ModelFragment, Statement, StatementCustom(..))
 import WebData exposing (LoadingStatus, WebData(..))
@@ -50,20 +50,6 @@ languageCodeLabelCouples =
 languageCodes : List String
 languageCodes =
     List.map (\( item, label ) -> item) languageCodeLabelCouples
-
-
-aForPath : (String -> msg) -> String -> List (Attribute msg) -> List (Html msg) -> Html msg
-aForPath navigate path attributes children =
-    a
-        ([ href (makeUrl path)
-         , onWithOptions
-            "click"
-            { stopPropagation = True, preventDefault = True }
-            (Json.Decode.succeed (navigate path))
-         ]
-            ++ attributes
-        )
-        children
 
 
 decodeArgumentType : String -> Json.Decode.Decoder String

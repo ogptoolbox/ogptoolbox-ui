@@ -3,9 +3,10 @@ module Browse exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
+import Html.Helpers exposing (aForPath)
 import String
 import Types exposing (Card, Statement, StatementCustom(..))
-import Views exposing (aForPath, viewLoading)
+import Views exposing (viewLoading)
 import WebData exposing (LoadingStatus(..))
 
 
@@ -203,7 +204,13 @@ viewTool activePill statement card navigate =
                         , text "The White House"
                         ]
                      , p []
-                        [ text card.description ]
+                        (case List.head card.descriptions of
+                            Just description ->
+                                [ text description ]
+
+                            Nothing ->
+                                []
+                        )
                      , span [ class "label label-default label-tool" ]
                         [ text "Default" ]
                      , span [ class "label label-default label-tool" ]

@@ -141,6 +141,7 @@ newTaskGetCard authenticationMaybe statementId =
 
 newTaskGetCardOfType : Maybe Authenticator.Model.Authentication -> List String -> String -> Task Http.Error Statement
 newTaskGetCardOfType authenticationMaybe cardTypes statementId =
+    -- TODO Check that the returned "Card Type" matches cardTypes.
     let
         authenticationHeaders =
             case authenticationMaybe of

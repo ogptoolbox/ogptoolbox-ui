@@ -4,12 +4,14 @@ import Authenticator.Model
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
+import Html.Helpers exposing (aForPath)
+
 import Http
 import String
 import Task
 import Types exposing (Card, Statement, StatementCustom(..))
 import Requests exposing (newTaskGetExamples, newTaskGetOrganizations, newTaskGetTools)
-import Views exposing (aForPath, viewWebData)
+import Views exposing (viewWebData)
 import WebData exposing (LoadingStatus(..), maybeData, WebData(..))
 
 
@@ -641,7 +643,13 @@ viewThumbnail url card extraClass =
                 ([ h4 []
                     [ aForPath navigate url [] [ text card.name ] ]
                  , p []
-                    [ text card.description ]
+                     (case List.head card.descriptions of
+                            Just description ->
+                                [ text description ]
+
+                            Nothing ->
+                                []
+                        )
                  , span [ class "label label-default label-tool" ]
                     [ text "Default" ]
                  , span [ class "label label-default label-tool" ]
