@@ -6,13 +6,14 @@ import Hop.Types
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Http
+import Maybe.Helpers
 import Organization
-import RemoteData exposing (RemoteData(..), WebData)
 import Requests exposing (newTaskGetOrganization, newTaskGetOrganizations)
 import Routes exposing (getSearchQuery, OrganizationsNestedRoute(..))
 import Task
 import Types exposing (Statement, StatementCustom(..))
 import Views exposing (viewWebData)
+import WebData exposing (LoadingStatus(..), maybeData, WebData(..))
 
 
 -- MODEL
@@ -40,10 +41,10 @@ urlUpdate ( route, location ) model =
     in
         case route of
             OrganizationRoute organizationId ->
-                ( Organization NotAsked, loadOne organizationId )
+                ( model, loadOne organizationId )
 
             OrganizationsIndexRoute ->
-                ( Organizations NotAsked, loadAll searchQuery )
+                ( model, loadAll searchQuery )
 
 
 
@@ -121,26 +122,52 @@ update msg authenticationMaybe model =
                 ( model', Cmd.none )
 
         LoadAll searchQuery ->
-            ( Organizations Loading
-            , Task.perform
-                (ForSelf << Error)
-                (ForSelf << LoadedAll)
-                (newTaskGetOrganizations authenticationMaybe searchQuery)
-            )
+            let
+                loadingStatus =
+                    Loading
+                        (case model of
+                            Organization _ ->
+                                Nothing
 
-        LoadOne toolId ->
-            ( Organization Loading
-            , Task.perform
-                (ForSelf << Error)
-                (ForSelf << LoadedOne)
-                (newTaskGetOrganization authenticationMaybe toolId)
-            )
+                            Organizations webData ->
+                                maybeData webData
+                        )
+
+                model' =
+                    Organizations (Data loadingStatus)
+
+                cmd =
+                    Task.perform Error LoadedAll (newTaskGetOrganizations authenticationMaybe searchQuery)
+                        |> Cmd.map ForSelf
+            in
+                ( model', cmd )
+
+        LoadOne organizationId ->
+            let
+                loadingStatus =
+                    Loading
+                        (case model of
+                            Organization webData ->
+                                maybeData webData
+
+                            Organizations _ ->
+                                Nothing
+                        )
+
+                model' =
+                    Organization (Data loadingStatus)
+
+                cmd =
+                    Task.perform Error LoadedOne (newTaskGetOrganization authenticationMaybe organizationId)
+                        |> Cmd.map ForSelf
+            in
+                ( model', cmd )
 
         LoadedAll statements ->
-            ( Organizations (Success statements), Cmd.none )
+            ( Organizations (Data (Loaded statements)), Cmd.none )
 
         LoadedOne statement ->
-            ( Organization (Success statement), Cmd.none )
+            ( Organization (Data (Loaded statement)), Cmd.none )
 
 
 
@@ -153,14 +180,9 @@ view authenticationMaybe model searchQuery =
         Organization webData ->
             [ div [ class "row section" ]
                 [ div [ class "container" ]
-                    (viewWebData
-                        (\organization -> [ Organization.view organization ])
-                        webData
-                    )
+                    (viewWebData (Organization.view >> Maybe.Helpers.toList) webData)
                 ]
             ]
 
         Organizations webData ->
-            viewWebData
-                (\organizations -> Browse.view Browse.Organizations organizations navigate searchQuery)
-                webData
+            viewWebData (Browse.view Browse.Organizations navigate searchQuery) webData

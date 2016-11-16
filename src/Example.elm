@@ -1,4 +1,4 @@
-module Organization exposing (..)
+module Example exposing (..)
 
 import Html exposing (..)
 import Tool
@@ -8,5 +8,5 @@ import WebData exposing (LoadingStatus)
 
 view : LoadingStatus Statement -> Maybe (Html msg)
 view =
-    -- TODO Use real Organization.view, from the designer mockup.
+    -- TODO Use real Example.view, when designer gives the mockup.
     Tool.view

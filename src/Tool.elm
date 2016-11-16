@@ -3,19 +3,30 @@ module Tool exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Types exposing (Card, Statement, StatementCustom(..))
+import WebData exposing (LoadingStatus(..))
 
 
 -- VIEW
 
 
-view : Statement -> Html msg
-view tool =
+view : LoadingStatus Statement -> Maybe (Html msg)
+view loadingStatus =
+    case loadingStatus of
+        Loading maybeStatement ->
+            Maybe.map viewStatement maybeStatement
+
+        Loaded statement ->
+            Just (viewStatement statement)
+
+
+viewStatement : Statement -> Html msg
+viewStatement tool =
     case tool.custom of
         CardCustom card ->
             div [ class "row" ]
-                        [ viewSidebar card
-                        , viewCard card
-                        ]
+                [ viewSidebar card
+                , viewCard card
+                ]
 
         _ ->
             Debug.crash "StatementCustom constructor not supported"

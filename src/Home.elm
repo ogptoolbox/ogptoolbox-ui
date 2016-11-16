@@ -5,12 +5,12 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Http
-import RemoteData exposing (RemoteData(..), WebData)
 import String
 import Task
 import Types exposing (Card, Statement, StatementCustom(..))
 import Requests exposing (newTaskGetExamples, newTaskGetOrganizations, newTaskGetTools)
 import Views exposing (aForPath, viewWebData)
+import WebData exposing (LoadingStatus(..), maybeData, WebData(..))
 
 
 -- MODEL
@@ -116,40 +116,41 @@ update msg authenticationMaybe model =
             let
                 model' =
                     { model
-                        | examples = Loading
-                        , organizations = Loading
-                        , tools = Loading
+                        | examples = Data (Loading (maybeData model.examples))
+                        , organizations = Data (Loading (maybeData model.organizations))
+                        , tools = Data (Loading (maybeData model.tools))
                     }
 
                 cmds =
-                    [ Task.perform
-                        (ForSelf << ErrorExamples)
-                        (ForSelf << LoadedExamples)
-                        (newTaskGetExamples authenticationMaybe searchQuery)
-                    , Task.perform
-                        (ForSelf << ErrorOrganizations)
-                        (ForSelf << LoadedOrganizations)
-                        (newTaskGetOrganizations authenticationMaybe searchQuery)
-                    , Task.perform
-                        (ForSelf << ErrorTools)
-                        (ForSelf << LoadedTools)
-                        (newTaskGetTools authenticationMaybe searchQuery)
-                    ]
+                    List.map (Cmd.map ForSelf)
+                        [ Task.perform
+                            ErrorExamples
+                            LoadedExamples
+                            (newTaskGetExamples authenticationMaybe searchQuery)
+                        , Task.perform
+                            ErrorOrganizations
+                            LoadedOrganizations
+                            (newTaskGetOrganizations authenticationMaybe searchQuery)
+                        , Task.perform
+                            ErrorTools
+                            LoadedTools
+                            (newTaskGetTools authenticationMaybe searchQuery)
+                        ]
             in
                 model' ! cmds
 
         LoadedExamples statements ->
-            ( { model | examples = Success statements }
+            ( { model | examples = Data (Loaded statements) }
             , Cmd.none
             )
 
         LoadedOrganizations statements ->
-            ( { model | organizations = Success statements }
+            ( { model | organizations = Data (Loaded statements) }
             , Cmd.none
             )
 
         LoadedTools statements ->
-            ( { model | tools = Success statements }
+            ( { model | tools = Data (Loaded statements) }
             , Cmd.none
             )
 
@@ -160,32 +161,41 @@ update msg authenticationMaybe model =
 
 view : Model -> String -> Html Msg
 view model searchQuery =
-    div []
-        ([ viewBanner
-         , viewMetrics model
-         ]
-            ++ (if String.isEmpty searchQuery then
-                    []
-                else
-                    [ div [ class "row section" ]
-                        [ div [ class "container" ]
-                            [ h1 [] [ text ("Search results for \"" ++ searchQuery ++ "\"") ] ]
+    let
+        viewWebDataFor webData view =
+            viewWebData
+                (\loadingStatus ->
+                    case loadingStatus of
+                        Loading maybeStatement ->
+                            case maybeStatement of
+                                Nothing ->
+                                    []
+
+                                Just data ->
+                                    [ view searchQuery data ]
+
+                        Loaded data ->
+                            [ view searchQuery data ]
+                )
+                webData
+    in
+        div []
+            ([ viewBanner
+             , viewMetrics model
+             ]
+                ++ (if String.isEmpty searchQuery then
+                        []
+                    else
+                        [ div [ class "row section" ]
+                            [ div [ class "container" ]
+                                [ h1 [] [ text ("Search results for \"" ++ searchQuery ++ "\"") ] ]
+                            ]
                         ]
-                    ]
-               )
-            ++ (viewWebData
-                    (\examples -> [ viewExamples examples searchQuery ])
-                    model.examples
-               )
-            ++ (viewWebData
-                    (\tools -> [ viewTools tools searchQuery ])
-                    model.tools
-               )
-            ++ (viewWebData
-                    (\organizations -> [ viewOrganizations organizations searchQuery ])
-                    model.organizations
-               )
-        )
+                   )
+                ++ (viewWebDataFor model.examples viewExamples)
+                ++ (viewWebDataFor model.tools viewTools)
+                ++ (viewWebDataFor model.organizations viewOrganizations)
+            )
 
 
 viewBanner : Html Msg
@@ -489,8 +499,8 @@ viewExampleThumbnail statement card =
         viewThumbnail url card "example grey"
 
 
-viewExamples : List Statement -> String -> Html Msg
-viewExamples examples searchQuery =
+viewExamples : String -> List Statement -> Html Msg
+viewExamples searchQuery examples =
     div [ class "row section" ]
         [ div [ class "container" ]
             [ h3 [ class "zone-label" ]
@@ -527,11 +537,24 @@ viewMetric : WebData (List Statement) -> Html msg
 viewMetric webData =
     text <|
         case webData of
-            Success statements ->
-                toString (List.length statements)
+            NotAsked ->
+                ""
 
-            _ ->
+            Failure _ ->
                 "Error"
+
+            Data loadingStatus ->
+                case loadingStatus of
+                    Loading maybeStatements ->
+                        case maybeStatements of
+                            Nothing ->
+                                ""
+
+                            Just statements ->
+                                toString (List.length statements)
+
+                    Loaded statements ->
+                        toString (List.length statements)
 
 
 viewMetrics : Model -> Html msg
@@ -563,8 +586,8 @@ viewMetrics model =
         ]
 
 
-viewOrganizations : List Statement -> String -> Html Msg
-viewOrganizations organizations searchQuery =
+viewOrganizations : String -> List Statement -> Html Msg
+viewOrganizations searchQuery organizations =
     div [ class "row section" ]
         [ div [ class "container" ]
             [ h3 [ class "zone-label" ]
@@ -631,8 +654,8 @@ viewThumbnail url card extraClass =
         ]
 
 
-viewTools : List Statement -> String -> Html Msg
-viewTools tools searchQuery =
+viewTools : String -> List Statement -> Html Msg
+viewTools searchQuery tools =
     div [ class "row section grey" ]
         [ div [ class "container" ]
             [ h3 [ class "zone-label" ]

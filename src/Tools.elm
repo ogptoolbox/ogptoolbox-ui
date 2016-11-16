@@ -6,13 +6,14 @@ import Hop.Types
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Http
-import RemoteData exposing (RemoteData(..), WebData)
+import Maybe.Helpers
 import Requests exposing (newTaskGetTool, newTaskGetTools)
 import Routes exposing (getSearchQuery, ToolsNestedRoute(..))
 import Task
 import Tool
 import Types exposing (Statement, StatementCustom(..))
 import Views exposing (viewWebData)
+import WebData exposing (LoadingStatus(..), maybeData, WebData(..))
 
 
 -- MODEL
@@ -40,10 +41,10 @@ urlUpdate ( route, location ) model =
     in
         case route of
             ToolRoute toolId ->
-                ( Tool NotAsked, loadOne toolId )
+                ( model, loadOne toolId )
 
             ToolsIndexRoute ->
-                ( Tools NotAsked, loadAll searchQuery )
+                ( model, loadAll searchQuery )
 
 
 
@@ -121,26 +122,52 @@ update msg authenticationMaybe model =
                 ( model', Cmd.none )
 
         LoadAll searchQuery ->
-            ( Tools Loading
-            , Task.perform
-                (ForSelf << Error)
-                (ForSelf << LoadedAll)
-                (newTaskGetTools authenticationMaybe searchQuery)
-            )
+            let
+                loadingStatus =
+                    Loading
+                        (case model of
+                            Tool _ ->
+                                Nothing
+
+                            Tools webData ->
+                                maybeData webData
+                        )
+
+                model' =
+                    Tools (Data loadingStatus)
+
+                cmd =
+                    Task.perform Error LoadedAll (newTaskGetTools authenticationMaybe searchQuery)
+                        |> Cmd.map ForSelf
+            in
+                ( model', cmd )
 
         LoadOne toolId ->
-            ( Tool Loading
-            , Task.perform
-                (ForSelf << Error)
-                (ForSelf << LoadedOne)
-                (newTaskGetTool authenticationMaybe toolId)
-            )
+            let
+                loadingStatus =
+                    Loading
+                        (case model of
+                            Tool webData ->
+                                maybeData webData
+
+                            Tools _ ->
+                                Nothing
+                        )
+
+                model' =
+                    Tool (Data loadingStatus)
+
+                cmd =
+                    Task.perform Error LoadedOne (newTaskGetTool authenticationMaybe toolId)
+                        |> Cmd.map ForSelf
+            in
+                ( model', cmd )
 
         LoadedAll statements ->
-            ( Tools (Success statements), Cmd.none )
+            ( Tools (Data (Loaded statements)), Cmd.none )
 
         LoadedOne statement ->
-            ( Tool (Success statement), Cmd.none )
+            ( Tool (Data (Loaded statement)), Cmd.none )
 
 
 
@@ -153,14 +180,9 @@ view authenticationMaybe model searchQuery =
         Tool webData ->
             [ div [ class "row section" ]
                 [ div [ class "container" ]
-                    (viewWebData
-                        (\tool -> [ Tool.view tool ])
-                        webData
-                    )
+                    (viewWebData (Tool.view >> Maybe.Helpers.toList) webData)
                 ]
             ]
 
         Tools webData ->
-            viewWebData
-                (\tools -> Browse.view Browse.Tools tools navigate searchQuery)
-                webData
+            viewWebData (Browse.view Browse.Tools navigate searchQuery) webData

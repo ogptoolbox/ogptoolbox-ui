@@ -3,8 +3,10 @@ module Browse exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
+import String
 import Types exposing (Card, Statement, StatementCustom(..))
 import Views exposing (aForPath, viewLoading)
+import WebData exposing (LoadingStatus(..))
 
 
 type PillType
@@ -13,8 +15,8 @@ type PillType
     | Organizations
 
 
-view : PillType -> List Statement -> (String -> msg) -> String -> List (Html msg)
-view activePill statements navigate searchQuery =
+view : PillType -> (String -> msg) -> String -> LoadingStatus (List Statement) -> List (Html msg)
+view activePill navigate searchQuery loadingStatus =
     [ div [ class "browse-tag" ]
         [ div [ class "row" ]
             [ div [ class "container-fluid" ]
@@ -46,96 +48,115 @@ view activePill statements navigate searchQuery =
     , div [ class "scroll-content" ]
         [ div [ class "row browse" ]
             [ div [ class "container-fluid" ]
-                [ div [ class "row" ]
-                    [ h1 [] [ text ("Search results for \"" ++ searchQuery ++ "\"") ] ]
-                , div [ class "row fixed" ]
-                    [ div [ class "col-xs-12" ]
-                        [ ul [ class "nav nav-pills nav-justified", attribute "role" "tablist" ]
-                            [ li
-                                [ classList
-                                    [ ( "active"
-                                      , case activePill of
-                                            Examples ->
-                                                True
+                ((if String.isEmpty searchQuery then
+                    []
+                  else
+                    [ div [ class "row" ]
+                        [ h1 [] [ text ("Search results for \"" ++ searchQuery ++ "\"") ] ]
+                    ]
+                 )
+                    ++ [ div [ class "row fixed" ]
+                            [ div [ class "col-xs-12" ]
+                                [ ul [ class "nav nav-pills nav-justified", attribute "role" "tablist" ]
+                                    [ li
+                                        [ classList
+                                            [ ( "active"
+                                              , case activePill of
+                                                    Examples ->
+                                                        True
 
-                                            _ ->
-                                                False
-                                      )
-                                    ]
-                                , attribute "role" "presentation"
-                                ]
-                                [ aForPath navigate
-                                    ("/examples?q=" ++ searchQuery)
-                                    []
-                                    [ text "Examples "
-                                    , span [ class "badge" ]
-                                        [ text "42" ]
-                                    ]
-                                ]
-                            , li
-                                [ classList
-                                    [ ( "active"
-                                      , case activePill of
-                                            Tools ->
-                                                True
+                                                    _ ->
+                                                        False
+                                              )
+                                            ]
+                                        , attribute "role" "presentation"
+                                        ]
+                                        [ aForPath navigate
+                                            ("/examples?q=" ++ searchQuery)
+                                            []
+                                            [ text "Examples "
+                                            , span [ class "badge" ]
+                                                [ text "42" ]
+                                            ]
+                                        ]
+                                    , li
+                                        [ classList
+                                            [ ( "active"
+                                              , case activePill of
+                                                    Tools ->
+                                                        True
 
-                                            _ ->
-                                                False
-                                      )
-                                    ]
-                                , attribute "role" "presentation"
-                                ]
-                                [ aForPath navigate
-                                    ("/tools?q=" ++ searchQuery)
-                                    []
-                                    [ text "Tools "
-                                    , span [ class "badge" ]
-                                        [ text "42" ]
-                                    ]
-                                ]
-                            , li
-                                [ classList
-                                    [ ( "active"
-                                      , case activePill of
-                                            Organizations ->
-                                                True
+                                                    _ ->
+                                                        False
+                                              )
+                                            ]
+                                        , attribute "role" "presentation"
+                                        ]
+                                        [ aForPath navigate
+                                            ("/tools?q=" ++ searchQuery)
+                                            []
+                                            [ text "Tools "
+                                            , span [ class "badge" ]
+                                                [ text "42" ]
+                                            ]
+                                        ]
+                                    , li
+                                        [ classList
+                                            [ ( "active"
+                                              , case activePill of
+                                                    Organizations ->
+                                                        True
 
-                                            _ ->
-                                                False
-                                      )
-                                    ]
-                                , attribute "role" "presentation"
-                                ]
-                                [ aForPath navigate
-                                    ("/organizations?q=" ++ searchQuery)
-                                    []
-                                    [ text "Organizations "
-                                    , span [ class "badge" ]
-                                        [ text "42" ]
+                                                    _ ->
+                                                        False
+                                              )
+                                            ]
+                                        , attribute "role" "presentation"
+                                        ]
+                                        [ aForPath navigate
+                                            ("/organizations?q=" ++ searchQuery)
+                                            []
+                                            [ text "Organizations "
+                                            , span [ class "badge" ]
+                                                [ text "42" ]
+                                            ]
+                                        ]
                                     ]
                                 ]
                             ]
-                        ]
-                    ]
-                , div [ class "row list" ]
-                    (viewStatements activePill statements navigate
-                        ++ [ div [ class "col-sm-12 text-center" ]
-                                [ a [ class "show-more" ]
-                                    [ text "Show all 398"
-                                    , span [ class "glyphicon glyphicon-menu-down" ]
-                                        []
-                                    ]
-                                ]
-                           ]
-                    )
-                ]
+                       , div [ class "row list" ]
+                            ((case loadingStatus of
+                                Loading maybeStatements ->
+                                    [ viewLoading ]
+                                        ++ (case maybeStatements of
+                                                Nothing ->
+                                                    []
+
+                                                Just statements ->
+                                                    viewStatements activePill navigate statements
+                                           )
+
+                                Loaded statements ->
+                                    viewStatements activePill navigate statements
+                             )
+                                ++ [ div [ class "col-sm-12 text-center" ]
+                                        [ a [ class "show-more" ]
+                                            [ text "Show all 398"
+                                            , span [ class "glyphicon glyphicon-menu-down" ]
+                                                []
+                                            ]
+                                        ]
+                                   ]
+                            )
+                       ]
+                )
             ]
         ]
     ]
 
 
-viewStatements : PillType -> List Statement -> (String -> msg) -> List (Html msg)
-viewStatements activePill statements navigate =
+viewStatements : PillType -> (String -> msg) -> List Statement -> List (Html msg)
+viewStatements activePill navigate statements =
     List.map
         (\statement ->
             case statement.custom of

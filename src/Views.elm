@@ -8,10 +8,10 @@ import Html.Attributes exposing (..)
 import Html.Attributes.Aria exposing (ariaDescribedby, ariaHidden, ariaLabel, ariaPressed, role)
 import Html.Events exposing (on, onClick, onInput, onWithOptions, targetValue)
 import Http exposing (Error(..))
-import RemoteData exposing (RemoteData(..), WebData)
 import Routes exposing (makeUrl)
 import String
 import Types exposing (Ballot, convertArgumentTypeToString, ModelFragment, Statement, StatementCustom(..))
+import WebData exposing (LoadingStatus, WebData(..))
 
 
 argumentTypeLabelCouples : List ( String, String )
@@ -663,17 +663,14 @@ viewStatementLinePanel authenticationMaybe statementId ratingChanged flagAbuse m
                         ]
 
 
-viewWebData : (a -> List (Html msg)) -> WebData a -> List (Html msg)
+viewWebData : (LoadingStatus a -> List (Html msg)) -> WebData a -> List (Html msg)
 viewWebData viewSuccess webData =
     case webData of
         NotAsked ->
             [ text "" ]
 
-        Loading ->
-            [ viewLoading ]
-
         Failure err ->
             [ viewHttpError err ]
 
-        Success data ->
-            viewSuccess data
+        Data loadingStatus ->
+            viewSuccess loadingStatus

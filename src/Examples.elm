@@ -2,17 +2,18 @@ module Examples exposing (..)
 
 import Authenticator.Model
 import Browse exposing (PillType(..))
+import Example
 import Hop.Types
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Http
-import RemoteData exposing (RemoteData(..), WebData)
+import Maybe.Helpers
 import Requests exposing (newTaskGetExample, newTaskGetExamples)
 import Routes exposing (getSearchQuery, ExamplesNestedRoute(..))
 import Task
-import Tool
 import Types exposing (Statement, StatementCustom(..))
 import Views exposing (viewWebData)
+import WebData exposing (LoadingStatus(..), maybeData, WebData(..))
 
 
 -- MODEL
@@ -40,10 +41,10 @@ urlUpdate ( route, location ) model =
     in
         case route of
             ExampleRoute exampleId ->
-                ( Example NotAsked, loadOne exampleId )
+                ( model, loadOne exampleId )
 
             ExamplesIndexRoute ->
-                ( Examples NotAsked, loadAll searchQuery )
+                ( model, loadAll searchQuery )
 
 
 
@@ -121,26 +122,52 @@ update msg authenticationMaybe model =
                 ( model', Cmd.none )
 
         LoadAll searchQuery ->
-            ( Examples Loading
-            , Task.perform
-                (ForSelf << Error)
-                (ForSelf << LoadedAll)
-                (newTaskGetExamples authenticationMaybe searchQuery)
-            )
+            let
+                loadingStatus =
+                    Loading
+                        (case model of
+                            Example _ ->
+                                Nothing
 
-        LoadOne toolId ->
-            ( Example Loading
-            , Task.perform
-                (ForSelf << Error)
-                (ForSelf << LoadedOne)
-                (newTaskGetExample authenticationMaybe toolId)
-            )
+                            Examples webData ->
+                                maybeData webData
+                        )
+
+                model' =
+                    Examples (Data loadingStatus)
+
+                cmd =
+                    Task.perform Error LoadedAll (newTaskGetExamples authenticationMaybe searchQuery)
+                        |> Cmd.map ForSelf
+            in
+                ( model', cmd )
+
+        LoadOne exampleId ->
+            let
+                loadingStatus =
+                    Loading
+                        (case model of
+                            Example webData ->
+                                maybeData webData
+
+                            Examples _ ->
+                                Nothing
+                        )
+
+                model' =
+                    Example (Data loadingStatus)
+
+                cmd =
+                    Task.perform Error LoadedOne (newTaskGetExample authenticationMaybe exampleId)
+                        |> Cmd.map ForSelf
+            in
+                ( model', cmd )
 
         LoadedAll statements ->
-            ( Examples (Success statements), Cmd.none )
+            ( Examples (Data (Loaded statements)), Cmd.none )
 
         LoadedOne statement ->
-            ( Example (Success statement), Cmd.none )
+            ( Example (Data (Loaded statement)), Cmd.none )
 
 
 
@@ -153,15 +180,9 @@ view authenticationMaybe model searchQuery =
         Example webData ->
             [ div [ class "row section" ]
                 [ div [ class "container" ]
-                    (viewWebData
-                        -- TODO Use Example.view, or rename Tool to Card
-                        (\example -> [ Tool.view example ])
-                        webData
-                    )
+                    (viewWebData (Example.view >> Maybe.Helpers.toList) webData)
                 ]
             ]
 
         Examples webData ->
-            viewWebData
-                (\examples -> Browse.view Browse.Examples examples navigate searchQuery)
-                webData
+            viewWebData (Browse.view Browse.Examples navigate searchQuery) webData
