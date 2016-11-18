@@ -3,7 +3,7 @@ module Tool exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Helpers exposing (aExternal)
-import Types exposing (Card, Statement, StatementCustom(..))
+import Types exposing (Card, Statement, StatementCustom(..), getManyStrings, getOneString)
 import WebData exposing (LoadingStatus(..))
 
 
@@ -62,7 +62,7 @@ viewSidebar card =
                                     [ td [ class "table-label" ]
                                         [ text "Website" ]
                                     , td []
-                                        (case List.head card.urls of
+                                        (case getOneString "URL" card of
                                             Just url ->
                                                 [ aExternal [ href url ] [ text url ] ]
 
@@ -98,12 +98,8 @@ viewSidebar card =
                             ]
                         ]
                     , div [ class "panel-body" ]
-                        (List.map
-                            (\tag ->
-                                span [ class "label label-default label-tag" ]
-                                    [ text tag ]
-                            )
-                            card.tags
+                        (getManyStrings "Tag" card
+                            |> List.map (\tag -> span [ class "label label-default label-tag" ] [ text tag ])
                         )
                     ]
                 ]
@@ -182,7 +178,7 @@ viewCard card =
         [ div [ class "row" ]
             [ div [ class "col-xs-12" ]
                 [ h1 []
-                    [ text card.name
+                    [ text (getOneString "Name" card |> Maybe.withDefault "")
                     , small []
                         [ text "Software" ]
                     ]
@@ -209,7 +205,11 @@ viewCard card =
                                     ]
                                 , div [ class "col-xs-4 text-right up7" ]
                                     [ a [ class "show-more" ]
-                                        [ text ("Best of " ++ (card.descriptions |> List.length |> toString)) ]
+                                        [ text
+                                            ("Best of "
+                                                ++ (getManyStrings "Description-EN" card |> List.length |> toString)
+                                            )
+                                        ]
                                     , button
                                         [ class "btn btn-default btn-xs btn-action"
                                         , attribute "data-target" "#edit-content"
@@ -221,7 +221,7 @@ viewCard card =
                                 ]
                             ]
                         , div [ class "panel-body" ]
-                            (case List.head card.descriptions of
+                            (case getOneString "Description-EN" card of
                                 Just description ->
                                     [ text description ]
 

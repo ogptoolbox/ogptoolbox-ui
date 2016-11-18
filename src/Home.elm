@@ -5,11 +5,10 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Html.Helpers exposing (aForPath)
-
 import Http
 import String
 import Task
-import Types exposing (Card, Statement, StatementCustom(..))
+import Types exposing (Card, Statement, StatementCustom(..), getManyStrings, getOneString)
 import Requests exposing (newTaskGetExamples, newTaskGetOrganizations, newTaskGetTools)
 import Views exposing (viewWebData)
 import WebData exposing (LoadingStatus(..), maybeData, WebData(..))
@@ -641,15 +640,15 @@ viewThumbnail url card extraClass =
                 ]
             , div [ class "caption" ]
                 ([ h4 []
-                    [ aForPath navigate url [] [ text card.name ] ]
+                    [ aForPath navigate url [] [ text (getOneString "Name" card |> Maybe.withDefault "") ] ]
                  , p []
-                     (case List.head card.descriptions of
-                            Just description ->
-                                [ text description ]
+                    (case getOneString "Description-EN" card of
+                        Just description ->
+                            [ text description ]
 
-                            Nothing ->
-                                []
-                        )
+                        Nothing ->
+                            []
+                    )
                  , span [ class "label label-default label-tool" ]
                     [ text "Default" ]
                  , span [ class "label label-default label-tool" ]

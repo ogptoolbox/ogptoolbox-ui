@@ -52,8 +52,8 @@ languageCodes =
     List.map (\( item, label ) -> item) languageCodeLabelCouples
 
 
-decodeArgumentType : String -> Json.Decode.Decoder String
-decodeArgumentType value =
+argumentTypeDecoder : String -> Json.Decode.Decoder String
+argumentTypeDecoder value =
     if List.member value argumentTypes then
         Json.Decode.succeed value
     else
@@ -124,7 +124,7 @@ viewArgumentType argumentType errorMaybe argumentTypeChanged =
                  , id "argument-type"
                  , on "change"
                     (Json.Decode.map argumentTypeChanged
-                        (targetValue `Json.Decode.andThen` decodeArgumentType)
+                        (targetValue `Json.Decode.andThen` argumentTypeDecoder)
                     )
                  ]
                     ++ errorAttributes
@@ -226,7 +226,7 @@ viewHttpError err =
                 text "There was a network error."
 
             UnexpectedPayload string ->
-                text "The server returned an unexpected payload."
+                text "The server returned unexpected data."
 
             BadResponse code string ->
                 if code == 404 then

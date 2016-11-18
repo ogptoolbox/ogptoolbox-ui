@@ -10,7 +10,7 @@ import Http
 import Json.Encode
 import String
 import Task
-import Types exposing (decodeUserBody, User, UserBody)
+import Types exposing (userBodyDecoder, User, UserBody)
 
 
 -- MODEL
@@ -107,7 +107,7 @@ update msg model =
                             Task.perform
                                 Error
                                 Success
-                                ( Http.fromJson decodeUserBody ( Http.send Http.defaultSettings
+                                ( Http.fromJson userBodyDecoder ( Http.send Http.defaultSettings
                                     { verb = "POST"
                                     , url = apiUrl ++ "users"
                                     , headers =

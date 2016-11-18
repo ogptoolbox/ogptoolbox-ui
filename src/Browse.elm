@@ -5,7 +5,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Html.Helpers exposing (aForPath)
 import String
-import Types exposing (Card, Statement, StatementCustom(..))
+import Types exposing (Card, Statement, StatementCustom(..), getManyStrings, getOneString)
 import Views exposing (viewLoading)
 import WebData exposing (LoadingStatus(..))
 
@@ -194,7 +194,7 @@ viewTool activePill statement card navigate =
                     ]
                 , div [ class "caption" ]
                     ([ h4 []
-                        [ aForPath navigate statementUrl [] [ text card.name ]
+                        [ aForPath navigate statementUrl [] [ text (getOneString "Name" card |> Maybe.withDefault "") ]
                         , small []
                             [ text "Software" ]
                         ]
@@ -204,7 +204,7 @@ viewTool activePill statement card navigate =
                         , text "The White House"
                         ]
                      , p []
-                        (case List.head card.descriptions of
+                        (case getOneString "Description-EN" card of
                             Just description ->
                                 [ text description ]
 

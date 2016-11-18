@@ -40,7 +40,7 @@ newTaskCreateStatement authentication statementCustom =
                             ]
                 )
     in
-        Http.fromJson decodeDataIdBody
+        Http.fromJson dataIdBodyDecoder
             (Http.send Http.defaultSettings
                 { verb = "POST"
                 , url =
@@ -60,7 +60,7 @@ newTaskCreateStatement authentication statementCustom =
 
 newTaskDeleteStatementRating : Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
 newTaskDeleteStatementRating authentication statementId =
-    Http.fromJson decodeDataIdBody
+    Http.fromJson dataIdBodyDecoder
         (Http.send Http.defaultSettings
             { verb = "DELETE"
             , url =
@@ -80,7 +80,7 @@ newTaskDeleteStatementRating authentication statementId =
 
 newTaskFlagAbuse : Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
 newTaskFlagAbuse authentication statementId =
-    Http.fromJson decodeDataIdBody
+    Http.fromJson dataIdBodyDecoder
         (Http.send Http.defaultSettings
             { verb = "GET"
             , url =
@@ -110,7 +110,7 @@ newTaskGetCard authenticationMaybe statementId =
                 Nothing ->
                     []
     in
-        Http.fromJson decodeDataIdBody
+        Http.fromJson dataIdBodyDecoder
             (Http.send Http.defaultSettings
                 { verb = "GET"
                 , url =
@@ -137,7 +137,7 @@ newTaskGetCardOfType authenticationMaybe cardTypes statementId =
                     []
     in
         Http.fromJson
-            (decodeAndValidateStatement statementId cardTypes)
+            (statementDecoderFromBody statementId cardTypes)
             (Http.send Http.defaultSettings
                 { verb = "GET"
                 , url = apiUrl ++ "statements/" ++ statementId
@@ -162,7 +162,7 @@ newTaskGetCards authenticationMaybe =
                 Nothing ->
                     []
     in
-        Http.fromJson decodeDataIdsBody
+        Http.fromJson dataIdsBodyDecoder
             (Http.send Http.defaultSettings
                 { verb = "GET"
                 , url =
@@ -192,7 +192,7 @@ newTaskGetCardsOfType authenticationMaybe cardTypes searchQuery =
                 Nothing ->
                     []
     in
-        Http.fromJson decodeStatements
+        Http.fromJson statementsDecoder
             (Http.send Http.defaultSettings
                 { verb = "GET"
                 , url =
@@ -215,12 +215,12 @@ newTaskGetCardsOfType authenticationMaybe cardTypes searchQuery =
 
 newTaskGetExample : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error Statement
 newTaskGetExample authenticationMaybe statementId =
-    newTaskGetCardOfType authenticationMaybe [ "Usage" ] statementId
+    newTaskGetCardOfType authenticationMaybe [ "Final Use" ] statementId
 
 
 newTaskGetExamples : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error (List Statement)
 newTaskGetExamples authenticationMaybe searchQuery =
-    newTaskGetCardsOfType authenticationMaybe [ "Usage" ] searchQuery
+    newTaskGetCardsOfType authenticationMaybe [ "Final Use" ] searchQuery
 
 
 newTaskGetOrganization : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error Statement
@@ -245,7 +245,7 @@ newTaskGetStatements authenticationMaybe =
                 Nothing ->
                     []
     in
-        Http.fromJson decodeDataIdsBody
+        Http.fromJson dataIdsBodyDecoder
             (Http.send Http.defaultSettings
                 { verb = "GET"
                 , url =
@@ -279,7 +279,7 @@ newTaskRateStatement authentication rating statementId =
             Json.Encode.object
                 [ ( "rating", Json.Encode.int rating ) ]
     in
-        Http.fromJson decodeDataIdBody
+        Http.fromJson dataIdBodyDecoder
             (Http.send Http.defaultSettings
                 { verb = "POST"
                 , url =
