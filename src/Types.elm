@@ -2,11 +2,9 @@ module Types exposing (..)
 
 import Dict exposing (Dict)
 import Json.Decode as Decode exposing (..)
-import Json.Decode.Extra as Json exposing ((|:))
+import Json.Decode.Extra exposing ((|:), sequence)
 import Result exposing (Result(..))
-import Result.Extra exposing (combine)
 import Set
-import String
 
 
 type alias Abuse =
@@ -57,6 +55,7 @@ type CardStringFieldFormat
 
 type CardField
     = StringField CardStringField
+    | NumberField Float
     | ArrayField (List CardField)
     | BijectiveUriReferenceField String
 
@@ -95,6 +94,7 @@ type alias DataIdsBody =
 
 type JsonCardSchema
     = StringSchema (Maybe CardStringFieldFormat)
+    | NumberSchema
     | ArraySchema JsonCardArraySchemaKind
     | BijectiveUriReferenceSchema
 
@@ -209,6 +209,9 @@ getManyStrings propertyName card =
                 ArrayField fields ->
                     List.concatMap getStrings fields
 
+                NumberField _ ->
+                    []
+
                 BijectiveUriReferenceField _ ->
                     []
     in
@@ -234,6 +237,9 @@ getOneString propertyName card =
 
                 ArrayField (field :: _) ->
                     getString field
+
+                NumberField _ ->
+                    Nothing
 
                 BijectiveUriReferenceField _ ->
                     Nothing
@@ -287,150 +293,89 @@ bijectiveUriReferenceDecoder =
 cardDecoder : Decoder Card
 cardDecoder =
     let
+        partition : Dict comparable (Result error value) -> ( Dict comparable value, Dict comparable error )
+        partition results =
+            Dict.foldl
+                (\key result ( values, errors ) ->
+                    case result of
+                        Ok value ->
+                            ( Dict.insert key value values, errors )
+
+                        Err error ->
+                            ( values, Dict.insert key error errors )
+                )
+                ( Dict.empty, Dict.empty )
+                results
+
+        combineDict : Dict comparable (Result error value) -> Result (Dict comparable error) (Dict comparable value)
+        combineDict results =
+            results
+                |> partition
+                |> (\( values, errors ) ->
+                        if Dict.isEmpty errors then
+                            Ok values
+                        else
+                            Err errors
+                   )
+
         mergeSchemasAndWidgets :
             Dict String JsonCardSchema
             -> Dict String CardWidget
-            -> { errors : List String
-               , schemasAndWidgets : Dict String ( JsonCardSchema, Maybe CardWidget )
-               }
+            -> Result (Dict String String) (Dict String ( JsonCardSchema, Maybe CardWidget ))
         mergeSchemasAndWidgets schemas widgets =
             Dict.merge
-                (\propertyName schema accu ->
-                    { accu
-                        | schemasAndWidgets =
-                            Dict.insert propertyName ( schema, Nothing ) accu.schemasAndWidgets
-                    }
-                )
-                (\propertyName schema widget accu ->
-                    { accu
-                        | schemasAndWidgets =
-                            Dict.insert propertyName ( schema, Just widget ) accu.schemasAndWidgets
-                    }
-                )
-                (\propertyName _ accu ->
-                    { accu | errors = ("Widget \"" ++ propertyName ++ "\" has no schema") :: accu.errors }
-                )
+                (\propertyName schema accu -> Dict.insert propertyName (Ok ( schema, Nothing )) accu)
+                (\propertyName schema widget accu -> Dict.insert propertyName (Ok ( schema, Just widget )) accu)
+                (\propertyName _ accu -> Dict.insert propertyName (Err ("Widget has no schema")) accu)
                 schemas
                 widgets
-                { errors = []
-                , schemasAndWidgets = Dict.empty
-                }
+                Dict.empty
+                |> combineDict
 
         mergeValues :
-            Dict String ( JsonCardSchema, Maybe CardWidget )
-            -> Dict String Value
-            -> { errors : List String
-               , valuesAndSchemasAndWidgets : Dict String ( Value, JsonCardSchema, Maybe CardWidget )
-               }
-        mergeValues schemasAndWidgets values =
+            Dict String Value
+            -> Dict String ( JsonCardSchema, Maybe CardWidget )
+            -> Result (Dict String String) (Dict String ( Value, JsonCardSchema, Maybe CardWidget ))
+        mergeValues values schemasAndWidgets =
             Dict.merge
                 (\propertyName ( schema, widget ) accu -> accu)
                 (\propertyName ( schema, widget ) value accu ->
-                    { accu
-                        | valuesAndSchemasAndWidgets =
-                            Dict.insert
-                                propertyName
-                                ( value, schema, widget )
-                                accu.valuesAndSchemasAndWidgets
-                    }
+                    Dict.insert propertyName (Ok ( value, schema, widget )) accu
                 )
-                (\propertyName _ accu ->
-                    { accu
-                        | errors =
-                            ("Value \"" ++ propertyName ++ "\" has no schema") :: accu.errors
-                    }
-                )
+                (\propertyName _ accu -> Dict.insert propertyName (Err ("Value has no schema")) accu)
                 schemasAndWidgets
                 values
-                { errors = []
-                , valuesAndSchemasAndWidgets = Dict.empty
-                }
+                Dict.empty
+                |> combineDict
 
-        toCardField : JsonCardSchema -> Maybe CardWidget -> Value -> Result String CardField
-        toCardField schema widget value =
+        toCardField : Maybe CardWidget -> JsonCardSchema -> Decoder CardField
+        toCardField widget schema =
             case schema of
                 StringSchema format ->
-                    decodeValue string value
-                        |> Result.map
-                            (\value ->
+                    string
+                        |> map
+                            (\stringValue ->
                                 StringField
                                     { format = format
-                                    , value = value
+                                    , value = stringValue
                                     , widget = widget
                                     }
                             )
 
+                NumberSchema ->
+                    float |> map NumberField
+
                 ArraySchema kind ->
                     case kind of
                         ListArraySchema schema ->
-                            case schema of
-                                StringSchema format ->
-                                    decodeValue (list string) value
-                                        |> Result.map
-                                            (\strings ->
-                                                ArrayField
-                                                    (List.map
-                                                        (\stringValue ->
-                                                            StringField
-                                                                { format = format
-                                                                , value = stringValue
-                                                                , widget = Nothing
-                                                                }
-                                                        )
-                                                        strings
-                                                    )
-                                            )
-
-                                ArraySchema _ ->
-                                    -- TODO There is recursion here apparently.
-                                    Err "A1 ArraySchema not implemented"
-
-                                BijectiveUriReferenceSchema ->
-                                    -- decodeValue (list ("targetId" := string)) value
-                                    --     |> Result.map (\refs -> ArrayField (List.map BijectiveUriReferenceField refs))
-                                    Err "A2 BijectiveUriReferenceSchema not implemented"
+                            list (toCardField Nothing schema) |> map ArrayField
 
                         TupleArraySchema schemas ->
-                            decodeValue (list Decode.value) value
-                                `Result.andThen`
-                                    (\values ->
-                                        let
-                                            subFieldsResults : List (Result String CardField)
-                                            subFieldsResults =
-                                                List.map2
-                                                    (\schema value ->
-                                                        case schema of
-                                                            StringSchema format ->
-                                                                decodeValue string value
-                                                                    |> Result.map
-                                                                        (\stringValue ->
-                                                                            StringField
-                                                                                { format = format
-                                                                                , value = stringValue
-                                                                                , widget = Nothing
-                                                                                }
-                                                                        )
-
-                                                            ArraySchema _ ->
-                                                                Debug.crash "C1 ArraySchema not implemented"
-
-                                                            BijectiveUriReferenceSchema ->
-                                                                decodeValue bijectiveUriReferenceDecoder value
-                                                                    |> Result.map BijectiveUriReferenceField
-                                                    )
-                                                    schemas
-                                                    values
-
-                                            subFieldsResult : Result String (List CardField)
-                                            subFieldsResult =
-                                                combine subFieldsResults
-                                        in
-                                            Result.map ArrayField subFieldsResult
-                                    )
+                            sequence (List.map (toCardField Nothing) schemas) |> map ArrayField
 
                 BijectiveUriReferenceSchema ->
-                    decodeValue bijectiveUriReferenceDecoder value
-                        |> Result.map BijectiveUriReferenceField
+                    bijectiveUriReferenceDecoder
+                        |> map BijectiveUriReferenceField
     in
         object3 (,,)
             ("schemas" := dict jsonCardSchemaDecoder)
@@ -438,51 +383,17 @@ cardDecoder =
             ("widgets" := dict cardWidgetDecoder)
             `andThen`
                 (\( schemas, values, widgets ) ->
-                    let
-                        -- TODO Return Result (List String) (Dict String ( JsonCardSchema, Maybe CardWidget ))
-                        -- instead of record.
-                        { errors, schemasAndWidgets } =
-                            mergeSchemasAndWidgets schemas widgets
-                    in
-                        if List.isEmpty errors then
-                            let
-                                { errors, valuesAndSchemasAndWidgets } =
-                                    mergeValues schemasAndWidgets values
-                            in
-                                if List.isEmpty errors then
-                                    let
-                                        { errors, cardFields } =
-                                            Dict.foldl
-                                                (\propertyName ( value, schema, widget ) accu ->
-                                                    case toCardField schema widget value of
-                                                        Ok cardField ->
-                                                            { accu
-                                                                | cardFields =
-                                                                    Dict.insert propertyName cardField accu.cardFields
-                                                            }
-
-                                                        Err err ->
-                                                            { accu
-                                                                | errors =
-                                                                    ("\"" ++ propertyName ++ "\": " ++ err)
-                                                                        :: accu.errors
-                                                            }
-                                                )
-                                                { errors = [], cardFields = Dict.empty }
-                                                valuesAndSchemasAndWidgets
-
-                                        _ =
-                                            Debug.log "errors" errors
-                                    in
-                                        succeed cardFields
-                                    -- if List.isEmpty errors then
-                                    --     succeed cardFields
-                                    -- else
-                                    --     fail ("Step 3: Multiple errors: " ++ (String.join "; " errors))
-                                else
-                                    fail ("Step 2: Multiple errors: " ++ (String.join "; " errors))
-                        else
-                            fail ("Step 1: Multiple errors: " ++ (String.join "; " errors))
+                    mergeSchemasAndWidgets schemas widgets
+                        `Result.andThen` mergeValues values
+                        `Result.andThen`
+                            (Dict.map
+                                (\propertyName ( value, schema, widget ) ->
+                                    decodeValue (toCardField widget schema) value
+                                )
+                                >> combineDict
+                            )
+                        |> Result.formatError (Dict.toList >> toString)
+                        |> fromResult
                 )
 
 
@@ -498,9 +409,7 @@ dataIdDecoder =
     succeed DataId
         |: oneOf [ ("ballots" := dict ballotDecoder), succeed Dict.empty ]
         |: ("id" := string)
-        |: ((maybe ("statements" := dict statementDecoder))
-                |> map (Maybe.withDefault Dict.empty)
-           )
+        |: ("statements" := dict statementDecoder)
         |: oneOf [ ("users" := dict userDecoder), succeed Dict.empty ]
 
 
@@ -509,9 +418,7 @@ dataIdsDecoder =
     succeed DataIds
         |: oneOf [ ("ballots" := dict ballotDecoder), succeed Dict.empty ]
         |: ("ids" := list string)
-        |: ((maybe ("statements" := dict statementDecoder))
-                |> map (Maybe.withDefault Dict.empty)
-           )
+        |: ("statements" := dict statementDecoder)
         |: oneOf [ ("users" := dict userDecoder), succeed Dict.empty ]
 
 
@@ -568,10 +475,13 @@ jsonCardSchemaDecoder =
                                             ]
                                    )
 
+                        "number" ->
+                            succeed NumberSchema
+
                         _ ->
                             fail ("Unknown card schema type: " ++ schemaType)
                 )
-        , ("$ref" := string) |> map (always BijectiveUriReferenceSchema)
+        , ("$ref" := string) |> map (\_ -> BijectiveUriReferenceSchema)
         ]
 
 
@@ -711,3 +621,19 @@ userBodyDecoder : Decoder UserBody
 userBodyDecoder =
     succeed UserBody
         |: ("data" := userDecoder)
+
+
+
+-- HELPERS
+
+
+fromResult : Result String a -> Decoder a
+fromResult result =
+    -- TODO Use http://package.elm-lang.org/packages/elm-community/json-extra/latest/Json-Decode-Extra#fromResult
+    -- when migrating to Elm 0.18
+    case result of
+        Ok successValue ->
+            succeed successValue
+
+        Err errorMessage ->
+            fail errorMessage

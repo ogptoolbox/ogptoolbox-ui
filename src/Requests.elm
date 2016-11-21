@@ -10,6 +10,21 @@ import Types exposing (..)
 import Task exposing (Task)
 
 
+cardTypesForExample : List String
+cardTypesForExample =
+    [ "Final Use" ]
+
+
+cardTypesForOrganization : List String
+cardTypesForOrganization =
+    [ "Organization" ]
+
+
+cardTypesForTool : List String
+cardTypesForTool =
+    [ "Software", "Platform" ]
+
+
 newTaskCreateStatement : Authenticator.Model.Authentication -> StatementCustom -> Task Http.Error DataIdBody
 newTaskCreateStatement authentication statementCustom =
     let
@@ -215,22 +230,22 @@ newTaskGetCardsOfType authenticationMaybe cardTypes searchQuery =
 
 newTaskGetExample : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error Statement
 newTaskGetExample authenticationMaybe statementId =
-    newTaskGetCardOfType authenticationMaybe [ "Final Use" ] statementId
+    newTaskGetCardOfType authenticationMaybe cardTypesForExample statementId
 
 
 newTaskGetExamples : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error (List Statement)
 newTaskGetExamples authenticationMaybe searchQuery =
-    newTaskGetCardsOfType authenticationMaybe [ "Final Use" ] searchQuery
+    newTaskGetCardsOfType authenticationMaybe cardTypesForExample searchQuery
 
 
 newTaskGetOrganization : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error Statement
 newTaskGetOrganization authenticationMaybe statementId =
-    newTaskGetCardOfType authenticationMaybe [ "Organization" ] statementId
+    newTaskGetCardOfType authenticationMaybe cardTypesForOrganization statementId
 
 
 newTaskGetOrganizations : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error (List Statement)
 newTaskGetOrganizations authenticationMaybe searchQuery =
-    newTaskGetCardsOfType authenticationMaybe [ "Organization" ] searchQuery
+    newTaskGetCardsOfType authenticationMaybe cardTypesForOrganization searchQuery
 
 
 newTaskGetStatements : Maybe Authenticator.Model.Authentication -> Task Http.Error DataIdsBody
@@ -264,12 +279,12 @@ newTaskGetStatements authenticationMaybe =
 
 newTaskGetTool : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error Statement
 newTaskGetTool authenticationMaybe statementId =
-    newTaskGetCardOfType authenticationMaybe [ "Software", "Platform" ] statementId
+    newTaskGetCardOfType authenticationMaybe cardTypesForTool statementId
 
 
 newTaskGetTools : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error (List Statement)
 newTaskGetTools authenticationMaybe searchQuery =
-    newTaskGetCardsOfType authenticationMaybe [ "Software", "Platform" ] searchQuery
+    newTaskGetCardsOfType authenticationMaybe cardTypesForTool searchQuery
 
 
 newTaskRateStatement : Authenticator.Model.Authentication -> Int -> String -> Task Http.Error DataIdBody
