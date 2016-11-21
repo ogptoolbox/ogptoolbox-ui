@@ -423,11 +423,19 @@ dataIdDecoder =
 
 dataIdsDecoder : Decoder DataIds
 dataIdsDecoder =
-    succeed DataIds
-        |: oneOf [ ("ballots" := dict ballotDecoder), succeed Dict.empty ]
-        |: ("ids" := list string)
-        |: ("statements" := dict statementDecoder)
-        |: oneOf [ ("users" := dict userDecoder), succeed Dict.empty ]
+    object3 (,,)
+        (oneOf [ ("ballots" := dict ballotDecoder), succeed Dict.empty ])
+        ("ids" := list string)
+        (oneOf [ ("users" := dict userDecoder), succeed Dict.empty ])
+        `andThen`
+            (\( ballots, ids, users ) ->
+                (if List.isEmpty ids then
+                    succeed Dict.empty
+                 else
+                    ("statements" := dict statementDecoder)
+                )
+                    |> map (\statements -> DataIds ballots ids statements users)
+            )
 
 
 dataIdBodyDecoder : Decoder DataIdBody
