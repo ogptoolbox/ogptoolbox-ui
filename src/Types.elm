@@ -248,6 +248,14 @@ getOneString propertyName card =
             `Maybe.andThen` getString
 
 
+getOneImageUrlPath : Card -> Maybe String
+getOneImageUrlPath card =
+    Maybe.oneOf
+        [ getOneString "Logo" card
+        , getOneString "Screenshot" card
+        ]
+
+
 
 -- DECODERS
 

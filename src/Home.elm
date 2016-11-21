@@ -4,11 +4,11 @@ import Authenticator.Model
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
-import Html.Helpers exposing (aForPath)
+import Html.Helpers exposing (aExternal, aForPath, imgOfCard)
 import Http
 import String
 import Task
-import Types exposing (Card, Statement, StatementCustom(..), getManyStrings, getOneString)
+import Types exposing (..)
 import Requests exposing (newTaskGetExamples, newTaskGetOrganizations, newTaskGetTools)
 import Views exposing (viewWebData)
 import WebData exposing (LoadingStatus(..), getData, WebData(..))
@@ -635,9 +635,7 @@ viewThumbnail url card extraClass =
     div [ class "col-xs-6 col-md-3" ]
         [ div [ class ("thumbnail " ++ extraClass), onClick (navigate url) ]
             [ div [ class "visual" ]
-                [ img [ alt "logo", src "img/TODO.png" ]
-                    []
-                ]
+                [ imgOfCard card ]
             , div [ class "caption" ]
                 ([ h4 []
                     [ aForPath navigate url [] [ text (getOneString "Name" card |> Maybe.withDefault "") ] ]
