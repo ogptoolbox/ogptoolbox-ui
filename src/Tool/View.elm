@@ -120,7 +120,7 @@ viewCard additionalInformationsCollapsed card =
                                         ]
                                     , div [ class "col-xs-4 text-right" ]
                                         [ a [ class "show-more pull-right" ]
-                                            [ text "Show 6 more"
+                                            [ text ("Show " ++ (card |> Dict.size |> toString) ++ " more")
                                             , span
                                                 [ class
                                                     ("glyphicon "
