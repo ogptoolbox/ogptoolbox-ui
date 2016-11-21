@@ -244,6 +244,9 @@ viewCard additionalInformationsCollapsed card =
                             [ div
                                 [ attribute "aria-controls" "collapseTwo"
                                 , attribute "aria-expanded" "false"
+                                , attribute "data-parent" "#accordion"
+                                , attribute "data-target" "#collapseTwo"
+                                , attribute "data-toggle" "collapse"
                                 , attribute "role" "tab"
                                 , class "panel-heading"
                                 , id "headingTwo"
@@ -277,7 +280,6 @@ viewCard additionalInformationsCollapsed card =
                                 , classList
                                     [ ( "panel-collapse", True )
                                     , ( "collapse", True )
-                                    , ( "in", not additionalInformationsCollapsed )
                                     ]
                                 , id "collapseTwo"
                                 , attribute "role" "tabpanel"
