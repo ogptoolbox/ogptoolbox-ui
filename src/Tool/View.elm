@@ -1,8 +1,17 @@
-module Tool exposing (..)
+module Tool.View exposing (..)
 
+import Dict
 import Html exposing (..)
 import Html.Attributes exposing (..)
+
+
+-- import Html.Events exposing (onClick)
+
 import Html.Helpers exposing (aExternal)
+
+
+-- import Tool.Types exposing (Msg(..))
+
 import Types exposing (Card, Statement, StatementCustom(..), getManyStrings, getOneString)
 import WebData exposing (LoadingStatus(..))
 
@@ -10,23 +19,23 @@ import WebData exposing (LoadingStatus(..))
 -- VIEW
 
 
-view : LoadingStatus Statement -> Maybe (Html msg)
-view loadingStatus =
+root : Bool -> LoadingStatus Statement -> Maybe (Html msg)
+root additionalInformationsCollapsed loadingStatus =
     case loadingStatus of
         Loading maybeStatement ->
-            Maybe.map viewStatement maybeStatement
+            Maybe.map (viewStatement additionalInformationsCollapsed) maybeStatement
 
         Loaded statement ->
-            Just (viewStatement statement)
+            Just (viewStatement additionalInformationsCollapsed statement)
 
 
-viewStatement : Statement -> Html msg
-viewStatement tool =
+viewStatement : Bool -> Statement -> Html msg
+viewStatement additionalInformationsCollapsed tool =
     case tool.custom of
         CardCustom card ->
             div [ class "row" ]
                 [ viewSidebar card
-                , viewCard card
+                , viewCard additionalInformationsCollapsed card
                 ]
 
         _ ->
@@ -172,8 +181,8 @@ viewSidebar card =
         ]
 
 
-viewCard : Card -> Html msg
-viewCard card =
+viewCard : Bool -> Card -> Html msg
+viewCard additionalInformationsCollapsed card =
     div [ class "col-md-9 content content-right" ]
         [ div [ class "row" ]
             [ div [ class "col-xs-12" ]
@@ -235,12 +244,10 @@ viewCard card =
                             [ div
                                 [ attribute "aria-controls" "collapseTwo"
                                 , attribute "aria-expanded" "false"
-                                , class "panel-heading"
-                                , attribute "data-parent" "#accordion"
-                                , attribute "data-toggle" "collapse"
-                                , href "#collapseTwo"
-                                , id "headingTwo"
                                 , attribute "role" "tab"
+                                , class "panel-heading"
+                                , id "headingTwo"
+                                  -- , onClick CollapseAdditionalInformations
                                 ]
                                 [ div [ class "row" ]
                                     [ div [ class "col-xs-8 text-left" ]
@@ -250,7 +257,16 @@ viewCard card =
                                     , div [ class "col-xs-4 text-right" ]
                                         [ a [ class "show-more pull-right" ]
                                             [ text "Show 6 more"
-                                            , span [ class "glyphicon glyphicon-menu-down" ]
+                                            , span
+                                                [ class
+                                                    ("glyphicon "
+                                                        ++ (if additionalInformationsCollapsed then
+                                                                "glyphicon-menu-right"
+                                                            else
+                                                                "glyphicon-menu-down"
+                                                           )
+                                                    )
+                                                ]
                                                 []
                                             ]
                                         ]
@@ -258,60 +274,33 @@ viewCard card =
                                 ]
                             , div
                                 [ attribute "aria-labelledby" "headingTwo"
-                                , class "panel-collapse collapse"
+                                , classList
+                                    [ ( "panel-collapse", True )
+                                    , ( "collapse", True )
+                                    , ( "in", not additionalInformationsCollapsed )
+                                    ]
                                 , id "collapseTwo"
                                 , attribute "role" "tabpanel"
                                 ]
                                 [ div [ class "panel-body nomargin" ]
                                     [ table [ class "table table-striped" ]
                                         [ tbody []
-                                            [ tr []
-                                                [ th [ scope "row" ]
-                                                    [ text "Developer" ]
-                                                , td []
-                                                    [ text "Open Knowledge Foundation" ]
-                                                ]
-                                            , tr []
-                                                [ th [ scope "row" ]
-                                                    [ text "Original release date" ]
-                                                , td []
-                                                    [ text "January 2007" ]
-                                                ]
-                                            , tr []
-                                                [ th [ scope "row" ]
-                                                    [ text "Latest release" ]
-                                                , td []
-                                                    [ text "23 september 2015" ]
-                                                ]
-                                            , tr []
-                                                [ th [ scope "row" ]
-                                                    [ text "Programming Language" ]
-                                                , td []
-                                                    [ text "Python" ]
-                                                ]
-                                            , tr []
-                                                [ th [ scope "row" ]
-                                                    [ text "Available Languages" ]
-                                                , td []
-                                                    [ text "English, French, Spanish, Russian, German, Italian" ]
-                                                ]
-                                            , tr []
-                                                [ th [ scope "row" ]
-                                                    [ text "Demo" ]
-                                                , td []
-                                                    [ a []
-                                                        [ text "http://demo.ckan.org/" ]
-                                                    ]
-                                                ]
-                                            , tr []
-                                                [ th [ scope "row" ]
-                                                    [ text "Contact" ]
-                                                , td []
-                                                    [ a []
-                                                        [ text "services@ckan.org" ]
-                                                    ]
-                                                ]
-                                            ]
+                                            (card
+                                                |> Dict.keys
+                                                |> List.map
+                                                    (\propertyName ->
+                                                        tr []
+                                                            [ th [ scope "row" ]
+                                                                [ text propertyName ]
+                                                            , td []
+                                                                [ text
+                                                                    (getOneString propertyName card
+                                                                        |> Maybe.withDefault ""
+                                                                    )
+                                                                ]
+                                                            ]
+                                                    )
+                                            )
                                         ]
                                     ]
                                 ]

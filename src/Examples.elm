@@ -13,15 +13,24 @@ import Routes exposing (getSearchQuery, ExamplesNestedRoute(..))
 import Task
 import Types exposing (Statement, StatementCustom(..))
 import Views exposing (viewWebData)
-import WebData exposing (LoadingStatus(..), maybeData, WebData(..))
+import WebData exposing (LoadingStatus(..), getData, WebData(..))
 
 
 -- MODEL
 
 
+type alias ExampleOptions =
+    { additionalInformationsCollapsed : Bool }
+
+
 type Model
     = Examples (WebData (List Statement))
-    | Example (WebData Statement)
+    | Example (WebData Statement) ExampleOptions
+
+
+defaultExampleOptions : ExampleOptions
+defaultExampleOptions =
+    { additionalInformationsCollapsed = False }
 
 
 init : Model
@@ -113,8 +122,8 @@ update msg authenticationMaybe model =
 
                 model' =
                     case model of
-                        Example _ ->
-                            Example (Failure err)
+                        Example _ options ->
+                            Example (Failure err) options
 
                         Examples _ ->
                             Examples (Failure err)
@@ -126,11 +135,11 @@ update msg authenticationMaybe model =
                 loadingStatus =
                     Loading
                         (case model of
-                            Example _ ->
+                            Example _ _ ->
                                 Nothing
 
                             Examples webData ->
-                                maybeData webData
+                                getData webData
                         )
 
                 model' =
@@ -144,18 +153,13 @@ update msg authenticationMaybe model =
 
         LoadOne exampleId ->
             let
-                loadingStatus =
-                    Loading
-                        (case model of
-                            Example webData ->
-                                maybeData webData
-
-                            Examples _ ->
-                                Nothing
-                        )
-
                 model' =
-                    Example (Data loadingStatus)
+                    case model of
+                        Example webData options ->
+                            Example (Data (Loading (getData webData))) options
+
+                        Examples _ ->
+                            Example (Data (Loading Nothing)) defaultExampleOptions
 
                 cmd =
                     Task.perform Error LoadedOne (newTaskGetExample authenticationMaybe exampleId)
@@ -167,7 +171,7 @@ update msg authenticationMaybe model =
             ( Examples (Data (Loaded statements)), Cmd.none )
 
         LoadedOne statement ->
-            ( Example (Data (Loaded statement)), Cmd.none )
+            ( Example (Data (Loaded statement)) defaultExampleOptions, Cmd.none )
 
 
 
@@ -177,10 +181,13 @@ update msg authenticationMaybe model =
 view : Maybe Authenticator.Model.Authentication -> Model -> String -> List (Html Msg)
 view authenticationMaybe model searchQuery =
     case model of
-        Example webData ->
+        Example webData options ->
             [ div [ class "row section" ]
                 [ div [ class "container" ]
-                    (viewWebData (Example.view >> Maybe.Helpers.toList) webData)
+                    (viewWebData
+                        (Example.view options.additionalInformationsCollapsed >> Maybe.Helpers.toList)
+                        webData
+                    )
                 ]
             ]
 

@@ -13,20 +13,29 @@ import Routes exposing (getSearchQuery, OrganizationsNestedRoute(..))
 import Task
 import Types exposing (Statement, StatementCustom(..))
 import Views exposing (viewWebData)
-import WebData exposing (LoadingStatus(..), maybeData, WebData(..))
+import WebData exposing (LoadingStatus(..), getData, WebData(..))
 
 
 -- MODEL
 
 
+type alias OrganizationOptions =
+    { additionalInformationsCollapsed : Bool }
+
+
 type Model
     = Organizations (WebData (List Statement))
-    | Organization (WebData Statement)
+    | Organization (WebData Statement) OrganizationOptions
 
 
 init : Model
 init =
     Organizations NotAsked
+
+
+defaultOrganizationOptions : OrganizationOptions
+defaultOrganizationOptions =
+    { additionalInformationsCollapsed = False }
 
 
 
@@ -113,8 +122,8 @@ update msg authenticationMaybe model =
 
                 model' =
                     case model of
-                        Organization _ ->
-                            Organization (Failure err)
+                        Organization _ options ->
+                            Organization (Failure err) options
 
                         Organizations _ ->
                             Organizations (Failure err)
@@ -126,11 +135,11 @@ update msg authenticationMaybe model =
                 loadingStatus =
                     Loading
                         (case model of
-                            Organization _ ->
+                            Organization _ _ ->
                                 Nothing
 
                             Organizations webData ->
-                                maybeData webData
+                                getData webData
                         )
 
                 model' =
@@ -144,18 +153,13 @@ update msg authenticationMaybe model =
 
         LoadOne organizationId ->
             let
-                loadingStatus =
-                    Loading
-                        (case model of
-                            Organization webData ->
-                                maybeData webData
-
-                            Organizations _ ->
-                                Nothing
-                        )
-
                 model' =
-                    Organization (Data loadingStatus)
+                    case model of
+                        Organization webData options ->
+                            Organization (Data (Loading (getData webData))) options
+
+                        Organizations _ ->
+                            Organization (Data (Loading Nothing)) defaultOrganizationOptions
 
                 cmd =
                     Task.perform Error LoadedOne (newTaskGetOrganization authenticationMaybe organizationId)
@@ -167,7 +171,7 @@ update msg authenticationMaybe model =
             ( Organizations (Data (Loaded statements)), Cmd.none )
 
         LoadedOne statement ->
-            ( Organization (Data (Loaded statement)), Cmd.none )
+            ( Organization (Data (Loaded statement)) defaultOrganizationOptions, Cmd.none )
 
 
 
@@ -177,10 +181,13 @@ update msg authenticationMaybe model =
 view : Maybe Authenticator.Model.Authentication -> Model -> String -> List (Html Msg)
 view authenticationMaybe model searchQuery =
     case model of
-        Organization webData ->
+        Organization webData options ->
             [ div [ class "row section" ]
                 [ div [ class "container" ]
-                    (viewWebData (Organization.view >> Maybe.Helpers.toList) webData)
+                    (viewWebData
+                        (Organization.view options.additionalInformationsCollapsed >> Maybe.Helpers.toList)
+                        webData
+                    )
                 ]
             ]
 

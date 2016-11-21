@@ -11,7 +11,7 @@ import Task
 import Types exposing (Card, Statement, StatementCustom(..), getManyStrings, getOneString)
 import Requests exposing (newTaskGetExamples, newTaskGetOrganizations, newTaskGetTools)
 import Views exposing (viewWebData)
-import WebData exposing (LoadingStatus(..), maybeData, WebData(..))
+import WebData exposing (LoadingStatus(..), getData, WebData(..))
 
 
 -- MODEL
@@ -117,9 +117,9 @@ update msg authenticationMaybe model =
             let
                 model' =
                     { model
-                        | examples = Data (Loading (maybeData model.examples))
-                        , organizations = Data (Loading (maybeData model.organizations))
-                        , tools = Data (Loading (maybeData model.tools))
+                        | examples = Data (Loading (getData model.examples))
+                        , organizations = Data (Loading (getData model.organizations))
+                        , tools = Data (Loading (getData model.tools))
                     }
 
                 cmds =

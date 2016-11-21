@@ -10,18 +10,27 @@ import Maybe.Helpers
 import Requests exposing (newTaskGetTool, newTaskGetTools)
 import Routes exposing (getSearchQuery, ToolsNestedRoute(..))
 import Task
-import Tool
+import Tool.View
 import Types exposing (Statement, StatementCustom(..))
 import Views exposing (viewWebData)
-import WebData exposing (LoadingStatus(..), maybeData, WebData(..))
+import WebData exposing (LoadingStatus(..), getData, WebData(..))
 
 
 -- MODEL
 
 
+type alias ToolOptions =
+    { additionalInformationsCollapsed : Bool }
+
+
 type Model
     = Tools (WebData (List Statement))
-    | Tool (WebData Statement)
+    | Tool (WebData Statement) ToolOptions
+
+
+defaultToolOptions : ToolOptions
+defaultToolOptions =
+    { additionalInformationsCollapsed = False }
 
 
 init : Model
@@ -113,8 +122,8 @@ update msg authenticationMaybe model =
 
                 model' =
                     case model of
-                        Tool _ ->
-                            Tool (Failure err)
+                        Tool _ options ->
+                            Tool (Failure err) options
 
                         Tools _ ->
                             Tools (Failure err)
@@ -126,11 +135,11 @@ update msg authenticationMaybe model =
                 loadingStatus =
                     Loading
                         (case model of
-                            Tool _ ->
+                            Tool _ _ ->
                                 Nothing
 
                             Tools webData ->
-                                maybeData webData
+                                getData webData
                         )
 
                 model' =
@@ -144,18 +153,13 @@ update msg authenticationMaybe model =
 
         LoadOne toolId ->
             let
-                loadingStatus =
-                    Loading
-                        (case model of
-                            Tool webData ->
-                                maybeData webData
-
-                            Tools _ ->
-                                Nothing
-                        )
-
                 model' =
-                    Tool (Data loadingStatus)
+                    case model of
+                        Tool webData options ->
+                            Tool (Data (Loading (getData webData))) options
+
+                        Tools _ ->
+                            Tool (Data (Loading Nothing)) defaultToolOptions
 
                 cmd =
                     Task.perform Error LoadedOne (newTaskGetTool authenticationMaybe toolId)
@@ -167,7 +171,7 @@ update msg authenticationMaybe model =
             ( Tools (Data (Loaded statements)), Cmd.none )
 
         LoadedOne statement ->
-            ( Tool (Data (Loaded statement)), Cmd.none )
+            ( Tool (Data (Loaded statement)) defaultToolOptions, Cmd.none )
 
 
 
@@ -177,10 +181,13 @@ update msg authenticationMaybe model =
 view : Maybe Authenticator.Model.Authentication -> Model -> String -> List (Html Msg)
 view authenticationMaybe model searchQuery =
     case model of
-        Tool webData ->
+        Tool webData options ->
             [ div [ class "row section" ]
                 [ div [ class "container" ]
-                    (viewWebData (Tool.view >> Maybe.Helpers.toList) webData)
+                    (viewWebData
+                        (Tool.View.root options.additionalInformationsCollapsed >> Maybe.Helpers.toList)
+                        webData
+                    )
                 ]
             ]
 

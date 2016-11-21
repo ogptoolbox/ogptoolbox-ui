@@ -14,8 +14,8 @@ type WebData a
     | Data (LoadingStatus a)
 
 
-maybeData : WebData a -> Maybe a
-maybeData webData =
+getData : WebData a -> Maybe a
+getData webData =
     case webData of
         NotAsked ->
             Nothing
@@ -25,8 +25,8 @@ maybeData webData =
 
         Data loadingStatus ->
             case loadingStatus of
-                Loading maybeData ->
-                    maybeData
+                Loading getData ->
+                    getData
 
                 Loaded data ->
                     Just data
