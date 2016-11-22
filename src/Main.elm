@@ -342,7 +342,12 @@ update msg model =
                 ( { model | organizationsModel = organizationsModel }, Cmd.map translateOrganizationsMsg childCmd )
 
         Search ->
-            ( model, addSearchQueryToLocation model.searchInputValue model.location )
+            let
+                command =
+                    makeUrl ("/tools?q=" ++ model.searchInputValue)
+                        |> Navigation.newUrl
+            in
+                ( model, command )
 
         SearchInputChanged searchInputValue ->
             ( { model | searchInputValue = searchInputValue }, Cmd.none )

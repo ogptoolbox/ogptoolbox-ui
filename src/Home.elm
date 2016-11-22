@@ -1,11 +1,13 @@
 module Home exposing (..)
 
 import Authenticator.Model
+import Dict
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Html.Helpers exposing (aExternal, aForPath, imgForCard)
 import Http
+import PropertyKeys exposing (..)
 import String
 import Task
 import Types exposing (..)
@@ -18,9 +20,9 @@ import WebData exposing (LoadingStatus(..), getData, WebData(..))
 
 
 type alias Model =
-    { examples : WebData (List Statement)
-    , organizations : WebData (List Statement)
-    , tools : WebData (List Statement)
+    { examples : WebData DataIdsBody
+    , organizations : WebData DataIdsBody
+    , tools : WebData DataIdsBody
     }
 
 
@@ -45,9 +47,9 @@ type InternalMsg
     | ErrorOrganizations Http.Error
     | ErrorTools Http.Error
     | Load String
-    | LoadedExamples (List Statement)
-    | LoadedOrganizations (List Statement)
-    | LoadedTools (List Statement)
+    | LoadedExamples DataIdsBody
+    | LoadedOrganizations DataIdsBody
+    | LoadedTools DataIdsBody
 
 
 type Msg
@@ -127,31 +129,31 @@ update msg authenticationMaybe model =
                         [ Task.perform
                             ErrorExamples
                             LoadedExamples
-                            (newTaskGetExamples authenticationMaybe searchQuery)
+                            (newTaskGetExamples authenticationMaybe searchQuery "")
                         , Task.perform
                             ErrorOrganizations
                             LoadedOrganizations
-                            (newTaskGetOrganizations authenticationMaybe searchQuery)
+                            (newTaskGetOrganizations authenticationMaybe searchQuery "")
                         , Task.perform
                             ErrorTools
                             LoadedTools
-                            (newTaskGetTools authenticationMaybe searchQuery)
+                            (newTaskGetTools authenticationMaybe searchQuery "")
                         ]
             in
                 model' ! cmds
 
-        LoadedExamples statements ->
-            ( { model | examples = Data (Loaded statements) }
+        LoadedExamples body ->
+            ( { model | examples = Data (Loaded body) }
             , Cmd.none
             )
 
-        LoadedOrganizations statements ->
-            ( { model | organizations = Data (Loaded statements) }
+        LoadedOrganizations body ->
+            ( { model | organizations = Data (Loaded body) }
             , Cmd.none
             )
 
-        LoadedTools statements ->
-            ( { model | tools = Data (Loaded statements) }
+        LoadedTools body ->
+            ( { model | tools = Data (Loaded body) }
             , Cmd.none
             )
 
@@ -172,11 +174,11 @@ view model searchQuery =
                                 Nothing ->
                                     []
 
-                                Just data ->
-                                    [ view searchQuery data ]
+                                Just body ->
+                                    [ view searchQuery (Dict.values body.data.statements) ]
 
-                        Loaded data ->
-                            [ view searchQuery data ]
+                        Loaded body ->
+                            [ view searchQuery (Dict.values body.data.statements) ]
                 )
                 webData
     in
@@ -534,7 +536,7 @@ viewExamples searchQuery examples =
         ]
 
 
-viewMetric : WebData (List Statement) -> Html msg
+viewMetric : WebData DataIdsBody -> Html msg
 viewMetric webData =
     text <|
         case webData of
@@ -551,11 +553,11 @@ viewMetric webData =
                             Nothing ->
                                 ""
 
-                            Just statements ->
-                                toString (List.length statements)
+                            Just body ->
+                                toString (Dict.size body.data.statements)
 
-                    Loaded statements ->
-                        toString (List.length statements)
+                    Loaded body ->
+                        toString (Dict.size body.data.statements)
 
 
 viewMetrics : Model -> Html msg
@@ -638,9 +640,9 @@ viewThumbnail url card extraClass =
                 [ imgForCard [] "218x140" card ]
             , div [ class "caption" ]
                 ([ h4 []
-                    [ aForPath navigate url [] [ text (getOneString "Name" card |> Maybe.withDefault "") ] ]
+                    [ aForPath navigate url [] [ text (getOneString nameKeys card |> Maybe.withDefault "") ] ]
                  , p []
-                    (case getOneString "Description-EN" card of
+                    (case getOneString descriptionKeys card of
                         Just description ->
                             [ text description ]
 

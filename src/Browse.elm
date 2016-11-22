@@ -1,23 +1,50 @@
 module Browse exposing (..)
 
+import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Html.Helpers exposing (aForPath, imgForCard)
+import PropertyKeys exposing (..)
 import String
-import Types exposing (Card, Statement, StatementCustom(..), getManyStrings, getOneString)
+import Types exposing (..)
 import Views exposing (viewLoading)
-import WebData exposing (LoadingStatus(..))
+import WebData exposing (getData, getLoadingStatusData, LoadingStatus(..), WebData(..))
 
 
-type PillType
+type ActivePill
     = Examples
-    | Tools
     | Organizations
+    | Tools
 
 
-view : PillType -> (String -> msg) -> String -> LoadingStatus (List Statement) -> List (Html msg)
-view activePill navigate searchQuery loadingStatus =
+type alias PillCounts =
+    Maybe
+        { examples : Int
+        , organizations : Int
+        , tools : Int
+        }
+
+
+activePillCount : ActivePill -> Maybe { b | examples : a, organizations : a, tools : a } -> Maybe a
+activePillCount activePill counts =
+    Maybe.map
+        (\{ examples, organizations, tools } ->
+            case activePill of
+                Examples ->
+                    examples
+
+                Organizations ->
+                    organizations
+
+                Tools ->
+                    tools
+        )
+        counts
+
+
+view : ActivePill -> PillCounts -> (String -> msg) -> String -> LoadingStatus DataIdsBody -> List (Html msg)
+view activePill counts navigate searchQuery loadingStatus =
     [ div [ class "browse-tag" ]
         [ div [ class "row" ]
             [ div [ class "container-fluid" ]
@@ -77,7 +104,15 @@ view activePill navigate searchQuery loadingStatus =
                                             []
                                             [ text "Examples "
                                             , span [ class "badge" ]
-                                                [ text "42" ]
+                                                [ text
+                                                    (case counts of
+                                                        Nothing ->
+                                                            "0"
+
+                                                        Just counts ->
+                                                            toString counts.examples
+                                                    )
+                                                ]
                                             ]
                                         ]
                                     , li
@@ -98,7 +133,15 @@ view activePill navigate searchQuery loadingStatus =
                                             []
                                             [ text "Tools "
                                             , span [ class "badge" ]
-                                                [ text "42" ]
+                                                [ text
+                                                    (case counts of
+                                                        Nothing ->
+                                                            "0"
+
+                                                        Just counts ->
+                                                            toString counts.tools
+                                                    )
+                                                ]
                                             ]
                                         ]
                                     , li
@@ -119,7 +162,15 @@ view activePill navigate searchQuery loadingStatus =
                                             []
                                             [ text "Organizations "
                                             , span [ class "badge" ]
-                                                [ text "42" ]
+                                                [ text
+                                                    (case counts of
+                                                        Nothing ->
+                                                            "0"
+
+                                                        Just counts ->
+                                                            toString counts.organizations
+                                                    )
+                                                ]
                                             ]
                                         ]
                                     ]
@@ -127,27 +178,44 @@ view activePill navigate searchQuery loadingStatus =
                             ]
                        , div [ class "row list" ]
                             ((case loadingStatus of
-                                Loading maybeStatements ->
+                                Loading body ->
                                     [ viewLoading ]
-                                        ++ (case maybeStatements of
+                                        ++ (case body of
                                                 Nothing ->
                                                     []
 
-                                                Just statements ->
-                                                    viewStatements activePill navigate statements
+                                                Just body ->
+                                                    viewStatements
+                                                        activePill
+                                                        navigate
+                                                        (Dict.values body.data.statements)
                                            )
 
-                                Loaded statements ->
-                                    viewStatements activePill navigate statements
+                                Loaded body ->
+                                    viewStatements activePill navigate (Dict.values body.data.statements)
                              )
-                                ++ [ div [ class "col-sm-12 text-center" ]
-                                        [ a [ class "show-more" ]
-                                            [ text "Show all 398"
-                                            , span [ class "glyphicon glyphicon-menu-down" ]
+                                ++ (let
+                                        count =
+                                            activePillCount activePill counts
+                                    in
+                                        case count of
+                                            Nothing ->
                                                 []
-                                            ]
-                                        ]
-                                   ]
+
+                                            Just count ->
+                                                if count > 20 then
+                                                    -- TODO Do not hardcode limit
+                                                    [ div [ class "col-sm-12 text-center" ]
+                                                        [ a [ class "show-more" ]
+                                                            [ text ("Show all " ++ (toString count))
+                                                            , span [ class "glyphicon glyphicon-menu-down" ]
+                                                                []
+                                                            ]
+                                                        ]
+                                                    ]
+                                                else
+                                                    []
+                                   )
                             )
                        ]
                 )
@@ -156,7 +224,7 @@ view activePill navigate searchQuery loadingStatus =
     ]
 
 
-viewStatements : PillType -> (String -> msg) -> List Statement -> List (Html msg)
+viewStatements : ActivePill -> (String -> msg) -> List Statement -> List (Html msg)
 viewStatements activePill navigate statements =
     List.map
         (\statement ->
@@ -170,7 +238,7 @@ viewStatements activePill navigate statements =
         statements
 
 
-viewTool : PillType -> Statement -> Card -> (String -> msg) -> Html msg
+viewTool : ActivePill -> Statement -> Card -> (String -> msg) -> Html msg
 viewTool activePill statement card navigate =
     let
         statementUrl =
@@ -192,7 +260,7 @@ viewTool activePill statement card navigate =
                     [ imgForCard [] "95x98" card ]
                 , div [ class "caption" ]
                     ([ h4 []
-                        [ aForPath navigate statementUrl [] [ text (getOneString "Name" card |> Maybe.withDefault "") ]
+                        [ aForPath navigate statementUrl [] [ text (getOneString nameKeys card |> Maybe.withDefault "") ]
                         , small []
                             [ text "Software" ]
                         ]
@@ -202,20 +270,23 @@ viewTool activePill statement card navigate =
                         , text "The White House"
                         ]
                      , p []
-                        (case getOneString "Description-EN" card of
+                        (case getOneString descriptionKeys card of
                             Just description ->
                                 [ text description ]
 
                             Nothing ->
                                 []
                         )
-                     , span [ class "label label-default label-tool" ]
-                        [ text "Default" ]
-                     , span [ class "label label-default label-tool" ]
-                        [ text "Default" ]
-                     , span [ class "label label-default label-tool" ]
-                        [ text "Default" ]
                      ]
+                        ++ (case getManyStrings typeKeys card of
+                                [] ->
+                                    [ text "TODO call-to-action" ]
+
+                                xs ->
+                                    List.map
+                                        (\str -> span [ class "label label-default label-tool" ] [ text str ])
+                                        xs
+                           )
                     )
                 ]
             ]

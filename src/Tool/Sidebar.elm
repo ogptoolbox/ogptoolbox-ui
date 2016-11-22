@@ -3,6 +3,7 @@ module Tool.Sidebar exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Helpers exposing (aExternal, imgForCard)
+import PropertyKeys exposing (..)
 import Types exposing (..)
 
 
@@ -21,19 +22,19 @@ root card =
                                     [ td [ class "table-label" ]
                                         [ text "Type" ]
                                     , td []
-                                        [ text "Web Software" ]
+                                        [ text "TODO" ]
                                     ]
                                 , tr [ class "editable" ]
                                     [ td [ class "table-label" ]
                                         [ text "License" ]
                                     , td []
-                                        [ text "Open-Source" ]
+                                        [ text (getOneString licenseKeys card |> Maybe.withDefault "") ]
                                     ]
                                 , tr [ class "editable" ]
                                     [ td [ class "table-label" ]
                                         [ text "Website" ]
                                     , td []
-                                        [ case getOneUrl card of
+                                        [ case getOneString urlKeys card of
                                             Nothing ->
                                                 text ""
 
@@ -69,7 +70,7 @@ root card =
                             ]
                         ]
                     , div [ class "panel-body" ]
-                        (getManyStrings "Tag" card
+                        (getManyStrings tagKeys card
                             |> List.map (\tag -> span [ class "label label-default label-tag" ] [ text tag ])
                         )
                     ]

@@ -63,10 +63,8 @@ type alias CardWidget =
 
 
 type alias DataId =
-    { ballots : Dict String Ballot
-    , id : String
+    { id : String
     , statements : Dict String Statement
-    , users : Dict String User
     }
 
 
@@ -84,7 +82,8 @@ type alias DataIds =
 
 
 type alias DataIdsBody =
-    { data : DataIds
+    { count : Int
+    , data : DataIds
     }
 
 
@@ -187,70 +186,3 @@ convertStatementCustomToKind statementCustom =
 
         TagCustom tag ->
             "Tag"
-
-
-getManyStrings : String -> Card -> List String
-getManyStrings propertyName card =
-    let
-        getStrings : CardField -> List String
-        getStrings cardField =
-            case cardField of
-                StringField { value } ->
-                    [ value ]
-
-                ArrayField fields ->
-                    List.concatMap getStrings fields
-
-                NumberField _ ->
-                    []
-
-                BijectiveUriReferenceField _ ->
-                    []
-    in
-        case Dict.get propertyName card of
-            Nothing ->
-                []
-
-            Just cardField ->
-                getStrings cardField
-
-
-getOneString : String -> Card -> Maybe String
-getOneString propertyName card =
-    let
-        getString : CardField -> Maybe String
-        getString cardField =
-            case cardField of
-                StringField { value } ->
-                    Just value
-
-                ArrayField [] ->
-                    Nothing
-
-                ArrayField (field :: _) ->
-                    getString field
-
-                NumberField _ ->
-                    Nothing
-
-                BijectiveUriReferenceField _ ->
-                    Nothing
-    in
-        Dict.get propertyName card
-            `Maybe.andThen` getString
-
-
-getOneImageUrlPath : Card -> Maybe String
-getOneImageUrlPath card =
-    Maybe.oneOf
-        [ getOneString "Logo" card
-        , getOneString "Screenshot" card
-        ]
-
-
-getOneUrl : Card -> Maybe String
-getOneUrl card =
-    Maybe.oneOf
-        [ getOneString "URL" card
-        , getOneString "Website" card
-        ]

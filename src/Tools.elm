@@ -1,36 +1,32 @@
 module Tools exposing (..)
 
 import Authenticator.Model
-import Browse exposing (PillType(..))
+import Browse exposing (ActivePill(..))
 import Hop.Types
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Http
-import Maybe.Helpers
-import Requests exposing (newTaskGetTool, newTaskGetTools)
+import Requests exposing (..)
 import Routes exposing (getSearchQuery, ToolsNestedRoute(..))
 import Task
 import Tool.View
-import Types exposing (Statement, StatementCustom(..))
+import Types exposing (..)
 import Views exposing (viewWebData)
-import WebData exposing (LoadingStatus(..), getData, WebData(..))
+import WebData exposing (..)
 
 
 -- MODEL
 
 
-type alias ToolOptions =
-    { additionalInformationsCollapsed : Bool }
-
-
 type Model
-    = Tools (WebData (List Statement))
-    | Tool (WebData Statement) ToolOptions
-
-
-defaultToolOptions : ToolOptions
-defaultToolOptions =
-    { additionalInformationsCollapsed = False }
+    = Tools
+        (WebData
+            { examplesCount : Int
+            , organizationsCount : Int
+            , tools : DataIdsBody
+            }
+        )
+    | Tool (WebData DataIdBody)
 
 
 init : Model
@@ -68,8 +64,8 @@ type InternalMsg
     = Error Http.Error
     | LoadAll String
     | LoadOne String
-    | LoadedAll (List Statement)
-    | LoadedOne Statement
+    | LoadedAll ( DataIdsBody, DataIdsBody, DataIdsBody )
+    | LoadedOne DataIdBody
 
 
 type Msg
@@ -122,8 +118,8 @@ update msg authenticationMaybe model =
 
                 model' =
                     case model of
-                        Tool _ options ->
-                            Tool (Failure err) options
+                        Tool _ ->
+                            Tool (Failure err)
 
                         Tools _ ->
                             Tools (Failure err)
@@ -135,7 +131,7 @@ update msg authenticationMaybe model =
                 loadingStatus =
                     Loading
                         (case model of
-                            Tool _ _ ->
+                            Tool _ ->
                                 Nothing
 
                             Tools webData ->
@@ -146,8 +142,16 @@ update msg authenticationMaybe model =
                     Tools (Data loadingStatus)
 
                 cmd =
-                    Task.perform Error LoadedAll (newTaskGetTools authenticationMaybe searchQuery)
-                        |> Cmd.map ForSelf
+                    Cmd.map ForSelf
+                        (Task.perform
+                            Error
+                            LoadedAll
+                            (Task.map3 (,,)
+                                (newTaskGetExamples authenticationMaybe searchQuery "1")
+                                (newTaskGetOrganizations authenticationMaybe searchQuery "1")
+                                (newTaskGetTools authenticationMaybe searchQuery "")
+                            )
+                        )
             in
                 ( model', cmd )
 
@@ -155,11 +159,11 @@ update msg authenticationMaybe model =
             let
                 model' =
                     case model of
-                        Tool webData options ->
-                            Tool (Data (Loading (getData webData))) options
+                        Tool webData ->
+                            Tool (Data (Loading (getData webData)))
 
                         Tools _ ->
-                            Tool (Data (Loading Nothing)) defaultToolOptions
+                            Tool (Data (Loading Nothing))
 
                 cmd =
                     Task.perform Error LoadedOne (newTaskGetTool authenticationMaybe toolId)
@@ -167,11 +171,23 @@ update msg authenticationMaybe model =
             in
                 ( model', cmd )
 
-        LoadedAll statements ->
-            ( Tools (Data (Loaded statements)), Cmd.none )
+        LoadedAll ( examples, organizations, tools ) ->
+            let
+                model' =
+                    Tools
+                        (Data
+                            (Loaded
+                                { examplesCount = examples.count
+                                , organizationsCount = organizations.count
+                                , tools = tools
+                                }
+                            )
+                        )
+            in
+                ( model', Cmd.none )
 
-        LoadedOne statement ->
-            ( Tool (Data (Loaded statement)) defaultToolOptions, Cmd.none )
+        LoadedOne body ->
+            ( Tool (Data (Loaded body)), Cmd.none )
 
 
 
@@ -181,15 +197,32 @@ update msg authenticationMaybe model =
 view : Maybe Authenticator.Model.Authentication -> Model -> String -> List (Html Msg)
 view authenticationMaybe model searchQuery =
     case model of
-        Tool webData options ->
+        Tool webData ->
             [ div [ class "row section" ]
                 [ div [ class "container" ]
-                    (viewWebData
-                        (Tool.View.root options.additionalInformationsCollapsed >> Maybe.Helpers.toList)
-                        webData
-                    )
+                    (viewWebData Tool.View.root webData)
                 ]
             ]
 
         Tools webData ->
-            viewWebData (Browse.view Browse.Tools navigate searchQuery) webData
+            viewWebData
+                (\loadingStatus ->
+                    let
+                        counts =
+                            getLoadingStatusData loadingStatus
+                                |> Maybe.map
+                                    (\loadingStatus ->
+                                        { examples = loadingStatus.examplesCount
+                                        , organizations = loadingStatus.organizationsCount
+                                        , tools = loadingStatus.tools.count
+                                        }
+                                    )
+                    in
+                        Browse.view
+                            Browse.Tools
+                            counts
+                            navigate
+                            searchQuery
+                            (mapLoadingStatus .tools loadingStatus)
+                )
+                webData

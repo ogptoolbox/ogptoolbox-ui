@@ -1,41 +1,37 @@
 module Organizations exposing (..)
 
 import Authenticator.Model
-import Browse exposing (PillType(..))
+import Browse exposing (ActivePill(..))
 import Hop.Types
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Http
-import Maybe.Helpers
 import Organization
-import Requests exposing (newTaskGetOrganization, newTaskGetOrganizations)
+import Requests exposing (..)
 import Routes exposing (getSearchQuery, OrganizationsNestedRoute(..))
 import Task
-import Types exposing (Statement, StatementCustom(..))
+import Types exposing (..)
 import Views exposing (viewWebData)
-import WebData exposing (LoadingStatus(..), getData, WebData(..))
+import WebData exposing (..)
 
 
 -- MODEL
 
 
-type alias OrganizationOptions =
-    { additionalInformationsCollapsed : Bool }
-
-
 type Model
-    = Organizations (WebData (List Statement))
-    | Organization (WebData Statement) OrganizationOptions
+    = Organizations
+        (WebData
+            { examplesCount : Int
+            , organizations : DataIdsBody
+            , toolsCount : Int
+            }
+        )
+    | Organization (WebData DataIdBody)
 
 
 init : Model
 init =
     Organizations NotAsked
-
-
-defaultOrganizationOptions : OrganizationOptions
-defaultOrganizationOptions =
-    { additionalInformationsCollapsed = False }
 
 
 
@@ -68,8 +64,8 @@ type InternalMsg
     = Error Http.Error
     | LoadAll String
     | LoadOne String
-    | LoadedAll (List Statement)
-    | LoadedOne Statement
+    | LoadedAll ( DataIdsBody, DataIdsBody, DataIdsBody )
+    | LoadedOne DataIdBody
 
 
 type Msg
@@ -122,8 +118,8 @@ update msg authenticationMaybe model =
 
                 model' =
                     case model of
-                        Organization _ options ->
-                            Organization (Failure err) options
+                        Organization _ ->
+                            Organization (Failure err)
 
                         Organizations _ ->
                             Organizations (Failure err)
@@ -135,7 +131,7 @@ update msg authenticationMaybe model =
                 loadingStatus =
                     Loading
                         (case model of
-                            Organization _ _ ->
+                            Organization _ ->
                                 Nothing
 
                             Organizations webData ->
@@ -146,8 +142,16 @@ update msg authenticationMaybe model =
                     Organizations (Data loadingStatus)
 
                 cmd =
-                    Task.perform Error LoadedAll (newTaskGetOrganizations authenticationMaybe searchQuery)
-                        |> Cmd.map ForSelf
+                    Cmd.map ForSelf
+                        (Task.perform
+                            Error
+                            LoadedAll
+                            (Task.map3 (,,)
+                                (newTaskGetExamples authenticationMaybe searchQuery "1")
+                                (newTaskGetOrganizations authenticationMaybe searchQuery "")
+                                (newTaskGetTools authenticationMaybe searchQuery "1")
+                            )
+                        )
             in
                 ( model', cmd )
 
@@ -155,11 +159,11 @@ update msg authenticationMaybe model =
             let
                 model' =
                     case model of
-                        Organization webData options ->
-                            Organization (Data (Loading (getData webData))) options
+                        Organization webData ->
+                            Organization (Data (Loading (getData webData)))
 
                         Organizations _ ->
-                            Organization (Data (Loading Nothing)) defaultOrganizationOptions
+                            Organization (Data (Loading Nothing))
 
                 cmd =
                     Task.perform Error LoadedOne (newTaskGetOrganization authenticationMaybe organizationId)
@@ -167,11 +171,23 @@ update msg authenticationMaybe model =
             in
                 ( model', cmd )
 
-        LoadedAll statements ->
-            ( Organizations (Data (Loaded statements)), Cmd.none )
+        LoadedAll ( examples, organizations, tools ) ->
+            let
+                model' =
+                    Organizations
+                        (Data
+                            (Loaded
+                                { examplesCount = examples.count
+                                , organizations = organizations
+                                , toolsCount = tools.count
+                                }
+                            )
+                        )
+            in
+                ( model', Cmd.none )
 
-        LoadedOne statement ->
-            ( Organization (Data (Loaded statement)) defaultOrganizationOptions, Cmd.none )
+        LoadedOne body ->
+            ( Organization (Data (Loaded body)), Cmd.none )
 
 
 
@@ -181,15 +197,32 @@ update msg authenticationMaybe model =
 view : Maybe Authenticator.Model.Authentication -> Model -> String -> List (Html Msg)
 view authenticationMaybe model searchQuery =
     case model of
-        Organization webData options ->
+        Organization webData ->
             [ div [ class "row section" ]
                 [ div [ class "container" ]
-                    (viewWebData
-                        (Organization.view options.additionalInformationsCollapsed >> Maybe.Helpers.toList)
-                        webData
-                    )
+                    (viewWebData Organization.view webData)
                 ]
             ]
 
         Organizations webData ->
-            viewWebData (Browse.view Browse.Organizations navigate searchQuery) webData
+            viewWebData
+                (\loadingStatus ->
+                    let
+                        counts =
+                            getLoadingStatusData loadingStatus
+                                |> Maybe.map
+                                    (\loadingStatus ->
+                                        { examples = loadingStatus.examplesCount
+                                        , organizations = loadingStatus.organizations.count
+                                        , tools = loadingStatus.toolsCount
+                                        }
+                                    )
+                    in
+                        Browse.view
+                            Browse.Organizations
+                            counts
+                            navigate
+                            searchQuery
+                            (mapLoadingStatus .organizations loadingStatus)
+                )
+                webData

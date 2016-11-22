@@ -24,9 +24,24 @@ getData webData =
             Nothing
 
         Data loadingStatus ->
-            case loadingStatus of
-                Loading getData ->
-                    getData
+            getLoadingStatusData loadingStatus
 
-                Loaded data ->
-                    Just data
+
+getLoadingStatusData : LoadingStatus a -> Maybe a
+getLoadingStatusData loadingStatus =
+    case loadingStatus of
+        Loading data ->
+            data
+
+        Loaded data ->
+            Just data
+
+
+mapLoadingStatus : (a -> b) -> LoadingStatus a -> LoadingStatus b
+mapLoadingStatus f loadingStatus =
+    case loadingStatus of
+        Loading data ->
+            Loading (Maybe.map f data)
+
+        Loaded data ->
+            Loaded (f data)

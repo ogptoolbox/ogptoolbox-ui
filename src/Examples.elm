@@ -1,36 +1,32 @@
 module Examples exposing (..)
 
 import Authenticator.Model
-import Browse exposing (PillType(..))
+import Browse exposing (ActivePill(..))
 import Example
 import Hop.Types
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Http
-import Maybe.Helpers
-import Requests exposing (newTaskGetExample, newTaskGetExamples)
+import Requests exposing (..)
 import Routes exposing (getSearchQuery, ExamplesNestedRoute(..))
 import Task
-import Types exposing (Statement, StatementCustom(..))
+import Types exposing (..)
 import Views exposing (viewWebData)
-import WebData exposing (LoadingStatus(..), getData, WebData(..))
+import WebData exposing (..)
 
 
 -- MODEL
 
 
-type alias ExampleOptions =
-    { additionalInformationsCollapsed : Bool }
-
-
 type Model
-    = Examples (WebData (List Statement))
-    | Example (WebData Statement) ExampleOptions
-
-
-defaultExampleOptions : ExampleOptions
-defaultExampleOptions =
-    { additionalInformationsCollapsed = False }
+    = Examples
+        (WebData
+            { examples : DataIdsBody
+            , organizationsCount : Int
+            , toolsCount : Int
+            }
+        )
+    | Example (WebData DataIdBody)
 
 
 init : Model
@@ -68,8 +64,8 @@ type InternalMsg
     = Error Http.Error
     | LoadAll String
     | LoadOne String
-    | LoadedAll (List Statement)
-    | LoadedOne Statement
+    | LoadedAll ( DataIdsBody, DataIdsBody, DataIdsBody )
+    | LoadedOne DataIdBody
 
 
 type Msg
@@ -122,8 +118,8 @@ update msg authenticationMaybe model =
 
                 model' =
                     case model of
-                        Example _ options ->
-                            Example (Failure err) options
+                        Example _ ->
+                            Example (Failure err)
 
                         Examples _ ->
                             Examples (Failure err)
@@ -135,7 +131,7 @@ update msg authenticationMaybe model =
                 loadingStatus =
                     Loading
                         (case model of
-                            Example _ _ ->
+                            Example _ ->
                                 Nothing
 
                             Examples webData ->
@@ -146,8 +142,16 @@ update msg authenticationMaybe model =
                     Examples (Data loadingStatus)
 
                 cmd =
-                    Task.perform Error LoadedAll (newTaskGetExamples authenticationMaybe searchQuery)
-                        |> Cmd.map ForSelf
+                    Cmd.map ForSelf
+                        (Task.perform
+                            Error
+                            LoadedAll
+                            (Task.map3 (,,)
+                                (newTaskGetExamples authenticationMaybe searchQuery "")
+                                (newTaskGetOrganizations authenticationMaybe searchQuery "1")
+                                (newTaskGetTools authenticationMaybe searchQuery "1")
+                            )
+                        )
             in
                 ( model', cmd )
 
@@ -155,11 +159,11 @@ update msg authenticationMaybe model =
             let
                 model' =
                     case model of
-                        Example webData options ->
-                            Example (Data (Loading (getData webData))) options
+                        Example webData ->
+                            Example (Data (Loading (getData webData)))
 
                         Examples _ ->
-                            Example (Data (Loading Nothing)) defaultExampleOptions
+                            Example (Data (Loading Nothing))
 
                 cmd =
                     Task.perform Error LoadedOne (newTaskGetExample authenticationMaybe exampleId)
@@ -167,11 +171,23 @@ update msg authenticationMaybe model =
             in
                 ( model', cmd )
 
-        LoadedAll statements ->
-            ( Examples (Data (Loaded statements)), Cmd.none )
+        LoadedAll ( examples, organizations, tools ) ->
+            let
+                model' =
+                    Examples
+                        (Data
+                            (Loaded
+                                { examples = examples
+                                , organizationsCount = organizations.count
+                                , toolsCount = tools.count
+                                }
+                            )
+                        )
+            in
+                ( model', Cmd.none )
 
-        LoadedOne statement ->
-            ( Example (Data (Loaded statement)) defaultExampleOptions, Cmd.none )
+        LoadedOne body ->
+            ( Example (Data (Loaded body)), Cmd.none )
 
 
 
@@ -181,15 +197,32 @@ update msg authenticationMaybe model =
 view : Maybe Authenticator.Model.Authentication -> Model -> String -> List (Html Msg)
 view authenticationMaybe model searchQuery =
     case model of
-        Example webData options ->
+        Example webData ->
             [ div [ class "row section" ]
                 [ div [ class "container" ]
-                    (viewWebData
-                        (Example.view options.additionalInformationsCollapsed >> Maybe.Helpers.toList)
-                        webData
-                    )
+                    (viewWebData Example.view webData)
                 ]
             ]
 
         Examples webData ->
-            viewWebData (Browse.view Browse.Examples navigate searchQuery) webData
+            viewWebData
+                (\loadingStatus ->
+                    let
+                        counts =
+                            getLoadingStatusData loadingStatus
+                                |> Maybe.map
+                                    (\loadingStatus ->
+                                        { examples = loadingStatus.examples.count
+                                        , organizations = loadingStatus.organizationsCount
+                                        , tools = loadingStatus.toolsCount
+                                        }
+                                    )
+                    in
+                        Browse.view
+                            Browse.Examples
+                            counts
+                            navigate
+                            searchQuery
+                            (mapLoadingStatus .examples loadingStatus)
+                )
+                webData

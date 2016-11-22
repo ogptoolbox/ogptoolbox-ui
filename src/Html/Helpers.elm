@@ -5,6 +5,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onWithOptions)
 import Json.Decode
+import PropertyKeys exposing (..)
 import Regex
 import Routes exposing (makeUrl)
 import String
@@ -41,7 +42,7 @@ aIfIsUrl attributes s =
     let
         -- Adapted from https://github.com/etaque/elm-form/blob/349c0da619b59da36b1274c4232f78d5ceaddeba/src/Form/Validate.elm#L400-L403
         validUrlPattern =
-            Regex.regex "^(https?://)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\w \\.-]*)*/?"
+            Regex.regex "^https?://([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\w \\.-]*)*/?"
                 |> Regex.caseInsensitive
     in
         if Regex.contains validUrlPattern s then
@@ -55,7 +56,7 @@ imgForCard attributes dim card =
     img
         ([ alt "Logo"
          , src
-            (case getOneImageUrlPath card of
+            (case getOneString imageUrlPathKeys card of
                 Just urlPath ->
                     apiUrl
                         ++ (if String.startsWith "/" urlPath then

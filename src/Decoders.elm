@@ -3,8 +3,10 @@ module Decoders exposing (..)
 import Dict exposing (Dict)
 import Json.Decode as Decode exposing (..)
 import Json.Decode.Extra exposing ((|:), sequence)
+import PropertyKeys exposing (..)
 import Result exposing (Result(..))
 import Set
+import String
 import Types exposing (..)
 
 
@@ -80,9 +82,9 @@ cardDecoder =
             -> Result (Dict String String) (Dict String ( JsonCardSchema, Maybe CardWidget ))
         mergeSchemasAndWidgets schemas widgets =
             Dict.merge
-                (\propertyName schema accu -> Dict.insert propertyName (Ok ( schema, Nothing )) accu)
-                (\propertyName schema widget accu -> Dict.insert propertyName (Ok ( schema, Just widget )) accu)
-                (\propertyName _ accu -> Dict.insert propertyName (Err ("Widget has no schema")) accu)
+                (\propertyKey schema accu -> Dict.insert propertyKey (Ok ( schema, Nothing )) accu)
+                (\propertyKey schema widget accu -> Dict.insert propertyKey (Ok ( schema, Just widget )) accu)
+                (\propertyKey _ accu -> Dict.insert propertyKey (Err ("Widget has no schema")) accu)
                 schemas
                 widgets
                 Dict.empty
@@ -94,11 +96,11 @@ cardDecoder =
             -> Result (Dict String String) (Dict String ( Value, JsonCardSchema, Maybe CardWidget ))
         mergeValues values schemasAndWidgets =
             Dict.merge
-                (\propertyName ( schema, widget ) accu -> accu)
-                (\propertyName ( schema, widget ) value accu ->
-                    Dict.insert propertyName (Ok ( value, schema, widget )) accu
+                (\propertyKey ( schema, widget ) accu -> accu)
+                (\propertyKey ( schema, widget ) value accu ->
+                    Dict.insert propertyKey (Ok ( value, schema, widget )) accu
                 )
-                (\propertyName _ accu -> Dict.insert propertyName (Err ("Value has no schema")) accu)
+                (\propertyKey _ accu -> Dict.insert propertyKey (Err ("Value has no schema")) accu)
                 schemasAndWidgets
                 values
                 Dict.empty
@@ -137,19 +139,18 @@ cardDecoder =
             ("schemas" := dict jsonCardSchemaDecoder)
             ("values" := dict value)
             ("widgets" := dict cardWidgetDecoder)
-            `andThen`
+            `customDecoder`
                 (\( schemas, values, widgets ) ->
                     mergeSchemasAndWidgets schemas widgets
                         `Result.andThen` mergeValues values
                         `Result.andThen`
                             (Dict.map
-                                (\propertyName ( value, schema, widget ) ->
+                                (\propertyKey ( value, schema, widget ) ->
                                     decodeValue (toCardField widget schema) value
                                 )
                                 >> combineDict
                             )
                         |> Result.formatError (Dict.toList >> toString)
-                        |> fromResult
                 )
 
 
@@ -160,13 +161,22 @@ cardWidgetDecoder =
         |: (maybe ("type" := string))
 
 
-dataIdDecoder : Decoder DataId
-dataIdDecoder =
-    succeed DataId
-        |: oneOf [ ("ballots" := dict ballotDecoder), succeed Dict.empty ]
-        |: ("id" := string)
-        |: ("statements" := dict statementDecoder)
-        |: oneOf [ ("users" := dict userDecoder), succeed Dict.empty ]
+dataIdDecoder : String -> List String -> Decoder DataId
+dataIdDecoder statementId cardTypes =
+    object2 (,)
+        ("id" := string)
+        ("statements" := dict statementDecoder)
+        `customDecoder`
+            (\( id, statements ) ->
+                validateStatement statementId cardTypes statements
+                    |> Result.map (\_ -> DataId id statements)
+            )
+
+
+dataIdBodyDecoder : String -> List String -> Decoder DataIdBody
+dataIdBodyDecoder statementId cardTypes =
+    succeed DataIdBody
+        |: ("data" := (dataIdDecoder statementId cardTypes))
 
 
 dataIdsDecoder : Decoder DataIds
@@ -186,15 +196,10 @@ dataIdsDecoder =
             )
 
 
-dataIdBodyDecoder : Decoder DataIdBody
-dataIdBodyDecoder =
-    succeed DataIdBody
-        |: ("data" := dataIdDecoder)
-
-
 dataIdsBodyDecoder : Decoder DataIdsBody
 dataIdsBodyDecoder =
     succeed DataIdsBody
+        |: ("count" := string `customDecoder` String.toInt)
         |: ("data" := dataIdsDecoder)
 
 
@@ -298,80 +303,6 @@ statementDecoder =
         |: oneOf [ ("ratingSum" := int), succeed 0 ]
 
 
-statementDecoderFromBody : String -> List String -> Decoder Statement
-statementDecoderFromBody statementId cardTypes =
-    let
-        validateHasOneOfCardTypes : List String -> Card -> Result String ()
-        validateHasOneOfCardTypes expectedCardTypes card =
-            let
-                existingCardTypes =
-                    getManyStrings "Card Type" card
-
-                intersection =
-                    Set.intersect (Set.fromList expectedCardTypes) (Set.fromList existingCardTypes)
-            in
-                if Set.isEmpty intersection then
-                    Err
-                        ("Expected one card type among "
-                            ++ (toString expectedCardTypes)
-                            ++ " but found "
-                            ++ (toString existingCardTypes)
-                        )
-                else
-                    Ok ()
-
-        getStatementCard : Statement -> Decoder Card
-        getStatementCard statement =
-            case statement.custom of
-                CardCustom card ->
-                    succeed card
-
-                _ ->
-                    fail ("statement.custom is not a Card")
-
-        getStatementOfId :
-            String
-            -> { a | data : { b | statements : Dict String Statement } }
-            -> Decoder Statement
-        getStatementOfId statementId body =
-            let
-                statements =
-                    body.data.statements
-            in
-                case Dict.get statementId statements of
-                    Nothing ->
-                        fail
-                            ("Statement ID \""
-                                ++ statementId
-                                ++ "\" is not in body.data.statements; received "
-                                ++ (toString (Dict.keys statements))
-                            )
-
-                    Just statement ->
-                        succeed statement
-    in
-        dataIdBodyDecoder
-            `andThen` getStatementOfId statementId
-            `andThen`
-                (\statement ->
-                    getStatementCard statement
-                        `andThen`
-                            (\card ->
-                                case validateHasOneOfCardTypes cardTypes card of
-                                    Ok _ ->
-                                        succeed statement
-
-                                    Err err ->
-                                        fail err
-                            )
-                )
-
-
-statementsDecoder : Decoder (List Statement)
-statementsDecoder =
-    dataIdsBodyDecoder |> map (\body -> Dict.values body.data.statements)
-
-
 userDecoder : Decoder User
 userDecoder =
     succeed User
@@ -391,13 +322,43 @@ userBodyDecoder =
 -- HELPERS
 
 
-fromResult : Result String a -> Decoder a
-fromResult result =
-    -- TODO Use http://package.elm-lang.org/packages/elm-community/json-extra/latest/Json-Decode-Extra#fromResult
-    -- when migrating to Elm 0.18
-    case result of
-        Ok successValue ->
-            succeed successValue
+validateStatement : String -> List String -> Dict String Statement -> Result String ()
+validateStatement statementId cardTypes statements =
+    let
+        validateHasOneOfCardTypes : List String -> Card -> Result String ()
+        validateHasOneOfCardTypes expectedCardTypes card =
+            let
+                existingCardTypes =
+                    getManyStrings cardTypeKeys card
 
-        Err errorMessage ->
-            fail errorMessage
+                intersection =
+                    Set.intersect (Set.fromList expectedCardTypes) (Set.fromList existingCardTypes)
+            in
+                if Set.isEmpty intersection then
+                    Err
+                        ("Expected one card type among "
+                            ++ (toString expectedCardTypes)
+                            ++ " but found "
+                            ++ (toString existingCardTypes)
+                        )
+                else
+                    Ok ()
+    in
+        (Dict.get statementId statements
+            |> Result.fromMaybe
+                ("Statement ID \""
+                    ++ statementId
+                    ++ "\" is not in body.data.statements; received "
+                    ++ (toString (Dict.keys statements))
+                )
+        )
+            `Result.andThen`
+                (\statement ->
+                    case statement.custom of
+                        CardCustom card ->
+                            Ok card
+
+                        _ ->
+                            Err "statement.custom is not a Card"
+                )
+            `Result.andThen` (\card -> validateHasOneOfCardTypes cardTypes card)

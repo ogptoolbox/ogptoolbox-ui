@@ -4,11 +4,9 @@ import Dict
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Helpers exposing (aExternal, aIfIsUrl)
+import Maybe.Helpers
+import PropertyKeys exposing (..)
 import Tool.Sidebar as Sidebar
-
-
--- import Tool.Types exposing (Msg(..))
-
 import Types exposing (..)
 import WebData exposing (LoadingStatus(..))
 
@@ -16,23 +14,34 @@ import WebData exposing (LoadingStatus(..))
 -- VIEW
 
 
-root : Bool -> LoadingStatus Statement -> Maybe (Html msg)
-root additionalInformationsCollapsed loadingStatus =
-    case loadingStatus of
-        Loading maybeStatement ->
-            Maybe.map (viewStatement additionalInformationsCollapsed) maybeStatement
+root : LoadingStatus DataIdBody -> List (Html msg)
+root loadingStatus =
+    let
+        statement body =
+            case Dict.get body.data.id body.data.statements of
+                Nothing ->
+                    Debug.crash "Error: this should never happen due to the JSON decoder."
 
-        Loaded statement ->
-            Just (viewStatement additionalInformationsCollapsed statement)
+                Just body ->
+                    body
+    in
+        (case loadingStatus of
+            Loading body ->
+                Maybe.map (\body -> viewStatement (statement body)) body
+
+            Loaded body ->
+                Just (viewStatement (statement body))
+        )
+            |> Maybe.Helpers.toList
 
 
-viewCard : Bool -> Card -> Html msg
-viewCard additionalInformationsCollapsed card =
+viewCard : Card -> Html msg
+viewCard card =
     div [ class "col-md-9 content content-right" ]
         [ div [ class "row" ]
             [ div [ class "col-xs-12" ]
                 [ h1 []
-                    [ text (getOneString "Name" card |> Maybe.withDefault "")
+                    [ text (getOneString nameKeys card |> Maybe.withDefault "")
                     , small []
                         [ text "Software" ]
                     ]
@@ -40,13 +49,15 @@ viewCard additionalInformationsCollapsed card =
             ]
         , div [ class "row" ]
             [ div [ class "col-xs-12" ]
-                [ span [ class "label label-default label-tag label-maintag" ]
-                    [ text "Open-Data" ]
-                , span [ class "label label-default label-tag label-maintag" ]
-                    [ text "Portal" ]
-                , span [ class "label label-default label-tag label-maintag" ]
-                    [ text "Open-Government" ]
-                ]
+                (case getManyStrings typeKeys card of
+                    [] ->
+                        [ text "TODO call-to-action" ]
+
+                    xs ->
+                        List.map
+                            (\str -> span [ class "label label-default label-tag label-maintag" ] [ text str ])
+                            xs
+                )
             ]
         , div [ class "row" ]
             [ div [ class "col-xs-12" ]
@@ -61,7 +72,7 @@ viewCard additionalInformationsCollapsed card =
                                     [ a [ class "show-more" ]
                                         [ text
                                             ("Best of "
-                                                ++ (getManyStrings "Description-EN" card |> List.length |> toString)
+                                                ++ (getManyStrings descriptionKeys card |> List.length |> toString)
                                             )
                                         ]
                                     , button
@@ -75,7 +86,7 @@ viewCard additionalInformationsCollapsed card =
                                 ]
                             ]
                         , div [ class "panel-body" ]
-                            (case getOneString "Description-EN" card of
+                            (case getOneString descriptionKeys card of
                                 Just description ->
                                     [ text description ]
 
@@ -105,17 +116,7 @@ viewCard additionalInformationsCollapsed card =
                                     , div [ class "col-xs-4 text-right" ]
                                         [ a [ class "show-more pull-right" ]
                                             [ text ("Show " ++ (card |> Dict.size |> toString) ++ " more")
-                                            , span
-                                                [ class
-                                                    ("glyphicon "
-                                                        ++ (if additionalInformationsCollapsed then
-                                                                "glyphicon-menu-right"
-                                                            else
-                                                                "glyphicon-menu-down"
-                                                           )
-                                                    )
-                                                ]
-                                                []
+                                            , span [ class "glyphicon glyphicon-menu-down" ] []
                                             ]
                                         ]
                                     ]
@@ -134,10 +135,10 @@ viewCard additionalInformationsCollapsed card =
                                         [ tbody []
                                             (card
                                                 |> Dict.map
-                                                    (\propertyName cardField ->
+                                                    (\propertyKey cardField ->
                                                         tr []
                                                             [ th [ scope "row" ]
-                                                                [ text propertyName ]
+                                                                [ text propertyKey ]
                                                             , td []
                                                                 [ viewCardField cardField ]
                                                             ]
@@ -248,45 +249,45 @@ viewCard additionalInformationsCollapsed card =
 
 viewCardField : CardField -> Html msg
 viewCardField cardField =
-        case cardField of
-            StringField { format, value } ->
-                case format of
-                    Nothing ->
+    case cardField of
+        StringField { format, value } ->
+            case format of
+                Nothing ->
+                    aIfIsUrl [] value
+
+                Just format ->
+                    case format of
+                        UriReference ->
+                            text "TODO"
+
+                        Uri ->
                             aIfIsUrl [] value
 
-                    Just format ->
-                        case format of
-                            UriReference ->
-                                text "TODO"
+                        Email ->
+                            a [ href ("mailto:" ++ value) ] [ text value ]
 
-                            Uri ->
-                                aIfIsUrl [] value
+        NumberField float ->
+            text (toString float)
 
-                            Email ->
-                                a [ href ("mailto:" ++ value) ] [ text value ]
+        ArrayField cardFields ->
+            ul [ class "list-unstyled" ]
+                (List.map
+                    (\cardField -> li [] [ viewCardField cardField ])
+                    cardFields
+                )
 
-            NumberField float ->
-                text (toString float)
-
-            ArrayField cardFields ->
-                ul [ class "list-unstyled" ]
-                    (List.map
-                        (\cardField -> li [] [ viewCardField cardField ])
-                        cardFields
-                    )
-
-            BijectiveUriReferenceField string ->
-                text string
+        BijectiveUriReferenceField string ->
+            text string
 
 
-viewStatement : Bool -> Statement -> Html msg
-viewStatement additionalInformationsCollapsed tool =
+viewStatement : Statement -> Html msg
+viewStatement tool =
     case tool.custom of
         CardCustom card ->
             div [ class "row" ]
                 [ Sidebar.root card
-                , viewCard additionalInformationsCollapsed card
+                , viewCard card
                 ]
 
         _ ->
-            Debug.crash "StatementCustom constructor not supported"
+            text "StatementCustom constructor not supported"

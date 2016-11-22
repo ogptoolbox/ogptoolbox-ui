@@ -24,8 +24,8 @@ cardTypesForTool =
     [ "Software", "Platform" ]
 
 
-newTaskGetCardOfType : Maybe Authenticator.Model.Authentication -> List String -> String -> Task Http.Error Statement
-newTaskGetCardOfType authenticationMaybe cardTypes statementId =
+newTaskGetCardOfType : List String -> Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
+newTaskGetCardOfType cardTypes authenticationMaybe statementId =
     let
         authenticationHeaders =
             case authenticationMaybe of
@@ -37,7 +37,7 @@ newTaskGetCardOfType authenticationMaybe cardTypes statementId =
                     []
     in
         Http.fromJson
-            (statementDecoderFromBody statementId cardTypes)
+            (dataIdBodyDecoder statementId cardTypes)
             (Http.send Http.defaultSettings
                 { verb = "GET"
                 , url = apiUrl ++ "statements/" ++ statementId
@@ -51,11 +51,12 @@ newTaskGetCardOfType authenticationMaybe cardTypes statementId =
 
 
 newTaskGetCardsOfType :
-    Maybe Authenticator.Model.Authentication
-    -> List String
+    List String
+    -> Maybe Authenticator.Model.Authentication
     -> String
-    -> Task Http.Error (List Statement)
-newTaskGetCardsOfType authenticationMaybe cardTypes searchQuery =
+    -> String
+    -> Task Http.Error DataIdsBody
+newTaskGetCardsOfType cardTypes authenticationMaybe searchQuery limit =
     let
         authenticationHeaders =
             case authenticationMaybe of
@@ -66,18 +67,28 @@ newTaskGetCardsOfType authenticationMaybe cardTypes searchQuery =
                 Nothing ->
                     []
     in
-        Http.fromJson statementsDecoder
+        Http.fromJson dataIdsBodyDecoder
             (Http.send Http.defaultSettings
                 { verb = "GET"
                 , url =
                     apiUrl
                         ++ "statements?"
-                        ++ (cardTypes
-                                |> List.map (\cardType -> "type=" ++ cardType)
+                        ++ (List.map (\cardType -> "type=" ++ cardType) cardTypes
+                                ++ ([ (if String.isEmpty searchQuery then
+                                        Nothing
+                                       else
+                                        "term=" ++ searchQuery |> Just
+                                      )
+                                    , (if String.isEmpty limit then
+                                        Nothing
+                                       else
+                                        "limit=" ++ limit |> Just
+                                      )
+                                    ]
+                                        |> List.filterMap identity
+                                   )
                                 |> String.join "&"
                            )
-                        ++ "&term="
-                        ++ searchQuery
                 , headers =
                     [ ( "Accept", "application/json" )
                     ]
@@ -87,31 +98,52 @@ newTaskGetCardsOfType authenticationMaybe cardTypes searchQuery =
             )
 
 
-newTaskGetExample : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error Statement
-newTaskGetExample authenticationMaybe statementId =
-    newTaskGetCardOfType authenticationMaybe cardTypesForExample statementId
+newTaskGetExample :
+    Maybe Authenticator.Model.Authentication
+    -> String
+    -> Task Http.Error DataIdBody
+newTaskGetExample =
+    newTaskGetCardOfType cardTypesForExample
 
 
-newTaskGetExamples : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error (List Statement)
-newTaskGetExamples authenticationMaybe searchQuery =
-    newTaskGetCardsOfType authenticationMaybe cardTypesForExample searchQuery
+newTaskGetExamples :
+    Maybe Authenticator.Model.Authentication
+    -> String
+    -> String
+    -> Task Http.Error DataIdsBody
+newTaskGetExamples =
+    newTaskGetCardsOfType cardTypesForExample
 
 
-newTaskGetOrganization : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error Statement
-newTaskGetOrganization authenticationMaybe statementId =
-    newTaskGetCardOfType authenticationMaybe cardTypesForOrganization statementId
+newTaskGetOrganization :
+    Maybe Authenticator.Model.Authentication
+    -> String
+    -> Task Http.Error DataIdBody
+newTaskGetOrganization =
+    newTaskGetCardOfType cardTypesForOrganization
 
 
-newTaskGetOrganizations : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error (List Statement)
-newTaskGetOrganizations authenticationMaybe searchQuery =
-    newTaskGetCardsOfType authenticationMaybe cardTypesForOrganization searchQuery
+newTaskGetOrganizations :
+    Maybe Authenticator.Model.Authentication
+    -> String
+    -> String
+    -> Task Http.Error DataIdsBody
+newTaskGetOrganizations =
+    newTaskGetCardsOfType cardTypesForOrganization
 
 
-newTaskGetTool : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error Statement
-newTaskGetTool authenticationMaybe statementId =
-    newTaskGetCardOfType authenticationMaybe cardTypesForTool statementId
+newTaskGetTool :
+    Maybe Authenticator.Model.Authentication
+    -> String
+    -> Task Http.Error DataIdBody
+newTaskGetTool =
+    newTaskGetCardOfType cardTypesForTool
 
 
-newTaskGetTools : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error (List Statement)
-newTaskGetTools authenticationMaybe searchQuery =
-    newTaskGetCardsOfType authenticationMaybe cardTypesForTool searchQuery
+newTaskGetTools :
+    Maybe Authenticator.Model.Authentication
+    -> String
+    -> String
+    -> Task Http.Error DataIdsBody
+newTaskGetTools =
+    newTaskGetCardsOfType cardTypesForTool
