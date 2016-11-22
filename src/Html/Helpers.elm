@@ -5,6 +5,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onWithOptions)
 import Json.Decode
+import Regex
 import Routes exposing (makeUrl)
 import String
 import Types exposing (..)
@@ -35,11 +36,25 @@ aForPath navigate path attributes children =
         children
 
 
-imgOfCard : Card -> Html msg
-imgOfCard card =
+aIfIsUrl : List (Attribute msg) -> String -> Html msg
+aIfIsUrl attributes s =
+    let
+        -- Adapted from https://github.com/etaque/elm-form/blob/349c0da619b59da36b1274c4232f78d5ceaddeba/src/Form/Validate.elm#L400-L403
+        validUrlPattern =
+            Regex.regex "^(https?://)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\w \\.-]*)*/?"
+                |> Regex.caseInsensitive
+    in
+        if Regex.contains validUrlPattern s then
+            aExternal ([ href s ] ++ attributes) [ text s ]
+        else
+            text s
+
+
+imgForCard : List (Attribute msg) -> String -> Card -> Html msg
+imgForCard attributes dim card =
     img
-        [ alt "screen"
-        , src
+        ([ alt "Logo"
+         , src
             (case getOneImageUrlPath card of
                 Just urlPath ->
                     apiUrl
@@ -48,9 +63,13 @@ imgOfCard card =
                             else
                                 urlPath
                            )
+                        ++ "?dim="
+                        ++ dim
 
                 Nothing ->
                     "TODO"
             )
-        ]
+         ]
+            ++ attributes
+        )
         []

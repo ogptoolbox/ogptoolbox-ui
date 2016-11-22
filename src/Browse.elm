@@ -3,7 +3,7 @@ module Browse exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
-import Html.Helpers exposing (aForPath)
+import Html.Helpers exposing (aForPath, imgForCard)
 import String
 import Types exposing (Card, Statement, StatementCustom(..), getManyStrings, getOneString)
 import Views exposing (viewLoading)
@@ -189,9 +189,7 @@ viewTool activePill statement card navigate =
         div [ class "col-xs-12" ]
             [ div [ class "thumbnail example", onClick (navigate statementUrl) ]
                 [ div [ class "visual" ]
-                    [ img [ alt "screen", src "img/screen1.png" ]
-                        []
-                    ]
+                    [ imgForCard [] "95x98" card ]
                 , div [ class "caption" ]
                     ([ h4 []
                         [ aForPath navigate statementUrl [] [ text (getOneString "Name" card |> Maybe.withDefault "") ]

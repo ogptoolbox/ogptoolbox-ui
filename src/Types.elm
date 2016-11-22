@@ -246,3 +246,11 @@ getOneImageUrlPath card =
         [ getOneString "Logo" card
         , getOneString "Screenshot" card
         ]
+
+
+getOneUrl : Card -> Maybe String
+getOneUrl card =
+    Maybe.oneOf
+        [ getOneString "URL" card
+        , getOneString "Website" card
+        ]

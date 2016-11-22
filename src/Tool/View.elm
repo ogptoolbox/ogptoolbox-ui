@@ -3,16 +3,13 @@ module Tool.View exposing (..)
 import Dict
 import Html exposing (..)
 import Html.Attributes exposing (..)
-
-
--- import Html.Events exposing (onClick)
-
+import Html.Helpers exposing (aExternal, aIfIsUrl)
 import Tool.Sidebar as Sidebar
 
 
 -- import Tool.Types exposing (Msg(..))
 
-import Types exposing (Card, Statement, StatementCustom(..), getManyStrings, getOneString)
+import Types exposing (..)
 import WebData exposing (LoadingStatus(..))
 
 
@@ -27,19 +24,6 @@ root additionalInformationsCollapsed loadingStatus =
 
         Loaded statement ->
             Just (viewStatement additionalInformationsCollapsed statement)
-
-
-viewStatement : Bool -> Statement -> Html msg
-viewStatement additionalInformationsCollapsed tool =
-    case tool.custom of
-        CardCustom card ->
-            div [ class "row" ]
-                [ Sidebar.root card
-                , viewCard additionalInformationsCollapsed card
-                ]
-
-        _ ->
-            Debug.crash "StatementCustom constructor not supported"
 
 
 viewCard : Bool -> Card -> Html msg
@@ -155,7 +139,7 @@ viewCard additionalInformationsCollapsed card =
                                                             [ th [ scope "row" ]
                                                                 [ text propertyName ]
                                                             , td []
-                                                                [ text (toString (cardField)) ]
+                                                                [ viewCardField cardField ]
                                                             ]
                                                     )
                                                 |> Dict.values
@@ -260,3 +244,49 @@ viewCard additionalInformationsCollapsed card =
                 )
             ]
         ]
+
+
+viewCardField : CardField -> Html msg
+viewCardField cardField =
+        case cardField of
+            StringField { format, value } ->
+                case format of
+                    Nothing ->
+                            aIfIsUrl [] value
+
+                    Just format ->
+                        case format of
+                            UriReference ->
+                                text "TODO"
+
+                            Uri ->
+                                aIfIsUrl [] value
+
+                            Email ->
+                                a [ href ("mailto:" ++ value) ] [ text value ]
+
+            NumberField float ->
+                text (toString float)
+
+            ArrayField cardFields ->
+                ul [ class "list-unstyled" ]
+                    (List.map
+                        (\cardField -> li [] [ viewCardField cardField ])
+                        cardFields
+                    )
+
+            BijectiveUriReferenceField string ->
+                text string
+
+
+viewStatement : Bool -> Statement -> Html msg
+viewStatement additionalInformationsCollapsed tool =
+    case tool.custom of
+        CardCustom card ->
+            div [ class "row" ]
+                [ Sidebar.root card
+                , viewCard additionalInformationsCollapsed card
+                ]
+
+        _ ->
+            Debug.crash "StatementCustom constructor not supported"

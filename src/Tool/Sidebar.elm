@@ -2,7 +2,7 @@ module Tool.Sidebar exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Helpers exposing (aExternal, imgOfCard)
+import Html.Helpers exposing (aExternal, imgForCard)
 import Types exposing (..)
 
 
@@ -13,7 +13,7 @@ root card =
             [ div [ class "col-xs-12" ]
                 [ div [ class "thumbnail orga grey" ]
                     [ div [ class "visual" ]
-                        [ imgOfCard card ]
+                        [ imgForCard [] "100" card ]
                     , div [ class "caption" ]
                         [ table [ class "table" ]
                             [ tbody []
@@ -33,13 +33,13 @@ root card =
                                     [ td [ class "table-label" ]
                                         [ text "Website" ]
                                     , td []
-                                        (case getOneString "URL" card of
-                                            Just url ->
-                                                [ aExternal [ href url ] [ text url ] ]
-
+                                        [ case getOneUrl card of
                                             Nothing ->
-                                                []
-                                        )
+                                                text ""
+
+                                            Just url ->
+                                                aExternal [ href url ] [ text url ]
+                                        ]
                                     ]
                                 , tr []
                                     [ td [ attribute "colspan" "2" ]
@@ -95,7 +95,6 @@ root card =
                                     [ th [ class "tool-icon-small", scope "row" ]
                                         [ img [ src "img/ckan.png" ]
                                             []
-                                        , text "."
                                         ]
                                     , td []
                                         [ text "Udata" ]
