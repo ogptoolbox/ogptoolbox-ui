@@ -6,7 +6,7 @@ module.exports = {
     // 'transition': true,
     // 'alert': true,
     // 'button': true,
-    // 'carousel': true,
+    'carousel': true,
     'collapse': true,
     // 'dropdown': true,
     // 'modal': true,
