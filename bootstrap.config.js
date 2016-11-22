@@ -3,7 +3,7 @@ module.exports = {
   styleLoader: 'style-loader!css-loader!less-loader',
 
   scripts: {
-    // 'transition': true,
+    'transition': true,
     // 'alert': true,
     // 'button': true,
     'carousel': true,
