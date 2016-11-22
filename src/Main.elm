@@ -743,10 +743,3 @@ viewHeader model containerClass =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.none
-
-
-
--- Sub.batch
---     -- [ Emitter.listenString "navigation" Navigate
---     -- , Sub.map Reference (Reference.subscriptions model.reference)
---     ]
