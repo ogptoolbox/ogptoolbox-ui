@@ -1,32 +1,12 @@
-module Examples exposing (..)
+module Examples.State exposing (..)
 
 import Authenticator.Model
-import Browse exposing (ActivePill(..))
-import Example
+import Examples.Types exposing (..)
 import Hop.Types
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Http
 import Requests exposing (..)
 import Routes exposing (getSearchQuery, ExamplesNestedRoute(..))
 import Task
-import Types exposing (..)
-import Views exposing (viewWebData)
 import WebData exposing (..)
-
-
--- MODEL
-
-
-type Model
-    = Examples
-        (WebData
-            { examples : DataIdsBody
-            , organizationsCount : Int
-            , toolsCount : Int
-            }
-        )
-    | Example (WebData DataIdBody)
 
 
 init : Model
@@ -56,33 +36,6 @@ urlUpdate ( route, location ) model =
 -- UPDATE
 
 
-type ExternalMsg
-    = Navigate String
-
-
-type InternalMsg
-    = Error Http.Error
-    | LoadAll String
-    | LoadOne String
-    | LoadedAll ( DataIdsBody, DataIdsBody, DataIdsBody )
-    | LoadedOne DataIdBody
-
-
-type Msg
-    = ForParent ExternalMsg
-    | ForSelf InternalMsg
-
-
-type alias MsgTranslation parentMsg =
-    { onInternalMsg : InternalMsg -> parentMsg
-    , onNavigate : String -> parentMsg
-    }
-
-
-type alias MsgTranslator parentMsg =
-    Msg -> parentMsg
-
-
 loadAll : String -> Cmd Msg
 loadAll searchQuery =
     Task.perform (\_ -> Debug.crash "") (\_ -> ForSelf (LoadAll searchQuery)) (Task.succeed "")
@@ -91,11 +44,6 @@ loadAll searchQuery =
 loadOne : String -> Cmd Msg
 loadOne id =
     Task.perform (\_ -> Debug.crash "") (\_ -> ForSelf (LoadOne id)) (Task.succeed "")
-
-
-navigate : String -> Msg
-navigate path =
-    ForParent (Navigate path)
 
 
 translateMsg : MsgTranslation parentMsg -> MsgTranslator parentMsg
@@ -188,41 +136,3 @@ update msg authenticationMaybe model =
 
         LoadedOne body ->
             ( Example (Data (Loaded body)), Cmd.none )
-
-
-
--- VIEW
-
-
-view : Maybe Authenticator.Model.Authentication -> Model -> String -> List (Html Msg)
-view authenticationMaybe model searchQuery =
-    case model of
-        Example webData ->
-            [ div [ class "row section" ]
-                [ div [ class "container" ]
-                    (viewWebData Example.view webData)
-                ]
-            ]
-
-        Examples webData ->
-            viewWebData
-                (\loadingStatus ->
-                    let
-                        counts =
-                            getLoadingStatusData loadingStatus
-                                |> Maybe.map
-                                    (\loadingStatus ->
-                                        { examples = loadingStatus.examples.count
-                                        , organizations = loadingStatus.organizationsCount
-                                        , tools = loadingStatus.toolsCount
-                                        }
-                                    )
-                    in
-                        Browse.view
-                            Browse.Examples
-                            counts
-                            navigate
-                            searchQuery
-                            (mapLoadingStatus .examples loadingStatus)
-                )
-                webData

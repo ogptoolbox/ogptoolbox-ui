@@ -5,7 +5,9 @@ import Authenticator.Model
 import Authenticator.Update
 import Authenticator.View
 import Dom.Scroll
-import Examples
+import Examples.State
+import Examples.Types
+import Examples.View
 import Help
 import Home
 import Hop.Types exposing (Location)
@@ -54,14 +56,12 @@ type alias Model =
     { aboutModel : About.Model
     , authenticationMaybe : Maybe Authenticator.Model.Authentication
     , authenticatorModel : Authenticator.Model.Model
-    , authenticatorRouteMaybe :
-        Maybe Authenticator.Model.Route
-    , examplesModel : Examples.Model
+    , authenticatorRouteMaybe : Maybe Authenticator.Model.Route
+    , examplesModel : Examples.Types.Model
     , helpModel : Help.Model
     , homeModel : Home.Model
     , location : Hop.Types.Location
     , organizationsModel : Organizations.Model
-    , page : String
     , route : Route
     , searchInputValue : String
     , toolsModel : Tools.Model
@@ -74,12 +74,11 @@ init ( route, location ) =
     , authenticationMaybe = Nothing
     , authenticatorModel = Authenticator.Model.init
     , authenticatorRouteMaybe = Nothing
-    , examplesModel = Examples.init
+    , examplesModel = Examples.State.init
     , helpModel = Help.init
     , homeModel = Home.init
     , organizationsModel = Organizations.init
     , location = location
-    , page = "reference"
     , route = route
     , searchInputValue = ""
     , toolsModel = Tools.init
@@ -111,7 +110,7 @@ urlUpdate ( route, location ) model =
                 ExamplesRoute childRoute ->
                     let
                         ( examplesModel, childCmd ) =
-                            Examples.urlUpdate ( childRoute, location ) model'.examplesModel
+                            Examples.State.urlUpdate ( childRoute, location ) model'.examplesModel
                     in
                         ( { model'
                             | examplesModel = examplesModel
@@ -179,7 +178,7 @@ type Msg
     = AboutMsg About.InternalMsg
     | AuthenticatorMsg Authenticator.Update.Msg
     | AuthenticatorRouteMsg (Maybe Authenticator.Model.Route)
-    | ExamplesMsg Examples.InternalMsg
+    | ExamplesMsg Examples.Types.InternalMsg
     | HelpMsg Help.InternalMsg
     | HomeMsg Home.InternalMsg
     | Navigate String
@@ -197,7 +196,7 @@ aboutMsgTranslation =
     }
 
 
-examplesMsgTranslation : Examples.MsgTranslation Msg
+examplesMsgTranslation : Examples.Types.MsgTranslation Msg
 examplesMsgTranslation =
     { onInternalMsg = ExamplesMsg
     , onNavigate = Navigate
@@ -237,9 +236,9 @@ translateAboutMsg =
     About.translateMsg aboutMsgTranslation
 
 
-translateExamplesMsg : Examples.MsgTranslator Msg
+translateExamplesMsg : Examples.Types.MsgTranslator Msg
 translateExamplesMsg =
-    Examples.translateMsg examplesMsgTranslation
+    Examples.State.translateMsg examplesMsgTranslation
 
 
 translateHelpMsg : Help.MsgTranslator Msg
@@ -305,7 +304,7 @@ update msg model =
         ExamplesMsg childMsg ->
             let
                 ( examplesModel, childCmd ) =
-                    Examples.update childMsg model.authenticationMaybe model.examplesModel
+                    Examples.State.update childMsg model.authenticationMaybe model.examplesModel
             in
                 ( { model | examplesModel = examplesModel }, Cmd.map translateExamplesMsg childCmd )
 
@@ -398,7 +397,7 @@ view model =
                 standardLayout [ Html.App.map translateAboutMsg (About.view model.authenticationMaybe model.aboutModel) ]
 
             ExamplesRoute childRoute ->
-                Examples.view model.authenticationMaybe model.examplesModel searchQuery
+                Examples.View.root model.authenticationMaybe model.examplesModel searchQuery
                     |> List.map (Html.App.map translateExamplesMsg)
                     |> case childRoute of
                         ExampleRoute _ ->
