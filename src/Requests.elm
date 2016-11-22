@@ -2,6 +2,7 @@ module Requests exposing (..)
 
 import Authenticator.Model
 import Configuration exposing (apiUrl)
+import Decoders exposing (..)
 import Dict exposing (Dict)
 import Http
 import Json.Encode
