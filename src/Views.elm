@@ -76,18 +76,6 @@ decodeLanguageCode value =
         Json.Decode.fail ("Unknown language: " ++ value)
 
 
-
--- decodeRating : Int -> Json.Decode.Decoder Int
--- decodeRating value =
---     if List.member value ratings then
---         Json.Decode.succeed value
---     else
---         Json.Decode.fail ("Unknown rating: " ++ toString value)
--- decodeRatingTargetValue : Json.Decode.Decoder Int
--- decodeRatingTargetValue =
---     Json.Decode.customDecoder targetValue (Json.Decode.decodeString Json.Decode.int) `Json.Decode.andThen` decodeRating
-
-
 hasBallotRating : Int -> Maybe Ballot -> Bool
 hasBallotRating rating ballotMaybe =
     case ballotMaybe of
