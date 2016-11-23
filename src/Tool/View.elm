@@ -1,47 +1,43 @@
 module Tool.View exposing (..)
 
-import Dict
+import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Helpers exposing (aExternal, aIfIsUrl)
-import Maybe.Helpers
+import Html.Events exposing (onClick)
+import Html.Helpers exposing (aExternal, aForPath, aIfIsUrl, imgForCard)
 import PropertyKeys exposing (..)
+import Routes exposing (pathForStatement)
 import Tool.Sidebar as Sidebar
 import Types exposing (..)
+import Views exposing (viewLoading)
 import WebData exposing (LoadingStatus(..))
 
 
 -- VIEW
 
 
-root : LoadingStatus DataIdBody -> List (Html msg)
-root loadingStatus =
-    let
-        statement body =
-            case Dict.get body.data.id body.data.statements of
+root : (String -> msg) -> LoadingStatus DataIdBody -> Html msg
+root navigate loadingStatus =
+    case loadingStatus of
+        Loading body ->
+            case body of
                 Nothing ->
-                    Debug.crash "Error: this should never happen due to the JSON decoder."
+                    viewLoading
 
                 Just body ->
-                    body
-    in
-        (case loadingStatus of
-            Loading body ->
-                Maybe.map (\body -> viewStatement (statement body)) body
+                    viewStatement navigate body
 
-            Loaded body ->
-                Just (viewStatement (statement body))
-        )
-            |> Maybe.Helpers.toList
+        Loaded body ->
+            viewStatement navigate body
 
 
-viewCard : Card -> Html msg
-viewCard card =
+viewCard : (String -> msg) -> Dict String Statement -> Card -> Html msg
+viewCard navigate statements card =
     div [ class "col-md-9 content content-right" ]
         [ div [ class "row" ]
             [ div [ class "col-xs-12" ]
                 [ h1 []
-                    [ text (getOneString nameKeys card |> Maybe.withDefault "")
+                    [ text (getOneString nameKeys card |> Maybe.withDefault "TODO call-to-action")
                     , small []
                         [ text "Software" ]
                     ]
@@ -86,13 +82,7 @@ viewCard card =
                                 ]
                             ]
                         , div [ class "panel-body" ]
-                            (case getOneString descriptionKeys card of
-                                Just description ->
-                                    [ text description ]
-
-                                Nothing ->
-                                    []
-                            )
+                            [ text (getOneString descriptionKeys card |> Maybe.withDefault "TODO call-to-action") ]
                         ]
                   ]
                  )
@@ -106,7 +96,6 @@ viewCard card =
                                 , attribute "role" "tab"
                                 , class "panel-heading"
                                 , id "headingTwo"
-                                  -- , onClick CollapseAdditionalInformations
                                 ]
                                 [ div [ class "row" ]
                                     [ div [ class "col-xs-8 text-left" ]
@@ -140,7 +129,7 @@ viewCard card =
                                                             [ th [ scope "row" ]
                                                                 [ text propertyKey ]
                                                             , td []
-                                                                [ viewCardField cardField ]
+                                                                [ viewCardField navigate statements cardField ]
                                                             ]
                                                     )
                                                 |> Dict.values
@@ -217,28 +206,26 @@ viewCard card =
                                 ]
                             , div [ class "panel-body" ]
                                 [ div [ class "row" ]
-                                    [ div [ class "col-xs-6 col-md-4 " ]
-                                        [ div [ class "thumbnail orga grey" ]
-                                            [ div [ class "visual" ]
-                                                [ img [ alt "logo", src "img/hackpad.png" ]
-                                                    []
+                                    ((case getManyStrings usedByKeys card of
+                                        [] ->
+                                            [ text "TODO call-to-action" ]
+
+                                        targetIds ->
+                                            List.map
+                                                (\targetId ->
+                                                    viewUriReferenceAsThumbnail navigate statements targetId
+                                                )
+                                                targetIds
+                                     )
+                                        ++ [ div [ class "col-sm-12 text-center" ]
+                                                [ a [ class "show-more" ]
+                                                    [ text "Show all 398"
+                                                    , span [ class "glyphicon glyphicon-menu-down" ]
+                                                        []
+                                                    ]
                                                 ]
-                                            , div [ class "caption" ]
-                                                [ h4 []
-                                                    [ text "The White House" ]
-                                                , p []
-                                                    [ text "OpenSpending" ]
-                                                ]
-                                            ]
-                                        ]
-                                    , div [ class "col-sm-12 text-center" ]
-                                        [ a [ class "show-more" ]
-                                            [ text "Show all 398"
-                                            , span [ class "glyphicon glyphicon-menu-down" ]
-                                                []
-                                            ]
-                                        ]
-                                    ]
+                                           ]
+                                    )
                                 ]
                             ]
                        ]
@@ -247,8 +234,8 @@ viewCard card =
         ]
 
 
-viewCardField : CardField -> Html msg
-viewCardField cardField =
+viewCardField : (String -> msg) -> Dict String Statement -> CardField -> Html msg
+viewCardField navigate statements cardField =
     case cardField of
         StringField { format, value } ->
             case format of
@@ -258,7 +245,7 @@ viewCardField cardField =
                 Just format ->
                     case format of
                         UriReference ->
-                            text "TODO"
+                            viewUriReferenceAsLink navigate statements value
 
                         Uri ->
                             aIfIsUrl [] value
@@ -272,22 +259,97 @@ viewCardField cardField =
         ArrayField cardFields ->
             ul [ class "list-unstyled" ]
                 (List.map
-                    (\cardField -> li [] [ viewCardField cardField ])
+                    (\cardField -> li [] [ viewCardField navigate statements cardField ])
                     cardFields
                 )
 
-        BijectiveUriReferenceField string ->
-            text string
+        BijectiveUriReferenceField targetId ->
+            viewUriReferenceAsLink navigate statements targetId
 
 
-viewStatement : Statement -> Html msg
-viewStatement tool =
-    case tool.custom of
-        CardCustom card ->
-            div [ class "row" ]
-                [ Sidebar.root card
-                , viewCard card
-                ]
+viewUriReferenceAsLink : (String -> msg) -> Dict String Statement -> String -> Html msg
+viewUriReferenceAsLink navigate statements statementId =
+    case Dict.get statementId statements of
+        Nothing ->
+            text ("Error: the referenced statement (id: " ++ statementId ++ " ) was not found in statements.")
 
-        _ ->
-            text "StatementCustom constructor not supported"
+        Just statement ->
+            case pathForStatement statement of
+                Just urlPath ->
+                    case statement.custom of
+                        CardCustom card ->
+                            aForPath navigate
+                                urlPath
+                                []
+                                [ text
+                                    (getOneString nameKeys card
+                                        |> Maybe.withDefault "TODO call-to-action"
+                                    )
+                                ]
+
+                        _ ->
+                            text "Error: StatementCustom constructor not supported."
+
+                Nothing ->
+                    text ("Error: impossible to determine the path of the referenced statement (id: " ++ statementId)
+
+
+viewUriReferenceAsThumbnail : (String -> msg) -> Dict String Statement -> String -> Html msg
+viewUriReferenceAsThumbnail navigate statements statementId =
+    case Dict.get statementId statements of
+        Nothing ->
+            text ("Error: the referenced statement (id: " ++ statementId ++ " ) was not found in statements.")
+
+        Just statement ->
+            case pathForStatement statement of
+                Just urlPath ->
+                    case statement.custom of
+                        CardCustom card ->
+                            div [ class "col-xs-6 col-md-4", onClick (navigate urlPath) ]
+                                [ div [ class "thumbnail orga grey" ]
+                                    [ div [ class "visual" ]
+                                        [ imgForCard [] "261x140" card ]
+                                    , div [ class "caption" ]
+                                        [ h4 []
+                                            [ aForPath navigate
+                                                urlPath
+                                                []
+                                                [ text
+                                                    (getOneString nameKeys card
+                                                        |> Maybe.withDefault "TODO call-to-action"
+                                                    )
+                                                ]
+                                            ]
+                                        , p []
+                                            [ text
+                                                (getOneString descriptionKeys card
+                                                    |> Maybe.withDefault "TODO call-to-action"
+                                                )
+                                            ]
+                                        ]
+                                    ]
+                                ]
+
+                        _ ->
+                            text "Error: StatementCustom constructor not supported."
+
+                Nothing ->
+                    text ("Error: impossible to determine the path of the referenced statement (id: " ++ statementId)
+
+
+viewStatement : (String -> msg) -> DataIdBody -> Html msg
+viewStatement navigate body =
+    case Dict.get body.data.id body.data.statements of
+        Nothing ->
+            text "Error: this should never happen due to the JSON decoder."
+
+        Just statement ->
+            case statement.custom of
+                CardCustom card ->
+                    div [ class "row" ]
+                        [ Sidebar.root card
+                        , viewCard navigate body.data.statements card
+                        ]
+
+                _ ->
+                    text "Error: StatementCustom constructor not supported."

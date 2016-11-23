@@ -40,7 +40,7 @@ newTaskGetCardOfType cardTypes authenticationMaybe statementId =
             (dataIdBodyDecoder statementId cardTypes)
             (Http.send Http.defaultSettings
                 { verb = "GET"
-                , url = apiUrl ++ "statements/" ++ statementId
+                , url = apiUrl ++ "statements/" ++ statementId ++ "?depth=1&show=references"
                 , headers =
                     [ ( "Accept", "application/json" )
                     ]
@@ -74,7 +74,9 @@ newTaskGetCardsOfType cardTypes authenticationMaybe searchQuery limit =
                     apiUrl
                         ++ "statements?"
                         ++ (List.map (\cardType -> "type=" ++ cardType) cardTypes
-                                ++ ([ (if String.isEmpty searchQuery then
+                                ++ ([ Just "depth=1"
+                                    , Just "show=references"
+                                    , (if String.isEmpty searchQuery then
                                         Nothing
                                        else
                                         "term=" ++ searchQuery |> Just

@@ -6,7 +6,7 @@ import Types exposing (..)
 import WebData exposing (..)
 
 
-view : LoadingStatus DataIdBody -> List (Html a)
+view : (String -> msg) -> LoadingStatus DataIdBody -> Html msg
 view =
     -- TODO Use real Example.view, when designer gives the mockup.
     Tool.View.root

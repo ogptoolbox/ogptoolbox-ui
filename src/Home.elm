@@ -496,10 +496,10 @@ viewBanner =
 viewExampleThumbnail : Statement -> Card -> Html Msg
 viewExampleThumbnail statement card =
     let
-        url =
+        urlPath =
             "/examples/" ++ statement.id
     in
-        viewThumbnail url card "example grey"
+        viewThumbnail urlPath card "example grey"
 
 
 viewExamples : String -> List Statement -> Html Msg
@@ -518,7 +518,7 @@ viewExamples searchQuery examples =
                                     viewExampleThumbnail statement card
 
                                 _ ->
-                                    Debug.crash "Unexpected statement.custom type"
+                                    text "Error: Unexpected statement.custom type"
                         )
                  )
                     ++ [ div [ class "col-sm-12 text-center" ]
@@ -605,7 +605,7 @@ viewOrganizations searchQuery organizations =
                                     viewOrganizationThumbnail statement card
 
                                 _ ->
-                                    Debug.crash "Unexpected statement.custom type"
+                                    text "Error: Unexpected statement.custom type"
                         )
                  )
                     ++ [ div [ class "col-sm-12 text-center" ]
@@ -626,21 +626,21 @@ viewOrganizations searchQuery organizations =
 viewOrganizationThumbnail : Statement -> Card -> Html Msg
 viewOrganizationThumbnail statement card =
     let
-        url =
+        urlPath =
             "/organizations/" ++ statement.id
     in
-        viewThumbnail url card "orga grey"
+        viewThumbnail urlPath card "orga grey"
 
 
 viewThumbnail : String -> Card -> String -> Html Msg
-viewThumbnail url card extraClass =
+viewThumbnail urlPath card extraClass =
     div [ class "col-xs-6 col-md-3" ]
-        [ div [ class ("thumbnail " ++ extraClass), onClick (navigate url) ]
+        [ div [ class ("thumbnail " ++ extraClass), onClick (navigate urlPath) ]
             [ div [ class "visual" ]
                 [ imgForCard [] "218x140" card ]
             , div [ class "caption" ]
                 ([ h4 []
-                    [ aForPath navigate url [] [ text (getOneString nameKeys card |> Maybe.withDefault "") ] ]
+                    [ aForPath navigate urlPath [] [ text (getOneString nameKeys card |> Maybe.withDefault "") ] ]
                  , p []
                     (case getOneString descriptionKeys card of
                         Just description ->
@@ -677,7 +677,7 @@ viewTools searchQuery tools =
                                     viewToolThumbnail statement card
 
                                 _ ->
-                                    Debug.crash "Unexpected statement.custom type"
+                                    text "Error: Unexpected statement.custom type"
                         )
                  )
                     ++ [ div [ class "col-sm-12 text-center" ]
@@ -699,10 +699,10 @@ viewTools searchQuery tools =
 viewToolThumbnail : Statement -> Card -> Html Msg
 viewToolThumbnail statement card =
     let
-        url =
+        urlPath =
             "/tools/" ++ statement.id
     in
-        viewThumbnail url card "tool"
+        viewThumbnail urlPath card "tool"
 
 
 viewModalTitle : Model -> Html Msg

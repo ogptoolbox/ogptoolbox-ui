@@ -200,7 +200,10 @@ view authenticationMaybe model searchQuery =
         Organization webData ->
             [ div [ class "row section" ]
                 [ div [ class "container" ]
-                    (viewWebData Organization.view webData)
+                    (viewWebData
+                        (\loadingStatus -> [ Organization.view navigate loadingStatus ])
+                        webData
+                    )
                 ]
             ]
 

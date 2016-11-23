@@ -8,6 +8,9 @@ import Hop
 import Hop.Matchers exposing (match1, match2, nested1)
 import Hop.Types exposing (Location)
 import Navigation
+import PropertyKeys exposing (..)
+import Requests exposing (cardTypesForExample, cardTypesForOrganization, cardTypesForTool)
+import Types exposing (..)
 
 
 -- MAIN ROUTE
@@ -121,3 +124,28 @@ addSearchQueryToLocation searchQuery location =
 getSearchQuery : Location -> String
 getSearchQuery location =
     Dict.get "q" location.query |> Maybe.withDefault ""
+
+
+
+-- REVERSE
+
+
+pathForStatement : Statement -> Maybe String
+pathForStatement statement =
+    case statement.custom of
+        CardCustom card ->
+            getOneString cardTypeKeys card
+                `Maybe.andThen`
+                    (\cardType ->
+                        if List.member cardType cardTypesForExample then
+                            Just ("/examples/" ++ statement.id)
+                        else if List.member cardType cardTypesForOrganization then
+                            Just ("/organizations/" ++ statement.id)
+                        else if List.member cardType cardTypesForTool then
+                            Just ("/tools/" ++ statement.id)
+                        else
+                            Nothing
+                    )
+
+        _ ->
+            Nothing

@@ -200,7 +200,10 @@ view authenticationMaybe model searchQuery =
         Tool webData ->
             [ div [ class "row section" ]
                 [ div [ class "container" ]
-                    (viewWebData Tool.View.root webData)
+                    (viewWebData
+                        (\loadingStatus -> [ Tool.View.root navigate loadingStatus ])
+                        webData
+                    )
                 ]
             ]
 

@@ -16,7 +16,10 @@ root authenticationMaybe model searchQuery =
         Example webData ->
             [ div [ class "row section" ]
                 [ div [ class "container" ]
-                    (viewWebData Example.view webData)
+                    (viewWebData
+                        (\loadingStatus -> [ Example.view navigate loadingStatus ])
+                        webData
+                    )
                 ]
             ]
 

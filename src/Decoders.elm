@@ -319,46 +319,46 @@ userBodyDecoder =
 
 
 
--- HELPERS
+-- VALIDATORS
+
+
+validateHasOneOfCardTypes : List String -> Card -> Result String ()
+validateHasOneOfCardTypes expectedCardTypes card =
+    let
+        existingCardTypes =
+            getManyStrings cardTypeKeys card
+
+        intersection =
+            Set.intersect (Set.fromList expectedCardTypes) (Set.fromList existingCardTypes)
+    in
+        if Set.isEmpty intersection then
+            Err
+                ("Expected one card type among "
+                    ++ (toString expectedCardTypes)
+                    ++ " but found "
+                    ++ (toString existingCardTypes)
+                )
+        else
+            Ok ()
 
 
 validateStatement : String -> List String -> Dict String Statement -> Result String ()
 validateStatement statementId cardTypes statements =
-    let
-        validateHasOneOfCardTypes : List String -> Card -> Result String ()
-        validateHasOneOfCardTypes expectedCardTypes card =
-            let
-                existingCardTypes =
-                    getManyStrings cardTypeKeys card
+    (Dict.get statementId statements
+        |> Result.fromMaybe
+            ("Statement ID \""
+                ++ statementId
+                ++ "\" is not in body.data.statements; received "
+                ++ (toString (Dict.keys statements))
+            )
+    )
+        `Result.andThen`
+            (\statement ->
+                case statement.custom of
+                    CardCustom card ->
+                        Ok card
 
-                intersection =
-                    Set.intersect (Set.fromList expectedCardTypes) (Set.fromList existingCardTypes)
-            in
-                if Set.isEmpty intersection then
-                    Err
-                        ("Expected one card type among "
-                            ++ (toString expectedCardTypes)
-                            ++ " but found "
-                            ++ (toString existingCardTypes)
-                        )
-                else
-                    Ok ()
-    in
-        (Dict.get statementId statements
-            |> Result.fromMaybe
-                ("Statement ID \""
-                    ++ statementId
-                    ++ "\" is not in body.data.statements; received "
-                    ++ (toString (Dict.keys statements))
-                )
-        )
-            `Result.andThen`
-                (\statement ->
-                    case statement.custom of
-                        CardCustom card ->
-                            Ok card
-
-                        _ ->
-                            Err "statement.custom is not a Card"
-                )
-            `Result.andThen` (\card -> validateHasOneOfCardTypes cardTypes card)
+                    _ ->
+                        Err "statement.custom is not a Card"
+            )
+        `Result.andThen` (\card -> validateHasOneOfCardTypes cardTypes card)

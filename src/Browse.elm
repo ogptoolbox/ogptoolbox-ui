@@ -1,11 +1,13 @@
 module Browse exposing (..)
 
+import Decoders exposing (validateHasOneOfCardTypes)
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Html.Helpers exposing (aForPath, imgForCard)
 import PropertyKeys exposing (..)
+import Requests exposing (cardTypesForExample, cardTypesForOrganization, cardTypesForTool)
 import String
 import Types exposing (..)
 import Views exposing (viewLoading)
@@ -226,14 +228,31 @@ view activePill counts navigate searchQuery loadingStatus =
 
 viewStatements : ActivePill -> (String -> msg) -> List Statement -> List (Html msg)
 viewStatements activePill navigate statements =
-    List.map
+    List.filterMap
         (\statement ->
             case statement.custom of
                 CardCustom card ->
-                    viewTool activePill statement card navigate
+                    let
+                        expectedCardTypes =
+                            case activePill of
+                                Examples ->
+                                    cardTypesForExample
+
+                                Organizations ->
+                                    cardTypesForOrganization
+
+                                Tools ->
+                                    cardTypesForTool
+                    in
+                        case validateHasOneOfCardTypes expectedCardTypes card of
+                            Ok _ ->
+                                Just (viewTool activePill statement card navigate)
+
+                            Err _ ->
+                                Nothing
 
                 _ ->
-                    text "statement.custom is not a Card"
+                    Nothing
         )
         statements
 
