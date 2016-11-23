@@ -1,11 +1,12 @@
 module Examples.View exposing (..)
 
 import Authenticator.Model
-import Browse exposing (ActivePill(..))
+import Browse
 import Example
 import Examples.Types exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Types exposing (..)
 import Views exposing (viewWebData)
 import WebData exposing (..)
 
@@ -13,7 +14,7 @@ import WebData exposing (..)
 root : Maybe Authenticator.Model.Authentication -> Model -> String -> List (Html Msg)
 root authenticationMaybe model searchQuery =
     case model of
-        Example webData ->
+        Examples.Types.Example webData ->
             [ div [ class "row section" ]
                 [ div [ class "container" ]
                     (viewWebData
@@ -38,7 +39,7 @@ root authenticationMaybe model searchQuery =
                                     )
                     in
                         Browse.view
-                            Browse.Examples
+                            Types.Example
                             counts
                             navigate
                             searchQuery

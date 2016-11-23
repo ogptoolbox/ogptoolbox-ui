@@ -1,23 +1,14 @@
 module Browse exposing (..)
 
-import Decoders exposing (validateHasOneOfCardTypes)
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Html.Helpers exposing (aForPath, imgForCard)
-import PropertyKeys exposing (..)
-import Requests exposing (cardTypesForExample, cardTypesForOrganization, cardTypesForTool)
 import String
 import Types exposing (..)
 import Views exposing (viewLoading)
 import WebData exposing (getData, getLoadingStatusData, LoadingStatus(..), WebData(..))
-
-
-type ActivePill
-    = Examples
-    | Organizations
-    | Tools
 
 
 type alias PillCounts =
@@ -28,25 +19,25 @@ type alias PillCounts =
         }
 
 
-activePillCount : ActivePill -> Maybe { b | examples : a, organizations : a, tools : a } -> Maybe a
-activePillCount activePill counts =
+cardTypeCount : CardType -> Maybe { b | examples : a, organizations : a, tools : a } -> Maybe a
+cardTypeCount cardType counts =
     Maybe.map
         (\{ examples, organizations, tools } ->
-            case activePill of
-                Examples ->
+            case cardType of
+                Example ->
                     examples
 
-                Organizations ->
+                Organization ->
                     organizations
 
-                Tools ->
+                Tool ->
                     tools
         )
         counts
 
 
-view : ActivePill -> PillCounts -> (String -> msg) -> String -> LoadingStatus DataIdsBody -> List (Html msg)
-view activePill counts navigate searchQuery loadingStatus =
+view : CardType -> PillCounts -> (String -> msg) -> String -> LoadingStatus DataIdsBody -> List (Html msg)
+view cardType counts navigate searchQuery loadingStatus =
     [ div [ class "browse-tag" ]
         [ div [ class "row" ]
             [ div [ class "container-fluid" ]
@@ -91,8 +82,8 @@ view activePill counts navigate searchQuery loadingStatus =
                                     [ li
                                         [ classList
                                             [ ( "active"
-                                              , case activePill of
-                                                    Examples ->
+                                              , case cardType of
+                                                    Example ->
                                                         True
 
                                                     _ ->
@@ -120,8 +111,8 @@ view activePill counts navigate searchQuery loadingStatus =
                                     , li
                                         [ classList
                                             [ ( "active"
-                                              , case activePill of
-                                                    Tools ->
+                                              , case cardType of
+                                                    Tool ->
                                                         True
 
                                                     _ ->
@@ -149,8 +140,8 @@ view activePill counts navigate searchQuery loadingStatus =
                                     , li
                                         [ classList
                                             [ ( "active"
-                                              , case activePill of
-                                                    Organizations ->
+                                              , case cardType of
+                                                    Organization ->
                                                         True
 
                                                     _ ->
@@ -188,17 +179,17 @@ view activePill counts navigate searchQuery loadingStatus =
 
                                                 Just body ->
                                                     viewStatements
-                                                        activePill
+                                                        cardType
                                                         navigate
                                                         (Dict.values body.data.statements)
                                            )
 
                                 Loaded body ->
-                                    viewStatements activePill navigate (Dict.values body.data.statements)
+                                    viewStatements cardType navigate (Dict.values body.data.statements)
                              )
                                 ++ (let
                                         count =
-                                            activePillCount activePill counts
+                                            cardTypeCount cardType counts
                                     in
                                         case count of
                                             Nothing ->
@@ -226,52 +217,33 @@ view activePill counts navigate searchQuery loadingStatus =
     ]
 
 
-viewStatements : ActivePill -> (String -> msg) -> List Statement -> List (Html msg)
-viewStatements activePill navigate statements =
-    List.filterMap
-        (\statement ->
-            case statement.custom of
-                CardCustom card ->
-                    let
-                        expectedCardTypes =
-                            case activePill of
-                                Examples ->
-                                    cardTypesForExample
-
-                                Organizations ->
-                                    cardTypesForOrganization
-
-                                Tools ->
-                                    cardTypesForTool
-                    in
-                        case validateHasOneOfCardTypes expectedCardTypes card of
-                            Ok _ ->
-                                Just (viewTool activePill statement card navigate)
-
-                            Err _ ->
-                                Nothing
-
-                _ ->
-                    Nothing
-        )
-        statements
+viewStatements : CardType -> (String -> msg) -> List Statement -> List (Html msg)
+viewStatements cardType navigate statements =
+    statements
+        |> filterByCardType cardType
+        |> List.map (viewTool cardType navigate)
 
 
-viewTool : ActivePill -> Statement -> Card -> (String -> msg) -> Html msg
-viewTool activePill statement card navigate =
+viewTool : CardType -> (String -> msg) -> Statement -> Html msg
+viewTool cardType navigate statement =
     let
         statementUrl =
-            (case activePill of
-                Examples ->
+            (case cardType of
+                Example ->
                     "/examples/"
 
-                Organizations ->
+                Organization ->
                     "/organizations/"
 
-                Tools ->
+                Tool ->
                     "/tools/"
             )
                 ++ statement.id
+
+        card =
+            case statement.custom of
+                CardCustom card ->
+                    card
     in
         div [ class "col-xs-12" ]
             [ div [ class "thumbnail example", onClick (navigate statementUrl) ]
@@ -279,7 +251,11 @@ viewTool activePill statement card navigate =
                     [ imgForCard [] "95x98" card ]
                 , div [ class "caption" ]
                     ([ h4 []
-                        [ aForPath navigate statementUrl [] [ text (getOneString nameKeys card |> Maybe.withDefault "") ]
+                        [ aForPath
+                            navigate
+                            statementUrl
+                            []
+                            [ text (getOneString nameKeys card |> Maybe.withDefault "") ]
                         , small []
                             [ text "Software" ]
                         ]

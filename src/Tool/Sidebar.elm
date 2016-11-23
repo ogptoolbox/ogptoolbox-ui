@@ -3,7 +3,6 @@ module Tool.Sidebar exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Helpers exposing (aExternal, imgForCard)
-import PropertyKeys exposing (..)
 import Types exposing (..)
 
 

@@ -9,19 +9,6 @@ import Types exposing (..)
 import Task exposing (Task)
 
 
-cardTypesForExample : List String
-cardTypesForExample =
-    [ "Final Use" ]
-
-
-cardTypesForOrganization : List String
-cardTypesForOrganization =
-    [ "Organization" ]
-
-
-cardTypesForTool : List String
-cardTypesForTool =
-    [ "Software", "Platform" ]
 
 
 newTaskGetCardOfType : List String -> Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
@@ -79,12 +66,12 @@ newTaskGetCardsOfType cardTypes authenticationMaybe searchQuery limit =
                                     , (if String.isEmpty searchQuery then
                                         Nothing
                                        else
-                                        "term=" ++ searchQuery |> Just
+                                        Just ("term=" ++ searchQuery)
                                       )
                                     , (if String.isEmpty limit then
                                         Nothing
                                        else
-                                        "limit=" ++ limit |> Just
+                                        Just ("limit=" ++ limit)
                                       )
                                     ]
                                         |> List.filterMap identity

@@ -1,35 +1,7 @@
 module Types exposing (..)
 
 import Dict exposing (Dict)
-
-
-type alias Abuse =
-    { statementId : String
-    }
-
-
-type alias Argument =
-    { argumentType : ArgumentType
-    , claimId : String
-    , groundId : String
-    }
-
-
-type ArgumentType
-    = Because
-    | But
-    | Comment
-    | Example
-
-
-type alias Ballot =
-    { deleted : Bool
-    , id : String
-    , rating : Int
-    , statementId : String
-    , updatedAt : String
-    , voterId : String
-    }
+import Set
 
 
 type alias Card =
@@ -56,6 +28,12 @@ type CardField
     | BijectiveUriReferenceField String
 
 
+type CardType
+    = Example
+    | Organization
+    | Tool
+
+
 type alias CardWidget =
     { tag : String
     , type_ : Maybe String
@@ -74,8 +52,7 @@ type alias DataIdBody =
 
 
 type alias DataIds =
-    { ballots : Dict String Ballot
-    , ids : List String
+    { ids : List String
     , statements : Dict String Statement
     , users : Dict String User
     }
@@ -99,14 +76,6 @@ type JsonCardArraySchemaKind
     | TupleArraySchema (List JsonCardSchema)
 
 
-type alias ModelFragment a =
-    { a
-        | ballotById : Dict String Ballot
-        , statementById : Dict String Statement
-        , statementIds : List String
-    }
-
-
 type alias Plain =
     { languageCode : String
     , name : String
@@ -114,24 +83,20 @@ type alias Plain =
 
 
 type alias Statement =
-    { ballotIdMaybe : Maybe String
-    , createdAt : String
+    { createdAt : String
     , custom : StatementCustom
     , deleted : Bool
     , groundIds : List String
     , id : String
-    , isAbuse : Bool
     , ratingCount : Int
     , ratingSum : Int
     }
 
 
-type StatementCustom
-    = AbuseCustom Abuse
-    | ArgumentCustom Argument
-    | PlainCustom Plain
-    | TagCustom Tag
-    | CardCustom Card
+type
+    StatementCustom
+    -- TODO Remove this indirection
+    = CardCustom Card
 
 
 type alias Tag =
@@ -153,36 +118,202 @@ type alias UserBody =
     }
 
 
-convertArgumentTypeToString : ArgumentType -> String
-convertArgumentTypeToString argumentType =
-    case argumentType of
-        Because ->
-            "because"
+getManyStrings : List String -> Card -> List String
+getManyStrings propertyKeys card =
+    let
+        getStrings : CardField -> List String
+        getStrings cardField =
+            case cardField of
+                StringField { value } ->
+                    [ value ]
 
-        But ->
-            "but"
+                ArrayField fields ->
+                    List.concatMap getStrings fields
 
-        Comment ->
-            "comment"
+                NumberField _ ->
+                    []
 
-        Example ->
-            "example"
+                BijectiveUriReferenceField _ ->
+                    []
+    in
+        propertyKeys
+            |> List.map
+                (\propertyKey ->
+                    case Dict.get propertyKey card of
+                        Nothing ->
+                            []
+
+                        Just cardField ->
+                            getStrings cardField
+                )
+            |> List.filter (not << List.isEmpty)
+            |> List.head
+            |> Maybe.withDefault []
 
 
-convertStatementCustomToKind : StatementCustom -> String
-convertStatementCustomToKind statementCustom =
-    case statementCustom of
-        AbuseCustom abuse ->
-            "Abuse"
+getOneString : List String -> Card -> Maybe String
+getOneString propertyKeys card =
+    let
+        getString : CardField -> Maybe String
+        getString cardField =
+            case cardField of
+                StringField { value } ->
+                    Just value
 
-        ArgumentCustom argument ->
-            "Argument"
+                ArrayField [] ->
+                    Nothing
 
-        CardCustom card ->
-            "Card"
+                ArrayField (field :: _) ->
+                    getString field
 
-        PlainCustom plain ->
-            "PlainStatement"
+                NumberField _ ->
+                    Nothing
 
-        TagCustom tag ->
-            "Tag"
+                BijectiveUriReferenceField _ ->
+                    Nothing
+    in
+        List.map
+            (\propertyKey ->
+                Dict.get propertyKey card
+                    `Maybe.andThen` getString
+            )
+            propertyKeys
+            |> Maybe.oneOf
+
+
+
+-- KEYS
+
+
+cardTypeKeys : List String
+cardTypeKeys =
+    [ "Card Type" ]
+
+
+descriptionKeys : List String
+descriptionKeys =
+    [ "Description-EN"
+    , "Description-FR"
+    ]
+
+
+imageUrlPathKeys : List String
+imageUrlPathKeys =
+    [ "Logo", "Screenshot" ]
+
+
+licenseKeys : List String
+licenseKeys =
+    [ "License", "license" ]
+
+
+nameKeys : List String
+nameKeys =
+    [ "Name" ]
+
+
+tagKeys : List String
+tagKeys =
+    [ "Tag" ]
+
+
+typeKeys : List String
+typeKeys =
+    [ "Type" ]
+
+
+urlKeys : List String
+urlKeys =
+    [ "URL", "Website" ]
+
+
+usedByKeys : List String
+usedByKeys =
+    [ "Used by" ]
+
+
+
+-- CARD TYPES
+
+
+cardTypesForExample : List String
+cardTypesForExample =
+    [ "Final Use" ]
+
+
+cardTypesForOrganization : List String
+cardTypesForOrganization =
+    [ "Organization" ]
+
+
+cardTypesForTool : List String
+cardTypesForTool =
+    [ "Software", "Platform" ]
+
+
+filterByCardType : CardType -> List Statement -> List Statement
+filterByCardType cardType statements =
+    List.filterMap
+        (\statement ->
+            case statement.custom of
+                CardCustom card ->
+                    let
+                        expectedCardTypes =
+                            case cardType of
+                                Example ->
+                                    cardTypesForExample
+
+                                Organization ->
+                                    cardTypesForOrganization
+
+                                Tool ->
+                                    cardTypesForTool
+                    in
+                        validateHasOneOfCardTypes expectedCardTypes card
+                            |> Result.map (\_ -> statement)
+                            |> Result.toMaybe
+        )
+        statements
+
+
+
+-- VALIDATORS
+
+
+validateHasOneOfCardTypes : List String -> Card -> Result String ()
+validateHasOneOfCardTypes expectedCardTypes card =
+    let
+        existingCardTypes =
+            getManyStrings cardTypeKeys card
+
+        intersection =
+            Set.intersect (Set.fromList expectedCardTypes) (Set.fromList existingCardTypes)
+    in
+        if Set.isEmpty intersection then
+            Err
+                ("Expected one card type among "
+                    ++ (toString expectedCardTypes)
+                    ++ " but found "
+                    ++ (toString existingCardTypes)
+                )
+        else
+            Ok ()
+
+
+validateStatement : String -> List String -> Dict String Statement -> Result String ()
+validateStatement statementId cardTypes statements =
+    (Dict.get statementId statements
+        |> Result.fromMaybe
+            ("Statement ID \""
+                ++ statementId
+                ++ "\" is not in body.data.statements; received "
+                ++ (toString (Dict.keys statements))
+            )
+    )
+        `Result.andThen`
+            (\statement ->
+                case statement.custom of
+                    CardCustom card ->
+                        Ok card
+            )
+        `Result.andThen` (\card -> validateHasOneOfCardTypes cardTypes card)

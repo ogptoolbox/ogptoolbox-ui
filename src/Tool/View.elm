@@ -5,15 +5,12 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Html.Helpers exposing (aExternal, aForPath, aIfIsUrl, imgForCard)
-import PropertyKeys exposing (..)
 import Routes exposing (pathForStatement)
+import String
 import Tool.Sidebar as Sidebar
 import Types exposing (..)
 import Views exposing (viewLoading)
 import WebData exposing (LoadingStatus(..))
-
-
--- VIEW
 
 
 root : (String -> msg) -> LoadingStatus DataIdBody -> Html msg
@@ -39,7 +36,7 @@ viewCard navigate statements card =
                 [ h1 []
                     [ text (getOneString nameKeys card |> Maybe.withDefault "TODO call-to-action")
                     , small []
-                        [ text "Software" ]
+                        [ text (getManyStrings cardTypeKeys card |> String.join ", ") ]
                     ]
                 ]
             ]
@@ -287,9 +284,6 @@ viewUriReferenceAsLink navigate statements statementId =
                                     )
                                 ]
 
-                        _ ->
-                            text "Error: StatementCustom constructor not supported."
-
                 Nothing ->
                     text ("Error: impossible to determine the path of the referenced statement (id: " ++ statementId)
 
@@ -330,9 +324,6 @@ viewUriReferenceAsThumbnail navigate statements statementId =
                                     ]
                                 ]
 
-                        _ ->
-                            text "Error: StatementCustom constructor not supported."
-
                 Nothing ->
                     text ("Error: impossible to determine the path of the referenced statement (id: " ++ statementId)
 
@@ -350,6 +341,3 @@ viewStatement navigate body =
                         [ Sidebar.root card
                         , viewCard navigate body.data.statements card
                         ]
-
-                _ ->
-                    text "Error: StatementCustom constructor not supported."

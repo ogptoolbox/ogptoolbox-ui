@@ -7,7 +7,6 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Html.Helpers exposing (aExternal, aForPath, imgForCard)
 import Http
-import PropertyKeys exposing (..)
 import String
 import Task
 import Types exposing (..)
@@ -510,15 +509,13 @@ viewExamples searchQuery examples =
                 [ text "Examples" ]
             , div [ class "row" ]
                 ((examples
+                    |> filterByCardType Example
                     |> List.take 8
                     |> List.map
                         (\statement ->
                             case statement.custom of
                                 CardCustom card ->
                                     viewExampleThumbnail statement card
-
-                                _ ->
-                                    text "Error: Unexpected statement.custom type"
                         )
                  )
                     ++ [ div [ class "col-sm-12 text-center" ]
@@ -597,15 +594,13 @@ viewOrganizations searchQuery organizations =
                 [ text "Organizations" ]
             , div [ class "row" ]
                 ((organizations
+                    |> filterByCardType Organization
                     |> List.take 8
                     |> List.map
                         (\statement ->
                             case statement.custom of
                                 CardCustom card ->
                                     viewOrganizationThumbnail statement card
-
-                                _ ->
-                                    text "Error: Unexpected statement.custom type"
                         )
                  )
                     ++ [ div [ class "col-sm-12 text-center" ]
@@ -669,15 +664,13 @@ viewTools searchQuery tools =
                 [ text "Tools" ]
             , div [ class "row" ]
                 ((tools
+                    |> filterByCardType Tool
                     |> List.take 8
                     |> List.map
                         (\statement ->
                             case statement.custom of
                                 CardCustom card ->
                                     viewToolThumbnail statement card
-
-                                _ ->
-                                    text "Error: Unexpected statement.custom type"
                         )
                  )
                     ++ [ div [ class "col-sm-12 text-center" ]

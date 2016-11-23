@@ -1,7 +1,7 @@
 module Organizations exposing (..)
 
 import Authenticator.Model
-import Browse exposing (ActivePill(..))
+import Browse
 import Hop.Types
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -222,7 +222,7 @@ view authenticationMaybe model searchQuery =
                                     )
                     in
                         Browse.view
-                            Browse.Organizations
+                            Types.Organization
                             counts
                             navigate
                             searchQuery

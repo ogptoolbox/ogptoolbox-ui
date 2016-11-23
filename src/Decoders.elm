@@ -3,44 +3,9 @@ module Decoders exposing (..)
 import Dict exposing (Dict)
 import Json.Decode as Decode exposing (..)
 import Json.Decode.Extra exposing ((|:), sequence)
-import PropertyKeys exposing (..)
 import Result exposing (Result(..))
-import Set
 import String
 import Types exposing (..)
-
-
-argumentTypeDecoder : Decoder ArgumentType
-argumentTypeDecoder =
-    customDecoder string
-        (\argumentType ->
-            case argumentType of
-                "because" ->
-                    Ok Because
-
-                "but" ->
-                    Ok But
-
-                "comment" ->
-                    Ok Comment
-
-                "example" ->
-                    Ok Example
-
-                _ ->
-                    Err ("Unknown argument type: " ++ argumentType)
-        )
-
-
-ballotDecoder : Decoder Ballot
-ballotDecoder =
-    succeed Ballot
-        |: oneOf [ ("rating" := int) `andThen` (\_ -> succeed False), succeed True ]
-        |: ("id" := string)
-        |: oneOf [ ("rating" := int), succeed 0 ]
-        |: ("statementId" := string)
-        |: oneOf [ ("updatedAt" := string), succeed "" ]
-        |: ("voterId" := string)
 
 
 bijectiveUriReferenceDecoder : Decoder String
@@ -181,18 +146,17 @@ dataIdBodyDecoder statementId cardTypes =
 
 dataIdsDecoder : Decoder DataIds
 dataIdsDecoder =
-    object3 (,,)
-        (oneOf [ ("ballots" := dict ballotDecoder), succeed Dict.empty ])
+    object2 (,)
         ("ids" := list string)
         (oneOf [ ("users" := dict userDecoder), succeed Dict.empty ])
         `andThen`
-            (\( ballots, ids, users ) ->
+            (\( ids, users ) ->
                 (if List.isEmpty ids then
                     succeed Dict.empty
                  else
                     ("statements" := dict statementDecoder)
                 )
-                    |> map (\statements -> DataIds ballots ids statements users)
+                    |> map (\statements -> DataIds ids statements users)
             )
 
 
@@ -257,39 +221,14 @@ jsonCardSchemaDecoder =
 statementDecoder : Decoder Statement
 statementDecoder =
     succeed Statement
-        |: maybe ("ballotId" := string)
         |: ("createdAt" := string)
         |: (("type" := string)
                 `andThen`
                     (\statementType ->
                         case statementType of
-                            "Abuse" ->
-                                succeed Abuse
-                                    |: ("statementId" := string)
-                                    |> map AbuseCustom
-
-                            "Argument" ->
-                                succeed Argument
-                                    |: ("argumentType" := argumentTypeDecoder)
-                                    |: ("claimId" := string)
-                                    |: ("groundId" := string)
-                                    |> map ArgumentCustom
-
                             "Card" ->
                                 cardDecoder
                                     |> map CardCustom
-
-                            "PlainStatement" ->
-                                succeed Plain
-                                    |: ("languageCode" := string)
-                                    |: ("name" := string)
-                                    |> map PlainCustom
-
-                            "Tag" ->
-                                succeed Tag
-                                    |: ("name" := string)
-                                    |: ("statementId" := string)
-                                    |> map TagCustom
 
                             _ ->
                                 fail ("Unknown statement type: " ++ statementType)
@@ -298,7 +237,6 @@ statementDecoder =
         |: oneOf [ ("deleted" := bool), succeed False ]
         |: oneOf [ ("groundIds" := list string), succeed [] ]
         |: ("id" := string)
-        |: oneOf [ ("isAbuse" := bool), succeed False ]
         |: oneOf [ ("ratingCount" := int), succeed 0 ]
         |: oneOf [ ("ratingSum" := int), succeed 0 ]
 
@@ -316,49 +254,3 @@ userBodyDecoder : Decoder UserBody
 userBodyDecoder =
     succeed UserBody
         |: ("data" := userDecoder)
-
-
-
--- VALIDATORS
-
-
-validateHasOneOfCardTypes : List String -> Card -> Result String ()
-validateHasOneOfCardTypes expectedCardTypes card =
-    let
-        existingCardTypes =
-            getManyStrings cardTypeKeys card
-
-        intersection =
-            Set.intersect (Set.fromList expectedCardTypes) (Set.fromList existingCardTypes)
-    in
-        if Set.isEmpty intersection then
-            Err
-                ("Expected one card type among "
-                    ++ (toString expectedCardTypes)
-                    ++ " but found "
-                    ++ (toString existingCardTypes)
-                )
-        else
-            Ok ()
-
-
-validateStatement : String -> List String -> Dict String Statement -> Result String ()
-validateStatement statementId cardTypes statements =
-    (Dict.get statementId statements
-        |> Result.fromMaybe
-            ("Statement ID \""
-                ++ statementId
-                ++ "\" is not in body.data.statements; received "
-                ++ (toString (Dict.keys statements))
-            )
-    )
-        `Result.andThen`
-            (\statement ->
-                case statement.custom of
-                    CardCustom card ->
-                        Ok card
-
-                    _ ->
-                        Err "statement.custom is not a Card"
-            )
-        `Result.andThen` (\card -> validateHasOneOfCardTypes cardTypes card)

@@ -8,8 +8,6 @@ import Hop
 import Hop.Matchers exposing (match1, match2, nested1)
 import Hop.Types exposing (Location)
 import Navigation
-import PropertyKeys exposing (..)
-import Requests exposing (cardTypesForExample, cardTypesForOrganization, cardTypesForTool)
 import Types exposing (..)
 
 
@@ -146,6 +144,3 @@ pathForStatement statement =
                         else
                             Nothing
                     )
-
-        _ ->
-            Nothing

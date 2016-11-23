@@ -5,7 +5,6 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onWithOptions)
 import Json.Decode
-import PropertyKeys exposing (..)
 import Regex
 import Routes exposing (makeUrl)
 import String
