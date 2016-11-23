@@ -206,28 +206,7 @@ viewBanner =
         [ div [ class "row " ]
             [ div [ class "carousel slide ", attribute "data-ride" "", id "carousel-example-generic" ]
                 [ div [ class "carousel-inner ", attribute "role" "listbox" ]
-                    [ div [ class "item active" ]
-                        [ div [ class "jumbotron" ]
-                            [ div [ class "container" ]
-                                [ h1 []
-                                    [ text "Find digital tools"
-                                    , br []
-                                        []
-                                    , text "to improve democracy"
-                                    ]
-                                , a
-                                    [ class "btn btn-primary btn-lg"
-                                    , attribute "data-slide-to" "1"
-                                    , href "#carousel-example-generic"
-                                    , attribute "role" "button"
-                                    ]
-                                    [ text "Start browsing" ]
-                                ]
-                            ]
-                        , div [ class "carousel-caption" ]
-                            []
-                        ]
-                    , div [ class "item text-center" ]
+                    [ div [ class "item active text-center" ]
                         [ div [ class "container" ]
                             [ div [ class "row" ]
                                 [ div [ class "col-md-12 text-center" ]
