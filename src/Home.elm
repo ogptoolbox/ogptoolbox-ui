@@ -174,10 +174,10 @@ view model searchQuery =
                                     []
 
                                 Just body ->
-                                    [ view searchQuery (Dict.values body.data.statements) ]
+                                    [ view searchQuery body.count (Dict.values body.data.statements) ]
 
                         Loaded body ->
-                            [ view searchQuery (Dict.values body.data.statements) ]
+                            [ view searchQuery body.count (Dict.values body.data.statements) ]
                 )
                 webData
     in
@@ -501,8 +501,8 @@ viewExampleThumbnail statement card =
         viewThumbnail urlPath card "example grey"
 
 
-viewExamples : String -> List Statement -> Html Msg
-viewExamples searchQuery examples =
+viewExamples : String -> Int -> List Statement -> Html Msg
+viewExamples searchQuery count examples =
     div [ class "row section" ]
         [ div [ class "container" ]
             [ h3 [ class "zone-label" ]
@@ -522,7 +522,7 @@ viewExamples searchQuery examples =
                             [ aForPath navigate
                                 ("/examples?q=" ++ searchQuery)
                                 [ class "show-more" ]
-                                [ text "Show all 398"
+                                [ text ("Show all " ++ (toString count))
                                 , span [ class "glyphicon glyphicon-menu-down" ]
                                     []
                                 ]
@@ -535,10 +535,10 @@ viewExamples searchQuery examples =
 
 viewMetric : WebData DataIdsBody -> Html msg
 viewMetric webData =
-    text <|
-        case webData of
+    text
+        (case webData of
             NotAsked ->
-                ""
+                "-"
 
             Failure _ ->
                 "Error"
@@ -551,10 +551,11 @@ viewMetric webData =
                                 ""
 
                             Just body ->
-                                toString (Dict.size body.data.statements)
+                                toString body.count
 
                     Loaded body ->
-                        toString (Dict.size body.data.statements)
+                        toString body.count
+        )
 
 
 viewMetrics : Model -> Html msg
@@ -586,8 +587,8 @@ viewMetrics model =
         ]
 
 
-viewOrganizations : String -> List Statement -> Html Msg
-viewOrganizations searchQuery organizations =
+viewOrganizations : String -> Int -> List Statement -> Html Msg
+viewOrganizations searchQuery count organizations =
     div [ class "row section" ]
         [ div [ class "container" ]
             [ h3 [ class "zone-label" ]
@@ -607,7 +608,7 @@ viewOrganizations searchQuery organizations =
                             [ aForPath navigate
                                 ("/organizations?q=" ++ searchQuery)
                                 [ class "show-more" ]
-                                [ text "Show all 398"
+                                [ text ("Show all " ++ (toString count))
                                 , span [ class "glyphicon glyphicon-menu-down" ]
                                     []
                                 ]
@@ -656,8 +657,8 @@ viewThumbnail urlPath card extraClass =
         ]
 
 
-viewTools : String -> List Statement -> Html Msg
-viewTools searchQuery tools =
+viewTools : String -> Int -> List Statement -> Html Msg
+viewTools searchQuery count tools =
     div [ class "row section grey" ]
         [ div [ class "container" ]
             [ h3 [ class "zone-label" ]
@@ -677,8 +678,7 @@ viewTools searchQuery tools =
                             [ aForPath navigate
                                 ("/tools?q=" ++ searchQuery)
                                 [ class "show-more" ]
-                                -- TODO Store total count in model since model.tools contains only some pages.
-                                [ text ("Show all " ++ (tools |> List.length |> toString))
+                                [ text ("Show all " ++ (toString count))
                                 , span [ class "glyphicon glyphicon-menu-down" ]
                                     []
                                 ]

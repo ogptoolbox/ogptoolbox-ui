@@ -144,7 +144,12 @@ viewCard navigate statements card =
                                         ]
                                     , div [ class "col-xs-4 text-right up7" ]
                                         [ a [ class "show-more" ]
-                                            [ text "Best of 129" ]
+                                            [ text
+                                                "Best of TODO"
+                                              --                                             ("Best of "
+                                              --     ++ (getManyStrings usedForKeys card |> List.length |> toString)
+                                              -- )
+                                            ]
                                         , button [ class "btn btn-default btn-xs btn-action", type' "button" ]
                                             [ text "Add" ]
                                         ]
@@ -176,14 +181,22 @@ viewCard navigate statements card =
                                                 ]
                                             ]
                                         ]
-                                    , div [ class "col-sm-12 text-center" ]
-                                        [ a [ class "show-more" ]
-                                            [ text "Show all 398"
-                                            , span [ class "glyphicon glyphicon-menu-down" ]
-                                                []
-                                            ]
-                                        ]
                                     ]
+                                  -- , div [ class "panel-body" ]
+                                  --     [ div [ class "row" ]
+                                  --         ((case getManyStrings usedForKeys card of
+                                  --             [] ->
+                                  --                 [ text "TODO call-to-action" ]
+                                  --             targetIds ->
+                                  --                 targetIds
+                                  --                     |> List.map
+                                  --                         (\targetId ->
+                                  --                             viewUriReferenceAsThumbnail navigate statements targetId
+                                  --                         )
+                                  --                     |> List.append (viewShowMore (List.length targetIds))
+                                  --          )
+                                  --         )
+                                  --     ]
                                 ]
                             ]
                        , div [ class "panel panel-default" ]
@@ -195,7 +208,11 @@ viewCard navigate statements card =
                                         ]
                                     , div [ class "col-xs-4 text-right up7" ]
                                         [ a [ class "show-more" ]
-                                            [ text "Best of 128" ]
+                                            [ text
+                                                ("Best of "
+                                                    ++ (getManyStrings usedByKeys card |> List.length |> toString)
+                                                )
+                                            ]
                                         , button [ class "btn btn-default btn-xs btn-action", type' "button" ]
                                             [ text "Add" ]
                                         ]
@@ -208,20 +225,13 @@ viewCard navigate statements card =
                                             [ text "TODO call-to-action" ]
 
                                         targetIds ->
-                                            List.map
-                                                (\targetId ->
-                                                    viewUriReferenceAsThumbnail navigate statements targetId
-                                                )
-                                                targetIds
+                                            targetIds
+                                                |> List.map
+                                                    (\targetId ->
+                                                        viewUriReferenceAsThumbnail navigate statements targetId
+                                                    )
+                                                |> List.append (viewShowMore (List.length targetIds))
                                      )
-                                        ++ [ div [ class "col-sm-12 text-center" ]
-                                                [ a [ class "show-more" ]
-                                                    [ text "Show all 398"
-                                                    , span [ class "glyphicon glyphicon-menu-down" ]
-                                                        []
-                                                    ]
-                                                ]
-                                           ]
                                     )
                                 ]
                             ]
@@ -262,6 +272,22 @@ viewCardField navigate statements cardField =
 
         BijectiveUriReferenceField targetId ->
             viewUriReferenceAsLink navigate statements targetId
+
+
+viewShowMore : number -> List (Html msg)
+viewShowMore count =
+    if count > 20 then
+        -- TODO Do not hardcode limit
+        [ div [ class "col-sm-12 text-center" ]
+            [ a [ class "show-more" ]
+                [ text ("Show all " ++ (toString count))
+                , span [ class "glyphicon glyphicon-menu-down" ]
+                    []
+                ]
+            ]
+        ]
+    else
+        []
 
 
 viewUriReferenceAsLink : (String -> msg) -> Dict String Statement -> String -> Html msg
