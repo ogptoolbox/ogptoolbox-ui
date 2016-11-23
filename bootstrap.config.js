@@ -8,7 +8,7 @@ module.exports = {
     // 'button': true,
     'carousel': true,
     'collapse': true,
-    // 'dropdown': true,
+    'dropdown': true,
     // 'modal': true,
     // 'tooltip': true,
     // 'popover': true,
