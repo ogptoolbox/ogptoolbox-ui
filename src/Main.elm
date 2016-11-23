@@ -397,7 +397,7 @@ view model =
                 standardLayout [ Html.App.map translateAboutMsg (About.view model.authenticationMaybe model.aboutModel) ]
 
             ExamplesRoute childRoute ->
-                Examples.View.root  model.authenticationMaybe model.examplesModel searchQuery
+                Examples.View.root model.authenticationMaybe model.examplesModel searchQuery
                     |> List.map (Html.App.map translateExamplesMsg)
                     |> case childRoute of
                         ExampleRoute _ ->
@@ -425,7 +425,7 @@ view model =
                     ]
 
             OrganizationsRoute childRoute ->
-                Organizations.view  model.authenticationMaybe model.organizationsModel searchQuery
+                Organizations.view model.authenticationMaybe model.organizationsModel searchQuery
                     |> List.map (Html.App.map translateOrganizationsMsg)
                     |> case childRoute of
                         OrganizationRoute _ ->
@@ -435,7 +435,7 @@ view model =
                             fullscreenLayout
 
             ToolsRoute childRoute ->
-                Tools.view  model.authenticationMaybe model.toolsModel searchQuery
+                Tools.view model.authenticationMaybe model.toolsModel searchQuery
                     |> List.map (Html.App.map translateToolsMsg)
                     |> case childRoute of
                         ToolRoute _ ->
@@ -502,7 +502,7 @@ viewFooter =
                     [ div [ class "col-xs-12 col-md-6" ]
                         [ div [ class "row" ]
                             [ div [ class "col-xs-6" ]
-                                [ img [ alt "Toolname", class "footer-logo", src "img/ogp-logo.png" ]
+                                [ img [ alt "OGP logo", class "footer-logo", src "/img/ogp-logo.png" ]
                                     []
                                 ]
                             , div [ class "col-xs-6" ]

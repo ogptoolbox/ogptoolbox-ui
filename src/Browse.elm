@@ -50,7 +50,7 @@ view activePill counts navigate searchQuery loadingStatus =
     [ div [ class "browse-tag" ]
         [ div [ class "row" ]
             [ div [ class "container-fluid" ]
-                [ img [ src "img/bubbles2.png" ]
+                [ img [ src "/img/bubbles2.png" ]
                     []
                 , div [ class "row filters" ]
                     [ div [ class "col-md-12 text-center" ]
@@ -284,7 +284,7 @@ viewTool activePill statement card navigate =
                             [ text "Software" ]
                         ]
                      , div [ class "example-author" ]
-                        [ img [ alt "screen", src "img/whitehouse.png" ]
+                        [ img [ alt "screen", src "/img/whitehouse.png" ]
                             []
                         , text "The White House"
                         ]

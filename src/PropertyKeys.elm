@@ -78,7 +78,9 @@ cardTypeKeys =
 
 descriptionKeys : List String
 descriptionKeys =
-    [ "Description-EN" ]
+    [ "Description-EN"
+    , "Description-FR"
+    ]
 
 
 imageUrlPathKeys : List String
