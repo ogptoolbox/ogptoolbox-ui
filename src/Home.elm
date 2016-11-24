@@ -164,22 +164,30 @@ update msg authenticationMaybe model =
 view : Model -> String -> Html Msg
 view model searchQuery =
     let
-        viewWebDataFor webData view =
-            viewWebData
-                (\loadingStatus ->
-                    case loadingStatus of
-                        Loading maybeStatement ->
-                            case maybeStatement of
-                                Nothing ->
-                                    []
+        viewWebDataFor title webData view =
+            div [ class "row section" ]
+                [ div [ class "container" ]
+                    ([ h3 [ class "zone-label" ]
+                        [ text title ]
+                     ]
+                        ++ (viewWebData
+                                (\loadingStatus ->
+                                    case loadingStatus of
+                                        Loading maybeStatement ->
+                                            case maybeStatement of
+                                                Nothing ->
+                                                    []
 
-                                Just body ->
-                                    [ view searchQuery body.count (Dict.values body.data.statements) ]
+                                                Just body ->
+                                                    [ view searchQuery body.count (Dict.values body.data.statements) ]
 
-                        Loaded body ->
-                            [ view searchQuery body.count (Dict.values body.data.statements) ]
-                )
-                webData
+                                        Loaded body ->
+                                            [ view searchQuery body.count (Dict.values body.data.statements) ]
+                                )
+                                webData
+                           )
+                    )
+                ]
     in
         div []
             ([ viewBanner
@@ -194,9 +202,10 @@ view model searchQuery =
                             ]
                         ]
                    )
-                ++ (viewWebDataFor model.examples viewExamples)
-                ++ (viewWebDataFor model.tools viewTools)
-                ++ (viewWebDataFor model.organizations viewOrganizations)
+                ++ [ viewWebDataFor "Examples" model.examples viewExamples
+                   , viewWebDataFor "Tools" model.tools viewTools
+                   , viewWebDataFor "Organizations" model.organizations viewOrganizations
+                   ]
             )
 
 
@@ -482,34 +491,28 @@ viewExampleThumbnail statement card =
 
 viewExamples : String -> Int -> List Statement -> Html Msg
 viewExamples searchQuery count examples =
-    div [ class "row section" ]
-        [ div [ class "container" ]
-            [ h3 [ class "zone-label" ]
-                [ text "Examples" ]
-            , div [ class "row" ]
-                ((examples
-                    |> filterByCardType Example
-                    |> List.take 8
-                    |> List.map
-                        (\statement ->
-                            case statement.custom of
-                                CardCustom card ->
-                                    viewExampleThumbnail statement card
-                        )
-                 )
-                    ++ [ div [ class "col-sm-12 text-center" ]
-                            [ aForPath navigate
-                                ("/examples?q=" ++ searchQuery)
-                                [ class "show-more" ]
-                                [ text ("Show all " ++ (toString count))
-                                , span [ class "glyphicon glyphicon-menu-down" ]
-                                    []
-                                ]
-                            ]
-                       ]
+    div [ class "row" ]
+        ((examples
+            |> filterByCardType Example
+            |> List.take 8
+            |> List.map
+                (\statement ->
+                    case statement.custom of
+                        CardCustom card ->
+                            viewExampleThumbnail statement card
                 )
-            ]
-        ]
+         )
+            ++ [ div [ class "col-sm-12 text-center" ]
+                    [ aForPath navigate
+                        ("/examples?q=" ++ searchQuery)
+                        [ class "show-more" ]
+                        [ text ("Show all " ++ (toString count))
+                        , span [ class "glyphicon glyphicon-menu-down" ]
+                            []
+                        ]
+                    ]
+               ]
+        )
 
 
 viewMetric : WebData DataIdsBody -> Html msg
@@ -520,7 +523,7 @@ viewMetric webData =
                 "-"
 
             Failure _ ->
-                "Error"
+                "-"
 
             Data loadingStatus ->
                 case loadingStatus of
@@ -568,34 +571,28 @@ viewMetrics model =
 
 viewOrganizations : String -> Int -> List Statement -> Html Msg
 viewOrganizations searchQuery count organizations =
-    div [ class "row section" ]
-        [ div [ class "container" ]
-            [ h3 [ class "zone-label" ]
-                [ text "Organizations" ]
-            , div [ class "row" ]
-                ((organizations
-                    |> filterByCardType Organization
-                    |> List.take 8
-                    |> List.map
-                        (\statement ->
-                            case statement.custom of
-                                CardCustom card ->
-                                    viewOrganizationThumbnail statement card
-                        )
-                 )
-                    ++ [ div [ class "col-sm-12 text-center" ]
-                            [ aForPath navigate
-                                ("/organizations?q=" ++ searchQuery)
-                                [ class "show-more" ]
-                                [ text ("Show all " ++ (toString count))
-                                , span [ class "glyphicon glyphicon-menu-down" ]
-                                    []
-                                ]
-                            ]
-                       ]
+    div [ class "row" ]
+        ((organizations
+            |> filterByCardType Organization
+            |> List.take 8
+            |> List.map
+                (\statement ->
+                    case statement.custom of
+                        CardCustom card ->
+                            viewOrganizationThumbnail statement card
                 )
-            ]
-        ]
+         )
+            ++ [ div [ class "col-sm-12 text-center" ]
+                    [ aForPath navigate
+                        ("/organizations?q=" ++ searchQuery)
+                        [ class "show-more" ]
+                        [ text ("Show all " ++ (toString count))
+                        , span [ class "glyphicon glyphicon-menu-down" ]
+                            []
+                        ]
+                    ]
+               ]
+        )
 
 
 viewOrganizationThumbnail : Statement -> Card -> Html Msg
@@ -638,34 +635,28 @@ viewThumbnail urlPath card extraClass =
 
 viewTools : String -> Int -> List Statement -> Html Msg
 viewTools searchQuery count tools =
-    div [ class "row section grey" ]
-        [ div [ class "container" ]
-            [ h3 [ class "zone-label" ]
-                [ text "Tools" ]
-            , div [ class "row" ]
-                ((tools
-                    |> filterByCardType Tool
-                    |> List.take 8
-                    |> List.map
-                        (\statement ->
-                            case statement.custom of
-                                CardCustom card ->
-                                    viewToolThumbnail statement card
-                        )
-                 )
-                    ++ [ div [ class "col-sm-12 text-center" ]
-                            [ aForPath navigate
-                                ("/tools?q=" ++ searchQuery)
-                                [ class "show-more" ]
-                                [ text ("Show all " ++ (toString count))
-                                , span [ class "glyphicon glyphicon-menu-down" ]
-                                    []
-                                ]
-                            ]
-                       ]
+    div [ class "row" ]
+        ((tools
+            |> filterByCardType Tool
+            |> List.take 8
+            |> List.map
+                (\statement ->
+                    case statement.custom of
+                        CardCustom card ->
+                            viewToolThumbnail statement card
                 )
-            ]
-        ]
+         )
+            ++ [ div [ class "col-sm-12 text-center" ]
+                    [ aForPath navigate
+                        ("/tools?q=" ++ searchQuery)
+                        [ class "show-more" ]
+                        [ text ("Show all " ++ (toString count))
+                        , span [ class "glyphicon glyphicon-menu-down" ]
+                            []
+                        ]
+                    ]
+               ]
+        )
 
 
 viewToolThumbnail : Statement -> Card -> Html Msg

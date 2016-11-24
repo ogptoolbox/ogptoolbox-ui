@@ -6,34 +6,8 @@ import Http exposing (Error(..))
 import WebData exposing (LoadingStatus, WebData(..))
 
 
-viewHttpError : Http.Error -> Html msg
-viewHttpError err =
-    div []
-        [ case err of
-            Timeout ->
-                text "The server was too slow to respond (timeout)."
-
-            NetworkError ->
-                text "There was a network error."
-
-            UnexpectedPayload string ->
-                text "The server returned unexpected data."
-
-            BadResponse code string ->
-                if code == 404 then
-                    viewNotFound
-                else
-                    text string
-        ]
-
-
-viewLoading : Html msg
-viewLoading =
-    text "Data is loading and should be displayed quite soon."
-
-
-viewNotFound : Html msg
-viewNotFound =
+viewError : String -> String -> Html msg
+viewError title message =
     div
         [ style
             [ ( "justify-content", "center" )
@@ -44,16 +18,53 @@ viewNotFound =
             , ( "margin", "1em" )
             , ( "font-family", "sans-serif" )
             ]
-        ]
+         ]
+
         [ h1 []
-            [ text "Page Not Found" ]
+            [ text title ]
         , p
             [ style
                 [ ( "color", "rgb(136, 136, 136)" )
+                , ( "margin-top", "3em" )
                 ]
             ]
-            [ text "Sorry, but the page you were trying to view does not exist." ]
+            [ text message ]
         ]
+
+
+viewHttpError : Http.Error -> Html msg
+viewHttpError err =
+    let
+        genericTitle =
+            "Something wrong happened!"
+    in
+        case err of
+            Timeout ->
+                viewError genericTitle "The server was too slow to respond (timeout)."
+
+            NetworkError ->
+                viewError genericTitle "There was a network error."
+
+            UnexpectedPayload string ->
+                viewError genericTitle "The server returned unexpected data."
+
+            BadResponse code string ->
+                if code == 404 then
+                    viewNotFound
+                else
+                    viewError genericTitle string
+
+
+viewLoading : Html msg
+viewLoading =
+    text "Data is loading and should be displayed quite soon."
+
+
+viewNotFound : Html msg
+viewNotFound =
+    viewError
+        "Page Not Found"
+        "Sorry, but the page you were trying to view does not exist."
 
 
 viewWebData : (LoadingStatus a -> List (Html msg)) -> WebData a -> List (Html msg)
