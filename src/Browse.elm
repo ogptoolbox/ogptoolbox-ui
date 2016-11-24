@@ -80,16 +80,7 @@ view cardType counts navigate searchQuery loadingStatus =
                             [ div [ class "col-xs-12" ]
                                 [ ul [ class "nav nav-pills nav-justified", attribute "role" "tablist" ]
                                     [ li
-                                        [ classList
-                                            [ ( "active"
-                                              , case cardType of
-                                                    Example ->
-                                                        True
-
-                                                    _ ->
-                                                        False
-                                              )
-                                            ]
+                                        [ classList [ ( "active", cardType == Example ) ]
                                         , attribute "role" "presentation"
                                         ]
                                         [ aForPath navigate
@@ -109,16 +100,7 @@ view cardType counts navigate searchQuery loadingStatus =
                                             ]
                                         ]
                                     , li
-                                        [ classList
-                                            [ ( "active"
-                                              , case cardType of
-                                                    Tool ->
-                                                        True
-
-                                                    _ ->
-                                                        False
-                                              )
-                                            ]
+                                        [ classList [ ( "active", cardType == Tool ) ]
                                         , attribute "role" "presentation"
                                         ]
                                         [ aForPath navigate
@@ -138,16 +120,7 @@ view cardType counts navigate searchQuery loadingStatus =
                                             ]
                                         ]
                                     , li
-                                        [ classList
-                                            [ ( "active"
-                                              , case cardType of
-                                                    Organization ->
-                                                        True
-
-                                                    _ ->
-                                                        False
-                                              )
-                                            ]
+                                        [ classList [ ( "active", cardType == Organization ) ]
                                         , attribute "role" "presentation"
                                         ]
                                         [ aForPath navigate
