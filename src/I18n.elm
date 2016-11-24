@@ -1,5 +1,8 @@
 module I18n exposing (..)
 
+import String
+
+
 -- STRINGS TO TRANSLATE
 -- for translators who want to internationalize the application
 
@@ -341,6 +344,21 @@ s =
 todo : Maybe a
 todo =
     Nothing
+
+
+languageFromString str =
+    case str |> String.left 2 |> String.toLower of
+        "en" ->
+            English
+
+        "es" ->
+            Spanish
+
+        "fr" ->
+            French
+
+        _ ->
+            English
 
 
 translate : Language -> TranslationId -> String

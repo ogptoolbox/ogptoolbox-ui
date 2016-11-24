@@ -38,9 +38,9 @@ import Tools
 import Views exposing (viewNotFound)
 
 
-main : Program Never
+main : Program String
 main =
-    Navigation.program urlParser
+    Navigation.programWithFlags urlParser
         { init = init
         , update = update
         , urlUpdate = urlUpdate
@@ -70,8 +70,8 @@ type alias Model =
     }
 
 
-init : ( Route, Hop.Types.Location ) -> ( Model, Cmd Msg )
-init ( route, location ) =
+init : String -> ( Route, Hop.Types.Location ) -> ( Model, Cmd Msg )
+init languageStr ( route, location ) =
     { aboutModel = About.init
     , authenticationMaybe = Nothing
     , authenticatorModel = Authenticator.Model.init
@@ -80,7 +80,7 @@ init ( route, location ) =
     , helpModel = Help.init
     , homeModel = Home.init
     , organizationsModel = Organizations.init
-    , language = I18n.English
+    , language = I18n.languageFromString languageStr
     , location = location
     , route = route
     , searchInputValue = ""
