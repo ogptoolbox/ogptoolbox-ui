@@ -52,7 +52,7 @@ getTranslationSet translationId =
 
         AddNew ->
             { english = s "Add new"
-            , french = todo
+            , french = s "Ajouter"
             , spanish = todo
             }
 
@@ -64,7 +64,7 @@ getTranslationSet translationId =
 
         Copyright ->
             { english = s "© 2016 Open Government Partnership"
-            , french = todo
+            , french = s "© 2016 Partenariat pour un Gouvernement Ouvert"
             , spanish = todo
             }
 
@@ -88,19 +88,19 @@ getTranslationSet translationId =
 
         GenericError ->
             { english = s "Something wrong happened!"
-            , french = todo
+            , french = s "Quelque chose s'est mal passé !"
             , spanish = todo
             }
 
         HeaderTitle ->
             { english = s "tools and use cases for open government"
-            , french = todo
+            , french = s "outils et cas d'utilisation pour un gouvernement ouvert"
             , spanish = todo
             }
 
         Help ->
             { english = s "Help"
-            , french = todo
+            , french = s "Aide"
             , spanish = todo
             }
 
@@ -203,7 +203,7 @@ including representatives of governments and civil society organizations.
 
         SearchInputPlaceholder ->
             { english = s "Search for a tool, example or organization"
-            , french = todo
+            , french = s "Rechercher un outil, un exemple ou une organisation"
             , spanish = todo
             }
 
