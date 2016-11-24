@@ -17,6 +17,7 @@ import Html.Attributes exposing (..)
 import Html.Attributes.Aria exposing (ariaHidden, ariaLabelledby)
 import Html.Events exposing (onInput, onSubmit, onWithOptions)
 import Html.Helpers exposing (aForPath)
+import I18n
 import Json.Decode
 import Navigation
 import Organizations
@@ -60,6 +61,7 @@ type alias Model =
     , examplesModel : Examples.Types.Model
     , helpModel : Help.Model
     , homeModel : Home.Model
+    , language : I18n.Language
     , location : Hop.Types.Location
     , organizationsModel : Organizations.Model
     , route : Route
@@ -78,6 +80,7 @@ init ( route, location ) =
     , helpModel = Help.init
     , homeModel = Home.init
     , organizationsModel = Organizations.init
+    , language = I18n.English
     , location = location
     , route = route
     , searchInputValue = ""
@@ -186,6 +189,7 @@ type Msg
     | OrganizationsMsg Organizations.InternalMsg
     | Search
     | SearchInputChanged String
+    | SetLanguage I18n.Language
     | ToolsMsg Tools.InternalMsg
 
 
@@ -351,6 +355,9 @@ update msg model =
         SearchInputChanged searchInputValue ->
             ( { model | searchInputValue = searchInputValue }, Cmd.none )
 
+        SetLanguage language ->
+            ( { model | language = language }, Cmd.none )
+
         ToolsMsg childMsg ->
             let
                 ( toolsModel, childCmd ) =
@@ -370,7 +377,7 @@ view model =
             div []
                 ([ viewHeader model "container" ]
                     ++ content
-                    ++ [ viewFooter
+                    ++ [ viewFooter model
                        , viewAuthenticatorModal model
                        , viewBackdrop model
                        ]
@@ -383,7 +390,7 @@ view model =
                  ]
                     ++ content
                     ++ [ div [ class "fixed-footer" ]
-                            [ text "© 2016 Open Government Partnership" ]
+                            [ text (I18n.translate model.language I18n.Copyright) ]
                        , viewAuthenticatorModal model
                        , viewBackdrop model
                        ]
@@ -394,10 +401,12 @@ view model =
     in
         case model.route of
             AboutRoute ->
-                standardLayout [ Html.App.map translateAboutMsg (About.view model.authenticationMaybe model.aboutModel) ]
+                standardLayout
+                    [ Html.App.map translateAboutMsg (About.view model.language model.aboutModel)
+                    ]
 
             ExamplesRoute childRoute ->
-                Examples.View.root model.authenticationMaybe model.examplesModel searchQuery
+                Examples.View.root model.authenticationMaybe model.examplesModel searchQuery model.language
                     |> List.map (Html.App.map translateExamplesMsg)
                     |> case childRoute of
                         ExampleRoute _ ->
@@ -407,25 +416,26 @@ view model =
                             fullscreenLayout
 
             HelpRoute ->
-                standardLayout [ Html.App.map translateHelpMsg (Help.view model.authenticationMaybe model.helpModel) ]
+                standardLayout
+                    [ Html.App.map translateHelpMsg (Help.view model.authenticationMaybe model.helpModel)
+                    ]
 
             HomeRoute ->
                 standardLayout
                     [ Html.App.map translateHomeMsg
-                        (Home.view model.homeModel (getSearchQuery model.location))
+                        (Home.view model.homeModel (getSearchQuery model.location) model.language)
                     ]
 
             NotFoundRoute ->
                 standardLayout
                     [ div [ class "row section" ]
                         [ div [ class "container" ]
-                            [ viewNotFound
-                            ]
+                            [ viewNotFound model.language ]
                         ]
                     ]
 
             OrganizationsRoute childRoute ->
-                Organizations.view model.authenticationMaybe model.organizationsModel searchQuery
+                Organizations.view model.authenticationMaybe model.organizationsModel searchQuery model.language
                     |> List.map (Html.App.map translateOrganizationsMsg)
                     |> case childRoute of
                         OrganizationRoute _ ->
@@ -435,7 +445,7 @@ view model =
                             fullscreenLayout
 
             ToolsRoute childRoute ->
-                Tools.view model.authenticationMaybe model.toolsModel searchQuery
+                Tools.view model.authenticationMaybe model.toolsModel searchQuery model.language
                     |> List.map (Html.App.map translateToolsMsg)
                     |> case childRoute of
                         ToolRoute _ ->
@@ -471,7 +481,7 @@ viewAuthenticatorModal model =
                                 [ span [ ariaHidden True ]
                                     [ text "×" ]
                                 , span [ class "sr-only" ]
-                                    [ text "Close" ]
+                                    [ text (I18n.translate model.language I18n.Close) ]
                                 ]
                             , h4 [ class "modal-title", id "modal-title" ]
                                 [ text (Authenticator.View.modalTitle authenticatorRoute) ]
@@ -493,8 +503,8 @@ viewBackdrop model =
         []
 
 
-viewFooter : Html msg
-viewFooter =
+viewFooter : Model -> Html Msg
+viewFooter model =
     footer []
         [ div [ class "row section footer" ]
             [ div [ class "container" ]
@@ -507,7 +517,7 @@ viewFooter =
                                 ]
                             , div [ class "col-xs-6" ]
                                 [ h4 []
-                                    [ text "Language" ]
+                                    [ text (I18n.translate model.language I18n.LanguageWord) ]
                                 , div [ class "dropdown dropdown-language" ]
                                     [ button
                                         [ attribute "aria-expanded" "true"
@@ -517,34 +527,50 @@ viewFooter =
                                         , id "dropdownMenu1"
                                         , type' "button"
                                         ]
-                                        [ text "English                  "
-                                        , span [ class "caret" ]
-                                            []
+                                        [ text (I18n.translate model.language (I18n.Language model.language))
+                                        , span [ class "caret" ] []
                                         ]
                                     , ul [ attribute "aria-labelledby" "dropdownMenu1", class "dropdown-menu" ]
                                         [ li []
-                                            [ a [ href "#" ]
-                                                [ text "Français" ]
+                                            [ a
+                                                [ href "#"
+                                                , onWithOptions
+                                                    "click"
+                                                    { preventDefault = True, stopPropagation = False }
+                                                    (Json.Decode.succeed (SetLanguage I18n.English))
+                                                ]
+                                                [ text (I18n.translate I18n.English (I18n.Language I18n.English)) ]
                                             ]
                                         , li []
-                                            [ a [ href "#" ]
-                                                [ text "Espanol" ]
+                                            [ a
+                                                [ href "#"
+                                                , onWithOptions
+                                                    "click"
+                                                    { preventDefault = True, stopPropagation = False }
+                                                    (Json.Decode.succeed (SetLanguage I18n.French))
+                                                ]
+                                                [ text (I18n.translate I18n.French (I18n.Language I18n.French)) ]
+                                            ]
+                                        , li []
+                                            [ a
+                                                [ href "#"
+                                                , onWithOptions
+                                                    "click"
+                                                    { preventDefault = True, stopPropagation = False }
+                                                    (Json.Decode.succeed (SetLanguage I18n.Spanish))
+                                                ]
+                                                [ text (I18n.translate I18n.Spanish (I18n.Language I18n.Spanish)) ]
                                             ]
                                         ]
                                     ]
                                 ]
                             ]
                         , p [ class "info-box" ]
-                            [ text """
-The Open Government Partnership is a multilateral initiative that aims to secure concrete commitments
-from governments to promote transparency, empower citizens, fight corruption, and harness new technologies
-to strengthen governance. In the spirit of multi-stakeholder collaboration, OGP is overseen by a Steering Committee
-including representatives of governments and civil society organizations.
-""" ]
+                            [ text (I18n.translate model.language I18n.OpenGovParagraph) ]
                         ]
                     , div [ class "col-xs-6 col-md-3" ]
                         [ h4 []
-                            [ text "About" ]
+                            [ text (I18n.translate model.language I18n.About) ]
                         , ul [ class "footer-menu" ]
                             [ li []
                                 [ a [ href "#" ]
@@ -593,7 +619,7 @@ including representatives of governments and civil society organizations.
                     ]
                 , div [ class "row copyright" ]
                     [ div [ class "col-md-12" ]
-                        [ text "© 2016 Open Government Partnership" ]
+                        [ text (I18n.translate model.language I18n.Copyright) ]
                     ]
                 ]
             ]
@@ -622,7 +648,7 @@ viewHeader model containerClass =
                                 { preventDefault = True, stopPropagation = False }
                                 (Json.Decode.succeed (AuthenticatorRouteMsg (Just Authenticator.Model.SignOutRoute)))
                             ]
-                            [ text "Sign Out" ]
+                            [ text (I18n.translate model.language I18n.SignOut) ]
                         ]
 
                 Nothing ->
@@ -634,7 +660,7 @@ viewHeader model containerClass =
                                 { preventDefault = True, stopPropagation = False }
                                 (Json.Decode.succeed (AuthenticatorRouteMsg (Just Authenticator.Model.SignInRoute)))
                             ]
-                            [ text "Sign In" ]
+                            [ text (I18n.translate model.language I18n.SignIn) ]
                         ]
 
         signUpNavItem =
@@ -651,7 +677,7 @@ viewHeader model containerClass =
                                 { preventDefault = True, stopPropagation = False }
                                 (Json.Decode.succeed (AuthenticatorRouteMsg (Just Authenticator.Model.SignUpRoute)))
                             ]
-                            [ text "Sign Up" ]
+                            [ text (I18n.translate model.language I18n.SignUp) ]
                         ]
     in
         header []
@@ -677,14 +703,14 @@ viewHeader model containerClass =
                             ]
                         , aForPath Navigate "/" [ class "navbar-brand" ] [ text "OGPtoolbox" ]
                         , p [ class "navbar-text" ]
-                            [ text "tools and use cases for open government" ]
+                            [ text (I18n.translate model.language I18n.HeaderTitle) ]
                         ]
                     , ul [ class "nav navbar-nav navbar-right" ]
                         [ profileNavItem
                         , signInOrOutNavItem
                         , signUpNavItem
                         , button [ class "btn btn-default btn-action", type' "button" ]
-                            [ text "Add new" ]
+                            [ text (I18n.translate model.language I18n.AddNew) ]
                         ]
                     ]
                 ]
@@ -710,12 +736,48 @@ viewHeader model containerClass =
                         ]
                     , div [ class "collapse navbar-collapse", id "bs-example-navbar-collapse-1" ]
                         [ ul [ class "nav navbar-nav" ]
-                            [ li [] [ aForPath Navigate "/" [] [ text "Home" ] ]
-                            , li [] [ aForPath Navigate "/about" [] [ text "About" ] ]
-                            , li [] [ aForPath Navigate "/tools" [] [ text "Tools" ] ]
-                            , li [] [ aForPath Navigate "/examples" [] [ text "Examples" ] ]
-                            , li [] [ aForPath Navigate "/organizations" [] [ text "Organizations" ] ]
-                            , li [] [ aForPath Navigate "/help" [] [ text "Help" ] ]
+                            [ li []
+                                [ aForPath
+                                    Navigate
+                                    "/"
+                                    []
+                                    [ text (I18n.translate model.language I18n.Home) ]
+                                ]
+                            , li []
+                                [ aForPath
+                                    Navigate
+                                    "/about"
+                                    []
+                                    [ text (I18n.translate model.language I18n.About) ]
+                                ]
+                            , li []
+                                [ aForPath
+                                    Navigate
+                                    "/tools"
+                                    []
+                                    [ text (I18n.translate model.language (I18n.Tool I18n.Plural)) ]
+                                ]
+                            , li []
+                                [ aForPath
+                                    Navigate
+                                    "/examples"
+                                    []
+                                    [ text (I18n.translate model.language (I18n.Example I18n.Plural)) ]
+                                ]
+                            , li []
+                                [ aForPath
+                                    Navigate
+                                    "/organizations"
+                                    []
+                                    [ text (I18n.translate model.language (I18n.Organization I18n.Plural)) ]
+                                ]
+                            , li []
+                                [ aForPath
+                                    Navigate
+                                    "/help"
+                                    []
+                                    [ text (I18n.translate model.language I18n.Help) ]
+                                ]
                             ]
                         , Html.form
                             [ class "navbar-form navbar-right"
@@ -727,7 +789,7 @@ viewHeader model containerClass =
                                 , input
                                     [ class "form-control"
                                     , onInput SearchInputChanged
-                                    , placeholder "Search for a tool, example or organization"
+                                    , placeholder (I18n.translate model.language I18n.SearchInputPlaceholder)
                                     , type' "search"
                                     , value model.searchInputValue
                                     ]

@@ -5,6 +5,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Html.Helpers exposing (aExternal, aForPath, aIfIsUrl, imgForCard)
+import I18n
 import Routes exposing (pathForStatement)
 import String
 import Tool.Sidebar as Sidebar
@@ -13,8 +14,8 @@ import Views exposing (viewLoading)
 import WebData exposing (LoadingStatus(..))
 
 
-root : (String -> msg) -> LoadingStatus DataIdBody -> Html msg
-root navigate loadingStatus =
+root : (String -> msg) -> I18n.Language -> LoadingStatus DataIdBody -> Html msg
+root navigate language loadingStatus =
     case loadingStatus of
         Loading body ->
             case body of
@@ -22,14 +23,14 @@ root navigate loadingStatus =
                     viewLoading
 
                 Just body ->
-                    viewStatement navigate body
+                    viewStatement navigate language body
 
         Loaded body ->
-            viewStatement navigate body
+            viewStatement navigate language body
 
 
-viewCard : (String -> msg) -> Dict String Statement -> Card -> Html msg
-viewCard navigate statements card =
+viewCard : (String -> msg) ->  I18n.Language -> Dict String Statement -> Card -> Html msg
+viewCard navigate language statements card =
     div [ class "col-md-9 content content-right" ]
         [ div [ class "row" ]
             [ div [ class "col-xs-12" ]
@@ -354,8 +355,8 @@ viewUriReferenceAsThumbnail navigate statements statementId =
                     text ("Error: impossible to determine the path of the referenced statement (id: " ++ statementId)
 
 
-viewStatement : (String -> msg) -> DataIdBody -> Html msg
-viewStatement navigate body =
+viewStatement : (String -> msg) ->  I18n.Language -> DataIdBody -> Html msg
+viewStatement navigate language body =
     case Dict.get body.data.id body.data.statements of
         Nothing ->
             text "Error: this should never happen due to the JSON decoder."
@@ -364,6 +365,6 @@ viewStatement navigate body =
             case statement.custom of
                 CardCustom card ->
                     div [ class "row" ]
-                        [ Sidebar.root card
-                        , viewCard navigate body.data.statements card
+                        [ Sidebar.root language card
+                        , viewCard navigate language body.data.statements card
                         ]

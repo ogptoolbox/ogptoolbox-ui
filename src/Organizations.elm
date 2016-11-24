@@ -6,6 +6,8 @@ import Hop.Types
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Http
+import I18n
+
 import Organization
 import Requests exposing (..)
 import Routes exposing (getSearchQuery, OrganizationsNestedRoute(..))
@@ -194,14 +196,15 @@ update msg authenticationMaybe model =
 -- VIEW
 
 
-view : Maybe Authenticator.Model.Authentication -> Model -> String -> List (Html Msg)
-view authenticationMaybe model searchQuery =
+view : Maybe Authenticator.Model.Authentication -> Model -> String -> I18n.Language-> List (Html Msg)
+view authenticationMaybe model searchQuery language =
     case model of
         Organization webData ->
             [ div [ class "row section" ]
                 [ div [ class "container" ]
                     (viewWebData
-                        (\loadingStatus -> [ Organization.view navigate loadingStatus ])
+                        language
+                        (\loadingStatus -> [ Organization.view navigate language loadingStatus ])
                         webData
                     )
                 ]
@@ -209,6 +212,7 @@ view authenticationMaybe model searchQuery =
 
         Organizations webData ->
             viewWebData
+                language
                 (\loadingStatus ->
                     let
                         counts =
@@ -226,6 +230,7 @@ view authenticationMaybe model searchQuery =
                             counts
                             navigate
                             searchQuery
+                            language
                             (mapLoadingStatus .organizations loadingStatus)
                 )
                 webData

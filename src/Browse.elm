@@ -5,6 +5,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Html.Helpers exposing (aForPath, imgForCard)
+import I18n
 import String
 import Types exposing (..)
 import Views exposing (viewLoading)
@@ -36,8 +37,15 @@ cardTypeCount cardType counts =
         counts
 
 
-view : CardType -> PillCounts -> (String -> msg) -> String -> LoadingStatus DataIdsBody -> List (Html msg)
-view cardType counts navigate searchQuery loadingStatus =
+view :
+    CardType
+    -> PillCounts
+    -> (String -> msg)
+    -> String
+    -> I18n.Language
+    -> LoadingStatus DataIdsBody
+    -> List (Html msg)
+view cardType counts navigate searchQuery language loadingStatus =
     [ div [ class "browse-tag" ]
         [ div [ class "row" ]
             [ div [ class "container-fluid" ]
@@ -73,7 +81,7 @@ view cardType counts navigate searchQuery loadingStatus =
                     []
                   else
                     [ div [ class "row" ]
-                        [ h1 [] [ text ("Search results for \"" ++ searchQuery ++ "\"") ] ]
+                        [ h1 [] [ text (I18n.translate language (I18n.SearchResults searchQuery)) ] ]
                     ]
                  )
                     ++ [ div [ class "row fixed" ]
@@ -86,7 +94,7 @@ view cardType counts navigate searchQuery loadingStatus =
                                         [ aForPath navigate
                                             ("/examples?q=" ++ searchQuery)
                                             []
-                                            [ text "Examples "
+                                            [ text (I18n.translate language (I18n.Example I18n.Plural))
                                             , span [ class "badge" ]
                                                 [ text
                                                     (case counts of
@@ -106,7 +114,7 @@ view cardType counts navigate searchQuery loadingStatus =
                                         [ aForPath navigate
                                             ("/tools?q=" ++ searchQuery)
                                             []
-                                            [ text "Tools "
+                                            [ text (I18n.translate language (I18n.Tool I18n.Plural))
                                             , span [ class "badge" ]
                                                 [ text
                                                     (case counts of
@@ -126,7 +134,7 @@ view cardType counts navigate searchQuery loadingStatus =
                                         [ aForPath navigate
                                             ("/organizations?q=" ++ searchQuery)
                                             []
-                                            [ text "Organizations "
+                                            [ text (I18n.translate language (I18n.Organization I18n.Plural))
                                             , span [ class "badge" ]
                                                 [ text
                                                     (case counts of
@@ -154,11 +162,15 @@ view cardType counts navigate searchQuery loadingStatus =
                                                     viewStatements
                                                         cardType
                                                         navigate
+                                                        language
                                                         (Dict.values body.data.statements)
                                            )
 
                                 Loaded body ->
-                                    viewStatements cardType navigate (Dict.values body.data.statements)
+                                    viewStatements cardType
+                                        navigate
+                                        language
+                                        (Dict.values body.data.statements)
                              )
                                 ++ (let
                                         count =
@@ -173,7 +185,7 @@ view cardType counts navigate searchQuery loadingStatus =
                                                     -- TODO Do not hardcode limit
                                                     [ div [ class "col-sm-12 text-center" ]
                                                         [ a [ class "show-more" ]
-                                                            [ text ("Show all " ++ (toString count))
+                                                            [ text (I18n.translate language (I18n.ShowAll count))
                                                             , span [ class "glyphicon glyphicon-menu-down" ]
                                                                 []
                                                             ]
@@ -190,15 +202,15 @@ view cardType counts navigate searchQuery loadingStatus =
     ]
 
 
-viewStatements : CardType -> (String -> msg) -> List Statement -> List (Html msg)
-viewStatements cardType navigate statements =
+viewStatements : CardType -> (String -> msg) -> I18n.Language -> List Statement -> List (Html msg)
+viewStatements cardType navigate language statements =
     statements
         |> filterByCardType cardType
-        |> List.map (viewTool cardType navigate)
+        |> List.map (viewTool cardType navigate language)
 
 
-viewTool : CardType -> (String -> msg) -> Statement -> Html msg
-viewTool cardType navigate statement =
+viewTool : CardType -> (String -> msg) -> I18n.Language -> Statement -> Html msg
+viewTool cardType navigate language statement =
     let
         statementUrl =
             (case cardType of
@@ -230,12 +242,12 @@ viewTool cardType navigate statement =
                             []
                             [ text (getOneString nameKeys card |> Maybe.withDefault "") ]
                         , small []
-                            [ text "Software" ]
+                            [ text (I18n.translate language I18n.Software) ]
                         ]
                      , div [ class "example-author" ]
-                        [ img [ alt "screen", src "/img/whitehouse.png" ]
+                        [ img [ alt "screen", src "/img/TODO.png" ]
                             []
-                        , text "The White House"
+                        , text "TODO The White House"
                         ]
                      , p []
                         (case getOneString descriptionKeys card of

@@ -2,6 +2,7 @@ module About exposing (..)
 
 import Authenticator.Model
 import Html exposing (..)
+import I18n
 
 
 -- MODEL
@@ -69,7 +70,7 @@ update msg authenticationMaybe model =
 -- VIEW
 
 
-view : Maybe Authenticator.Model.Authentication -> Model -> Html Msg
-view authenticationMaybe model =
+view : I18n.Language -> Model -> Html Msg
+view language model =
     div []
-        [ text "About OGP Toolbox" ]
+        [ text "TODO About OGP Toolbox" ]

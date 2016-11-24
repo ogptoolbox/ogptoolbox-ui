@@ -3,6 +3,7 @@ module Views exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Http exposing (Error(..))
+import I18n
 import WebData exposing (LoadingStatus, WebData(..))
 
 
@@ -18,8 +19,7 @@ viewError title message =
             , ( "margin", "1em" )
             , ( "font-family", "sans-serif" )
             ]
-         ]
-
+        ]
         [ h1 []
             [ text title ]
         , p
@@ -32,25 +32,25 @@ viewError title message =
         ]
 
 
-viewHttpError : Http.Error -> Html msg
-viewHttpError err =
+viewHttpError : I18n.Language -> Http.Error -> Html msg
+viewHttpError language err =
     let
         genericTitle =
-            "Something wrong happened!"
+            I18n.translate language I18n.GenericError
     in
         case err of
             Timeout ->
-                viewError genericTitle "The server was too slow to respond (timeout)."
+                viewError genericTitle (I18n.translate language I18n.TimeoutExplanation)
 
             NetworkError ->
-                viewError genericTitle "There was a network error."
+                viewError genericTitle (I18n.translate language I18n.NetworkErrorExplanation)
 
             UnexpectedPayload string ->
-                viewError genericTitle "The server returned unexpected data."
+                viewError genericTitle (I18n.translate language I18n.UnexpectedPayloadExplanation)
 
             BadResponse code string ->
                 if code == 404 then
-                    viewNotFound
+                    viewNotFound language
                 else
                     viewError genericTitle string
 
@@ -60,21 +60,21 @@ viewLoading =
     text "Data is loading and should be displayed quite soon."
 
 
-viewNotFound : Html msg
-viewNotFound =
+viewNotFound : I18n.Language -> Html msg
+viewNotFound language =
     viewError
-        "Page Not Found"
-        "Sorry, but the page you were trying to view does not exist."
+        (I18n.translate language I18n.PageNotFound)
+        (I18n.translate language I18n.PageNotFoundExplanation)
 
 
-viewWebData : (LoadingStatus a -> List (Html msg)) -> WebData a -> List (Html msg)
-viewWebData viewSuccess webData =
+viewWebData : I18n.Language -> (LoadingStatus a -> List (Html msg)) -> WebData a -> List (Html msg)
+viewWebData language viewSuccess webData =
     case webData of
         NotAsked ->
             [ text "" ]
 
         Failure err ->
-            [ viewHttpError err ]
+            [ viewHttpError language err ]
 
         Data loadingStatus ->
             viewSuccess loadingStatus

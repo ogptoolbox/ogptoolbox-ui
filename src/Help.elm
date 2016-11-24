@@ -72,4 +72,4 @@ update msg authenticationMaybe model =
 view : Maybe Authenticator.Model.Authentication -> Model -> Html Msg
 view authenticationMaybe model =
     div []
-        [ text "Help OGP Toolbox" ]
+        [ text "TODO Help OGP Toolbox" ]

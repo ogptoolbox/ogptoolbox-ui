@@ -6,19 +6,21 @@ import Example
 import Examples.Types exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import I18n
 import Types exposing (..)
 import Views exposing (viewWebData)
 import WebData exposing (..)
 
 
-root : Maybe Authenticator.Model.Authentication -> Model -> String -> List (Html Msg)
-root authenticationMaybe model searchQuery =
+root : Maybe Authenticator.Model.Authentication -> Model -> String -> I18n.Language -> List (Html Msg)
+root authenticationMaybe model searchQuery language =
     case model of
         Examples.Types.Example webData ->
             [ div [ class "row section" ]
                 [ div [ class "container" ]
                     (viewWebData
-                        (\loadingStatus -> [ Example.view navigate loadingStatus ])
+                        language
+                        (\loadingStatus -> [ Example.view navigate language loadingStatus ])
                         webData
                     )
                 ]
@@ -26,6 +28,7 @@ root authenticationMaybe model searchQuery =
 
         Examples.Types.Examples webData ->
             viewWebData
+                language
                 (\loadingStatus ->
                     let
                         counts =
@@ -43,6 +46,7 @@ root authenticationMaybe model searchQuery =
                             counts
                             navigate
                             searchQuery
+                            language
                             (mapLoadingStatus .examples loadingStatus)
                 )
                 webData

@@ -6,6 +6,7 @@ import Hop.Types
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Http
+import I18n
 import Requests exposing (..)
 import Routes exposing (getSearchQuery, ToolsNestedRoute(..))
 import Task
@@ -194,14 +195,15 @@ update msg authenticationMaybe model =
 -- VIEW
 
 
-view : Maybe Authenticator.Model.Authentication -> Model -> String -> List (Html Msg)
-view authenticationMaybe model searchQuery =
+view : Maybe Authenticator.Model.Authentication -> Model -> String -> I18n.Language -> List (Html Msg)
+view authenticationMaybe model searchQuery language =
     case model of
         Tool webData ->
             [ div [ class "row section" ]
                 [ div [ class "container" ]
                     (viewWebData
-                        (\loadingStatus -> [ Tool.View.root navigate loadingStatus ])
+                        language
+                        (\loadingStatus -> [ Tool.View.root navigate language loadingStatus ])
                         webData
                     )
                 ]
@@ -209,6 +211,7 @@ view authenticationMaybe model searchQuery =
 
         Tools webData ->
             viewWebData
+                language
                 (\loadingStatus ->
                     let
                         counts =
@@ -226,6 +229,7 @@ view authenticationMaybe model searchQuery =
                             counts
                             navigate
                             searchQuery
+                            language
                             (mapLoadingStatus .tools loadingStatus)
                 )
                 webData

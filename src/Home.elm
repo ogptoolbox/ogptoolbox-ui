@@ -7,6 +7,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Html.Helpers exposing (aExternal, aForPath, imgForCard)
 import Http
+import I18n
 import String
 import Task
 import Types exposing (..)
@@ -161,8 +162,8 @@ update msg authenticationMaybe model =
 -- VIEW
 
 
-view : Model -> String -> Html Msg
-view model searchQuery =
+view : Model -> String -> I18n.Language -> Html Msg
+view model searchQuery language =
     let
         viewWebDataFor title webData view =
             div [ class "row section" ]
@@ -171,6 +172,7 @@ view model searchQuery =
                         [ text title ]
                      ]
                         ++ (viewWebData
+                                language
                                 (\loadingStatus ->
                                     case loadingStatus of
                                         Loading maybeStatement ->
@@ -179,10 +181,10 @@ view model searchQuery =
                                                     []
 
                                                 Just body ->
-                                                    [ view searchQuery body.count (Dict.values body.data.statements) ]
+                                                    [ view searchQuery language body.count (Dict.values body.data.statements) ]
 
                                         Loaded body ->
-                                            [ view searchQuery body.count (Dict.values body.data.statements) ]
+                                            [ view searchQuery language body.count (Dict.values body.data.statements) ]
                                 )
                                 webData
                            )
@@ -191,20 +193,29 @@ view model searchQuery =
     in
         div []
             ([ viewBanner
-             , viewMetrics model
+             , viewMetrics language model
              ]
                 ++ (if String.isEmpty searchQuery then
                         []
                     else
                         [ div [ class "row section" ]
                             [ div [ class "container" ]
-                                [ h1 [] [ text ("Search results for \"" ++ searchQuery ++ "\"") ] ]
+                                [ h1 [] [ text (I18n.translate language (I18n.SearchResults searchQuery)) ] ]
                             ]
                         ]
                    )
-                ++ [ viewWebDataFor "Examples" model.examples viewExamples
-                   , viewWebDataFor "Tools" model.tools viewTools
-                   , viewWebDataFor "Organizations" model.organizations viewOrganizations
+                ++ [ viewWebDataFor
+                        (I18n.translate language (I18n.Example I18n.Plural))
+                        model.examples
+                        viewExamples
+                   , viewWebDataFor
+                        (I18n.translate language (I18n.Tool I18n.Plural))
+                        model.tools
+                        viewTools
+                   , viewWebDataFor
+                        (I18n.translate language (I18n.Organization I18n.Plural))
+                        model.organizations
+                        viewOrganizations
                    ]
             )
 
@@ -225,7 +236,7 @@ viewBanner =
                                 ]
                             , div [ class "row filters" ]
                                 [ div [ class "col-md-12 text-center" ]
-                                    [ text "Showing results suited for                  "
+                                    [ text "Showing results suited for"
                                     , div [ class "dropdown dropdown-filter dropup" ]
                                         [ a
                                             [ class "btn btn-default dropdown-toggle"
@@ -233,7 +244,7 @@ viewBanner =
                                             , href "#carousel-example-generic"
                                             , attribute "role" "button"
                                             ]
-                                            [ text "all organizations                      "
+                                            [ text "all organizations"
                                             , span [ class "caret" ]
                                                 []
                                             ]
@@ -252,7 +263,7 @@ viewBanner =
                                                 ]
                                             ]
                                         ]
-                                    , text "and available in                   "
+                                    , text "and available in"
                                     , div [ class "dropdown dropdown-filter dropup" ]
                                         [ a
                                             [ class "btn btn-default dropdown-toggle"
@@ -260,7 +271,7 @@ viewBanner =
                                             , href "#carousel-example-generic"
                                             , attribute "role" "button"
                                             ]
-                                            [ text "English                      "
+                                            [ text "English"
                                             , span [ class "caret" ]
                                                 []
                                             ]
@@ -310,7 +321,7 @@ viewBanner =
                                                 , value "option1"
                                                 ]
                                                 []
-                                            , text "All organizations                    "
+                                            , text "All organizations"
                                             ]
                                         ]
                                     ]
@@ -325,7 +336,7 @@ viewBanner =
                                                 , value "option1"
                                                 ]
                                                 []
-                                            , text "Local government                    "
+                                            , text "Local government"
                                             ]
                                         ]
                                     ]
@@ -340,7 +351,7 @@ viewBanner =
                                                 , value "option1"
                                                 ]
                                                 []
-                                            , text "Regional government                    "
+                                            , text "Regional government"
                                             ]
                                         ]
                                     ]
@@ -355,7 +366,7 @@ viewBanner =
                                                 , value "option1"
                                                 ]
                                                 []
-                                            , text "National government                    "
+                                            , text "National government"
                                             ]
                                         ]
                                     ]
@@ -370,7 +381,7 @@ viewBanner =
                                                 , value "option1"
                                                 ]
                                                 []
-                                            , text "Political organization                    "
+                                            , text "Political organization"
                                             ]
                                         ]
                                     ]
@@ -385,7 +396,7 @@ viewBanner =
                                                 , value "option1"
                                                 ]
                                                 []
-                                            , text "Political movement                    "
+                                            , text "Political movement"
                                             ]
                                         ]
                                     ]
@@ -400,7 +411,7 @@ viewBanner =
                                                 , value "option1"
                                                 ]
                                                 []
-                                            , text "Non-profit organization                    "
+                                            , text "Non-profit organization"
                                             ]
                                         ]
                                     ]
@@ -415,7 +426,7 @@ viewBanner =
                                                 , value "option1"
                                                 ]
                                                 []
-                                            , text "For-profit organization                    "
+                                            , text "For-profit organization"
                                             ]
                                         ]
                                     ]
@@ -489,8 +500,8 @@ viewExampleThumbnail statement card =
         viewThumbnail urlPath card "example grey"
 
 
-viewExamples : String -> Int -> List Statement -> Html Msg
-viewExamples searchQuery count examples =
+viewExamples : String -> I18n.Language -> Int -> List Statement -> Html Msg
+viewExamples searchQuery language count examples =
     div [ class "row" ]
         ((examples
             |> filterByCardType Example
@@ -506,9 +517,8 @@ viewExamples searchQuery count examples =
                     [ aForPath navigate
                         ("/examples?q=" ++ searchQuery)
                         [ class "show-more" ]
-                        [ text ("Show all " ++ (toString count))
-                        , span [ class "glyphicon glyphicon-menu-down" ]
-                            []
+                        [ text (I18n.translate language (I18n.ShowAll count))
+                        , span [ class "glyphicon glyphicon-menu-down" ] []
                         ]
                     ]
                ]
@@ -540,27 +550,27 @@ viewMetric webData =
         )
 
 
-viewMetrics : Model -> Html msg
-viewMetrics model =
+viewMetrics : I18n.Language -> Model -> Html msg
+viewMetrics language model =
     div [ class "row metrics" ]
         [ div [ class "container" ]
             [ div [ class "col-xs-4 text-center" ]
                 [ span [ class "metric-label" ]
-                    [ text "Examples" ]
+                    [ text (I18n.translate language (I18n.Example I18n.Plural)) ]
                 , h3 []
                     [ viewMetric model.examples
                     ]
                 ]
             , div [ class "col-xs-4 text-center" ]
                 [ span [ class "metric-label" ]
-                    [ text "Tools" ]
+                    [ text (I18n.translate language (I18n.Tool I18n.Plural)) ]
                 , h3 []
                     [ viewMetric model.tools
                     ]
                 ]
             , div [ class "col-xs-4 text-center" ]
                 [ span [ class "metric-label" ]
-                    [ text "Organizations" ]
+                    [ text (I18n.translate language (I18n.Organization I18n.Plural)) ]
                 , h3 []
                     [ viewMetric model.organizations
                     ]
@@ -569,8 +579,8 @@ viewMetrics model =
         ]
 
 
-viewOrganizations : String -> Int -> List Statement -> Html Msg
-viewOrganizations searchQuery count organizations =
+viewOrganizations : String -> I18n.Language -> Int -> List Statement -> Html Msg
+viewOrganizations searchQuery language count organizations =
     div [ class "row" ]
         ((organizations
             |> filterByCardType Organization
@@ -586,9 +596,8 @@ viewOrganizations searchQuery count organizations =
                     [ aForPath navigate
                         ("/organizations?q=" ++ searchQuery)
                         [ class "show-more" ]
-                        [ text ("Show all " ++ (toString count))
-                        , span [ class "glyphicon glyphicon-menu-down" ]
-                            []
+                        [ text (I18n.translate language (I18n.ShowAll count))
+                        , span [ class "glyphicon glyphicon-menu-down" ] []
                         ]
                     ]
                ]
@@ -622,19 +631,15 @@ viewThumbnail urlPath card extraClass =
                             []
                     )
                  , span [ class "label label-default label-tool" ]
-                    [ text "Default" ]
-                 , span [ class "label label-default label-tool" ]
-                    [ text "Default" ]
-                 , span [ class "label label-default label-tool" ]
-                    [ text "Default" ]
+                    [ text "TODO Default" ]
                  ]
                 )
             ]
         ]
 
 
-viewTools : String -> Int -> List Statement -> Html Msg
-viewTools searchQuery count tools =
+viewTools : String -> I18n.Language -> Int -> List Statement -> Html Msg
+viewTools searchQuery language count tools =
     div [ class "row" ]
         ((tools
             |> filterByCardType Tool
@@ -650,9 +655,8 @@ viewTools searchQuery count tools =
                     [ aForPath navigate
                         ("/tools?q=" ++ searchQuery)
                         [ class "show-more" ]
-                        [ text ("Show all " ++ (toString count))
-                        , span [ class "glyphicon glyphicon-menu-down" ]
-                            []
+                        [ text (I18n.translate language (I18n.ShowAll count))
+                        , span [ class "glyphicon glyphicon-menu-down" ] []
                         ]
                     ]
                ]
@@ -666,8 +670,3 @@ viewToolThumbnail statement card =
             "/tools/" ++ statement.id
     in
         viewThumbnail urlPath card "tool"
-
-
-viewModalTitle : Model -> Html Msg
-viewModalTitle model =
-    text "Sign up to contribute"
