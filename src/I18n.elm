@@ -1,8 +1,5 @@
 module I18n exposing (..)
 
-import String
-
-
 -- STRINGS TO TRANSLATE
 -- for translators who want to internationalize the application
 
@@ -346,19 +343,33 @@ todo =
     Nothing
 
 
-languageFromString str =
-    case str |> String.left 2 |> String.toLower of
+languageFromIso639_1 : String -> Maybe Language
+languageFromIso639_1 str =
+    case str of
         "en" ->
-            English
+            Just English
 
         "es" ->
-            Spanish
+            Just Spanish
 
         "fr" ->
-            French
+            Just French
 
         _ ->
-            English
+            Nothing
+
+
+iso639_1FromLanguage : Language -> String
+iso639_1FromLanguage language =
+    case language of
+        English ->
+            "en"
+
+        Spanish ->
+            "es"
+
+        French ->
+            "fr"
 
 
 translate : Language -> TranslationId -> String

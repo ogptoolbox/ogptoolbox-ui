@@ -4,9 +4,10 @@ import Configuration exposing (apiUrl)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onWithOptions)
+import I18n
 import Json.Decode
 import Regex
-import Routes exposing (makeUrl)
+import Routes exposing (makeUrl, makeUrlWithLanguage)
 import String
 import Types exposing (..)
 
@@ -23,17 +24,35 @@ aExternal attributes children =
 
 
 aForPath : (String -> msg) -> String -> List (Attribute msg) -> List (Html msg) -> Html msg
-aForPath navigate path attributes children =
+aForPath navigate urlPath attributes children =
     a
-        ([ href (makeUrl path)
+        ([ href (makeUrl urlPath)
          , onWithOptions
             "click"
             { stopPropagation = True, preventDefault = True }
-            (Json.Decode.succeed (navigate path))
+            (Json.Decode.succeed (navigate urlPath))
          ]
             ++ attributes
         )
         children
+
+
+aForPathWithLanguage : (String -> msg) -> I18n.Language -> String -> List (Attribute msg) -> List (Html msg) -> Html msg
+aForPathWithLanguage navigate language urlPath attributes children =
+    let
+        urlPathWithLanguage =
+            makeUrlWithLanguage language urlPath
+    in
+        a
+            ([ href urlPathWithLanguage
+             , onWithOptions
+                "click"
+                { stopPropagation = True, preventDefault = True }
+                (Json.Decode.succeed (navigate urlPathWithLanguage))
+             ]
+                ++ attributes
+            )
+            children
 
 
 aIfIsUrl : List (Attribute msg) -> String -> Html msg

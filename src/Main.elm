@@ -16,7 +16,7 @@ import Html.App
 import Html.Attributes exposing (..)
 import Html.Attributes.Aria exposing (ariaHidden, ariaLabelledby)
 import Html.Events exposing (onInput, onSubmit, onWithOptions)
-import Html.Helpers exposing (aForPath)
+import Html.Helpers exposing (aForPath, aForPathWithLanguage)
 import I18n
 import Json.Decode
 import Navigation
@@ -26,16 +26,20 @@ import Routes
         ( addSearchQueryToLocation
         , ExamplesNestedRoute(..)
         , getSearchQuery
+        , I18nRoute(..)
         , makeUrl
         , makeUrlFromLocation
+        , makeUrlWithLanguage
         , OrganizationsNestedRoute(..)
         , Route(..)
         , ToolsNestedRoute(..)
+        , replaceLanguageInLocation
         , urlParser
         )
+import String
 import Task
 import Tools
-import Views exposing (viewNotFound)
+import Views exposing (viewError, viewNotFound)
 
 
 main : Program String
@@ -61,17 +65,17 @@ type alias Model =
     , examplesModel : Examples.Types.Model
     , helpModel : Help.Model
     , homeModel : Home.Model
-    , language : I18n.Language
+    , i18nRoute : I18nRoute
     , location : Hop.Types.Location
+    , navigatorLanguage : Maybe I18n.Language
     , organizationsModel : Organizations.Model
-    , route : Route
     , searchInputValue : String
     , toolsModel : Tools.Model
     }
 
 
-init : String -> ( Route, Hop.Types.Location ) -> ( Model, Cmd Msg )
-init languageStr ( route, location ) =
+init : String -> ( I18nRoute, Hop.Types.Location ) -> ( Model, Cmd Msg )
+init languageStr ( i18nRoute, location ) =
     { aboutModel = About.init
     , authenticationMaybe = Nothing
     , authenticatorModel = Authenticator.Model.init
@@ -79,92 +83,109 @@ init languageStr ( route, location ) =
     , examplesModel = Examples.State.init
     , helpModel = Help.init
     , homeModel = Home.init
-    , organizationsModel = Organizations.init
-    , language = I18n.languageFromString languageStr
+    , i18nRoute = i18nRoute
     , location = location
-    , route = route
+    , navigatorLanguage =
+        languageStr
+            |> String.left 2
+            |> String.toLower
+            |> I18n.languageFromIso639_1
+    , organizationsModel = Organizations.init
     , searchInputValue = ""
     , toolsModel = Tools.init
     }
-        |> urlUpdate ( route, location )
+        |> urlUpdate ( i18nRoute, location )
 
 
 
 -- ROUTING
 
 
-urlUpdate : ( Route, Hop.Types.Location ) -> Model -> ( Model, Cmd Msg )
-urlUpdate ( route, location ) model =
+urlUpdate : ( I18nRoute, Hop.Types.Location ) -> Model -> ( Model, Cmd Msg )
+urlUpdate ( i18nRoute, location ) model =
     let
+        _ =
+            Debug.log "i18nRoute, location" ( i18nRoute, location )
+
         searchQuery =
             getSearchQuery location
 
-        model' =
-            { model
-                | location = location
-                , route = route
-            }
+        ( model', cmd ) =
+            case i18nRoute of
+                I18nRouteWithLanguage language route ->
+                    case route of
+                        AboutRoute ->
+                            ( model, Cmd.none )
 
-        ( model'', cmd ) =
-            case route of
-                AboutRoute ->
-                    ( model', Cmd.none )
+                        ExamplesRoute childRoute ->
+                            let
+                                ( examplesModel, childCmd ) =
+                                    Examples.State.urlUpdate ( childRoute, location ) model.examplesModel
+                            in
+                                ( { model
+                                    | examplesModel = examplesModel
+                                    , searchInputValue = searchQuery
+                                  }
+                                , Cmd.map translateExamplesMsg childCmd
+                                )
 
-                ExamplesRoute childRoute ->
+                        HelpRoute ->
+                            ( model, Cmd.none )
+
+                        HomeRoute ->
+                            let
+                                ( homeModel, childCmd ) =
+                                    Home.update (Home.Load searchQuery) model.authenticationMaybe model.homeModel
+                            in
+                                ( { model
+                                    | homeModel = homeModel
+                                    , searchInputValue = searchQuery
+                                  }
+                                , Cmd.map translateHomeMsg childCmd
+                                )
+
+                        NotFoundRoute _ ->
+                            ( model, Cmd.none )
+
+                        OrganizationsRoute childRoute ->
+                            let
+                                ( organizationsModel, childCmd ) =
+                                    Organizations.urlUpdate ( childRoute, location ) model.organizationsModel
+                            in
+                                ( { model
+                                    | organizationsModel = organizationsModel
+                                    , searchInputValue = searchQuery
+                                  }
+                                , Cmd.map translateOrganizationsMsg childCmd
+                                )
+
+                        ToolsRoute childRoute ->
+                            let
+                                ( toolsModel, childCmd ) =
+                                    Tools.urlUpdate ( childRoute, location ) model.toolsModel
+                            in
+                                ( { model
+                                    | toolsModel = toolsModel
+                                    , searchInputValue = searchQuery
+                                  }
+                                , Cmd.map translateToolsMsg childCmd
+                                )
+
+                I18nRouteWithoutLanguage urlPath ->
                     let
-                        ( examplesModel, childCmd ) =
-                            Examples.State.urlUpdate ( childRoute, location ) model'.examplesModel
+                        language =
+                            model.navigatorLanguage |> Maybe.withDefault I18n.English
+
+                        command =
+                            makeUrlWithLanguage language urlPath
+                                |> Navigation.modifyUrl
                     in
-                        ( { model'
-                            | examplesModel = examplesModel
-                            , searchInputValue = searchQuery
-                          }
-                        , Cmd.map translateExamplesMsg childCmd
-                        )
-
-                HelpRoute ->
-                    ( model', Cmd.none )
-
-                HomeRoute ->
-                    let
-                        ( homeModel, childCmd ) =
-                            Home.update (Home.Load searchQuery) model.authenticationMaybe model'.homeModel
-                    in
-                        ( { model'
-                            | homeModel = homeModel
-                            , searchInputValue = searchQuery
-                          }
-                        , Cmd.map translateHomeMsg childCmd
-                        )
-
-                NotFoundRoute ->
-                    ( model', Cmd.none )
-
-                OrganizationsRoute childRoute ->
-                    let
-                        ( organizationsModel, childCmd ) =
-                            Organizations.urlUpdate ( childRoute, location ) model'.organizationsModel
-                    in
-                        ( { model'
-                            | organizationsModel = organizationsModel
-                            , searchInputValue = searchQuery
-                          }
-                        , Cmd.map translateOrganizationsMsg childCmd
-                        )
-
-                ToolsRoute childRoute ->
-                    let
-                        ( toolsModel, childCmd ) =
-                            Tools.urlUpdate ( childRoute, location ) model'.toolsModel
-                    in
-                        ( { model'
-                            | toolsModel = toolsModel
-                            , searchInputValue = searchQuery
-                          }
-                        , Cmd.map translateToolsMsg childCmd
-                        )
+                        ( model, command )
     in
-        model''
+        { model'
+            | location = location
+            , i18nRoute = i18nRoute
+        }
             ! [ Task.perform
                     (\_ -> Debug.crash "Dom.Scroll.toTop \"html-element\"")
                     (always NoOp)
@@ -189,7 +210,6 @@ type Msg
     | OrganizationsMsg Organizations.InternalMsg
     | Search
     | SearchInputChanged String
-    | SetLanguage I18n.Language
     | ToolsMsg Tools.InternalMsg
 
 
@@ -346,17 +366,23 @@ update msg model =
 
         Search ->
             let
+                urlPath =
+                    "/tools?q=" ++ model.searchInputValue
+
                 command =
-                    makeUrl ("/tools?q=" ++ model.searchInputValue)
+                    (case model.i18nRoute of
+                        I18nRouteWithLanguage language _ ->
+                            makeUrlWithLanguage language urlPath
+
+                        I18nRouteWithoutLanguage _ ->
+                            makeUrl urlPath
+                    )
                         |> Navigation.newUrl
             in
                 ( model, command )
 
         SearchInputChanged searchInputValue ->
             ( { model | searchInputValue = searchInputValue }, Cmd.none )
-
-        SetLanguage language ->
-            ( { model | language = language }, Cmd.none )
 
         ToolsMsg childMsg ->
             let
@@ -373,25 +399,25 @@ update msg model =
 view : Model -> Html Msg
 view model =
     let
-        standardLayout content =
+        standardLayout language content =
             div []
-                ([ viewHeader model "container" ]
+                ([ viewHeader model language "container" ]
                     ++ content
-                    ++ [ viewFooter model
-                       , viewAuthenticatorModal model
+                    ++ [ viewFooter model language
+                       , viewAuthenticatorModal model language
                        , viewBackdrop model
                        ]
                 )
 
-        fullscreenLayout content =
+        fullscreenLayout language content =
             div [ class "main-container" ]
                 ([ div [ class "fixed-header" ]
-                    [ viewHeader model "container-fluid" ]
+                    [ viewHeader model language "container-fluid" ]
                  ]
                     ++ content
                     ++ [ div [ class "fixed-footer" ]
-                            [ text (I18n.translate model.language I18n.Copyright) ]
-                       , viewAuthenticatorModal model
+                            [ text (I18n.translate language I18n.Copyright) ]
+                       , viewAuthenticatorModal model language
                        , viewBackdrop model
                        ]
                 )
@@ -399,64 +425,73 @@ view model =
         searchQuery =
             getSearchQuery model.location
     in
-        case model.route of
-            AboutRoute ->
+        case model.i18nRoute of
+            I18nRouteWithLanguage language route ->
+                case route of
+                    AboutRoute ->
+                        standardLayout language
+                            [ Html.App.map translateAboutMsg (About.view language model.aboutModel)
+                            ]
+
+                    ExamplesRoute childRoute ->
+                        Examples.View.root model.authenticationMaybe model.examplesModel searchQuery language
+                            |> List.map (Html.App.map translateExamplesMsg)
+                            |> case childRoute of
+                                ExampleRoute _ ->
+                                    standardLayout language
+
+                                ExamplesIndexRoute ->
+                                    fullscreenLayout language
+
+                    HelpRoute ->
+                        standardLayout language
+                            [ Html.App.map translateHelpMsg (Help.view model.authenticationMaybe model.helpModel)
+                            ]
+
+                    HomeRoute ->
+                        standardLayout language
+                            [ Html.App.map translateHomeMsg
+                                (Home.view model.homeModel (getSearchQuery model.location) language)
+                            ]
+
+                    NotFoundRoute _ ->
+                        standardLayout language
+                            [ div [ class "row section" ]
+                                [ div [ class "container" ]
+                                    [ viewNotFound language ]
+                                ]
+                            ]
+
+                    OrganizationsRoute childRoute ->
+                        Organizations.view model.authenticationMaybe model.organizationsModel searchQuery language
+                            |> List.map (Html.App.map translateOrganizationsMsg)
+                            |> case childRoute of
+                                OrganizationRoute _ ->
+                                    standardLayout language
+
+                                OrganizationsIndexRoute ->
+                                    fullscreenLayout language
+
+                    ToolsRoute childRoute ->
+                        Tools.view model.authenticationMaybe model.toolsModel searchQuery language
+                            |> List.map (Html.App.map translateToolsMsg)
+                            |> case childRoute of
+                                ToolRoute _ ->
+                                    standardLayout language
+
+                                ToolsIndexRoute ->
+                                    fullscreenLayout language
+
+            I18nRouteWithoutLanguage _ ->
                 standardLayout
-                    [ Html.App.map translateAboutMsg (About.view model.language model.aboutModel)
+                    I18n.English
+                    [ div [ style [ ( "min-height", "60em" ) ] ]
+                        [ viewError "" "" ]
                     ]
 
-            ExamplesRoute childRoute ->
-                Examples.View.root model.authenticationMaybe model.examplesModel searchQuery model.language
-                    |> List.map (Html.App.map translateExamplesMsg)
-                    |> case childRoute of
-                        ExampleRoute _ ->
-                            standardLayout
 
-                        ExamplesIndexRoute ->
-                            fullscreenLayout
-
-            HelpRoute ->
-                standardLayout
-                    [ Html.App.map translateHelpMsg (Help.view model.authenticationMaybe model.helpModel)
-                    ]
-
-            HomeRoute ->
-                standardLayout
-                    [ Html.App.map translateHomeMsg
-                        (Home.view model.homeModel (getSearchQuery model.location) model.language)
-                    ]
-
-            NotFoundRoute ->
-                standardLayout
-                    [ div [ class "row section" ]
-                        [ div [ class "container" ]
-                            [ viewNotFound model.language ]
-                        ]
-                    ]
-
-            OrganizationsRoute childRoute ->
-                Organizations.view model.authenticationMaybe model.organizationsModel searchQuery model.language
-                    |> List.map (Html.App.map translateOrganizationsMsg)
-                    |> case childRoute of
-                        OrganizationRoute _ ->
-                            standardLayout
-
-                        OrganizationsIndexRoute ->
-                            fullscreenLayout
-
-            ToolsRoute childRoute ->
-                Tools.view model.authenticationMaybe model.toolsModel searchQuery model.language
-                    |> List.map (Html.App.map translateToolsMsg)
-                    |> case childRoute of
-                        ToolRoute _ ->
-                            standardLayout
-
-                        ToolsIndexRoute ->
-                            fullscreenLayout
-
-
-viewAuthenticatorModal : Model -> Html Msg
-viewAuthenticatorModal model =
+viewAuthenticatorModal : Model -> I18n.Language -> Html Msg
+viewAuthenticatorModal model language =
     case model.authenticatorRouteMaybe of
         Just authenticatorRoute ->
             div
@@ -481,7 +516,7 @@ viewAuthenticatorModal model =
                                 [ span [ ariaHidden True ]
                                     [ text "×" ]
                                 , span [ class "sr-only" ]
-                                    [ text (I18n.translate model.language I18n.Close) ]
+                                    [ text (I18n.translate language I18n.Close) ]
                                 ]
                             , h4 [ class "modal-title", id "modal-title" ]
                                 [ text (Authenticator.View.modalTitle authenticatorRoute) ]
@@ -503,8 +538,8 @@ viewBackdrop model =
         []
 
 
-viewFooter : Model -> Html Msg
-viewFooter model =
+viewFooter : Model -> I18n.Language -> Html Msg
+viewFooter model language =
     footer []
         [ div [ class "row section footer" ]
             [ div [ class "container" ]
@@ -517,7 +552,7 @@ viewFooter model =
                                 ]
                             , div [ class "col-xs-6" ]
                                 [ h4 []
-                                    [ text (I18n.translate model.language I18n.LanguageWord) ]
+                                    [ text (I18n.translate language I18n.LanguageWord) ]
                                 , div [ class "dropdown dropdown-language" ]
                                     [ button
                                         [ attribute "aria-expanded" "true"
@@ -527,38 +562,26 @@ viewFooter model =
                                         , id "dropdownMenu1"
                                         , type' "button"
                                         ]
-                                        [ text (I18n.translate model.language (I18n.Language model.language))
+                                        [ text (I18n.translate language (I18n.Language language))
                                         , span [ class "caret" ] []
                                         ]
                                     , ul [ attribute "aria-labelledby" "dropdownMenu1", class "dropdown-menu" ]
                                         [ li []
-                                            [ a
-                                                [ href "#"
-                                                , onWithOptions
-                                                    "click"
-                                                    { preventDefault = True, stopPropagation = False }
-                                                    (Json.Decode.succeed (SetLanguage I18n.English))
-                                                ]
+                                            [ aForPath Navigate
+                                                (replaceLanguageInLocation I18n.English model.location)
+                                                []
                                                 [ text (I18n.translate I18n.English (I18n.Language I18n.English)) ]
                                             ]
                                         , li []
-                                            [ a
-                                                [ href "#"
-                                                , onWithOptions
-                                                    "click"
-                                                    { preventDefault = True, stopPropagation = False }
-                                                    (Json.Decode.succeed (SetLanguage I18n.French))
-                                                ]
+                                            [ aForPath Navigate
+                                                (replaceLanguageInLocation I18n.French model.location)
+                                                []
                                                 [ text (I18n.translate I18n.French (I18n.Language I18n.French)) ]
                                             ]
                                         , li []
-                                            [ a
-                                                [ href "#"
-                                                , onWithOptions
-                                                    "click"
-                                                    { preventDefault = True, stopPropagation = False }
-                                                    (Json.Decode.succeed (SetLanguage I18n.Spanish))
-                                                ]
+                                            [ aForPath Navigate
+                                                (replaceLanguageInLocation I18n.Spanish model.location)
+                                                []
                                                 [ text (I18n.translate I18n.Spanish (I18n.Language I18n.Spanish)) ]
                                             ]
                                         ]
@@ -566,11 +589,11 @@ viewFooter model =
                                 ]
                             ]
                         , p [ class "info-box" ]
-                            [ text (I18n.translate model.language I18n.OpenGovParagraph) ]
+                            [ text (I18n.translate language I18n.OpenGovParagraph) ]
                         ]
                     , div [ class "col-xs-6 col-md-3" ]
                         [ h4 []
-                            [ text (I18n.translate model.language I18n.About) ]
+                            [ text (I18n.translate language I18n.About) ]
                         , ul [ class "footer-menu" ]
                             [ li []
                                 [ a [ href "#" ]
@@ -619,20 +642,27 @@ viewFooter model =
                     ]
                 , div [ class "row copyright" ]
                     [ div [ class "col-md-12" ]
-                        [ text (I18n.translate model.language I18n.Copyright) ]
+                        [ text (I18n.translate language I18n.Copyright) ]
                     ]
                 ]
             ]
         ]
 
 
-viewHeader : Model -> String -> Html Msg
-viewHeader model containerClass =
+viewHeader : Model -> I18n.Language -> String -> Html Msg
+viewHeader model language containerClass =
     let
         profileNavItem =
             case model.authenticationMaybe of
                 Just authentication ->
-                    li [] [ aForPath Navigate "/profile" [] [ text authentication.name ] ]
+                    li []
+                        [ aForPathWithLanguage
+                            Navigate
+                            language
+                            "/profile"
+                            []
+                            [ text authentication.name ]
+                        ]
 
                 Nothing ->
                     text ""
@@ -648,7 +678,7 @@ viewHeader model containerClass =
                                 { preventDefault = True, stopPropagation = False }
                                 (Json.Decode.succeed (AuthenticatorRouteMsg (Just Authenticator.Model.SignOutRoute)))
                             ]
-                            [ text (I18n.translate model.language I18n.SignOut) ]
+                            [ text (I18n.translate language I18n.SignOut) ]
                         ]
 
                 Nothing ->
@@ -660,7 +690,7 @@ viewHeader model containerClass =
                                 { preventDefault = True, stopPropagation = False }
                                 (Json.Decode.succeed (AuthenticatorRouteMsg (Just Authenticator.Model.SignInRoute)))
                             ]
-                            [ text (I18n.translate model.language I18n.SignIn) ]
+                            [ text (I18n.translate language I18n.SignIn) ]
                         ]
 
         signUpNavItem =
@@ -677,7 +707,7 @@ viewHeader model containerClass =
                                 { preventDefault = True, stopPropagation = False }
                                 (Json.Decode.succeed (AuthenticatorRouteMsg (Just Authenticator.Model.SignUpRoute)))
                             ]
-                            [ text (I18n.translate model.language I18n.SignUp) ]
+                            [ text (I18n.translate language I18n.SignUp) ]
                         ]
     in
         header []
@@ -701,16 +731,21 @@ viewHeader model containerClass =
                             , span [ class "icon-bar" ]
                                 []
                             ]
-                        , aForPath Navigate "/" [ class "navbar-brand" ] [ text "OGPtoolbox" ]
+                        , aForPathWithLanguage
+                            Navigate
+                            language
+                            "/"
+                            [ class "navbar-brand" ]
+                            [ text "OGPtoolbox" ]
                         , p [ class "navbar-text" ]
-                            [ text (I18n.translate model.language I18n.HeaderTitle) ]
+                            [ text (I18n.translate language I18n.HeaderTitle) ]
                         ]
                     , ul [ class "nav navbar-nav navbar-right" ]
                         [ profileNavItem
                         , signInOrOutNavItem
                         , signUpNavItem
                         , button [ class "btn btn-default btn-action", type' "button" ]
-                            [ text (I18n.translate model.language I18n.AddNew) ]
+                            [ text (I18n.translate language I18n.AddNew) ]
                         ]
                     ]
                 ]
@@ -737,46 +772,52 @@ viewHeader model containerClass =
                     , div [ class "collapse navbar-collapse", id "bs-example-navbar-collapse-1" ]
                         [ ul [ class "nav navbar-nav" ]
                             [ li []
-                                [ aForPath
+                                [ aForPathWithLanguage
                                     Navigate
+                                    language
                                     "/"
                                     []
-                                    [ text (I18n.translate model.language I18n.Home) ]
+                                    [ text (I18n.translate language I18n.Home) ]
                                 ]
                             , li []
-                                [ aForPath
+                                [ aForPathWithLanguage
                                     Navigate
+                                    language
                                     "/about"
                                     []
-                                    [ text (I18n.translate model.language I18n.About) ]
+                                    [ text (I18n.translate language I18n.About) ]
                                 ]
                             , li []
-                                [ aForPath
+                                [ aForPathWithLanguage
                                     Navigate
+                                    language
                                     "/tools"
                                     []
-                                    [ text (I18n.translate model.language (I18n.Tool I18n.Plural)) ]
+                                    [ text (I18n.translate language (I18n.Tool I18n.Plural)) ]
                                 ]
                             , li []
-                                [ aForPath
+                                [ aForPathWithLanguage
                                     Navigate
+                                    language
                                     "/examples"
                                     []
-                                    [ text (I18n.translate model.language (I18n.Example I18n.Plural)) ]
+                                    [ text (I18n.translate language (I18n.Example I18n.Plural)) ]
                                 ]
                             , li []
-                                [ aForPath
+                                [ aForPathWithLanguage
                                     Navigate
+                                    language
                                     "/organizations"
                                     []
-                                    [ text (I18n.translate model.language (I18n.Organization I18n.Plural)) ]
+                                    [ text (I18n.translate language (I18n.Organization I18n.Plural)) ]
                                 ]
                             , li []
-                                [ aForPath
+                                [ aForPathWithLanguage
                                     Navigate
+                                    language
                                     "/help"
                                     []
-                                    [ text (I18n.translate model.language I18n.Help) ]
+                                    [ text (I18n.translate language I18n.Help) ]
                                 ]
                             ]
                         , Html.form
@@ -789,7 +830,7 @@ viewHeader model containerClass =
                                 , input
                                     [ class "form-control"
                                     , onInput SearchInputChanged
-                                    , placeholder (I18n.translate model.language I18n.SearchInputPlaceholder)
+                                    , placeholder (I18n.translate language I18n.SearchInputPlaceholder)
                                     , type' "search"
                                     , value model.searchInputValue
                                     ]
