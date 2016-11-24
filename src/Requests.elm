@@ -9,16 +9,13 @@ import Types exposing (..)
 import Task exposing (Task)
 
 
-
-
 newTaskGetCardOfType : List String -> Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
 newTaskGetCardOfType cardTypes authenticationMaybe statementId =
     let
         authenticationHeaders =
             case authenticationMaybe of
                 Just authentication ->
-                    [ ( "Retruco-API-Key", authentication.apiKey )
-                    ]
+                    [ ( "Retruco-API-Key", authentication.apiKey ) ]
 
                 Nothing ->
                     []
@@ -27,11 +24,8 @@ newTaskGetCardOfType cardTypes authenticationMaybe statementId =
             (dataIdBodyDecoder statementId cardTypes)
             (Http.send Http.defaultSettings
                 { verb = "GET"
-                , url = apiUrl ++ "statements/" ++ statementId ++ "?depth=1&show=references"
-                , headers =
-                    [ ( "Accept", "application/json" )
-                    ]
-                        ++ authenticationHeaders
+                , url = apiUrl ++ "cards/" ++ statementId ++ "?show=values"
+                , headers = ( "Accept", "application/json" ) :: authenticationHeaders
                 , body = Http.empty
                 }
             )
@@ -48,8 +42,7 @@ newTaskGetCardsOfType cardTypes authenticationMaybe searchQuery limit =
         authenticationHeaders =
             case authenticationMaybe of
                 Just authentication ->
-                    [ ( "Retruco-API-Key", authentication.apiKey )
-                    ]
+                    [ ( "Retruco-API-Key", authentication.apiKey ) ]
 
                 Nothing ->
                     []
@@ -59,10 +52,9 @@ newTaskGetCardsOfType cardTypes authenticationMaybe searchQuery limit =
                 { verb = "GET"
                 , url =
                     apiUrl
-                        ++ "statements?"
+                        ++ "cards?"
                         ++ (List.map (\cardType -> "type=" ++ cardType) cardTypes
-                                ++ ([ Just "depth=1"
-                                    , Just "show=references"
+                                ++ ([ Just "show=values"
                                     , (if String.isEmpty searchQuery then
                                         Nothing
                                        else
@@ -78,10 +70,7 @@ newTaskGetCardsOfType cardTypes authenticationMaybe searchQuery limit =
                                    )
                                 |> String.join "&"
                            )
-                , headers =
-                    [ ( "Accept", "application/json" )
-                    ]
-                        ++ authenticationHeaders
+                , headers = ( "Accept", "application/json" ) :: authenticationHeaders
                 , body = Http.empty
                 }
             )
