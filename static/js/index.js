@@ -34,6 +34,7 @@ main.ports.mountd3bubbles.subscribe(function(data) {
     var bubbles = data.map(function(bubble) {
         if (bubble.selected) {
             bubble.type = "selected";
+            bubble.radius = 90;
         }
         return bubble;
     });
