@@ -48,7 +48,7 @@ if (TARGET_ENV === 'development') {
       'webpack-dev-server/client?http://localhost:3011',
       'expose?$!expose?jQuery!jquery',
       'bootstrap-webpack!./bootstrap.config.js',
-      path.join(__dirname, 'static/index.js')
+      path.join(__dirname, 'static/js/index.js')
     ],
     devServer: {
       historyApiFallback: true,
@@ -78,7 +78,7 @@ if (TARGET_ENV === 'production') {
     entry: [
       'expose?$!expose?jQuery!jquery',
       'bootstrap-webpack!./bootstrap.config.prod.js',
-      path.join(__dirname, 'static/index.js')
+      path.join(__dirname, 'static/js/index.js')
     ],
     module: {
       loaders: [

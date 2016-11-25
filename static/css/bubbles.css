@@ -1,0 +1,58 @@
+   /* ----
+Alter cursor layout by pointer
+--- */
+svg.D3Bubbles g.bubble-wrapper circle{
+    cursor: pointer;
+}
+
+/* ----
+Disable text selection
+Disable "text-select" cursor
+--- */
+svg.D3Bubbles g.bubble-wrapper text{
+    cursor: pointer;
+    -webkit-touch-callout:none;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+    font-family: 'Helvetica','Arial', sans-serif;
+    font-size: 13px;
+}
+svg.D3Bubbles g.bubble-wrapper circle {
+    cursor: pointer;
+    opacity: 0.85;
+}
+svg.D3Bubbles g.bubble-wrapper:hover circle {
+    opacity: 1;
+}
+#tag {
+    background-color: #3f454a;
+}
+
+#bubble-wrapper-main circle, #bubble-wrapper-selected circle {
+    fill: transparent;
+    stroke-width: 3;
+    stroke: rgba(255,255,255,0.3);
+}
+#bubble-wrapper-main circle {
+    r: 150;
+}
+#bubble-wrapper-selected circle {
+    r: 100;
+}
+#bubble-wrapper-selected:hover circle {
+    fill: rgba(255,255,255,0.05);
+}
+#bubble-wrapper-main text {
+    fill: rgba(255,255,255,0.9);
+    font-size: 24px;
+}
+#bubble-wrapper-selected text {
+    fill: rgba(255,255,255,0.9);
+    font-size: 16px;
+}
+#bubble-wrapper-main text.label, #bubble-wrapper-selected text.label {
+    fill: rgba(255,255,255,0.2);
+    font-size: 11px;
+}

@@ -54,13 +54,6 @@ main =
 
 
 
--- PORTS
-
-
-port setDocumentTitle : String -> Cmd msg
-
-
-
 -- MODEL
 
 
@@ -146,6 +139,7 @@ urlUpdate ( i18nRoute, location ) model =
                                     Home.update (Home.Load searchQuery)
                                         model.authenticationMaybe
                                         model.homeModel
+                                        mountd3bubbles
                             in
                                 ( { model
                                     | homeModel = homeModel
@@ -229,6 +223,12 @@ type Msg
     | Search
     | SearchInputChanged String
     | ToolsMsg Tools.InternalMsg
+
+
+port mountd3bubbles : List Home.Bubble -> Cmd msg
+
+
+port setDocumentTitle : String -> Cmd msg
 
 
 aboutMsgTranslation : About.MsgTranslation Msg
@@ -360,9 +360,11 @@ update msg model =
         HomeMsg childMsg ->
             let
                 ( homeModel, childCmd ) =
-                    Home.update childMsg model.authenticationMaybe model.homeModel
+                    Home.update childMsg model.authenticationMaybe model.homeModel mountd3bubbles
             in
-                ( { model | homeModel = homeModel }, Cmd.map translateHomeMsg childCmd )
+                ( { model | homeModel = homeModel }
+                , Cmd.map translateHomeMsg childCmd
+                )
 
         Navigate path ->
             let
@@ -865,6 +867,15 @@ viewHeader model language containerClass =
 -- SUBSCRIPTIONS
 
 
+port bubbleSelections : (Home.Bubble -> msg) -> Sub msg
+
+
+port bubbleDeselections : (Home.Bubble -> msg) -> Sub msg
+
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    Sub.batch
+        [ bubbleSelections (HomeMsg << Home.SelectBubble)
+        , bubbleDeselections (HomeMsg << Home.DeselectBubble)
+        ]

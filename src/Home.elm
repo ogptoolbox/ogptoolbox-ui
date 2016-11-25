@@ -13,16 +13,24 @@ import Task
 import Types exposing (..)
 import Requests exposing (newTaskGetExamples, newTaskGetOrganizations, newTaskGetTools)
 import Views exposing (viewWebData)
-import WebData exposing (LoadingStatus(..), getData, WebData(..))
+import WebData exposing (LoadingStatus(..), getData, mapLoadingStatus, WebData(..))
 
 
 -- MODEL
+
+
+type alias Bubble =
+    { name : String
+    , radius : Int
+    , selected : Bool
+    }
 
 
 type alias Model =
     { examples : WebData DataIdsBody
     , organizations : WebData DataIdsBody
     , tools : WebData DataIdsBody
+    , bubbles : WebData (List Bubble)
     }
 
 
@@ -31,6 +39,7 @@ init =
     { examples = NotAsked
     , organizations = NotAsked
     , tools = NotAsked
+    , bubbles = NotAsked
     }
 
 
@@ -43,13 +52,17 @@ type ExternalMsg
 
 
 type InternalMsg
-    = ErrorExamples Http.Error
+    = DeselectBubble Bubble
+    | ErrorBubbles Http.Error
+    | ErrorExamples Http.Error
     | ErrorOrganizations Http.Error
     | ErrorTools Http.Error
     | Load String
+    | LoadedBubbles (List Bubble)
     | LoadedExamples DataIdsBody
     | LoadedOrganizations DataIdsBody
     | LoadedTools DataIdsBody
+    | SelectBubble Bubble
 
 
 type Msg
@@ -82,9 +95,40 @@ translateMsg { onInternalMsg, onNavigate } msg =
             onInternalMsg internalMsg
 
 
-update : InternalMsg -> Maybe Authenticator.Model.Authentication -> Model -> ( Model, Cmd Msg )
-update msg authenticationMaybe model =
+update : InternalMsg -> Maybe Authenticator.Model.Authentication -> Model -> (List Bubble -> Cmd Msg) -> ( Model, Cmd Msg )
+update msg authenticationMaybe model mountd3bubbles =
     case msg of
+        DeselectBubble { name } ->
+            case getData model.bubbles of
+                Nothing ->
+                    ( model, Cmd.none )
+
+                Just bubbles ->
+                    let
+                        newBubbles =
+                            List.map
+                                (\bubble ->
+                                    if bubble.name == name then
+                                        { bubble | selected = False }
+                                    else
+                                        bubble
+                                )
+                                bubbles
+                    in
+                        ( { model | bubbles = Data (Loaded newBubbles) }
+                        , mountd3bubbles newBubbles
+                        )
+
+        ErrorBubbles err ->
+            let
+                _ =
+                    Debug.log "Home ErrorBubbles" err
+
+                model' =
+                    { model | bubbles = Failure err }
+            in
+                ( model', Cmd.none )
+
         ErrorExamples err ->
             let
                 _ =
@@ -138,9 +182,23 @@ update msg authenticationMaybe model =
                             ErrorTools
                             LoadedTools
                             (newTaskGetTools authenticationMaybe searchQuery "")
+                        , Task.perform
+                            ErrorBubbles
+                            LoadedBubbles
+                            (Task.succeed
+                                [ { name = "Data-visualization", radius = 87, selected = True }
+                                , { name = "Petitions", radius = 80, selected = False }
+                                ]
+                            )
+                          -- TODO Replace with HTTP request
                         ]
             in
                 model' ! cmds
+
+        LoadedBubbles body ->
+            ( { model | bubbles = Data (Loaded body) }
+            , mountd3bubbles body
+            )
 
         LoadedExamples body ->
             ( { model | examples = Data (Loaded body) }
@@ -156,6 +214,27 @@ update msg authenticationMaybe model =
             ( { model | tools = Data (Loaded body) }
             , Cmd.none
             )
+
+        SelectBubble { name } ->
+            case getData model.bubbles of
+                Nothing ->
+                    ( model, Cmd.none )
+
+                Just bubbles ->
+                    let
+                        newBubbles =
+                            List.map
+                                (\bubble ->
+                                    if bubble.name == name then
+                                        { bubble | selected = True }
+                                    else
+                                        bubble
+                                )
+                                bubbles
+                    in
+                        ( { model | bubbles = Data (Loaded newBubbles) }
+                        , mountd3bubbles newBubbles
+                        )
 
 
 
@@ -224,14 +303,15 @@ viewBanner : Html Msg
 viewBanner =
     div [ class "banner" ]
         [ div [ class "row " ]
-            [ div [ class "carousel slide ", attribute "data-ride" "", id "carousel-example-generic" ]
+            [ div [ class "carousel slide", attribute "data-ride" "", id "carousel-example-generic" ]
                 [ div [ class "carousel-inner ", attribute "role" "listbox" ]
                     [ div [ class "item active text-center" ]
-                        [ div [ class "container" ]
+                        [ div [ class "container-fluid" ]
                             [ div [ class "row" ]
                                 [ div [ class "col-md-12 text-center" ]
-                                    [ img [ src "/img/bubbles.png" ]
-                                        []
+                                    [ div [ id "tag" ]
+                                        [ div [ class "plot" ] []
+                                        ]
                                     ]
                                 ]
                             , div [ class "row filters" ]
