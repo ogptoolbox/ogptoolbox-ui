@@ -16,6 +16,10 @@ var language = navigator.languages && navigator.languages[0] || // Chrome / Fire
 var d3Bubbles = require('./d3bubbles');
 d3Bubbles.installPolyfill();
 
+var rAF = typeof requestAnimationFrame !== 'undefined'
+    ? requestAnimationFrame
+    : function(callback) { setTimeout(function() { callback(); }, 0); };
+
 
 // inject bundled Elm app into div#main
 
@@ -31,23 +35,26 @@ main.ports.setDocumentTitle.subscribe(function(str) {
 });
 
 main.ports.mountd3bubbles.subscribe(function(data) {
-    var bubbles = data.map(function(bubble) {
-        if (bubble.selected) {
-            bubble.type = "selected";
-            bubble.radius = 90;
+    // Use rAF in order to be sure that the port Cmd is called after view is rendered.
+    rAF(function() {
+        var bubbles = data.map(function(bubble) {
+            if (bubble.selected) {
+                bubble.type = "selected";
+                bubble.radius = 90;
+            }
+            return bubble;
+        });
+        var noBubbleSelected = data.filter(function(bubble) {
+            return bubble.selected;
+        }).length == 0;
+        if (noBubbleSelected) {
+            var centerBubble = { name: "Open government", radius: 150, type: "main" };
+            bubbles = bubbles.concat(centerBubble);
         }
-        return bubble;
-    });
-    var noBubbleSelected = data.filter(function(bubble) {
-        return bubble.selected;
-    }).length == 0;
-    if (noBubbleSelected) {
-        var centerBubble = { name: "Open government", radius: 150, type: "main" };
-        bubbles = bubbles.concat(centerBubble);
-    }
-    d3Bubbles.mount({
-        data: bubbles,
-        onSelect: main.ports.bubbleSelections.send,
-        onDeselect: main.ports.bubbleDeselections.send,
-    });
+        d3Bubbles.mount({
+            data: bubbles,
+            onSelect: main.ports.bubbleSelections.send,
+            onDeselect: main.ports.bubbleDeselections.send,
+        });
+    })
 });
