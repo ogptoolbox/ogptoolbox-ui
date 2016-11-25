@@ -5,7 +5,7 @@ import Dict
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
-import Html.Helpers exposing (aExternal, aForPath, imgForCard)
+import Html.Helpers exposing (aExternal, aForPath, getImageUrl)
 import Http
 import I18n
 import String
@@ -571,13 +571,13 @@ viewBanner =
         ]
 
 
-viewExampleThumbnail : Statement -> Card -> Html Msg
-viewExampleThumbnail statement card =
+viewExampleThumbnail : Statement -> Card -> I18n.Language -> Html Msg
+viewExampleThumbnail statement card language =
     let
         urlPath =
             "/examples/" ++ statement.id
     in
-        viewThumbnail urlPath card "example grey"
+        viewThumbnail urlPath card "example grey" Types.Example language
 
 
 viewExamples : String -> I18n.Language -> Int -> List Statement -> Html Msg
@@ -590,7 +590,7 @@ viewExamples searchQuery language count examples =
                 (\statement ->
                     case statement.custom of
                         CardCustom card ->
-                            viewExampleThumbnail statement card
+                            viewExampleThumbnail statement card language
                 )
          )
             ++ [ div [ class "col-sm-12 text-center" ]
@@ -669,7 +669,7 @@ viewOrganizations searchQuery language count organizations =
                 (\statement ->
                     case statement.custom of
                         CardCustom card ->
-                            viewOrganizationThumbnail statement card
+                            viewOrganizationThumbnail statement card language
                 )
          )
             ++ [ div [ class "col-sm-12 text-center" ]
@@ -684,38 +684,62 @@ viewOrganizations searchQuery language count organizations =
         )
 
 
-viewOrganizationThumbnail : Statement -> Card -> Html Msg
-viewOrganizationThumbnail statement card =
+viewOrganizationThumbnail : Statement -> Card -> I18n.Language -> Html Msg
+viewOrganizationThumbnail statement card language =
     let
         urlPath =
             "/organizations/" ++ statement.id
     in
-        viewThumbnail urlPath card "orga grey"
+        viewThumbnail urlPath card "orga grey" Types.Organization language
 
 
-viewThumbnail : String -> Card -> String -> Html Msg
-viewThumbnail urlPath card extraClass =
-    div [ class "col-xs-6 col-md-3" ]
-        [ div [ class ("thumbnail " ++ extraClass), onClick (navigate urlPath) ]
-            [ div [ class "visual" ]
-                [ imgForCard [] "218x140" card ]
-            , div [ class "caption" ]
-                ([ h4 []
-                    [ aForPath navigate urlPath [] [ text (getOneString nameKeys card |> Maybe.withDefault "") ] ]
-                 , p []
-                    (case getOneString descriptionKeys card of
-                        Just description ->
-                            [ text description ]
+viewThumbnail : String -> Card -> String -> CardType -> I18n.Language -> Html Msg
+viewThumbnail urlPath card extraClass cardType language =
+    let
+        name =
+            getOneString nameKeys card |> Maybe.withDefault ""
+    in
+        div [ class "col-xs-6 col-md-3" ]
+            [ div [ class ("thumbnail " ++ extraClass), onClick (navigate urlPath) ]
+                [ div [ class "visual" ]
+                    [ case getImageUrl "218x140" card of
+                        Just url ->
+                            img [ alt "Logo", src url ] []
 
                         Nothing ->
-                            []
+                            h1 [ class "dynamic" ] [ text name ]
+                    ]
+                , div [ class "caption" ]
+                    [ h4 []
+                        [ aForPath navigate urlPath [] [ text name ] ]
+                    , case getOneString descriptionKeys card of
+                        Just description ->
+                            p [] [ text description ]
+
+                        Nothing ->
+                            p
+                                [ class "call" ]
+                                [ text (I18n.translate language (I18n.CallToActionForDescription cardType)) ]
+                    ]
+                , div [ class "tags" ]
+                    (case getManyStrings tagKeys card of
+                        [] ->
+                            [ span
+                                [ class "label label-default label-tool" ]
+                                [ text (I18n.translate language I18n.CallToActionForCategory) ]
+                            ]
+
+                        xs ->
+                            List.map
+                                (\str ->
+                                    span
+                                        [ class "label label-default label-tool" ]
+                                        [ text str ]
+                                )
+                                xs
                     )
-                 , span [ class "label label-default label-tool" ]
-                    [ text "TODO Default" ]
-                 ]
-                )
+                ]
             ]
-        ]
 
 
 viewTools : String -> I18n.Language -> Int -> List Statement -> Html Msg
@@ -728,7 +752,7 @@ viewTools searchQuery language count tools =
                 (\statement ->
                     case statement.custom of
                         CardCustom card ->
-                            viewToolThumbnail statement card
+                            viewToolThumbnail statement card language
                 )
          )
             ++ [ div [ class "col-sm-12 text-center" ]
@@ -743,10 +767,10 @@ viewTools searchQuery language count tools =
         )
 
 
-viewToolThumbnail : Statement -> Card -> Html Msg
-viewToolThumbnail statement card =
+viewToolThumbnail : Statement -> Card -> I18n.Language -> Html Msg
+viewToolThumbnail statement card language =
     let
         urlPath =
             "/tools/" ++ statement.id
     in
-        viewThumbnail urlPath card "tool"
+        viewThumbnail urlPath card "tool" Types.Tool language

@@ -4,7 +4,7 @@ import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
-import Html.Helpers exposing (aForPath, imgForCard)
+import Html.Helpers exposing (aForPath, getImageUrl)
 import I18n
 import String
 import Types exposing (..)
@@ -150,7 +150,7 @@ view cardType counts navigate searchQuery language loadingStatus =
                                     ]
                                 ]
                             ]
-                       , div [ class "row list" ]
+                       , div [ class "row list p90" ]
                             ((case loadingStatus of
                                 Loading body ->
                                     [ viewLoading ]
@@ -206,11 +206,11 @@ viewStatements : CardType -> (String -> msg) -> I18n.Language -> List Statement 
 viewStatements cardType navigate language statements =
     statements
         |> filterByCardType cardType
-        |> List.map (viewTool cardType navigate language)
+        |> List.map (viewCard cardType navigate language)
 
 
-viewTool : CardType -> (String -> msg) -> I18n.Language -> Statement -> Html msg
-viewTool cardType navigate language statement =
+viewCard : CardType -> (String -> msg) -> I18n.Language -> Statement -> Html msg
+viewCard cardType navigate language statement =
     let
         statementUrl =
             (case cardType of
@@ -229,27 +229,36 @@ viewTool cardType navigate language statement =
             case statement.custom of
                 CardCustom card ->
                     card
+
+        name =
+            getOneString nameKeys card |> Maybe.withDefault ""
     in
         div [ class "col-xs-12" ]
             [ div [ class "thumbnail example", onClick (navigate statementUrl) ]
                 [ div [ class "visual" ]
-                    [ imgForCard [] "95x98" card ]
+                    [ case getImageUrl "95x98" card of
+                        Just url ->
+                            img [ alt "Logo", src url ] []
+
+                        Nothing ->
+                            h1 [ class "dynamic" ] [ text name ]
+                    ]
                 , div [ class "caption" ]
-                    ([ h4 []
+                    [ h4 []
                         [ aForPath
                             navigate
                             statementUrl
                             []
-                            [ text (getOneString nameKeys card |> Maybe.withDefault "") ]
+                            [ text name ]
                         , small []
                             [ text (I18n.translate language I18n.Software) ]
                         ]
-                     , div [ class "example-author" ]
+                    , div [ class "example-author" ]
                         [ img [ alt "screen", src "/img/TODO.png" ]
                             []
                         , text "TODO The White House"
                         ]
-                     , p []
+                    , p []
                         (case getOneString descriptionKeys card of
                             Just description ->
                                 [ text description ]
@@ -257,16 +266,17 @@ viewTool cardType navigate language statement =
                             Nothing ->
                                 []
                         )
-                     ]
-                        ++ (case getManyStrings typeKeys card of
-                                [] ->
-                                    [ text "TODO call-to-action" ]
+                    ]
+                , div [ class "tags" ]
+                    (case getManyStrings typeKeys card of
+                        [] ->
+                            [ text "TODO call-to-action" ]
 
-                                xs ->
-                                    List.map
-                                        (\str -> span [ class "label label-default label-tool" ] [ text str ])
-                                        xs
-                           )
+                        xs ->
+                            List.map
+                                (\str -> span
+                                [ class "label label-default label-tool" ] [ text str ])
+                                xs
                     )
                 ]
             ]

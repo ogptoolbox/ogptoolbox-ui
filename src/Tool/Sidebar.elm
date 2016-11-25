@@ -2,7 +2,7 @@ module Tool.Sidebar exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Helpers exposing (aExternal, imgForCard)
+import Html.Helpers exposing (aExternal, getImageUrl)
 import I18n
 import Types exposing (..)
 
@@ -14,7 +14,14 @@ root language card =
             [ div [ class "col-xs-12" ]
                 [ div [ class "thumbnail orga grey" ]
                     [ div [ class "visual" ]
-                        [ imgForCard [] "100" card ]
+                    [ case getImageUrl "100" card of
+                        Just url ->
+                            img [ alt "Logo", src url ] []
+
+                        Nothing ->
+                            h1 [ class "dynamic" ] [ text (getOneString nameKeys card |> Maybe.withDefault "") ]
+                    ]
+
                     , div [ class "caption" ]
                         [ table [ class "table" ]
                             [ tbody []

@@ -98,6 +98,20 @@ a {
             border-color: #2590ff;
         }
     }
+    &.btn-action3     {
+        background: none;
+        border: 1px solid #a7a7a7;
+        padding: 6px 20px;
+        color: grey;
+        font-size: 13px;
+        margin-top: 1px;
+
+        &:hover     {
+            color: white;
+            background: @light-blue;
+            border-color: @light-blue;
+        }
+    }
 
 }
 
@@ -314,9 +328,9 @@ nav.navbar.navbar-inverse {
     }
 
     input[type=radio], input[type=checkbox] {
-       position: absolute;
-       top: -9999px;
-       left: -9999px;
+     position: absolute;
+     top: -9999px;
+     left: -9999px;
 /* For mobile, it's typically better to position checkbox on top of clickable
 area and turn opacity to 0 instead. */
 }
@@ -508,6 +522,8 @@ p.info-box  {
 // MAIN CONTENT
 .content    {
 
+    min-height: 700px;
+
     .metrics {
         margin: 30px 0px 0;
         h3 {
@@ -593,13 +609,13 @@ p.info-box  {
 }
 
 .panel-body {
-    padding: 9px 0;
+    padding: 0;
 
     &.simple {
         padding-top: 2px;
     }
     p {
-        padding: 0;
+        padding: 9px 0;
         line-height: 1.6em;
     }
 }
@@ -709,6 +725,18 @@ h4.zone-label {
     padding: 0px;
     margin-bottom: 24px;
     cursor: pointer;
+    position: relative;
+
+    button.close {
+        position: absolute;
+        right: 12px;
+        top: 8px;
+        display: none;
+    }
+
+    &:hover button.close {
+        display: block;
+    }
 
     &.example, &.tool, &.orga   {
         box-shadow: none;
@@ -736,11 +764,25 @@ h4.zone-label {
     &.tool  {
         background: white;
         box-shadow: none;
-        border: none;
+        border-size: 0;
         border-radius: 0px;
 
         .visual     {
             border-bottom: 1px solid #e8e8e8;
+
+            h1.dynamic {
+                font-size: 60px;
+                line-height: 95px;
+                color: #cdcdcd;
+                font-weight: 300;
+                display: table-cell;
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                vertical-align: middle;
+            }
         }
         &.grey     {
             background: @light-grey;
@@ -765,6 +807,94 @@ h4.zone-label {
         }
     }
 
+    &.example {
+
+        h1.dynamic {
+            font-size: 18px;
+            line-height: 138px;
+            color: #f6f6f6;
+            background: #d8d8d8;
+            font-weight: 300;
+            height: auto;
+            width: auto;
+            display: table-cell;
+            position: absolute;
+            margin: auto;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+    }
+
+    &.collection   {
+        height: 185px;
+        border-radius: 6px;
+        box-shadow: none;
+        border: none;
+        overflow: hidden;
+
+        &:hover {
+
+            .visual img     {
+                opacity: 0.8;
+            }
+
+        }
+
+        .visual     {
+            height: 100%;
+            display: block;
+            overflow: hidden;
+            background: #25282b;
+            position: relative;
+            img     {
+                height: 120%;
+                width: auto;
+                position: absolute;
+                margin: auto;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                opacity: 0.5;
+            }
+        }
+        .caption {
+            color: white;
+            margin-top: -184px;
+            z-index: 1000;
+            position: relative;
+            max-height: 160px;
+            height: 160px;
+            padding: 18px;
+            margin-bottom: 0;
+
+            h4 {
+                font-size: 22px;
+                line-height: 1em;
+            }
+            .example-author {
+                font-size: 12px;
+                margin-bottom: 7px;
+                margin-top: -1px;
+                line-height: 12px;
+                img {
+                    max-width: 23px;
+                    max-height: 15px;
+                    margin-right: 4px;
+                    background: white;
+                    padding: 1px;
+                    margin-top: -2px;
+                }
+            }
+            p {
+                margin-top: 30px;
+            }
+        }
+    }
+
     .visual     {
         height: 140px;
         display: block;
@@ -773,6 +903,7 @@ h4.zone-label {
         vertical-align: middle;
         text-align: center;
         background: black;
+        position: relative;
         img     {
             width: 100%;
             opacity: 0.9;
@@ -781,17 +912,17 @@ h4.zone-label {
 
 
     .example-author-thumb   {
-       height: 54px;
-       width: 54px;
-       border: 1px solid #e8e8e8;
-       background: white;
-       float: right;
-       position: absolute;
-       right: 25px;
-       top: 111px;
-       text-align: center;
+     height: 54px;
+     width: 54px;
+     border: 1px solid #e8e8e8;
+     background: white;
+     float: right;
+     position: absolute;
+     right: 15px;
+     top: 111px;
+     text-align: center;
 
-       img   {
+     img   {
         width: 85%;
         position: absolute;
         margin: auto;
@@ -806,42 +937,37 @@ h4.zone-label {
 
 .caption {
 
-    padding: 12px 12px 17px;
+    padding: 12px 12px 20px;
+    max-height: 90px;
+    min-height: 90px;
+    height: 90px;
+    overflow: hidden;
 
     h4 {
         font-size: 15px;
-        margin: 3px 0 8px;
+        margin: 3px 0 9px;
     }
 
     p   {
         font-size: 12px;
         line-height: 1.4em;
-        max-height: 48px;
-        min-height: 48px;
-        height: 48px;
-        overflow: hidden;
-        margin-bottom: 20px;
         padding: 0px;
-    }
-    .label-tool {
-        background-color: transparent;
-        border: 1px solid #ddd;
-        color: grey;
-        margin-right: 3px;
-        font-weight: normal;
-        border-radius: 2px;
-        padding: 2px 6px;
-        cursor: pointer;
+        margin-bottom: 0px;
 
-        &:hover {
-            background-color: #a7a7a7;
-            border: 1px solid #a7a7a7;
-            color: white;
-
+        &.call {
+            font-style: italic;
+            color: grey;
         }
     }
 
 }
+
+.tags {
+
+    padding: 15px 12px 13px;
+
+}
+
 .table>tbody>tr>td, .thumbnail .table>tbody>tr>th, .thumbnail .table>tfoot>tr>td, .thumbnail .table>tfoot>tr>th, .thumbnail .table>thead>tr>td, .thumbnail .table>thead>tr>th {
     padding: 8px 6px;
     line-height: 1.5;
@@ -877,11 +1003,76 @@ a.show-more {
     }
 }
 
+.label-tool {
+        background-color: transparent;
+        border: 1px solid #ddd;
+        color: grey;
+        margin-right: 4px;
+        font-weight: normal;
+        border-radius: 2px;
+        padding: 2px 6px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #a7a7a7;
+            border: 1px solid #a7a7a7;
+            color: white;
+
+        }
+    }
+
+.call-add {
+        font-size: 9px;
+        text-transform: uppercase;
+        background-color: transparent;
+        border: 1px solid #ddd;
+        color: grey;
+        font-weight: normal;
+        border-radius: 2px;
+        padding: 4px 10px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #a7a7a7;
+            border: 1px solid #a7a7a7;
+            color: white;
+
+        }
+}
+
+.call-container {
+
+    text-align: center;
+    margin-bottom: 70px;
+    margin-top: 10px;
+
+    p {
+        text-align: center;
+        margin: 20px 0 15px;
+    }
+
+}
+
+.visual .call-container {
+
+    position: absolute;
+    top: 75px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    vertical-align: middle;
+    display: table-cell;
+
+}
 
 //SHOW THUMBNAILS IN A LIST INSTEAD OF GRID
 .list {
+    margin-bottom: 20px;
 
-    padding-top: 87px;
+    &.p90 {
+        padding-top: 87px;
+    }
 
     .show-more {
         margin-top: 20px;
@@ -892,14 +1083,22 @@ a.show-more {
         background-color: white;
         border-bottom: 1px solid @line-grey;
         margin-bottom: 0px;
+        min-height: 137px;
 
         &:hover {
             background: @light-grey;
         }
 
+        &.tool .caption p {
+            margin-top: 8px;
+            margin-bottom: 20px;
+            line-height: 1.4em;
+
+        }
+
         .visual {
             float: left;
-            width: 97px;
+            width: 160px;
             height: 100px;
             clear: both;
             border: 1px solid @line-grey;
@@ -910,7 +1109,10 @@ a.show-more {
         }
         .caption {
             padding: 0px;
-            padding-left: 110px;
+            padding-left: 15px;
+            height: 72px;
+            min-height: 72px;
+            max-height: 72px;
 
             h4 {
                 margin: 0px 0 4px;
@@ -939,6 +1141,13 @@ a.show-more {
                 margin-bottom: 7px;
                 line-height: 1.3em;
             }
+        }
+
+        .tags {
+            padding-left: 15px;
+            overflow: hidden;
+            padding-bottom: 0px;
+            padding-top: 8px;
         }
     }
 
@@ -988,10 +1197,10 @@ a.show-more {
 .panel-side {
 
     h6.panel-title {
-     font-weight: 600;
-     font-size: 13px;
- }
- .panel-body {
+       font-weight: 600;
+       font-size: 13px;
+   }
+   .panel-body {
     padding: 5px 0;
     margin: 0px;
 }
@@ -1015,7 +1224,9 @@ table {
 
 .sidebar .thumbnail .caption {
 
-    padding: 12px 0px 17px;
+    padding: 12px 0px 8px;
+    max-height: 100%;
+    height: auto;
 
     .table .table-label {
         padding-left: 18px;
@@ -1228,10 +1439,10 @@ body, html, #main, .main-container {
         max-height: 100%;
         position: absolute;
 
-            top: -6px;
-            left: -20px;
-            right: -20px;
-            bottom: 0;
+        top: -6px;
+        left: -20px;
+        right: -20px;
+        bottom: 0;
     }
 
     .row.filters {
@@ -1284,7 +1495,7 @@ body, html, #main, .main-container {
     margin-top: -6px;
 
     li {
-            color: white;
+        color: white;
     }
 }
 
@@ -1319,23 +1530,23 @@ body, html, #main, .main-container {
     }
 
     h4, h3, h2 {
-            text-align: left;
-            padding-left: 120px;
-            color: white;
-        }
-        h4 {
-    font-size: 14px;
-    padding-top: 5px;
+        text-align: left;
+        padding-left: 120px;
+        color: white;
+    }
+    h4 {
+        font-size: 14px;
+        padding-top: 5px;
     }
     h2 {
-    font-size: 52px;
-    margin-top: -10px;
-    font-weight: 300;
+        font-size: 52px;
+        margin-top: -10px;
+        font-weight: 300;
     }
     h3 {
-    font-size: 17px;
-    margin-top: -8px;
-    font-weight: 300;
+        font-size: 17px;
+        margin-top: -8px;
+        font-weight: 300;
         a {
             color: white;
             font-weight: 400;
@@ -1354,8 +1565,8 @@ body, html, #main, .main-container {
     }
 
     .form-group {
-    margin: 20px 0 0;
-}
+        margin: 20px 0 0;
+    }
 
 }
 
@@ -1373,14 +1584,80 @@ body, html, #main, .main-container {
     padding: 50px;
 
     .glyphicon {
-    font-size: 61px;
-    margin: auto;
-    display: block;
-}
+        font-size: 61px;
+        margin: auto;
+        display: block;
+    }
 
-&:hover {
+    &:hover {
         color: rgba(0, 0, 0, 0.5);
         background: rgba(0, 0, 0, 0.2);
+    }
+
+}
+
+
+.example h4 {
+    padding-right: 70px !important;
+}
+
+
+// COMPARE TABLE
+
+table.compare {
+    margin-top: 40px;
+    margin-bottom: 80px;
+
+//     &.table-striped>tbody>tr>td:nth-of-type(even) {
+//     background-color: rgba(0, 0, 0, 0);
+// }
+// &.table-striped>tbody>tr>td:nth-of-type(odd) {
+//     background-color: rgba(0, 0, 0, 0.02);
+// }
+&.table-striped>tbody>tr>td {
+    border-left: 2px solid white ;
+}
+   &.table-striped>tbody>tr:nth-of-type(even) {
+    background-color: white;
+}
+&.table-striped>tbody>tr:nth-of-type(odd) {
+    background-color: #f7f7f7;
+}
+
+    &>tbody>tr>td {
+        padding-left: 10px;
+        text-align: center;
+    }
+    &>tbody>tr>th {
+        padding-right: 20px;
+        padding-left: 8px;
+    }
+    &>thead>tr>th {
+        padding-left: 10px;
+        text-align: center;
+        padding-bottom: 20px;
+        vertical-align: middle;
+        display: table-cell;
+        height: 60px;
+
+    }
+    img {
+        height: auto;
+        width: auto;
+        max-height: 40px;
+        max-width: 80px;
+        margin-right: 5px;
+    }
+    .btn.btn-default.btn-action {
+    border: 1px solid #25b5ff;
+    color: #25b5ff;
+    padding: 3px 10px;
+    margin-top: 0px;
+    font-size: 12px;
+
+    &:hover {
+        color: white;
+    }
     }
 
 }

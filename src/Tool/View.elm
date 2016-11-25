@@ -4,7 +4,7 @@ import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
-import Html.Helpers exposing (aExternal, aForPath, aIfIsUrl, imgForCard)
+import Html.Helpers exposing (aExternal, aForPath, aIfIsUrl, getImageUrl)
 import I18n
 import Routes exposing (pathForStatement)
 import String
@@ -29,7 +29,7 @@ root navigate language loadingStatus =
             viewStatement navigate language body
 
 
-viewCard : (String -> msg) ->  I18n.Language -> Dict String Statement -> Card -> Html msg
+viewCard : (String -> msg) -> I18n.Language -> Dict String Statement -> Card -> Html msg
 viewCard navigate language statements card =
     div [ class "col-md-9 content content-right" ]
         [ div [ class "row" ]
@@ -326,36 +326,42 @@ viewUriReferenceAsThumbnail navigate statements statementId =
                 Just urlPath ->
                     case statement.custom of
                         CardCustom card ->
-                            div [ class "col-xs-6 col-md-4", onClick (navigate urlPath) ]
-                                [ div [ class "thumbnail orga grey" ]
-                                    [ div [ class "visual" ]
-                                        [ imgForCard [] "261x140" card ]
-                                    , div [ class "caption" ]
-                                        [ h4 []
-                                            [ aForPath navigate
-                                                urlPath
-                                                []
+                            let
+                                name =
+                                    getOneString nameKeys card |> Maybe.withDefault "TODO call-to-action"
+                            in
+                                div [ class "col-xs-6 col-md-4", onClick (navigate urlPath) ]
+                                    [ div [ class "thumbnail orga grey" ]
+                                        [ div [ class "visual" ]
+                                            [ case getImageUrl "261x140" card of
+                                                Just url ->
+                                                    img [ alt "Logo", src url ] []
+
+                                                Nothing ->
+                                                    h1 [ class "dynamic" ] [ text name ]
+                                            ]
+                                        , div [ class "caption" ]
+                                            [ h4 []
+                                                [ aForPath navigate
+                                                    urlPath
+                                                    []
+                                                    [ text name ]
+                                                ]
+                                            , p []
                                                 [ text
-                                                    (getOneString nameKeys card
+                                                    (getOneString descriptionKeys card
                                                         |> Maybe.withDefault "TODO call-to-action"
                                                     )
                                                 ]
                                             ]
-                                        , p []
-                                            [ text
-                                                (getOneString descriptionKeys card
-                                                    |> Maybe.withDefault "TODO call-to-action"
-                                                )
-                                            ]
                                         ]
                                     ]
-                                ]
 
                 Nothing ->
                     text ("Error: impossible to determine the path of the referenced statement (id: " ++ statementId)
 
 
-viewStatement : (String -> msg) ->  I18n.Language -> DataIdBody -> Html msg
+viewStatement : (String -> msg) -> I18n.Language -> DataIdBody -> Html msg
 viewStatement navigate language body =
     case Dict.get body.data.id body.data.statements of
         Nothing ->

@@ -1,5 +1,8 @@
 module I18n exposing (..)
 
+import Types
+
+
 -- STRINGS TO TRANSLATE
 -- for translators who want to internationalize the application
 
@@ -7,6 +10,8 @@ module I18n exposing (..)
 type TranslationId
     = About
     | AddNew
+    | CallToActionForCategory
+    | CallToActionForDescription Types.CardType
     | Close
     | Copyright
     | Example GrammaticalNumber
@@ -56,6 +61,45 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        CallToActionForCategory ->
+            { english = s "+ Add category"
+            , french = s "+ Ajouter une catégorie"
+            , spanish = todo
+            }
+
+        CallToActionForDescription cardType ->
+            { english =
+                case cardType of
+                    Types.Example ->
+                        s "Add a description for this use case"
+
+                    Types.Organization ->
+                        s "Add a description for this organization"
+
+                    Types.Tool ->
+                        s "Add a description for this tool"
+            , french =
+                case cardType of
+                    Types.Example ->
+                        todo
+
+                    Types.Organization ->
+                        todo
+
+                    Types.Tool ->
+                        todo
+            , spanish =
+                case cardType of
+                    Types.Example ->
+                        todo
+
+                    Types.Organization ->
+                        todo
+
+                    Types.Tool ->
+                        todo
+            }
+
         Close ->
             { english = s "Close"
             , french = s "Fermer"
@@ -72,18 +116,24 @@ getTranslationSet translationId =
             { english =
                 case number of
                     Singular ->
-                        s "Example"
+                        s "Use case"
 
                     Plural ->
-                        s "Examples"
+                        s "Use cases"
             , french =
                 case number of
                     Singular ->
-                        s "Exemple"
+                        todo
 
                     Plural ->
-                        s "Exemples"
-            , spanish = todo
+                        todo
+            , spanish =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
             }
 
         GenericError ->
@@ -93,8 +143,8 @@ getTranslationSet translationId =
             }
 
         HeaderTitle ->
-            { english = s "tools and use cases for open government"
-            , french = s "outils et cas d'utilisation pour un gouvernement ouvert"
+            { english = s "find digital tools to improve democracy"
+            , french = todo
             , spanish = todo
             }
 

@@ -69,26 +69,17 @@ aIfIsUrl attributes s =
             text s
 
 
-imgForCard : List (Attribute msg) -> String -> Card -> Html msg
-imgForCard attributes dim card =
-    img
-        ([ alt "Logo"
-         , src
-            (case getOneString imageUrlPathKeys card of
-                Just urlPath ->
-                    apiUrl
-                        ++ (if String.startsWith "/" urlPath then
-                                String.dropLeft 1 urlPath
-                            else
-                                urlPath
-                           )
-                        ++ "?dim="
-                        ++ dim
-
-                Nothing ->
-                    "TODO"
+getImageUrl : String -> Card -> Maybe String
+getImageUrl dim card =
+    getOneString imageUrlPathKeys card
+        |> Maybe.map
+            (\urlPath ->
+                apiUrl
+                    ++ (if String.startsWith "/" urlPath then
+                            String.dropLeft 1 urlPath
+                        else
+                            urlPath
+                       )
+                    ++ "?dim="
+                    ++ dim
             )
-         ]
-            ++ attributes
-        )
-        []
