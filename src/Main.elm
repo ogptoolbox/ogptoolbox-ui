@@ -104,9 +104,6 @@ init languageStr ( i18nRoute, location ) =
 urlUpdate : ( I18nRoute, Hop.Types.Location ) -> Model -> ( Model, Cmd Msg )
 urlUpdate ( i18nRoute, location ) model =
     let
-        _ =
-            Debug.log "i18nRoute, location" ( i18nRoute, location )
-
         searchQuery =
             getSearchQuery location
 
