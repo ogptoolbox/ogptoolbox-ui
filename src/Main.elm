@@ -1,4 +1,4 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 import About
 import Authenticator.Model
@@ -51,6 +51,13 @@ main =
         , view = view
         , subscriptions = subscriptions
         }
+
+
+
+-- PORTS
+
+
+port setDocumentTitle : String -> Cmd msg
 
 
 
@@ -112,12 +119,16 @@ urlUpdate ( i18nRoute, location ) model =
                 I18nRouteWithLanguage language route ->
                     case route of
                         AboutRoute ->
-                            ( model, Cmd.none )
+                            ( model, setDocumentTitle (I18n.translate language I18n.About) )
 
                         ExamplesRoute childRoute ->
                             let
                                 ( examplesModel, childCmd ) =
-                                    Examples.State.urlUpdate ( childRoute, location ) model.examplesModel
+                                    Examples.State.urlUpdate
+                                        ( childRoute, location )
+                                        model.examplesModel
+                                        language
+                                        setDocumentTitle
                             in
                                 ( { model
                                     | examplesModel = examplesModel
@@ -127,12 +138,14 @@ urlUpdate ( i18nRoute, location ) model =
                                 )
 
                         HelpRoute ->
-                            ( model, Cmd.none )
+                            ( model, setDocumentTitle (I18n.translate language I18n.Help) )
 
                         HomeRoute ->
                             let
                                 ( homeModel, childCmd ) =
-                                    Home.update (Home.Load searchQuery) model.authenticationMaybe model.homeModel
+                                    Home.update (Home.Load searchQuery)
+                                        model.authenticationMaybe
+                                        model.homeModel
                             in
                                 ( { model
                                     | homeModel = homeModel
@@ -142,12 +155,16 @@ urlUpdate ( i18nRoute, location ) model =
                                 )
 
                         NotFoundRoute _ ->
-                            ( model, Cmd.none )
+                            ( model, setDocumentTitle (I18n.translate language I18n.PageNotFound) )
 
                         OrganizationsRoute childRoute ->
                             let
                                 ( organizationsModel, childCmd ) =
-                                    Organizations.urlUpdate ( childRoute, location ) model.organizationsModel
+                                    Organizations.urlUpdate
+                                        ( childRoute, location )
+                                        model.organizationsModel
+                                        language
+                                        setDocumentTitle
                             in
                                 ( { model
                                     | organizationsModel = organizationsModel
@@ -159,7 +176,11 @@ urlUpdate ( i18nRoute, location ) model =
                         ToolsRoute childRoute ->
                             let
                                 ( toolsModel, childCmd ) =
-                                    Tools.urlUpdate ( childRoute, location ) model.toolsModel
+                                    Tools.urlUpdate
+                                        ( childRoute, location )
+                                        model.toolsModel
+                                        language
+                                        setDocumentTitle
                             in
                                 ( { model
                                     | toolsModel = toolsModel

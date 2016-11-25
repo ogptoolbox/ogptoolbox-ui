@@ -3,6 +3,7 @@ module Examples.State exposing (..)
 import Authenticator.Model
 import Examples.Types exposing (..)
 import Hop.Types
+import I18n
 import Requests exposing (..)
 import Routes exposing (getSearchQuery, ExamplesNestedRoute(..))
 import Task
@@ -18,18 +19,29 @@ init =
 -- ROUTING
 
 
-urlUpdate : ( ExamplesNestedRoute, Hop.Types.Location ) -> Model -> ( Model, Cmd Msg )
-urlUpdate ( route, location ) model =
+urlUpdate :
+    ( ExamplesNestedRoute, Hop.Types.Location )
+    -> Model
+    -> I18n.Language
+    -> (String -> Cmd Msg)
+    -> ( Model, Cmd Msg )
+urlUpdate ( route, location ) model language setDocumentTitle =
     let
         searchQuery =
             getSearchQuery location
     in
         case route of
             ExampleRoute exampleId ->
-                ( model, loadOne exampleId )
+                model
+                    ! [ loadOne exampleId
+                      , setDocumentTitle (I18n.translate language (I18n.Example I18n.Singular))
+                      ]
 
             ExamplesIndexRoute ->
-                ( model, loadAll searchQuery )
+                model
+                    ! [ loadAll searchQuery
+                      , setDocumentTitle (I18n.translate language (I18n.Example I18n.Plural))
+                      ]
 
 
 

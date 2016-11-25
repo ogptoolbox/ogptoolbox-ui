@@ -7,7 +7,6 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Http
 import I18n
-
 import Organization
 import Requests exposing (..)
 import Routes exposing (getSearchQuery, OrganizationsNestedRoute(..))
@@ -40,18 +39,29 @@ init =
 -- ROUTING
 
 
-urlUpdate : ( OrganizationsNestedRoute, Hop.Types.Location ) -> Model -> ( Model, Cmd Msg )
-urlUpdate ( route, location ) model =
+urlUpdate :
+    ( OrganizationsNestedRoute, Hop.Types.Location )
+    -> Model
+    -> I18n.Language
+    -> (String -> Cmd Msg)
+    -> ( Model, Cmd Msg )
+urlUpdate ( route, location ) model language setDocumentTitle =
     let
         searchQuery =
             getSearchQuery location
     in
         case route of
             OrganizationRoute organizationId ->
-                ( model, loadOne organizationId )
+                model
+                    ! [ loadOne organizationId
+                      , setDocumentTitle (I18n.translate language (I18n.Organization I18n.Singular))
+                      ]
 
             OrganizationsIndexRoute ->
-                ( model, loadAll searchQuery )
+                model
+                    ! [ loadAll searchQuery
+                      , setDocumentTitle (I18n.translate language (I18n.Organization I18n.Plural))
+                      ]
 
 
 
@@ -196,7 +206,7 @@ update msg authenticationMaybe model =
 -- VIEW
 
 
-view : Maybe Authenticator.Model.Authentication -> Model -> String -> I18n.Language-> List (Html Msg)
+view : Maybe Authenticator.Model.Authentication -> Model -> String -> I18n.Language -> List (Html Msg)
 view authenticationMaybe model searchQuery language =
     case model of
         Organization webData ->

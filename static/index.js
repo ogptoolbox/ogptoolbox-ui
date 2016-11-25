@@ -12,4 +12,12 @@ var language = navigator.languages && navigator.languages[0] || // Chrome / Fire
 // inject bundled Elm app into div#main
 
 var Elm = require('../src/Main');
-Elm.Main.embed(document.getElementById('main'), language);
+var main = Elm.Main.embed(document.getElementById('main'), language);
+
+main.ports.setDocumentTitle.subscribe(function(str) {
+    var titleElements = document.head.getElementsByTagName('title');
+    if (titleElements.length) {
+        var titleElement = titleElements[0];
+        titleElement.innerText = str + " – OGP Toolbox";
+    }
+});

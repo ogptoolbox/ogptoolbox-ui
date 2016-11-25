@@ -39,18 +39,29 @@ init =
 -- ROUTING
 
 
-urlUpdate : ( ToolsNestedRoute, Hop.Types.Location ) -> Model -> ( Model, Cmd Msg )
-urlUpdate ( route, location ) model =
+urlUpdate :
+    ( ToolsNestedRoute, Hop.Types.Location )
+    -> Model
+    -> I18n.Language
+    -> (String -> Cmd Msg)
+    -> ( Model, Cmd Msg )
+urlUpdate ( route, location ) model language setDocumentTitle =
     let
         searchQuery =
             getSearchQuery location
     in
         case route of
             ToolRoute toolId ->
-                ( model, loadOne toolId )
+                model
+                    ! [ loadOne toolId
+                      , setDocumentTitle (I18n.translate language (I18n.Tool I18n.Singular))
+                      ]
 
             ToolsIndexRoute ->
-                ( model, loadAll searchQuery )
+                model
+                    ! [ loadAll searchQuery
+                      , setDocumentTitle (I18n.translate language (I18n.Tool I18n.Plural))
+                      ]
 
 
 
