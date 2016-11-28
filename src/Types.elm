@@ -1,31 +1,23 @@
 module Types exposing (..)
 
 import Dict exposing (Dict)
-import Set
+
+
+-- import Set
 
 
 type alias Card =
-    Dict String CardField
-
-
-type alias CardStringField =
-    { format : Maybe CardStringFieldFormat
-    , value : String
-    , widget : Maybe CardWidget
+    { createdAt : String
+    , deleted : Bool
+    , id : String
+    , properties : Dict String String
+    , rating : Int
+    , ratingCount : Int
+    , ratingSum : Int
+    , subTypes : List String
+    , tags : List (Dict String String)
+    , type_ : String
     }
-
-
-type CardStringFieldFormat
-    = UriReference
-    | Uri
-    | Email
-
-
-type CardField
-    = StringField CardStringField
-    | NumberField Float
-    | ArrayField (List CardField)
-    | BijectiveUriReferenceField String
 
 
 type CardType
@@ -34,15 +26,10 @@ type CardType
     | Tool
 
 
-type alias CardWidget =
-    { tag : String
-    , type_ : Maybe String
-    }
-
-
 type alias DataId =
-    { id : String
-    , statements : Dict String Statement
+    { cards : Dict String Card
+    , id : String
+    , values : Dict String Value
     }
 
 
@@ -52,56 +39,18 @@ type alias DataIdBody =
 
 
 type alias DataIds =
-    { ids : List String
-    , statements : Dict String Statement
+    { cards : Dict String Card
+    , ids : List String
     , users : Dict String User
+    , values : Dict String Value
     }
 
 
 type alias DataIdsBody =
     { count : Int
     , data : DataIds
-    }
-
-
-type JsonCardSchema
-    = StringSchema (Maybe CardStringFieldFormat)
-    | NumberSchema
-    | ArraySchema JsonCardArraySchemaKind
-    | BijectiveUriReferenceSchema
-
-
-type JsonCardArraySchemaKind
-    = ListArraySchema JsonCardSchema
-    | TupleArraySchema (List JsonCardSchema)
-
-
-type alias Plain =
-    { languageCode : String
-    , name : String
-    }
-
-
-type alias Statement =
-    { createdAt : String
-    , custom : StatementCustom
-    , deleted : Bool
-    , groundIds : List String
-    , id : String
-    , ratingCount : Int
-    , ratingSum : Int
-    }
-
-
-type
-    StatementCustom
-    -- TODO Remove this indirection
-    = CardCustom Card
-
-
-type alias Tag =
-    { name : String
-    , statementId : String
+    , limit : Int
+    , offset : Int
     }
 
 
@@ -118,66 +67,85 @@ type alias UserBody =
     }
 
 
-getManyStrings : List String -> Card -> List String
-getManyStrings propertyKeys card =
+type alias Value =
+    { createdAt : String
+    , id : String
+    , schemaId : String
+    , type_ : String
+    , value : ValueType
+    , widgetId : String
+    }
+
+
+type ValueType
+    = StringValue String
+    | IntValue Int
+    | FloatValue Float
+    | ListValue (List ValueType)
+
+
+getManyStrings : List String -> Card -> Dict String Value -> List String
+getManyStrings propertyKeys card values =
     let
-        getStrings : CardField -> List String
-        getStrings cardField =
-            case cardField of
-                StringField { value } ->
+        getStrings : ValueType -> List String
+        getStrings value =
+            case value of
+                StringValue value ->
                     [ value ]
 
-                ArrayField fields ->
-                    List.concatMap getStrings fields
-
-                NumberField _ ->
+                ListValue [] ->
                     []
 
-                BijectiveUriReferenceField _ ->
+                ListValue subValues ->
+                    List.concatMap getStrings subValues
+
+                IntValue _ ->
+                    []
+
+                FloatValue _ ->
                     []
     in
         propertyKeys
             |> List.map
                 (\propertyKey ->
-                    case Dict.get propertyKey card of
-                        Nothing ->
-                            []
-
-                        Just cardField ->
-                            getStrings cardField
+                    Dict.get propertyKey card.properties
+                        `Maybe.andThen` (\valueId -> Dict.get valueId values)
+                        |> Maybe.map (\value -> getStrings value.value)
+                        |> Maybe.withDefault []
                 )
             |> List.filter (not << List.isEmpty)
             |> List.head
             |> Maybe.withDefault []
 
 
-getOneString : List String -> Card -> Maybe String
-getOneString propertyKeys card =
+getOneString : List String -> Card -> Dict String Value -> Maybe String
+getOneString propertyKeys card values =
     let
-        getString : CardField -> Maybe String
-        getString cardField =
-            case cardField of
-                StringField { value } ->
+        getString : ValueType -> Maybe String
+        getString value =
+            case value of
+                StringValue value ->
                     Just value
 
-                ArrayField [] ->
+                ListValue [] ->
                     Nothing
 
-                ArrayField (field :: _) ->
-                    getString field
+                ListValue (subValue :: _) ->
+                    getString subValue
 
-                NumberField _ ->
+                IntValue _ ->
                     Nothing
 
-                BijectiveUriReferenceField _ ->
+                FloatValue _ ->
                     Nothing
     in
-        List.map
-            (\propertyKey ->
-                Dict.get propertyKey card
-                    `Maybe.andThen` getString
-            )
-            propertyKeys
+        propertyKeys
+            |> List.map
+                (\propertyKey ->
+                    Dict.get propertyKey card.properties
+                        `Maybe.andThen` (\valueId -> Dict.get valueId values)
+                        `Maybe.andThen` (\value -> getString value.value)
+                )
             |> Maybe.oneOf
 
 
@@ -185,16 +153,9 @@ getOneString propertyKeys card =
 -- KEYS
 
 
-cardTypeKeys : List String
-cardTypeKeys =
-    [ "Card Type" ]
-
-
 descriptionKeys : List String
 descriptionKeys =
-    [ "Description-EN"
-    , "Description-FR"
-    ]
+    [ "description" ]
 
 
 imageUrlPathKeys : List String
@@ -209,7 +170,7 @@ licenseKeys =
 
 nameKeys : List String
 nameKeys =
-    [ "Name" ]
+    [ "name" ]
 
 
 tagKeys : List String
@@ -251,69 +212,54 @@ cardTypesForTool =
     [ "Software", "Platform" ]
 
 
-filterByCardType : CardType -> List Statement -> List Statement
-filterByCardType cardType statements =
-    List.filterMap
-        (\statement ->
-            case statement.custom of
-                CardCustom card ->
-                    let
-                        expectedCardTypes =
-                            case cardType of
-                                Example ->
-                                    cardTypesForExample
 
-                                Organization ->
-                                    cardTypesForOrganization
-
-                                Tool ->
-                                    cardTypesForTool
-                    in
-                        validateHasOneOfCardTypes expectedCardTypes card
-                            |> Result.map (\_ -> statement)
-                            |> Result.toMaybe
-        )
-        statements
-
-
-
+-- filterByCardType : CardType -> List Statement -> List Statement
+-- filterByCardType cardType statements =
+--     List.filterMap
+--         (\statement ->
+--             case statement.custom of
+--                 CardCustom card ->
+--                     let
+--                         expectedCardTypes =
+--                             case cardType of
+--                                 Example ->
+--                                     cardTypesForExample
+--                                 Organization ->
+--                                     cardTypesForOrganization
+--                                 Tool ->
+--                                     cardTypesForTool
+--                     in
+--                         validateHasOneOfCardTypes expectedCardTypes card
+--                             |> Result.map (\_ -> statement)
+--                             |> Result.toMaybe
+--         )
+--         statements
 -- VALIDATORS
-
-
-validateHasOneOfCardTypes : List String -> Card -> Result String ()
-validateHasOneOfCardTypes expectedCardTypes card =
-    let
-        existingCardTypes =
-            getManyStrings cardTypeKeys card
-
-        intersection =
-            Set.intersect (Set.fromList expectedCardTypes) (Set.fromList existingCardTypes)
-    in
-        if Set.isEmpty intersection then
-            Err
-                ("Expected one card type among "
-                    ++ (toString expectedCardTypes)
-                    ++ " but found "
-                    ++ (toString existingCardTypes)
-                )
-        else
-            Ok ()
-
-
-validateStatement : String -> List String -> Dict String Statement -> Result String ()
-validateStatement statementId cardTypes statements =
-    (Dict.get statementId statements
-        |> Result.fromMaybe
-            ("Statement ID \""
-                ++ statementId
-                ++ "\" is not in body.data.statements; received "
-                ++ (toString (Dict.keys statements))
-            )
-    )
-        `Result.andThen`
-            (\statement ->
-                case statement.custom of
-                    CardCustom card ->
-                        Ok card
-            )
-        `Result.andThen` (\card -> validateHasOneOfCardTypes cardTypes card)
+-- validateCard : String -> List String -> Dict String Card -> Result String ()
+-- validateCard cardId cardTypes cards =
+--     (Dict.get cardId cards
+--         |> Result.fromMaybe
+--             ("Statement ID \""
+--                 ++ cardId
+--                 ++ "\" is not in body.data.cards; received "
+--                 ++ (toString (Dict.keys cards))
+--             )
+--     )
+--         `Result.andThen` (\card -> validateHasOneOfCardTypes cardTypes card)
+-- validateHasOneOfCardTypes : List String -> Card -> Result String ()
+-- validateHasOneOfCardTypes expectedCardTypes card =
+--     let
+--         existingCardTypes =
+--             getManyStrings cardTypeKeys card
+--         intersection =
+--             Set.intersect (Set.fromList expectedCardTypes) (Set.fromList existingCardTypes)
+--     in
+--         if Set.isEmpty intersection then
+--             Err
+--                 ("Expected one card type among "
+--                     ++ (toString expectedCardTypes)
+--                     ++ " but found "
+--                     ++ (toString existingCardTypes)
+--                 )
+--         else
+--             Ok ()

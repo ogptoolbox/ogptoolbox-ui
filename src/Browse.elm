@@ -159,18 +159,21 @@ view cardType counts navigate searchQuery language loadingStatus =
                                                     []
 
                                                 Just body ->
-                                                    viewStatements
+                                                    viewCards
                                                         cardType
                                                         navigate
                                                         language
-                                                        (Dict.values body.data.statements)
+                                                        (Dict.values body.data.cards)
+                                                        body.data.values
                                            )
 
                                 Loaded body ->
-                                    viewStatements cardType
+                                    viewCards
+                                        cardType
                                         navigate
                                         language
-                                        (Dict.values body.data.statements)
+                                        (Dict.values body.data.cards)
+                                        body.data.values
                              )
                                 ++ (let
                                         count =
@@ -202,17 +205,18 @@ view cardType counts navigate searchQuery language loadingStatus =
     ]
 
 
-viewStatements : CardType -> (String -> msg) -> I18n.Language -> List Statement -> List (Html msg)
-viewStatements cardType navigate language statements =
-    statements
-        |> filterByCardType cardType
-        |> List.map (viewCard cardType navigate language)
+viewCards : CardType -> (String -> msg) -> I18n.Language -> List Card -> Dict String Value -> List (Html msg)
+viewCards cardType navigate language cards values =
+    cards
+        -- |> filterByCardType cardType
+        |>
+            List.map (viewCard cardType navigate language values)
 
 
-viewCard : CardType -> (String -> msg) -> I18n.Language -> Statement -> Html msg
-viewCard cardType navigate language statement =
+viewCard : CardType -> (String -> msg) -> I18n.Language -> Dict String Value -> Card -> Html msg
+viewCard cardType navigate language values card =
     let
-        statementUrl =
+        cardUrl =
             (case cardType of
                 Example ->
                     "/examples/"
@@ -223,20 +227,15 @@ viewCard cardType navigate language statement =
                 Tool ->
                     "/tools/"
             )
-                ++ statement.id
-
-        card =
-            case statement.custom of
-                CardCustom card ->
-                    card
+                ++ card.id
 
         name =
-            getOneString nameKeys card |> Maybe.withDefault ""
+            getOneString nameKeys card values |> Maybe.withDefault ""
     in
         div [ class "col-xs-12" ]
-            [ div [ class "thumbnail example", onClick (navigate statementUrl) ]
+            [ div [ class "thumbnail example", onClick (navigate cardUrl) ]
                 [ div [ class "visual" ]
-                    [ case getImageUrl "95x98" card of
+                    [ case getImageUrl "95x98" card values of
                         Just url ->
                             img [ alt "Logo", src url ] []
 
@@ -247,7 +246,7 @@ viewCard cardType navigate language statement =
                     [ h4 []
                         [ aForPath
                             navigate
-                            statementUrl
+                            cardUrl
                             []
                             [ text name ]
                         , small []
@@ -259,7 +258,7 @@ viewCard cardType navigate language statement =
                         , text "TODO The White House"
                         ]
                     , p []
-                        (case getOneString descriptionKeys card of
+                        (case getOneString descriptionKeys card values of
                             Just description ->
                                 [ text description ]
 
@@ -268,14 +267,17 @@ viewCard cardType navigate language statement =
                         )
                     ]
                 , div [ class "tags" ]
-                    (case getManyStrings typeKeys card of
+                    (case getManyStrings typeKeys card values of
                         [] ->
                             [ text "TODO call-to-action" ]
 
                         xs ->
                             List.map
-                                (\str -> span
-                                [ class "label label-default label-tool" ] [ text str ])
+                                (\str ->
+                                    span
+                                        [ class "label label-default label-tool" ]
+                                        [ text str ]
+                                )
                                 xs
                     )
                 ]

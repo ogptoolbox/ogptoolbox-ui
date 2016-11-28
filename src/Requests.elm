@@ -24,7 +24,7 @@ newTaskGetCardOfType cardTypes authenticationMaybe statementId =
             (dataIdBodyDecoder statementId cardTypes)
             (Http.send Http.defaultSettings
                 { verb = "GET"
-                , url = apiUrl ++ "cards/" ++ statementId ++ "?show=values"
+                , url = apiUrl ++ "objects/" ++ statementId ++ "?show=values"
                 , headers = ( "Accept", "application/json" ) :: authenticationHeaders
                 , body = Http.empty
                 }
