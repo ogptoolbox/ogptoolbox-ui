@@ -5,6 +5,7 @@ import Configuration exposing (apiUrl)
 import Decoders exposing (..)
 import Http
 import I18n
+import Set exposing (Set)
 import String
 import Types exposing (..)
 import Task exposing (Task)
@@ -36,7 +37,7 @@ newTaskGetCardsOfType :
     -> Maybe Authenticator.Model.Authentication
     -> String
     -> String
-    -> List String
+    -> Set String
     -> Task Http.Error DataIdsBody
 newTaskGetCardsOfType cardTypes authenticationMaybe searchQuery limit tags =
     let
@@ -69,7 +70,7 @@ newTaskGetCardsOfType cardTypes authenticationMaybe searchQuery limit tags =
                                      ]
                                         |> List.filterMap identity
                                     )
-                                        ++ (List.map (\tag -> "tag=" ++ tag) tags)
+                                        ++ (Set.map (\tag -> "tag=" ++ tag) tags |> Set.toList)
                                    )
                                 |> String.join "&"
                            )
@@ -91,7 +92,7 @@ newTaskGetExamples :
     Maybe Authenticator.Model.Authentication
     -> String
     -> String
-    -> List String
+    -> Set String
     -> Task Http.Error DataIdsBody
 newTaskGetExamples =
     newTaskGetCardsOfType cardTypesForExample
@@ -109,13 +110,13 @@ newTaskGetOrganizations :
     Maybe Authenticator.Model.Authentication
     -> String
     -> String
-    -> List String
+    -> Set String
     -> Task Http.Error DataIdsBody
 newTaskGetOrganizations =
     newTaskGetCardsOfType cardTypesForOrganization
 
 
-newTaskGetTagsPopularity : I18n.Language -> List String -> Task Http.Error (List PopularTag)
+newTaskGetTagsPopularity : I18n.Language -> Set String -> Task Http.Error (List PopularTag)
 newTaskGetTagsPopularity language tags =
     let
         url =
@@ -123,7 +124,7 @@ newTaskGetTagsPopularity language tags =
                 ++ "cards/tags-popularity?type=Final+Use&language="
                 ++ I18n.iso639_1FromLanguage language
                 ++ "&"
-                ++ ((List.map (\tag -> "tag=" ++ tag) tags) |> String.join "&")
+                ++ ((Set.map (\tag -> "tag=" ++ tag) tags) |> Set.toList |> String.join "&")
     in
         Http.fromJson popularTagsDecoder
             (Http.send Http.defaultSettings
@@ -147,7 +148,7 @@ newTaskGetTools :
     Maybe Authenticator.Model.Authentication
     -> String
     -> String
-    -> List String
+    -> Set String
     -> Task Http.Error DataIdsBody
 newTaskGetTools =
     newTaskGetCardsOfType cardTypesForTool

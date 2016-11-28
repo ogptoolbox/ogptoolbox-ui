@@ -10,6 +10,7 @@ import I18n
 import Organization
 import Requests exposing (..)
 import Routes exposing (getSearchQuery, OrganizationsNestedRoute(..))
+import Set exposing (Set)
 import Task
 import Types exposing (..)
 import Views exposing (viewWebData)
@@ -154,9 +155,9 @@ update msg model authenticationMaybe language setDocumentMetatags =
                             Error
                             LoadedAll
                             (Task.map3 (,,)
-                                (newTaskGetExamples authenticationMaybe searchQuery "1" [])
-                                (newTaskGetOrganizations authenticationMaybe searchQuery "" [])
-                                (newTaskGetTools authenticationMaybe searchQuery "1" [])
+                                (newTaskGetExamples authenticationMaybe searchQuery "1" Set.empty)
+                                (newTaskGetOrganizations authenticationMaybe searchQuery "" Set.empty)
+                                (newTaskGetTools authenticationMaybe searchQuery "1" Set.empty)
                             )
                         )
             in

@@ -9,6 +9,7 @@ import Http
 import I18n
 import Requests exposing (..)
 import Routes exposing (getSearchQuery, ToolsNestedRoute(..))
+import Set exposing (Set)
 import Task
 import Tool.View
 import Types exposing (..)
@@ -154,9 +155,9 @@ update msg model authenticationMaybe language setDocumentMetatags =
                             Error
                             LoadedAll
                             (Task.map3 (,,)
-                                (newTaskGetExamples authenticationMaybe searchQuery "1" [])
-                                (newTaskGetOrganizations authenticationMaybe searchQuery "1" [])
-                                (newTaskGetTools authenticationMaybe searchQuery "" [])
+                                (newTaskGetExamples authenticationMaybe searchQuery "1" Set.empty)
+                                (newTaskGetOrganizations authenticationMaybe searchQuery "1" Set.empty)
+                                (newTaskGetTools authenticationMaybe searchQuery "" Set.empty)
                             )
                         )
             in

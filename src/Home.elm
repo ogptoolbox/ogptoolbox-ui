@@ -8,6 +8,7 @@ import Html.Events exposing (onClick)
 import Html.Helpers exposing (aExternal, aForPath)
 import Http
 import I18n
+import Set exposing (Set)
 import String
 import Task
 import Types exposing (..)
@@ -23,7 +24,7 @@ type alias Model =
     { examples : WebData DataIdsBody
     , organizations : WebData DataIdsBody
     , popularTags : WebData (List PopularTag)
-    , selectedTags : List String
+    , selectedTags : Set String
     , tools : WebData DataIdsBody
     }
 
@@ -33,7 +34,7 @@ init =
     { examples = NotAsked
     , organizations = NotAsked
     , popularTags = NotAsked
-    , selectedTags = []
+    , selectedTags = Set.empty
     , tools = NotAsked
     }
 
@@ -108,7 +109,7 @@ update msg model authenticationMaybe language searchQuery mountd3bubbles =
                 Just _ ->
                     let
                         newSelectedTags =
-                            List.filter (\tag -> tag /= deselectedTag) model.selectedTags
+                            Set.remove deselectedTag model.selectedTags
 
                         cmds =
                             List.map (Cmd.map ForSelf)
@@ -198,7 +199,7 @@ update msg model authenticationMaybe language searchQuery mountd3bubbles =
                         , Task.perform
                             ErrorPopularTags
                             LoadedPopularTags
-                            (newTaskGetTagsPopularity language [])
+                            (newTaskGetTagsPopularity language Set.empty)
                         ]
             in
                 model' ! cmds
@@ -215,7 +216,7 @@ update msg model authenticationMaybe language searchQuery mountd3bubbles =
 
         LoadedPopularTags popularTags ->
             ( { model | popularTags = Data (Loaded popularTags) }
-            , mountd3bubbles ( popularTags, model.selectedTags )
+            , mountd3bubbles ( popularTags, model.selectedTags |> Set.toList )
             )
 
         LoadedTools body ->
@@ -231,7 +232,7 @@ update msg model authenticationMaybe language searchQuery mountd3bubbles =
                 Just _ ->
                     let
                         newSelectedTags =
-                            selectedTag :: model.selectedTags
+                            Set.insert selectedTag model.selectedTags
 
                         cmds =
                             List.map (Cmd.map ForSelf)

@@ -2,12 +2,12 @@ module Examples.State exposing (..)
 
 import Authenticator.Model
 import Constants
-import Dict exposing (Dict)
 import Examples.Types exposing (..)
 import Hop.Types
 import I18n
 import Requests exposing (..)
 import Routes exposing (getSearchQuery, ExamplesNestedRoute(..))
+import Set exposing (Set)
 import Task
 import Types exposing (Card, DocumentMetatags, getImageUrlOrOgpLogo, getName)
 import WebData exposing (..)
@@ -105,9 +105,9 @@ update msg model authenticationMaybe language setDocumentMetatags =
                             Error
                             LoadedAll
                             (Task.map3 (,,)
-                                (newTaskGetExamples authenticationMaybe searchQuery "" [])
-                                (newTaskGetOrganizations authenticationMaybe searchQuery "1" [])
-                                (newTaskGetTools authenticationMaybe searchQuery "1" [])
+                                (newTaskGetExamples authenticationMaybe searchQuery "" Set.empty)
+                                (newTaskGetOrganizations authenticationMaybe searchQuery "1" Set.empty)
+                                (newTaskGetTools authenticationMaybe searchQuery "1" Set.empty)
                             )
                         )
             in
