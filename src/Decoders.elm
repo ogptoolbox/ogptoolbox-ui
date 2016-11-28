@@ -7,17 +7,16 @@ import String
 import Types exposing (..)
 
 
-bubbleDecoder : Decoder Bubble
-bubbleDecoder =
-    succeed Bubble
+popularTagDecoder : Decoder PopularTag
+popularTagDecoder =
+    succeed PopularTag
         |: ("count" := (string `customDecoder` String.toFloat))
-        |: succeed False
         |: ("tag" := string)
 
 
-bubblesDecoder : Decoder (List Bubble)
-bubblesDecoder =
-    ("data" := list bubbleDecoder)
+popularTagsDecoder : Decoder (List PopularTag)
+popularTagsDecoder =
+    ("data" := list popularTagDecoder)
 
 
 cardDecoder : Decoder Card

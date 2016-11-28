@@ -22,8 +22,9 @@ import WebData exposing (LoadingStatus(..), getData, mapLoadingStatus, WebData(.
 type alias Model =
     { examples : WebData DataIdsBody
     , organizations : WebData DataIdsBody
+    , popularTags : WebData (List PopularTag)
+    , selectedTags : List String
     , tools : WebData DataIdsBody
-    , bubbles : WebData (List Bubble)
     }
 
 
@@ -31,8 +32,9 @@ init : Model
 init =
     { examples = NotAsked
     , organizations = NotAsked
+    , popularTags = NotAsked
+    , selectedTags = []
     , tools = NotAsked
-    , bubbles = NotAsked
     }
 
 
@@ -45,17 +47,17 @@ type ExternalMsg
 
 
 type InternalMsg
-    = DeselectBubble Bubble
-    | ErrorBubbles Http.Error
+    = DeselectBubble String
     | ErrorExamples Http.Error
     | ErrorOrganizations Http.Error
+    | ErrorPopularTags Http.Error
     | ErrorTools Http.Error
     | Load String
-    | LoadedBubbles (List Bubble)
     | LoadedExamples DataIdsBody
     | LoadedOrganizations DataIdsBody
+    | LoadedPopularTags (List PopularTag)
     | LoadedTools DataIdsBody
-    | SelectBubble Bubble
+    | SelectBubble String
 
 
 type Msg
@@ -78,13 +80,6 @@ navigate path =
     ForParent (Navigate path)
 
 
-selectedTags : List Bubble -> List String
-selectedTags bubbles =
-    bubbles
-        |> List.filter .selected
-        |> List.map .tag
-
-
 translateMsg : MsgTranslation parentMsg -> MsgTranslator parentMsg
 translateMsg { onInternalMsg, onNavigate } msg =
     case msg of
@@ -95,44 +90,27 @@ translateMsg { onInternalMsg, onNavigate } msg =
             onInternalMsg internalMsg
 
 
-update : InternalMsg -> Maybe Authenticator.Model.Authentication -> Model -> (List Bubble -> Cmd Msg) -> I18n.Language -> ( Model, Cmd Msg )
+update : InternalMsg -> Maybe Authenticator.Model.Authentication -> Model -> (( List PopularTag, List String ) -> Cmd Msg) -> I18n.Language -> ( Model, Cmd Msg )
 update msg authenticationMaybe model mountd3bubbles language =
     case msg of
-        DeselectBubble { tag } ->
-            case getData model.bubbles of
+        DeselectBubble deselectedTag ->
+            case getData model.popularTags of
                 Nothing ->
                     ( model, Cmd.none )
 
-                Just bubbles ->
+                Just _ ->
                     let
-                        newBubbles =
-                            List.map
-                                (\bubble ->
-                                    if bubble.tag == tag then
-                                        { bubble | selected = False }
-                                    else
-                                        bubble
-                                )
-                                bubbles
+                        newSelectedTags =
+                            List.filter (\tag -> tag /= deselectedTag) model.selectedTags
                     in
-                        ( { model | bubbles = Data (Loaded newBubbles) }
+                        ( { model | selectedTags = newSelectedTags }
                         , Cmd.map ForSelf
                             (Task.perform
-                                ErrorBubbles
-                                LoadedBubbles
-                                (newTaskGetTagsPopularity language (selectedTags newBubbles))
+                                ErrorPopularTags
+                                LoadedPopularTags
+                                (newTaskGetTagsPopularity language newSelectedTags)
                             )
                         )
-
-        ErrorBubbles err ->
-            let
-                _ =
-                    Debug.log "Home ErrorBubbles" err
-
-                model' =
-                    { model | bubbles = Failure err }
-            in
-                ( model', Cmd.none )
 
         ErrorExamples err ->
             let
@@ -151,6 +129,16 @@ update msg authenticationMaybe model mountd3bubbles language =
 
                 model' =
                     { model | organizations = Failure err }
+            in
+                ( model', Cmd.none )
+
+        ErrorPopularTags err ->
+            let
+                _ =
+                    Debug.log "Home ErrorPopularTags" err
+
+                model' =
+                    { model | popularTags = Failure err }
             in
                 ( model', Cmd.none )
 
@@ -173,9 +161,6 @@ update msg authenticationMaybe model mountd3bubbles language =
                         , tools = Data (Loading (getData model.tools))
                     }
 
-                bubbles =
-                    getData model.bubbles |> Maybe.withDefault []
-
                 cmds =
                     List.map (Cmd.map ForSelf)
                         [ Task.perform
@@ -191,17 +176,12 @@ update msg authenticationMaybe model mountd3bubbles language =
                             LoadedTools
                             (newTaskGetTools authenticationMaybe searchQuery "")
                         , Task.perform
-                            ErrorBubbles
-                            LoadedBubbles
-                            (newTaskGetTagsPopularity language (selectedTags bubbles))
+                            ErrorPopularTags
+                            LoadedPopularTags
+                            (newTaskGetTagsPopularity language [])
                         ]
             in
                 model' ! cmds
-
-        LoadedBubbles body ->
-            ( { model | bubbles = Data (Loaded body) }
-            , mountd3bubbles body
-            )
 
         LoadedExamples body ->
             ( { model | examples = Data (Loaded body) }
@@ -213,34 +193,32 @@ update msg authenticationMaybe model mountd3bubbles language =
             , Cmd.none
             )
 
+        LoadedPopularTags popularTags ->
+            ( { model | popularTags = Data (Loaded popularTags) }
+            , mountd3bubbles ( popularTags, model.selectedTags )
+            )
+
         LoadedTools body ->
             ( { model | tools = Data (Loaded body) }
             , Cmd.none
             )
 
-        SelectBubble { tag } ->
-            case getData model.bubbles of
+        SelectBubble selectedTag ->
+            case getData model.popularTags of
                 Nothing ->
                     ( model, Cmd.none )
 
-                Just bubbles ->
+                Just _ ->
                     let
-                        newBubbles =
-                            List.map
-                                (\bubble ->
-                                    if bubble.tag == tag then
-                                        { bubble | selected = True }
-                                    else
-                                        bubble
-                                )
-                                bubbles
+                        newSelectedTags =
+                            selectedTag :: model.selectedTags
                     in
-                        ( { model | bubbles = Data (Loaded newBubbles) }
+                        ( { model | selectedTags = newSelectedTags }
                         , Cmd.map ForSelf
                             (Task.perform
-                                ErrorBubbles
-                                LoadedBubbles
-                                (newTaskGetTagsPopularity language (selectedTags newBubbles))
+                                ErrorPopularTags
+                                LoadedPopularTags
+                                (newTaskGetTagsPopularity language newSelectedTags)
                             )
                         )
 
@@ -823,13 +801,13 @@ viewThumbnail urlPath card values extraClass cardType language =
 
                         xs ->
                             xs
-                            |> List.take 3
-                            |> List.map
-                                (\str ->
-                                    span
-                                        [ class "label label-default label-tool" ]
-                                        [ text str ]
-                                )
+                                |> List.take 3
+                                |> List.map
+                                    (\str ->
+                                        span
+                                            [ class "label label-default label-tool" ]
+                                            [ text str ]
+                                    )
                     )
                 ]
             ]

@@ -35,31 +35,29 @@ main.ports.setDocumentTitle.subscribe(function(str) {
 });
 
 main.ports.mountd3bubbles.subscribe(function(data) {
+    var popularTags = data[0];
+    var selectedTags = data[1];
     // Use rAF in order to be sure that the port Cmd is called after view is rendered.
     rAF(function() {
-        var bubbles = data.map(function(bubble) {
-            if (bubble.selected) {
-                bubble.type = "selected";
-                bubble.radius = 90;
-            }
-            return bubble;
+        var bubbles = popularTags.map(function(popularTag) {
+            return { name: popularTag.tag, radius: popularTag.count };
         });
-        var noBubbleSelected = data.filter(function(bubble) {
-            return bubble.selected;
-        }).length == 0;
-        if (noBubbleSelected) {
-            var centerBubble = { tag: "Open government", count: 150, type: "main" };
+        if (selectedTags.length) {
+            bubbles = bubbles.concat(selectedTags.map(function(selectedTag) {
+                return { name: selectedTag, radius: 90, type: "selected" };
+            }));
+        } else {
+            var centerBubble = { name: "Open government", radius: 150, type: "main" };
             bubbles = bubbles.concat(centerBubble);
         }
-        bubbles = bubbles.map(function(bubble) {
-            bubble.name = bubble.tag;
-            bubble.radius = bubble.count;
-            return bubble;
-        });
         d3Bubbles.mount({
             data: bubbles,
-            onSelect: main.ports.bubbleSelections.send,
-            onDeselect: main.ports.bubbleDeselections.send,
+            onSelect: function (bubble) {
+                main.ports.bubbleSelections.send(bubble.name);
+            },
+            onDeselect: function (bubble) {
+                main.ports.bubbleDeselections.send(bubble.name);
+            },
         });
     })
 });

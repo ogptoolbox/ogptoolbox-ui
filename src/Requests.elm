@@ -110,7 +110,7 @@ newTaskGetOrganizations =
     newTaskGetCardsOfType cardTypesForOrganization
 
 
-newTaskGetTagsPopularity : I18n.Language -> List String -> Task Http.Error (List Bubble)
+newTaskGetTagsPopularity : I18n.Language -> List String -> Task Http.Error (List PopularTag)
 newTaskGetTagsPopularity language tags =
     let
         url =
@@ -120,7 +120,7 @@ newTaskGetTagsPopularity language tags =
                 ++ "&"
                 ++ ((List.map (\tag -> "tag=" ++ tag) tags) |> String.join "&")
     in
-        Http.fromJson bubblesDecoder
+        Http.fromJson popularTagsDecoder
             (Http.send Http.defaultSettings
                 { verb = "GET"
                 , url = url

@@ -3,13 +3,6 @@ module Types exposing (..)
 import Dict exposing (Dict)
 
 
-type alias Bubble =
-    { count : Float
-    , selected : Bool
-    , tag : String
-    }
-
-
 type alias Card =
     { createdAt : String
     , deleted : Bool
@@ -55,6 +48,12 @@ type alias DataIdsBody =
     , data : DataIds
     , limit : Int
     , offset : Int
+    }
+
+
+type alias PopularTag =
+    { count : Float
+    , tag : String
     }
 
 

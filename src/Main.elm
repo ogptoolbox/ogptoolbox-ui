@@ -228,7 +228,7 @@ type Msg
     | ToolsMsg Tools.InternalMsg
 
 
-port mountd3bubbles : List Bubble -> Cmd msg
+port mountd3bubbles : ( List PopularTag, List String ) -> Cmd msg
 
 
 port setDocumentTitle : String -> Cmd msg
@@ -886,10 +886,10 @@ viewHeader model language containerClass =
 -- SUBSCRIPTIONS
 
 
-port bubbleSelections : (Bubble -> msg) -> Sub msg
+port bubbleSelections : (String -> msg) -> Sub msg
 
 
-port bubbleDeselections : (Bubble -> msg) -> Sub msg
+port bubbleDeselections : (String -> msg) -> Sub msg
 
 
 subscriptions : Model -> Sub Msg
