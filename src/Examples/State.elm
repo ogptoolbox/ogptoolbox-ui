@@ -1,12 +1,15 @@
 module Examples.State exposing (..)
 
 import Authenticator.Model
+import Constants
+import Dict exposing (Dict)
 import Examples.Types exposing (..)
 import Hop.Types
 import I18n
 import Requests exposing (..)
 import Routes exposing (getSearchQuery, ExamplesNestedRoute(..))
 import Task
+import Types exposing (Card, DocumentMetatags, getImageUrlOrOgpLogo, getName)
 import WebData exposing (..)
 
 
@@ -19,29 +22,18 @@ init =
 -- ROUTING
 
 
-urlUpdate :
-    ( ExamplesNestedRoute, Hop.Types.Location )
-    -> Model
-    -> I18n.Language
-    -> (String -> Cmd Msg)
-    -> ( Model, Cmd Msg )
-urlUpdate ( route, location ) model language setDocumentTitle =
+urlUpdate : ( ExamplesNestedRoute, Hop.Types.Location ) -> Model -> ( Model, Cmd Msg )
+urlUpdate ( route, location ) model =
     let
         searchQuery =
             getSearchQuery location
     in
         case route of
             ExampleRoute exampleId ->
-                model
-                    ! [ loadOne exampleId
-                      , setDocumentTitle (I18n.translate language (I18n.Example I18n.Singular))
-                      ]
+                ( model, loadOne exampleId )
 
             ExamplesIndexRoute ->
-                model
-                    ! [ loadAll searchQuery
-                      , setDocumentTitle (I18n.translate language (I18n.Example I18n.Plural))
-                      ]
+                ( model, loadAll searchQuery )
 
 
 
@@ -68,8 +60,14 @@ translateMsg { onInternalMsg, onNavigate } msg =
             onInternalMsg internalMsg
 
 
-update : InternalMsg -> Maybe Authenticator.Model.Authentication -> Model -> ( Model, Cmd Msg )
-update msg authenticationMaybe model =
+update :
+    InternalMsg
+    -> Model
+    -> Maybe Authenticator.Model.Authentication
+    -> I18n.Language
+    -> (DocumentMetatags -> Cmd Msg)
+    -> ( Model, Cmd Msg )
+update msg model authenticationMaybe language setDocumentMetatags =
     case msg of
         Error err ->
             let
@@ -107,9 +105,9 @@ update msg authenticationMaybe model =
                             Error
                             LoadedAll
                             (Task.map3 (,,)
-                                (newTaskGetExamples authenticationMaybe searchQuery "")
-                                (newTaskGetOrganizations authenticationMaybe searchQuery "1")
-                                (newTaskGetTools authenticationMaybe searchQuery "1")
+                                (newTaskGetExamples authenticationMaybe searchQuery "" [])
+                                (newTaskGetOrganizations authenticationMaybe searchQuery "1" [])
+                                (newTaskGetTools authenticationMaybe searchQuery "1" [])
                             )
                         )
             in
@@ -143,8 +141,21 @@ update msg authenticationMaybe model =
                                 }
                             )
                         )
+
+                cmd =
+                    setDocumentMetatags
+                        { title = I18n.translate language (I18n.Example I18n.Plural)
+                        , imageUrl = Constants.logoUrl
+                        }
             in
-                ( model', Cmd.none )
+                ( model', cmd )
 
         LoadedOne body ->
-            ( Example (Data (Loaded body)), Cmd.none )
+            let
+                cmd =
+                    setDocumentMetatags
+                        { title = getName body.data.id body.data.cards body.data.values
+                        , imageUrl = getImageUrlOrOgpLogo body.data.id body.data.cards body.data.values
+                        }
+            in
+                ( Example (Data (Loaded body)), cmd )

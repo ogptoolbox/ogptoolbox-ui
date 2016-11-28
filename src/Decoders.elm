@@ -50,18 +50,19 @@ dataIdBodyDecoder =
 
 dataIdsDecoder : Decoder DataIds
 dataIdsDecoder =
-    object3 (,,)
+    object2 (,)
         ("ids" := list string)
         (oneOf [ ("users" := dict userDecoder), succeed Dict.empty ])
-        ("values" := dict valueDecoder)
         `andThen`
-            (\( ids, users, values ) ->
+            (\( ids, users ) ->
                 (if List.isEmpty ids then
-                    succeed Dict.empty
+                    succeed ( Dict.empty, Dict.empty )
                  else
-                    ("cards" := dict cardDecoder)
+                    object2 (,)
+                        ("cards" := dict cardDecoder)
+                        ("values" := dict valueDecoder)
                 )
-                    |> map (\cards -> DataIds cards ids users values)
+                    |> map (\( cards, values ) -> DataIds cards ids users values)
             )
 
 

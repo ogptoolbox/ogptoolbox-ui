@@ -1,6 +1,9 @@
 module Types exposing (..)
 
+import Configuration exposing (apiUrl)
+import Constants
 import Dict exposing (Dict)
+import String
 
 
 type alias Card =
@@ -48,6 +51,12 @@ type alias DataIdsBody =
     , data : DataIds
     , limit : Int
     , offset : Int
+    }
+
+
+type alias DocumentMetatags =
+    { title : String
+    , imageUrl : String
     }
 
 
@@ -140,6 +149,7 @@ getOneString propertyKeys card values =
                     Just value
 
                 LocalizedStringValue values ->
+                    -- TODO Do not hardcode language
                     Dict.get "en" values
 
                 ListValue [] ->
@@ -162,6 +172,51 @@ getOneString propertyKeys card values =
                         `Maybe.andThen` (\value -> getString value.value)
                 )
             |> Maybe.oneOf
+
+
+getName cardId cards values =
+    case Dict.get cardId cards of
+        Nothing ->
+            "No name"
+
+        Just card ->
+            case getOneString nameKeys card values of
+                Nothing ->
+                    "No name"
+
+                Just name ->
+                    name
+
+getImageUrl : String -> Card -> Dict String Value -> Maybe String
+getImageUrl dim card values =
+    getOneString imageUrlPathKeys card values
+        |> Maybe.map
+            (\urlPath -> imageUrl urlPath ++ "?dim=" ++ dim)
+
+getImageUrlOrOgpLogo : String -> Dict String Card -> Dict String Value -> String
+
+getImageUrlOrOgpLogo cardId cards values =
+    case Dict.get cardId cards of
+        Nothing ->
+            Constants.logoUrl
+
+        Just card ->
+            case getOneString imageUrlPathKeys card values of
+                Nothing ->
+                    Constants.logoUrl
+
+                Just urlPath ->
+                    imageUrl urlPath
+
+
+imageUrl : String -> String
+imageUrl urlPath =
+    apiUrl
+        ++ (if String.startsWith "/" urlPath then
+                String.dropLeft 1 urlPath
+            else
+                urlPath
+           )
 
 
 

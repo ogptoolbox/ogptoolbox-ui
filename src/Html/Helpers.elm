@@ -1,7 +1,5 @@
 module Html.Helpers exposing (..)
 
-import Configuration exposing (apiUrl)
-import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onWithOptions)
@@ -9,8 +7,6 @@ import I18n
 import Json.Decode
 import Regex
 import Routes exposing (makeUrl, makeUrlWithLanguage)
-import String
-import Types exposing (..)
 
 
 aExternal : List (Attribute msg) -> List (Html msg) -> Html msg
@@ -69,18 +65,3 @@ aIfIsUrl attributes s =
         else
             text s
 
-
-getImageUrl : String -> Card -> Dict String Value -> Maybe String
-getImageUrl dim card values =
-    getOneString imageUrlPathKeys card values
-        |> Maybe.map
-            (\urlPath ->
-                apiUrl
-                    ++ (if String.startsWith "/" urlPath then
-                            String.dropLeft 1 urlPath
-                        else
-                            urlPath
-                       )
-                    ++ "?dim="
-                    ++ dim
-            )

@@ -39,29 +39,18 @@ init =
 -- ROUTING
 
 
-urlUpdate :
-    ( ToolsNestedRoute, Hop.Types.Location )
-    -> Model
-    -> I18n.Language
-    -> (String -> Cmd Msg)
-    -> ( Model, Cmd Msg )
-urlUpdate ( route, location ) model language setDocumentTitle =
+urlUpdate : ( ToolsNestedRoute, Hop.Types.Location ) -> Model -> ( Model, Cmd Msg )
+urlUpdate ( route, location ) model =
     let
         searchQuery =
             getSearchQuery location
     in
         case route of
             ToolRoute toolId ->
-                model
-                    ! [ loadOne toolId
-                      , setDocumentTitle (I18n.translate language (I18n.Tool I18n.Singular))
-                      ]
+                ( model, loadOne toolId )
 
             ToolsIndexRoute ->
-                model
-                    ! [ loadAll searchQuery
-                      , setDocumentTitle (I18n.translate language (I18n.Tool I18n.Plural))
-                      ]
+                ( model, loadAll searchQuery )
 
 
 
@@ -120,8 +109,14 @@ translateMsg { onInternalMsg, onNavigate } msg =
             onInternalMsg internalMsg
 
 
-update : InternalMsg -> Maybe Authenticator.Model.Authentication -> Model -> ( Model, Cmd Msg )
-update msg authenticationMaybe model =
+update :
+    InternalMsg
+    -> Model
+    -> Maybe Authenticator.Model.Authentication
+    -> I18n.Language
+    -> (DocumentMetatags -> Cmd Msg)
+    -> ( Model, Cmd Msg )
+update msg model authenticationMaybe language setDocumentMetatags =
     case msg of
         Error err ->
             let
@@ -159,9 +154,9 @@ update msg authenticationMaybe model =
                             Error
                             LoadedAll
                             (Task.map3 (,,)
-                                (newTaskGetExamples authenticationMaybe searchQuery "1")
-                                (newTaskGetOrganizations authenticationMaybe searchQuery "1")
-                                (newTaskGetTools authenticationMaybe searchQuery "")
+                                (newTaskGetExamples authenticationMaybe searchQuery "1" [])
+                                (newTaskGetOrganizations authenticationMaybe searchQuery "1" [])
+                                (newTaskGetTools authenticationMaybe searchQuery "" [])
                             )
                         )
             in
@@ -199,7 +194,14 @@ update msg authenticationMaybe model =
                 ( model', Cmd.none )
 
         LoadedOne body ->
-            ( Tool (Data (Loaded body)), Cmd.none )
+            let
+                cmd =
+                    setDocumentMetatags
+                        { title = getName body.data.id body.data.cards body.data.values
+                        , imageUrl = getImageUrlOrOgpLogo body.data.id body.data.cards body.data.values
+                        }
+            in
+                ( Tool (Data (Loaded body)), cmd )
 
 
 

@@ -26,11 +26,22 @@ var rAF = typeof requestAnimationFrame !== 'undefined'
 var Elm = require('../../src/Main');
 var main = Elm.Main.embed(document.getElementById('main'), language);
 
-main.ports.setDocumentTitle.subscribe(function(str) {
-    var titleElements = document.head.getElementsByTagName('title');
-    if (titleElements.length) {
-        var titleElement = titleElements[0];
-        titleElement.innerText = str + " – OGP Toolbox";
+main.ports.setDocumentMetatags.subscribe(function(metatags) {
+    if (metatags.hasOwnProperty('imageUrl')) {
+        var element = document.head.querySelector('meta[property="og:image"]');
+        if (element) {
+            element.setAttribute('content', metatags.imageUrl);
+        }
+    }
+    if (metatags.hasOwnProperty('title')) {
+        var elements = document.head.getElementsByTagName('title');
+        if (elements.length) {
+            var element = elements[0];
+            var genericTitle = "OGP Toolbox";
+            element.innerText = metatags.title
+                ? metatags.title + " – " + genericTitle
+                : genericTitle;
+        }
     }
 });
 

@@ -5,7 +5,7 @@ import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
-import Html.Helpers exposing (aExternal, aForPath, getImageUrl)
+import Html.Helpers exposing (aExternal, aForPath)
 import Http
 import I18n
 import String
@@ -90,8 +90,15 @@ translateMsg { onInternalMsg, onNavigate } msg =
             onInternalMsg internalMsg
 
 
-update : InternalMsg -> Maybe Authenticator.Model.Authentication -> Model -> (( List PopularTag, List String ) -> Cmd Msg) -> I18n.Language -> ( Model, Cmd Msg )
-update msg authenticationMaybe model mountd3bubbles language =
+update :
+    InternalMsg
+    -> Model
+    -> Maybe Authenticator.Model.Authentication
+    -> I18n.Language
+    -> String
+    -> (( List PopularTag, List String ) -> Cmd Msg)
+    -> ( Model, Cmd Msg )
+update msg model authenticationMaybe language searchQuery mountd3bubbles =
     case msg of
         DeselectBubble deselectedTag ->
             case getData model.popularTags of
@@ -102,15 +109,28 @@ update msg authenticationMaybe model mountd3bubbles language =
                     let
                         newSelectedTags =
                             List.filter (\tag -> tag /= deselectedTag) model.selectedTags
+
+                        cmds =
+                            List.map (Cmd.map ForSelf)
+                                [ Task.perform
+                                    ErrorExamples
+                                    LoadedExamples
+                                    (newTaskGetExamples authenticationMaybe searchQuery "" newSelectedTags)
+                                , Task.perform
+                                    ErrorOrganizations
+                                    LoadedOrganizations
+                                    (newTaskGetOrganizations authenticationMaybe searchQuery "" newSelectedTags)
+                                , Task.perform
+                                    ErrorTools
+                                    LoadedTools
+                                    (newTaskGetTools authenticationMaybe searchQuery "" newSelectedTags)
+                                , Task.perform
+                                    ErrorPopularTags
+                                    LoadedPopularTags
+                                    (newTaskGetTagsPopularity language newSelectedTags)
+                                ]
                     in
-                        ( { model | selectedTags = newSelectedTags }
-                        , Cmd.map ForSelf
-                            (Task.perform
-                                ErrorPopularTags
-                                LoadedPopularTags
-                                (newTaskGetTagsPopularity language newSelectedTags)
-                            )
-                        )
+                        { model | selectedTags = newSelectedTags } ! cmds
 
         ErrorExamples err ->
             let
@@ -166,15 +186,15 @@ update msg authenticationMaybe model mountd3bubbles language =
                         [ Task.perform
                             ErrorExamples
                             LoadedExamples
-                            (newTaskGetExamples authenticationMaybe searchQuery "")
+                            (newTaskGetExamples authenticationMaybe searchQuery "" model.selectedTags)
                         , Task.perform
                             ErrorOrganizations
                             LoadedOrganizations
-                            (newTaskGetOrganizations authenticationMaybe searchQuery "")
+                            (newTaskGetOrganizations authenticationMaybe searchQuery "" model.selectedTags)
                         , Task.perform
                             ErrorTools
                             LoadedTools
-                            (newTaskGetTools authenticationMaybe searchQuery "")
+                            (newTaskGetTools authenticationMaybe searchQuery "" model.selectedTags)
                         , Task.perform
                             ErrorPopularTags
                             LoadedPopularTags
@@ -212,15 +232,28 @@ update msg authenticationMaybe model mountd3bubbles language =
                     let
                         newSelectedTags =
                             selectedTag :: model.selectedTags
+
+                        cmds =
+                            List.map (Cmd.map ForSelf)
+                                [ Task.perform
+                                    ErrorExamples
+                                    LoadedExamples
+                                    (newTaskGetExamples authenticationMaybe searchQuery "" newSelectedTags)
+                                , Task.perform
+                                    ErrorOrganizations
+                                    LoadedOrganizations
+                                    (newTaskGetOrganizations authenticationMaybe searchQuery "" newSelectedTags)
+                                , Task.perform
+                                    ErrorTools
+                                    LoadedTools
+                                    (newTaskGetTools authenticationMaybe searchQuery "" newSelectedTags)
+                                , Task.perform
+                                    ErrorPopularTags
+                                    LoadedPopularTags
+                                    (newTaskGetTagsPopularity language newSelectedTags)
+                                ]
                     in
-                        ( { model | selectedTags = newSelectedTags }
-                        , Cmd.map ForSelf
-                            (Task.perform
-                                ErrorPopularTags
-                                LoadedPopularTags
-                                (newTaskGetTagsPopularity language newSelectedTags)
-                            )
-                        )
+                        { model | selectedTags = newSelectedTags } ! cmds
 
 
 

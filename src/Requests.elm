@@ -36,8 +36,9 @@ newTaskGetCardsOfType :
     -> Maybe Authenticator.Model.Authentication
     -> String
     -> String
+    -> List String
     -> Task Http.Error DataIdsBody
-newTaskGetCardsOfType cardTypes authenticationMaybe searchQuery limit =
+newTaskGetCardsOfType cardTypes authenticationMaybe searchQuery limit tags =
     let
         authenticationHeaders =
             case authenticationMaybe of
@@ -54,19 +55,21 @@ newTaskGetCardsOfType cardTypes authenticationMaybe searchQuery limit =
                     apiUrl
                         ++ "cards?"
                         ++ (List.map (\cardType -> "type=" ++ cardType) cardTypes
-                                ++ ([ Just "show=values"
-                                    , (if String.isEmpty searchQuery then
-                                        Nothing
-                                       else
-                                        Just ("term=" ++ searchQuery)
-                                      )
-                                    , (if String.isEmpty limit then
-                                        Nothing
-                                       else
-                                        Just ("limit=" ++ limit)
-                                      )
-                                    ]
+                                ++ (([ Just "show=values"
+                                     , (if String.isEmpty searchQuery then
+                                            Nothing
+                                        else
+                                            Just ("term=" ++ searchQuery)
+                                       )
+                                     , (if String.isEmpty limit then
+                                            Nothing
+                                        else
+                                            Just ("limit=" ++ limit)
+                                       )
+                                     ]
                                         |> List.filterMap identity
+                                    )
+                                        ++ (List.map (\tag -> "tag=" ++ tag) tags)
                                    )
                                 |> String.join "&"
                            )
@@ -88,6 +91,7 @@ newTaskGetExamples :
     Maybe Authenticator.Model.Authentication
     -> String
     -> String
+    -> List String
     -> Task Http.Error DataIdsBody
 newTaskGetExamples =
     newTaskGetCardsOfType cardTypesForExample
@@ -105,6 +109,7 @@ newTaskGetOrganizations :
     Maybe Authenticator.Model.Authentication
     -> String
     -> String
+    -> List String
     -> Task Http.Error DataIdsBody
 newTaskGetOrganizations =
     newTaskGetCardsOfType cardTypesForOrganization
@@ -142,6 +147,7 @@ newTaskGetTools :
     Maybe Authenticator.Model.Authentication
     -> String
     -> String
+    -> List String
     -> Task Http.Error DataIdsBody
 newTaskGetTools =
     newTaskGetCardsOfType cardTypesForTool

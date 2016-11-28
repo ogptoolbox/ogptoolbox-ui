@@ -4,7 +4,7 @@ import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
-import Html.Helpers exposing (aForPath, getImageUrl)
+import Html.Helpers exposing (aForPath)
 import I18n
 import String
 import Types exposing (..)

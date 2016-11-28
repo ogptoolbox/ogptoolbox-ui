@@ -3,7 +3,7 @@ module Tool.Sidebar exposing (..)
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Helpers exposing (aExternal, getImageUrl)
+import Html.Helpers exposing (aExternal)
 import I18n
 import Types exposing (..)
 
