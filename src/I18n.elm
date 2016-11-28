@@ -162,7 +162,7 @@ getTranslationSet translationId =
             }
 
         HeaderTitle ->
-            { english = s "find digital tools to improve democracy"
+            { english = s "digital solutions to improve democracy"
             , french = todo
             , spanish = todo
             }
