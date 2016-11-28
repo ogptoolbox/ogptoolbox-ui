@@ -5,7 +5,6 @@
     "build": "webpack",
     "clean": "rimraf dist elm-stuff/build-artifacts",
     "postinstall": "elm package install",
-    "prebuild": "npm run clean",
     "serve": "static --spa --port 3012 dist",
     "start": "webpack-dev-server --hot --inline --content-base static/ --port 3011"
   },
