@@ -823,13 +823,21 @@ viewHeader model language containerClass =
                                     []
                                     [ text (I18n.translate language (I18n.Example I18n.Plural)) ]
                                 ]
+                              -- , li []
+                              --     [ aForPathWithLanguage
+                              --         Navigate
+                              --         language
+                              --         "/organizations"
+                              --         []
+                              --         [ text (I18n.translate language (I18n.Organization I18n.Plural)) ]
+                              --     ]
                             , li []
                                 [ aForPathWithLanguage
                                     Navigate
                                     language
-                                    "/organizations"
+                                    "/collections"
                                     []
-                                    [ text (I18n.translate language (I18n.Organization I18n.Plural)) ]
+                                    [ text (I18n.translate language (I18n.Collection I18n.Plural)) ]
                                 ]
                             , li []
                                 [ aForPathWithLanguage
