@@ -112,19 +112,22 @@ newTaskGetOrganizations =
 
 newTaskGetTagsPopularity : I18n.Language -> List String -> Task Http.Error (List Bubble)
 newTaskGetTagsPopularity language tags =
-    Http.fromJson bubblesDecoder
-        (Http.send Http.defaultSettings
-            { verb = "GET"
-            , url =
-                apiUrl
-                    ++ "cards/tags-popularity?type=Final+Use&language="
-                    ++ I18n.iso639_1FromLanguage language
-                    ++ "&"
-                    ++ ((List.map (\tag -> "tag=" ++ tag) tags) |> String.join "&")
-            , headers = [ ( "Accept", "application/json" ) ]
-            , body = Http.empty
-            }
-        )
+    let
+        url =
+            apiUrl
+                ++ "cards/tags-popularity?type=Final+Use&language="
+                ++ I18n.iso639_1FromLanguage language
+                ++ "&"
+                ++ ((List.map (\tag -> "tag=" ++ tag) tags) |> String.join "&")
+    in
+        Http.fromJson bubblesDecoder
+            (Http.send Http.defaultSettings
+                { verb = "GET"
+                , url = url
+                , headers = [ ( "Accept", "application/json" ) ]
+                , body = Http.empty
+                }
+            )
 
 
 newTaskGetTool :

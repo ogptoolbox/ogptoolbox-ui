@@ -4,8 +4,7 @@ import Dict exposing (Dict)
 
 
 type alias Bubble =
-    {
-    count : Float
+    { count : Float
     , selected : Bool
     , tag : String
     }

@@ -78,6 +78,13 @@ navigate path =
     ForParent (Navigate path)
 
 
+selectedTags : List Bubble -> List String
+selectedTags bubbles =
+    bubbles
+        |> List.filter .selected
+        |> List.map .tag
+
+
 translateMsg : MsgTranslation parentMsg -> MsgTranslator parentMsg
 translateMsg { onInternalMsg, onNavigate } msg =
     case msg of
@@ -109,7 +116,12 @@ update msg authenticationMaybe model mountd3bubbles language =
                                 bubbles
                     in
                         ( { model | bubbles = Data (Loaded newBubbles) }
-                        , mountd3bubbles newBubbles
+                        , Cmd.map ForSelf
+                            (Task.perform
+                                ErrorBubbles
+                                LoadedBubbles
+                                (newTaskGetTagsPopularity language (selectedTags newBubbles))
+                            )
                         )
 
         ErrorBubbles err ->
@@ -161,15 +173,8 @@ update msg authenticationMaybe model mountd3bubbles language =
                         , tools = Data (Loading (getData model.tools))
                     }
 
-                selectedTags =
-                    case getData model.bubbles of
-                        Nothing ->
-                            []
-
-                        Just bubbles ->
-                            bubbles
-                                |> List.filter .selected
-                                |> List.map .tag
+                bubbles =
+                    getData model.bubbles |> Maybe.withDefault []
 
                 cmds =
                     List.map (Cmd.map ForSelf)
@@ -188,7 +193,7 @@ update msg authenticationMaybe model mountd3bubbles language =
                         , Task.perform
                             ErrorBubbles
                             LoadedBubbles
-                            (newTaskGetTagsPopularity language selectedTags)
+                            (newTaskGetTagsPopularity language (selectedTags bubbles))
                         ]
             in
                 model' ! cmds
@@ -231,7 +236,12 @@ update msg authenticationMaybe model mountd3bubbles language =
                                 bubbles
                     in
                         ( { model | bubbles = Data (Loaded newBubbles) }
-                        , mountd3bubbles newBubbles
+                        , Cmd.map ForSelf
+                            (Task.perform
+                                ErrorBubbles
+                                LoadedBubbles
+                                (newTaskGetTagsPopularity language (selectedTags newBubbles))
+                            )
                         )
 
 
