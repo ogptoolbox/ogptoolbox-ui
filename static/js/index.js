@@ -55,7 +55,10 @@ main.ports.mountd3bubbles.subscribe(function(data) {
         });
         if (selectedTags.length) {
             bubbles = bubbles.concat(selectedTags.map(function(selectedTag) {
-                return { name: selectedTag, radius: 90, type: "selected" };
+                var maxRadius = Math.max.apply(null, popularTags.map(function(popularTag) {
+                    return popularTag.count;
+                }));
+                return { name: selectedTag, radius: maxRadius * 1.33, type: "selected" };
             }));
         } else {
             var centerBubble = { name: "Open government", radius: 150, type: "main" };
