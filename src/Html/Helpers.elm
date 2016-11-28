@@ -1,6 +1,7 @@
 module Html.Helpers exposing (..)
 
 import Configuration exposing (apiUrl)
+import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onWithOptions)
@@ -69,9 +70,9 @@ aIfIsUrl attributes s =
             text s
 
 
-getImageUrl : String -> Card -> Maybe String
-getImageUrl dim card =
-    getOneString imageUrlPathKeys card
+getImageUrl : String -> Card -> Dict String Value -> Maybe String
+getImageUrl dim card values =
+    getOneString imageUrlPathKeys card values
         |> Maybe.map
             (\urlPath ->
                 apiUrl

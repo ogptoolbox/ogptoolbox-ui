@@ -1,7 +1,7 @@
 module Home exposing (..)
 
 import Authenticator.Model
-import Dict
+import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
@@ -21,7 +21,7 @@ import WebData exposing (LoadingStatus(..), getData, mapLoadingStatus, WebData(.
 
 type alias Bubble =
     { name : String
-    , radius : Int
+    , radius : Float
     , selected : Bool
     }
 
@@ -186,8 +186,23 @@ update msg authenticationMaybe model mountd3bubbles =
                             ErrorBubbles
                             LoadedBubbles
                             (Task.succeed
-                                [ { name = "Data-visualization", radius = 87, selected = True }
+                                [ { name = "Data-visualization", radius = 87, selected = False }
                                 , { name = "Petitions", radius = 80, selected = False }
+                                , { name = "Consultation", radius = 60, selected = False }
+                                , { name = "Law-making", radius = 57, selected = False }
+                                , { name = "Budget", radius = 55, selected = False }
+                                , { name = "Debate", radius = 54, selected = False }
+                                , { name = "Reporting", radius = 50, selected = False }
+                                , { name = "Deliberation", radius = 40, selected = False }
+                                , { name = "Collaborative", radius = 38, selected = False }
+                                , { name = "Mobilizing", radius = 35, selected = False }
+                                , { name = "Crowdfunding", radius = 50, selected = False }
+                                , { name = "Information", radius = 52, selected = False }
+                                , { name = "Proposal Making", radius = 39, selected = False }
+                                , { name = "Mapping", radius = 47, selected = False }
+                                , { name = "Transparency", radius = 50, selected = False }
+                                , { name = "Voting", radius = 37, selected = False }
+                                , { name = "Polling", radius = 20, selected = False }
                                 ]
                             )
                           -- TODO Replace with HTTP request
@@ -244,7 +259,7 @@ update msg authenticationMaybe model mountd3bubbles =
 view : Model -> String -> I18n.Language -> Html Msg
 view model searchQuery language =
     let
-        viewWebDataFor title webData view =
+        viewWebDataFor title webData viewFunction =
             div [ class "row section" ]
                 [ div [ class "container" ]
                     ([ h3 [ class "zone-label" ]
@@ -260,10 +275,22 @@ view model searchQuery language =
                                                     []
 
                                                 Just body ->
-                                                    [ view searchQuery language body.count (Dict.values body.data.statements) ]
+                                                    [ viewFunction
+                                                        searchQuery
+                                                        language
+                                                        body.count
+                                                        body.data.values
+                                                        (Dict.values body.data.cards)
+                                                    ]
 
                                         Loaded body ->
-                                            [ view searchQuery language body.count (Dict.values body.data.statements) ]
+                                            [ viewFunction
+                                                searchQuery
+                                                language
+                                                body.count
+                                                body.data.values
+                                                (Dict.values body.data.cards)
+                                            ]
                                 )
                                 webData
                            )
@@ -650,27 +677,23 @@ viewCollections =
         ]
 
 
-viewExampleThumbnail : Statement -> Card -> I18n.Language -> Html Msg
-viewExampleThumbnail statement card language =
+viewExampleThumbnail : Card -> Dict String Value -> I18n.Language -> Html Msg
+viewExampleThumbnail card values language =
     let
         urlPath =
-            "/examples/" ++ statement.id
+            "/examples/" ++ card.id
     in
-        viewThumbnail urlPath card "example grey" Types.Example language
+        viewThumbnail urlPath card values "example grey" Types.Example language
 
 
-viewExamples : String -> I18n.Language -> Int -> List Statement -> Html Msg
-viewExamples searchQuery language count examples =
+viewExamples : String -> I18n.Language -> Int -> Dict String Value -> List Card -> Html Msg
+viewExamples searchQuery language count values examples =
     div [ class "row" ]
         ((examples
-            |> filterByCardType Example
-            |> List.take 8
-            |> List.map
-                (\statement ->
-                    case statement.custom of
-                        CardCustom card ->
-                            viewExampleThumbnail statement card language
-                )
+            -- |> filterByCardType Example
+            |>
+                List.take 8
+            |> List.map (\card -> viewExampleThumbnail card values language)
          )
             ++ [ div [ class "col-sm-12 text-center" ]
                     [ aForPath navigate
@@ -738,18 +761,15 @@ viewMetrics language model =
         ]
 
 
-viewOrganizations : String -> I18n.Language -> Int -> List Statement -> Html Msg
-viewOrganizations searchQuery language count organizations =
+viewOrganizations : String -> I18n.Language -> Int -> Dict String Value -> List Card -> Html Msg
+viewOrganizations searchQuery language count values organizations =
     div [ class "row" ]
         ((organizations
-            |> filterByCardType Organization
-            |> List.take 8
+            -- |> filterByCardType Organization
+            |>
+                List.take 8
             |> List.map
-                (\statement ->
-                    case statement.custom of
-                        CardCustom card ->
-                            viewOrganizationThumbnail statement card language
-                )
+                (\card -> viewOrganizationThumbnail card values language)
          )
             ++ [ div [ class "col-sm-12 text-center" ]
                     [ aForPath navigate
@@ -763,25 +783,25 @@ viewOrganizations searchQuery language count organizations =
         )
 
 
-viewOrganizationThumbnail : Statement -> Card -> I18n.Language -> Html Msg
-viewOrganizationThumbnail statement card language =
+viewOrganizationThumbnail : Card -> Dict String Value -> I18n.Language -> Html Msg
+viewOrganizationThumbnail card values language =
     let
         urlPath =
-            "/organizations/" ++ statement.id
+            "/organizations/" ++ card.id
     in
-        viewThumbnail urlPath card "orga grey" Types.Organization language
+        viewThumbnail urlPath card values "orga grey" Types.Organization language
 
 
-viewThumbnail : String -> Card -> String -> CardType -> I18n.Language -> Html Msg
-viewThumbnail urlPath card extraClass cardType language =
+viewThumbnail : String -> Card -> Dict String Value -> String -> CardType -> I18n.Language -> Html Msg
+viewThumbnail urlPath card values extraClass cardType language =
     let
         name =
-            getOneString nameKeys card |> Maybe.withDefault ""
+            getOneString nameKeys card values |> Maybe.withDefault ""
     in
         div [ class "col-xs-6 col-md-3" ]
             [ div [ class ("thumbnail " ++ extraClass), onClick (navigate urlPath) ]
                 [ div [ class "visual" ]
-                    [ case getImageUrl "218x140" card of
+                    [ case getImageUrl "218x140" card values of
                         Just url ->
                             img [ alt "Logo", src url ] []
 
@@ -791,7 +811,7 @@ viewThumbnail urlPath card extraClass cardType language =
                 , div [ class "caption" ]
                     [ h4 []
                         [ aForPath navigate urlPath [] [ text name ] ]
-                    , case getOneString descriptionKeys card of
+                    , case getOneString descriptionKeys card values of
                         Just description ->
                             p [] [ text description ]
 
@@ -801,7 +821,7 @@ viewThumbnail urlPath card extraClass cardType language =
                                 [ text (I18n.translate language (I18n.CallToActionForDescription cardType)) ]
                     ]
                 , div [ class "tags" ]
-                    (case getManyStrings tagKeys card of
+                    (case getManyStrings tagKeys card values of
                         [] ->
                             [ span
                                 [ class "label label-default label-tool" ]
@@ -821,18 +841,14 @@ viewThumbnail urlPath card extraClass cardType language =
             ]
 
 
-viewTools : String -> I18n.Language -> Int -> List Statement -> Html Msg
-viewTools searchQuery language count tools =
+viewTools : String -> I18n.Language -> Int -> Dict String Value -> List Card -> Html Msg
+viewTools searchQuery language count values tools =
     div [ class "row" ]
         ((tools
-            |> filterByCardType Tool
-            |> List.take 8
-            |> List.map
-                (\statement ->
-                    case statement.custom of
-                        CardCustom card ->
-                            viewToolThumbnail statement card language
-                )
+            -- |> filterByCardType Tool
+            |>
+                List.take 8
+            |> List.map (\card -> viewToolThumbnail card values language)
          )
             ++ [ div [ class "col-sm-12 text-center" ]
                     [ aForPath navigate
@@ -846,10 +862,10 @@ viewTools searchQuery language count tools =
         )
 
 
-viewToolThumbnail : Statement -> Card -> I18n.Language -> Html Msg
-viewToolThumbnail statement card language =
+viewToolThumbnail : Card -> Dict String Value -> I18n.Language -> Html Msg
+viewToolThumbnail card values language =
     let
         urlPath =
-            "/tools/" ++ statement.id
+            "/tools/" ++ card.id
     in
-        viewThumbnail urlPath card "tool" Types.Tool language
+        viewThumbnail urlPath card values "tool" Types.Tool language

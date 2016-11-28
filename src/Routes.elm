@@ -3,7 +3,7 @@ module Routes exposing (..)
 -- import Authenticator.Model
 
 import Combine exposing (Parser)
-import Dict
+import Dict exposing (Dict)
 import Hop
 import Hop.Matchers exposing (match1, match2, nested1, regex)
 import Hop.Types exposing (Location)
@@ -167,19 +167,17 @@ replaceLanguageInLocation language location =
 -- REVERSE
 
 
-pathForStatement : Statement -> Maybe String
-pathForStatement statement =
-    case statement.custom of
-        CardCustom card ->
-            getOneString cardTypeKeys card
-                `Maybe.andThen`
-                    (\cardType ->
-                        if List.member cardType cardTypesForExample then
-                            Just ("/examples/" ++ statement.id)
-                        else if List.member cardType cardTypesForOrganization then
-                            Just ("/organizations/" ++ statement.id)
-                        else if List.member cardType cardTypesForTool then
-                            Just ("/tools/" ++ statement.id)
-                        else
-                            Nothing
-                    )
+pathForCard : Card -> Maybe String
+pathForCard card =
+    List.head card.subTypes
+        `Maybe.andThen`
+            (\cardType ->
+                if List.member cardType cardTypesForExample then
+                    Just ("/examples/" ++ card.id)
+                else if List.member cardType cardTypesForOrganization then
+                    Just ("/organizations/" ++ card.id)
+                else if List.member cardType cardTypesForTool then
+                    Just ("/tools/" ++ card.id)
+                else
+                    Nothing
+            )
