@@ -21,7 +21,7 @@ import WebData exposing (LoadingStatus(..), getData, mapLoadingStatus, WebData(.
 
 type alias Bubble =
     { name : String
-    , radius : Int
+    , radius : Float
     , selected : Bool
     }
 
@@ -186,8 +186,23 @@ update msg authenticationMaybe model mountd3bubbles =
                             ErrorBubbles
                             LoadedBubbles
                             (Task.succeed
-                                [ { name = "Data-visualization", radius = 87, selected = True }
+                                [ { name = "Data-visualization", radius = 87, selected = False }
                                 , { name = "Petitions", radius = 80, selected = False }
+                                , { name = "Consultation", radius = 60, selected = False }
+                                , { name = "Law-making", radius = 57, selected = False }
+                                , { name = "Budget", radius = 55, selected = False }
+                                , { name = "Debate", radius = 54, selected = False }
+                                , { name = "Reporting", radius = 50, selected = False }
+                                , { name = "Deliberation", radius = 40, selected = False }
+                                , { name = "Collaborative", radius = 38, selected = False }
+                                , { name = "Mobilizing", radius = 35, selected = False }
+                                , { name = "Crowdfunding", radius = 50, selected = False }
+                                , { name = "Information", radius = 52, selected = False }
+                                , { name = "Proposal Making", radius = 39, selected = False }
+                                , { name = "Mapping", radius = 47, selected = False }
+                                , { name = "Transparency", radius = 50, selected = False }
+                                , { name = "Voting", radius = 37, selected = False }
+                                , { name = "Polling", radius = 20, selected = False }
                                 ]
                             )
                           -- TODO Replace with HTTP request
