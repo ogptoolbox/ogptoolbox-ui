@@ -4,13 +4,14 @@ import Authenticator.Model
 import Configuration exposing (apiUrl)
 import Decoders exposing (..)
 import Http
+import I18n
 import String
 import Types exposing (..)
 import Task exposing (Task)
 
 
-newTaskGetCardOfType : List String -> Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
-newTaskGetCardOfType cardTypes authenticationMaybe statementId =
+newTaskGetCardOfType : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
+newTaskGetCardOfType authenticationMaybe cardId =
     let
         authenticationHeaders =
             case authenticationMaybe of
@@ -20,11 +21,10 @@ newTaskGetCardOfType cardTypes authenticationMaybe statementId =
                 Nothing ->
                     []
     in
-        Http.fromJson
-            (dataIdBodyDecoder statementId cardTypes)
+        Http.fromJson dataIdBodyDecoder
             (Http.send Http.defaultSettings
                 { verb = "GET"
-                , url = apiUrl ++ "objects/" ++ statementId ++ "?show=values"
+                , url = apiUrl ++ "objects/" ++ cardId ++ "?show=values"
                 , headers = ( "Accept", "application/json" ) :: authenticationHeaders
                 , body = Http.empty
                 }
@@ -81,7 +81,7 @@ newTaskGetExample :
     -> String
     -> Task Http.Error DataIdBody
 newTaskGetExample =
-    newTaskGetCardOfType cardTypesForExample
+    newTaskGetCardOfType
 
 
 newTaskGetExamples :
@@ -98,7 +98,7 @@ newTaskGetOrganization :
     -> String
     -> Task Http.Error DataIdBody
 newTaskGetOrganization =
-    newTaskGetCardOfType cardTypesForOrganization
+    newTaskGetCardOfType
 
 
 newTaskGetOrganizations :
@@ -110,12 +110,29 @@ newTaskGetOrganizations =
     newTaskGetCardsOfType cardTypesForOrganization
 
 
+newTaskGetTagsPopularity : I18n.Language -> List String -> Task Http.Error (List Bubble)
+newTaskGetTagsPopularity language tags =
+    Http.fromJson bubblesDecoder
+        (Http.send Http.defaultSettings
+            { verb = "GET"
+            , url =
+                apiUrl
+                    ++ "cards/tags-popularity?type=Final+Use&language="
+                    ++ I18n.iso639_1FromLanguage language
+                    ++ "&"
+                    ++ ((List.map (\tag -> "tag=" ++ tag) tags) |> String.join "&")
+            , headers = [ ( "Accept", "application/json" ) ]
+            , body = Http.empty
+            }
+        )
+
+
 newTaskGetTool :
     Maybe Authenticator.Model.Authentication
     -> String
     -> Task Http.Error DataIdBody
 newTaskGetTool =
-    newTaskGetCardOfType cardTypesForTool
+    newTaskGetCardOfType
 
 
 newTaskGetTools :

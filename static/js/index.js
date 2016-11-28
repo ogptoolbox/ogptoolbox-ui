@@ -48,9 +48,14 @@ main.ports.mountd3bubbles.subscribe(function(data) {
             return bubble.selected;
         }).length == 0;
         if (noBubbleSelected) {
-            var centerBubble = { name: "Open government", radius: 150, type: "main" };
+            var centerBubble = { tag: "Open government", count: 150, type: "main" };
             bubbles = bubbles.concat(centerBubble);
         }
+        bubbles = bubbles.map(function(bubble) {
+            bubble.name = bubble.tag;
+            bubble.radius = bubble.count;
+            return bubble;
+        });
         d3Bubbles.mount({
             data: bubbles,
             onSelect: main.ports.bubbleSelections.send,

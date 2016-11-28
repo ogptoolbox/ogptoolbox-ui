@@ -11,19 +11,12 @@ import I18n
 import String
 import Task
 import Types exposing (..)
-import Requests exposing (newTaskGetExamples, newTaskGetOrganizations, newTaskGetTools)
+import Requests exposing (newTaskGetExamples, newTaskGetOrganizations, newTaskGetTagsPopularity, newTaskGetTools)
 import Views exposing (viewWebData)
 import WebData exposing (LoadingStatus(..), getData, mapLoadingStatus, WebData(..))
 
 
 -- MODEL
-
-
-type alias Bubble =
-    { name : String
-    , radius : Float
-    , selected : Bool
-    }
 
 
 type alias Model =
@@ -95,10 +88,10 @@ translateMsg { onInternalMsg, onNavigate } msg =
             onInternalMsg internalMsg
 
 
-update : InternalMsg -> Maybe Authenticator.Model.Authentication -> Model -> (List Bubble -> Cmd Msg) -> ( Model, Cmd Msg )
-update msg authenticationMaybe model mountd3bubbles =
+update : InternalMsg -> Maybe Authenticator.Model.Authentication -> Model -> (List Bubble -> Cmd Msg) -> I18n.Language -> ( Model, Cmd Msg )
+update msg authenticationMaybe model mountd3bubbles language =
     case msg of
-        DeselectBubble { name } ->
+        DeselectBubble { tag } ->
             case getData model.bubbles of
                 Nothing ->
                     ( model, Cmd.none )
@@ -108,7 +101,7 @@ update msg authenticationMaybe model mountd3bubbles =
                         newBubbles =
                             List.map
                                 (\bubble ->
-                                    if bubble.name == name then
+                                    if bubble.tag == tag then
                                         { bubble | selected = False }
                                     else
                                         bubble
@@ -168,6 +161,16 @@ update msg authenticationMaybe model mountd3bubbles =
                         , tools = Data (Loading (getData model.tools))
                     }
 
+                selectedTags =
+                    case getData model.bubbles of
+                        Nothing ->
+                            []
+
+                        Just bubbles ->
+                            bubbles
+                                |> List.filter .selected
+                                |> List.map .tag
+
                 cmds =
                     List.map (Cmd.map ForSelf)
                         [ Task.perform
@@ -185,27 +188,7 @@ update msg authenticationMaybe model mountd3bubbles =
                         , Task.perform
                             ErrorBubbles
                             LoadedBubbles
-                            (Task.succeed
-                                [ { name = "Data-visualization", radius = 87, selected = False }
-                                , { name = "Petitions", radius = 80, selected = False }
-                                , { name = "Consultation", radius = 60, selected = False }
-                                , { name = "Law-making", radius = 57, selected = False }
-                                , { name = "Budget", radius = 55, selected = False }
-                                , { name = "Debate", radius = 54, selected = False }
-                                , { name = "Reporting", radius = 50, selected = False }
-                                , { name = "Deliberation", radius = 40, selected = False }
-                                , { name = "Collaborative", radius = 38, selected = False }
-                                , { name = "Mobilizing", radius = 35, selected = False }
-                                , { name = "Crowdfunding", radius = 50, selected = False }
-                                , { name = "Information", radius = 52, selected = False }
-                                , { name = "Proposal Making", radius = 39, selected = False }
-                                , { name = "Mapping", radius = 47, selected = False }
-                                , { name = "Transparency", radius = 50, selected = False }
-                                , { name = "Voting", radius = 37, selected = False }
-                                , { name = "Polling", radius = 20, selected = False }
-                                ]
-                            )
-                          -- TODO Replace with HTTP request
+                            (newTaskGetTagsPopularity language selectedTags)
                         ]
             in
                 model' ! cmds
@@ -230,7 +213,7 @@ update msg authenticationMaybe model mountd3bubbles =
             , Cmd.none
             )
 
-        SelectBubble { name } ->
+        SelectBubble { tag } ->
             case getData model.bubbles of
                 Nothing ->
                     ( model, Cmd.none )
@@ -240,7 +223,7 @@ update msg authenticationMaybe model mountd3bubbles =
                         newBubbles =
                             List.map
                                 (\bubble ->
-                                    if bubble.name == name then
+                                    if bubble.tag == tag then
                                         { bubble | selected = True }
                                     else
                                         bubble

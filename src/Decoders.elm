@@ -7,6 +7,19 @@ import String
 import Types exposing (..)
 
 
+bubbleDecoder : Decoder Bubble
+bubbleDecoder =
+    succeed Bubble
+        |: ("count" := (string `customDecoder` String.toFloat))
+        |: succeed False
+        |: ("tag" := string)
+
+
+bubblesDecoder : Decoder (List Bubble)
+bubblesDecoder =
+    ("data" := list bubbleDecoder)
+
+
 cardDecoder : Decoder Card
 cardDecoder =
     succeed Card
@@ -22,26 +35,18 @@ cardDecoder =
         |: ("type" := string)
 
 
-dataIdDecoder : String -> List String -> Decoder DataId
-dataIdDecoder cardId cardTypes =
-    -- object2 (,)
-    --     ("cards" := dict cardDecoder)
-    --     ("id" := string)
-    --     `customDecoder`
-    --         (\( id, cards ) ->
-    --             validateCard cardId cardTypes cards
-    --                 |> Result.map (\_ -> DataId id cards)
-    --         )
+dataIdDecoder : Decoder DataId
+dataIdDecoder =
     succeed DataId
         |: ("cards" := dict cardDecoder)
         |: ("id" := string)
         |: ("values" := dict valueDecoder)
 
 
-dataIdBodyDecoder : String -> List String -> Decoder DataIdBody
-dataIdBodyDecoder statementId cardTypes =
+dataIdBodyDecoder : Decoder DataIdBody
+dataIdBodyDecoder =
     succeed DataIdBody
-        |: ("data" := (dataIdDecoder statementId cardTypes))
+        |: ("data" := dataIdDecoder)
 
 
 dataIdsDecoder : Decoder DataIds

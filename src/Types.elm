@@ -3,7 +3,12 @@ module Types exposing (..)
 import Dict exposing (Dict)
 
 
--- import Set
+type alias Bubble =
+    {
+    count : Float
+    , selected : Bool
+    , tag : String
+    }
 
 
 type alias Card =
@@ -210,56 +215,3 @@ cardTypesForOrganization =
 cardTypesForTool : List String
 cardTypesForTool =
     [ "Software", "Platform" ]
-
-
-
--- filterByCardType : CardType -> List Statement -> List Statement
--- filterByCardType cardType statements =
---     List.filterMap
---         (\statement ->
---             case statement.custom of
---                 CardCustom card ->
---                     let
---                         expectedCardTypes =
---                             case cardType of
---                                 Example ->
---                                     cardTypesForExample
---                                 Organization ->
---                                     cardTypesForOrganization
---                                 Tool ->
---                                     cardTypesForTool
---                     in
---                         validateHasOneOfCardTypes expectedCardTypes card
---                             |> Result.map (\_ -> statement)
---                             |> Result.toMaybe
---         )
---         statements
--- VALIDATORS
--- validateCard : String -> List String -> Dict String Card -> Result String ()
--- validateCard cardId cardTypes cards =
---     (Dict.get cardId cards
---         |> Result.fromMaybe
---             ("Statement ID \""
---                 ++ cardId
---                 ++ "\" is not in body.data.cards; received "
---                 ++ (toString (Dict.keys cards))
---             )
---     )
---         `Result.andThen` (\card -> validateHasOneOfCardTypes cardTypes card)
--- validateHasOneOfCardTypes : List String -> Card -> Result String ()
--- validateHasOneOfCardTypes expectedCardTypes card =
---     let
---         existingCardTypes =
---             getManyStrings cardTypeKeys card
---         intersection =
---             Set.intersect (Set.fromList expectedCardTypes) (Set.fromList existingCardTypes)
---     in
---         if Set.isEmpty intersection then
---             Err
---                 ("Expected one card type among "
---                     ++ (toString expectedCardTypes)
---                     ++ " but found "
---                     ++ (toString existingCardTypes)
---                 )
---         else
---             Ok ()

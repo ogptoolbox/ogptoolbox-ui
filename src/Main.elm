@@ -39,6 +39,7 @@ import Routes
 import String
 import Task
 import Tools
+import Types exposing (..)
 import Views exposing (viewError, viewNotFound)
 
 
@@ -136,10 +137,12 @@ urlUpdate ( i18nRoute, location ) model =
                         HomeRoute ->
                             let
                                 ( homeModel, childCmd ) =
-                                    Home.update (Home.Load searchQuery)
+                                    Home.update
+                                        (Home.Load searchQuery)
                                         model.authenticationMaybe
                                         model.homeModel
                                         mountd3bubbles
+                                        language
                             in
                                 ( { model
                                     | homeModel = homeModel
@@ -225,7 +228,7 @@ type Msg
     | ToolsMsg Tools.InternalMsg
 
 
-port mountd3bubbles : List Home.Bubble -> Cmd msg
+port mountd3bubbles : List Bubble -> Cmd msg
 
 
 port setDocumentTitle : String -> Cmd msg
@@ -359,8 +362,16 @@ update msg model =
 
         HomeMsg childMsg ->
             let
+                language =
+                    case model.i18nRoute of
+                        I18nRouteWithLanguage language _ ->
+                            language
+
+                        _ ->
+                            I18n.English
+
                 ( homeModel, childCmd ) =
-                    Home.update childMsg model.authenticationMaybe model.homeModel mountd3bubbles
+                    Home.update childMsg model.authenticationMaybe model.homeModel mountd3bubbles language
             in
                 ( { model | homeModel = homeModel }
                 , Cmd.map translateHomeMsg childCmd
@@ -875,10 +886,10 @@ viewHeader model language containerClass =
 -- SUBSCRIPTIONS
 
 
-port bubbleSelections : (Home.Bubble -> msg) -> Sub msg
+port bubbleSelections : (Bubble -> msg) -> Sub msg
 
 
-port bubbleDeselections : (Home.Bubble -> msg) -> Sub msg
+port bubbleDeselections : (Bubble -> msg) -> Sub msg
 
 
 subscriptions : Model -> Sub Msg
