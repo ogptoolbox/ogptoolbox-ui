@@ -13,6 +13,7 @@ type TranslationId
     | CallToActionForCategory
     | CallToActionForDescription Types.CardType
     | Close
+    | Collection GrammaticalNumber
     | Copyright
     | Example GrammaticalNumber
     | GenericError
@@ -103,6 +104,24 @@ getTranslationSet translationId =
         Close ->
             { english = s "Close"
             , french = s "Fermer"
+            , spanish = todo
+            }
+
+        Collection number ->
+            { english =
+                case number of
+                    Singular ->
+                        s "Collection"
+
+                    Plural ->
+                        s "Collections"
+            , french =
+                case number of
+                    Singular ->
+                        s "Collection"
+
+                    Plural ->
+                        s "Collections"
             , spanish = todo
             }
 
