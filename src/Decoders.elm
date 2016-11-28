@@ -119,6 +119,12 @@ valueTypeDecoder schemaId =
         "/types/string" ->
             string |> map StringValue
 
+        "/schemas/localized-string" ->
+            dict string |> map LocalizedStringValue
+
+        "/schemas/localized-strings-array" ->
+            list (dict string) |> map (\xs -> ListValue (List.map LocalizedStringValue xs))
+
         _ ->
             -- fail ("Unsupported schemaId: " ++ schemaId)
             oneOf

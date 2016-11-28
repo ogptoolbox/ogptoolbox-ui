@@ -822,13 +822,14 @@ viewThumbnail urlPath card values extraClass cardType language =
                             ]
 
                         xs ->
-                            List.map
+                            xs
+                            |> List.take 3
+                            |> List.map
                                 (\str ->
                                     span
                                         [ class "label label-default label-tool" ]
                                         [ text str ]
                                 )
-                                xs
                     )
                 ]
             ]

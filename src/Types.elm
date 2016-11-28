@@ -83,6 +83,7 @@ type alias Value =
 
 type ValueType
     = StringValue String
+    | LocalizedStringValue (Dict String String)
     | IntValue Int
     | FloatValue Float
     | ListValue (List ValueType)
@@ -96,6 +97,14 @@ getManyStrings propertyKeys card values =
             case value of
                 StringValue value ->
                     [ value ]
+
+                LocalizedStringValue values ->
+                    case Dict.get "en" values of
+                        Nothing ->
+                            []
+
+                        Just value ->
+                            [ value ]
 
                 ListValue [] ->
                     []
@@ -131,6 +140,9 @@ getOneString propertyKeys card values =
                 StringValue value ->
                     Just value
 
+                LocalizedStringValue values ->
+                    Dict.get "en" values
+
                 ListValue [] ->
                     Nothing
 
@@ -164,12 +176,12 @@ descriptionKeys =
 
 imageUrlPathKeys : List String
 imageUrlPathKeys =
-    [ "Logo", "Screenshot" ]
+    [ "logo", "screenshot" ]
 
 
 licenseKeys : List String
 licenseKeys =
-    [ "License", "license" ]
+    [ "license" ]
 
 
 nameKeys : List String
@@ -179,22 +191,22 @@ nameKeys =
 
 tagKeys : List String
 tagKeys =
-    [ "Tag" ]
+    [ "tags" ]
 
 
 typeKeys : List String
 typeKeys =
-    [ "Type" ]
+    [ "types" ]
 
 
 urlKeys : List String
 urlKeys =
-    [ "URL", "Website" ]
+    [ "website" ]
 
 
 usedByKeys : List String
 usedByKeys =
-    [ "Used by" ]
+    [ "used-by" ]
 
 
 
