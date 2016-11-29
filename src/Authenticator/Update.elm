@@ -19,7 +19,9 @@ update msg model =
             let
                 ( signIn, signInEffect, authenticationMaybe ) =
                     SignIn.update subMsg model.signIn
-                model' = { model | authenticationMaybe = authenticationMaybe, signIn = signIn }
+
+                model' =
+                    { model | authenticationMaybe = authenticationMaybe, signIn = signIn }
             in
                 ( model', Cmd.map SignInMsg signInEffect )
 
@@ -27,7 +29,9 @@ update msg model =
             let
                 ( signOut, signOutEffect ) =
                     SignOut.update subMsg model.signOut
-                model' = { model | authenticationMaybe = Nothing, signOut = signOut }
+
+                model' =
+                    { model | authenticationMaybe = Nothing, signOut = signOut }
             in
                 ( model', Cmd.map SignOutMsg signOutEffect )
 
@@ -35,6 +39,8 @@ update msg model =
             let
                 ( signUp, signUpEffect, authenticationMaybe ) =
                     SignUp.update subMsg model.signUp
-                model' = { model | authenticationMaybe = authenticationMaybe, signUp = signUp }
+
+                model' =
+                    { model | authenticationMaybe = authenticationMaybe, signUp = signUp }
             in
                 ( model', Cmd.map SignUpMsg signUpEffect )

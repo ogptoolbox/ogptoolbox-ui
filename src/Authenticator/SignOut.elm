@@ -8,11 +8,14 @@ import Html.Events exposing (..)
 -- MODEL
 
 
-type alias Model = {}
+type alias Model =
+    {}
 
 
 init : Model
-init = {}
+init =
+    {}
+
 
 
 -- UPDATE
@@ -27,6 +30,7 @@ update msg model =
     case msg of
         Submit ->
             ( model, Cmd.none )
+
 
 
 -- VIEW

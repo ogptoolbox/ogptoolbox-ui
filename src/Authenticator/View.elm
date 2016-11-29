@@ -14,8 +14,10 @@ modalTitle route =
     case route of
         SignInRoute ->
             "Sign in to contribute"
+
         SignOutRoute ->
             "Sign out and contribute later"
+
         SignUpRoute ->
             "Sign up to contribute"
 
@@ -25,7 +27,9 @@ viewModalBody route model =
     case route of
         SignInRoute ->
             Html.App.map SignInMsg (SignIn.viewModalBody model.signIn)
+
         SignOutRoute ->
             Html.App.map SignOutMsg (SignOut.viewModalBody model.signOut)
+
         SignUpRoute ->
             Html.App.map SignUpMsg (SignUp.viewModalBody model.signUp)
