@@ -361,7 +361,7 @@ viewValueValue language navigate cards values value =
                         case Routes.pathForCard card of
                             Nothing ->
                                 text
-                                    ("Error: impossible to determine the path of the referenced card (targetId: "
+                                    ("Error: impossible to determine the path of the referenced card; targetId: "
                                         ++ targetId
                                     )
 
