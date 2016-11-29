@@ -1,7 +1,7 @@
 // pull in desired CSS/LESS files
 require('../css/ogp-style.less');
 require('../css/retruco.less');
-require('../css/bubbles.css');
+require('../css/bubbles.less');
 
 
 // user prefered language (http://stackoverflow.com/a/38150585/3548266)
