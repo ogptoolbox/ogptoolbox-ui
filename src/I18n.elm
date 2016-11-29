@@ -2,6 +2,7 @@ module I18n exposing (..)
 
 import Constants
 import Dict exposing (Dict)
+import String
 import Types exposing (..)
 
 
@@ -12,6 +13,7 @@ import Types exposing (..)
 type TranslationId
     = About
     | AddNew
+    | AdditionalInformations
     | CallToActionForCategory
     | CallToActionForDescription Types.CardType
     | Close
@@ -44,6 +46,8 @@ type TranslationId
     | TimeoutExplanation
     | Tool GrammaticalNumber
     | Type
+    | UsedBy
+    | UsedFor
     | UnexpectedPayloadExplanation
     | UseIt
     | Website
@@ -55,6 +59,12 @@ getTranslationSet translationId =
         About ->
             { english = s "About"
             , french = s "À propos"
+            , spanish = todo
+            }
+
+        AdditionalInformations ->
+            { english = s "Additional informations"
+            , french = s "Informations supplémentaires"
             , spanish = todo
             }
 
@@ -356,6 +366,16 @@ including representatives of governments and civil society organizations.
             , spanish = todo
             }
 
+        UsedBy ->
+            { english = s "Used by"
+            , french = todo
+            , spanish = todo
+            }
+        UsedFor ->
+            { english = s "Used for"
+            , french = todo
+            , spanish = todo
+            }
         UnexpectedPayloadExplanation ->
             { english = s "The server returned unexpected data."
             , french = todo
@@ -427,15 +447,10 @@ getManyStrings language propertyKeys card values =
                 StringValue value ->
                     [ value ]
 
-                LocalizedStringValue values ->
-                    case Dict.get (iso639_1FromLanguage language) values of
+                LocalizedStringValue valueByLanguage ->
+                    case getValueByPreferredLanguage language valueByLanguage of
                         Nothing ->
-                            case Dict.get "en" values of
-                                Nothing ->
-                                    []
-
-                                Just value ->
-                                    [ value ]
+                            []
 
                         Just value ->
                             [ value ]
@@ -477,13 +492,8 @@ getOneString language propertyKeys card values =
                 StringValue value ->
                     Just value
 
-                LocalizedStringValue values ->
-                    case Dict.get (iso639_1FromLanguage language) values of
-                        Nothing ->
-                            Dict.get "en" values
-
-                        Just value ->
-                            Just value
+                LocalizedStringValue valueByLanguage ->
+                    getValueByPreferredLanguage language valueByLanguage
 
                 ArrayValue [] ->
                     Nothing
@@ -545,6 +555,35 @@ getImageUrlOrOgpLogo language cardId cards values =
 
                 Just urlPath ->
                     imageUrl urlPath
+
+
+getValueByPreferredLanguage : Language -> Dict String String -> Maybe String
+getValueByPreferredLanguage language valueByLanguage =
+    let
+        userLanguageCode =
+            iso639_1FromLanguage language
+    in
+        ([ Dict.get userLanguageCode valueByLanguage
+            |> Maybe.map (\s -> ( userLanguageCode, s ))
+         , Dict.get "en" valueByLanguage
+            |> Maybe.map (\s -> ( "en", s ))
+         ]
+            ++ (Dict.toList valueByLanguage |> List.map Just)
+        )
+            |> List.filterMap identity
+            |> List.filterMap
+                (\( languageCode, s ) ->
+                    if String.isEmpty (String.trim s) then
+                        Nothing
+                    else
+                        Just
+                            (if languageCode == userLanguageCode then
+                                s
+                             else
+                                "(" ++ (String.toUpper languageCode) ++ ") " ++ s
+                            )
+                )
+            |> List.head
 
 
 languageFromIso639_1 : String -> Maybe Language
