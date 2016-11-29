@@ -108,6 +108,14 @@ update msg model authenticationMaybe language searchQuery mountd3bubbles =
 
                 Just _ ->
                     let
+                        newModel =
+                            { model
+                                | examples = Data (Loading (getData model.examples))
+                                , organizations = Data (Loading (getData model.organizations))
+                                , selectedTags = newSelectedTags
+                                , tools = Data (Loading (getData model.tools))
+                            }
+
                         newSelectedTags =
                             Set.remove deselectedTag model.selectedTags
 
@@ -131,7 +139,7 @@ update msg model authenticationMaybe language searchQuery mountd3bubbles =
                                     (newTaskGetTagsPopularity language newSelectedTags)
                                 ]
                     in
-                        { model | selectedTags = newSelectedTags } ! cmds
+                        newModel ! cmds
 
         ErrorExamples err ->
             let
@@ -231,6 +239,14 @@ update msg model authenticationMaybe language searchQuery mountd3bubbles =
 
                 Just _ ->
                     let
+                        newModel =
+                            { model
+                                | examples = Data (Loading (getData model.examples))
+                                , organizations = Data (Loading (getData model.organizations))
+                                , selectedTags = newSelectedTags
+                                , tools = Data (Loading (getData model.tools))
+                            }
+
                         newSelectedTags =
                             Set.insert selectedTag model.selectedTags
 
@@ -254,7 +270,7 @@ update msg model authenticationMaybe language searchQuery mountd3bubbles =
                                     (newTaskGetTagsPopularity language newSelectedTags)
                                 ]
                     in
-                        { model | selectedTags = newSelectedTags } ! cmds
+                        newModel ! cmds
 
 
 
