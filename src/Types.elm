@@ -1,9 +1,14 @@
 module Types exposing (..)
 
 import Configuration exposing (apiUrl)
-import Constants
 import Dict exposing (Dict)
 import String
+
+
+type alias BijectiveUriReference =
+    { targetId : String
+    , reverseKeyId : String
+    }
 
 
 type alias Card =
@@ -92,121 +97,10 @@ type alias Value =
 type ValueType
     = StringValue String
     | LocalizedStringValue (Dict String String)
-    | IntValue Int
-    | FloatValue Float
-    | ListValue (List ValueType)
-
-
-getManyStrings : List String -> Card -> Dict String Value -> List String
-getManyStrings propertyKeys card values =
-    let
-        getStrings : ValueType -> List String
-        getStrings value =
-            case value of
-                StringValue value ->
-                    [ value ]
-
-                LocalizedStringValue values ->
-                    case Dict.get "en" values of
-                        Nothing ->
-                            []
-
-                        Just value ->
-                            [ value ]
-
-                ListValue [] ->
-                    []
-
-                ListValue subValues ->
-                    List.concatMap getStrings subValues
-
-                IntValue _ ->
-                    []
-
-                FloatValue _ ->
-                    []
-    in
-        propertyKeys
-            |> List.map
-                (\propertyKey ->
-                    Dict.get propertyKey card.properties
-                        `Maybe.andThen` (\valueId -> Dict.get valueId values)
-                        |> Maybe.map (\value -> getStrings value.value)
-                        |> Maybe.withDefault []
-                )
-            |> List.filter (not << List.isEmpty)
-            |> List.head
-            |> Maybe.withDefault []
-
-
-getOneString : List String -> Card -> Dict String Value -> Maybe String
-getOneString propertyKeys card values =
-    let
-        getString : ValueType -> Maybe String
-        getString value =
-            case value of
-                StringValue value ->
-                    Just value
-
-                LocalizedStringValue values ->
-                    -- TODO Do not hardcode language
-                    Dict.get "en" values
-
-                ListValue [] ->
-                    Nothing
-
-                ListValue (subValue :: _) ->
-                    getString subValue
-
-                IntValue _ ->
-                    Nothing
-
-                FloatValue _ ->
-                    Nothing
-    in
-        propertyKeys
-            |> List.map
-                (\propertyKey ->
-                    Dict.get propertyKey card.properties
-                        `Maybe.andThen` (\valueId -> Dict.get valueId values)
-                        `Maybe.andThen` (\value -> getString value.value)
-                )
-            |> Maybe.oneOf
-
-
-getName cardId cards values =
-    case Dict.get cardId cards of
-        Nothing ->
-            "No name"
-
-        Just card ->
-            case getOneString nameKeys card values of
-                Nothing ->
-                    "No name"
-
-                Just name ->
-                    name
-
-getImageUrl : String -> Card -> Dict String Value -> Maybe String
-getImageUrl dim card values =
-    getOneString imageUrlPathKeys card values
-        |> Maybe.map
-            (\urlPath -> imageUrl urlPath ++ "?dim=" ++ dim)
-
-getImageUrlOrOgpLogo : String -> Dict String Card -> Dict String Value -> String
-
-getImageUrlOrOgpLogo cardId cards values =
-    case Dict.get cardId cards of
-        Nothing ->
-            Constants.logoUrl
-
-        Just card ->
-            case getOneString imageUrlPathKeys card values of
-                Nothing ->
-                    Constants.logoUrl
-
-                Just urlPath ->
-                    imageUrl urlPath
+    | NumberValue Float
+    | ArrayValue (List ValueType)
+    | BijectiveUriReferenceValue BijectiveUriReference
+    | WrongValue String String
 
 
 imageUrl : String -> String

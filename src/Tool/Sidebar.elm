@@ -4,7 +4,7 @@ import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Helpers exposing (aExternal)
-import I18n
+import I18n exposing (getImageUrl,getManyStrings, getOneString)
 import Types exposing (..)
 
 
@@ -15,13 +15,13 @@ root language card values =
             [ div [ class "col-xs-12" ]
                 [ div [ class "thumbnail orga grey" ]
                     [ div [ class "visual" ]
-                        [ case getImageUrl "100" card values of
+                        [ case getImageUrl language "100" card values of
                             Just url ->
                                 img [ alt "Logo", src url ] []
 
                             Nothing ->
                                 h1 [ class "dynamic" ]
-                                    [ text (getOneString nameKeys card values |> Maybe.withDefault "") ]
+                                    [ text (getOneString language nameKeys card values |> Maybe.withDefault "") ]
                         ]
                     , div [ class "caption" ]
                         [ table [ class "table" ]
@@ -36,13 +36,13 @@ root language card values =
                                     [ td [ class "table-label" ]
                                         [ text (I18n.translate language I18n.License) ]
                                     , td []
-                                        [ text (getOneString licenseKeys card values |> Maybe.withDefault "") ]
+                                        [ text (getOneString language licenseKeys card values |> Maybe.withDefault "") ]
                                     ]
                                 , tr [ class "editable" ]
                                     [ td [ class "table-label" ]
                                         [ text (I18n.translate language I18n.Website) ]
                                     , td []
-                                        [ case getOneString urlKeys card values of
+                                        [ case getOneString language urlKeys card values of
                                             Nothing ->
                                                 text ""
 
@@ -78,7 +78,7 @@ root language card values =
                             ]
                         ]
                     , div [ class "panel-body" ]
-                        (getManyStrings tagKeys card values
+                        (getManyStrings language tagKeys card values
                             |> List.map (\tag -> span [ class "label label-default label-tag" ] [ text tag ])
                         )
                     ]

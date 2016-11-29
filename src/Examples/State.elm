@@ -4,12 +4,12 @@ import Authenticator.Model
 import Constants
 import Examples.Types exposing (..)
 import Hop.Types
-import I18n
+import I18n exposing (getImageUrlOrOgpLogo, getName)
 import Requests exposing (..)
 import Routes exposing (getSearchQuery, ExamplesNestedRoute(..))
 import Set exposing (Set)
 import Task
-import Types exposing (Card, DocumentMetatags, getImageUrlOrOgpLogo, getName)
+import Types exposing (Card, DocumentMetatags)
 import WebData exposing (..)
 
 
@@ -154,8 +154,8 @@ update msg model authenticationMaybe language setDocumentMetatags =
             let
                 cmd =
                     setDocumentMetatags
-                        { title = getName body.data.id body.data.cards body.data.values
-                        , imageUrl = getImageUrlOrOgpLogo body.data.id body.data.cards body.data.values
+                        { title = getName language body.data.id body.data.cards body.data.values
+                        , imageUrl = getImageUrlOrOgpLogo language body.data.id body.data.cards body.data.values
                         }
             in
                 ( Example (Data (Loaded body)), cmd )

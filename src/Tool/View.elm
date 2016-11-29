@@ -3,16 +3,9 @@ module Tool.View exposing (..)
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
-
-
--- import Html.Events exposing (onClick)
--- import Html.Helpers exposing (aExternal, aForPath, aIfIsUrl, getImageUrl)
-
-import I18n
-
-
--- import Routes
-
+import Html.Helpers exposing (aForPath, aIfIsUrl)
+import I18n exposing (getManyStrings, getOneString)
+import Routes
 import String
 import Tool.Sidebar as Sidebar
 import Types exposing (..)
@@ -37,24 +30,31 @@ root navigate language loadingStatus =
 
 viewCard : (String -> msg) -> I18n.Language -> DataIdBody -> Html msg
 viewCard navigate language body =
-    case Dict.get body.data.id body.data.cards of
-        Nothing ->
-            text "Error: the card was not found."
+    let
+        cards =
+            body.data.cards
 
-        Just card ->
-            div [ class "row" ]
-                [ Sidebar.root language card body.data.values
-                , viewCardContent navigate language card body.data.values
-                ]
+        values =
+            body.data.values
+    in
+        case Dict.get body.data.id cards of
+            Nothing ->
+                text "Error: the card was not found."
+
+            Just card ->
+                div [ class "row" ]
+                    [ Sidebar.root language card values
+                    , viewCardContent navigate language card cards values
+                    ]
 
 
-viewCardContent : (String -> msg) -> I18n.Language -> Card -> Dict String Value -> Html msg
-viewCardContent navigate language card values =
+viewCardContent : (String -> msg) -> I18n.Language -> Card -> Dict String Card -> Dict String Value -> Html msg
+viewCardContent navigate language card cards values =
     div [ class "col-md-9 content content-right" ]
         [ div [ class "row" ]
             [ div [ class "col-xs-12" ]
                 [ h1 []
-                    [ text (getOneString nameKeys card values |> Maybe.withDefault "TODO call-to-action")
+                    [ text (getOneString language nameKeys card values |> Maybe.withDefault "TODO call-to-action")
                     , small []
                         [ text (String.join ", " card.subTypes) ]
                     ]
@@ -62,7 +62,7 @@ viewCardContent navigate language card values =
             ]
         , div [ class "row" ]
             [ div [ class "col-xs-12" ]
-                (case getManyStrings typeKeys card values of
+                (case getManyStrings language typeKeys card values of
                     [] ->
                         [ text "TODO call-to-action" ]
 
@@ -85,7 +85,10 @@ viewCardContent navigate language card values =
                                     [ a [ class "show-more" ]
                                         [ text
                                             ("Best of "
-                                                ++ (getManyStrings descriptionKeys card values |> List.length |> toString)
+                                                ++ (getManyStrings language descriptionKeys card values
+                                                        |> List.length
+                                                        |> toString
+                                                   )
                                             )
                                         ]
                                     , button
@@ -99,7 +102,11 @@ viewCardContent navigate language card values =
                                 ]
                             ]
                         , div [ class "panel-body" ]
-                            [ text (getOneString descriptionKeys card values |> Maybe.withDefault "TODO call-to-action") ]
+                            [ text
+                                (getOneString language descriptionKeys card values
+                                    |> Maybe.withDefault "TODO call-to-action"
+                                )
+                            ]
                         ]
                   ]
                  )
@@ -142,15 +149,37 @@ viewCardContent navigate language card values =
                                             (card.properties
                                                 |> Dict.map
                                                     (\propertyKey valueId ->
-                                                        -- case Dict.get valueId values of
-                                                        --     Nothing ->
-                                                        tr []
-                                                            [ th [ scope "row" ]
-                                                                [ text propertyKey ]
-                                                            , td []
-                                                                -- [ viewCardField navigate statements cardField ]
-                                                                [ text ("TODO viewCardField" ++ (toString (Dict.get valueId values))) ]
-                                                            ]
+                                                        case Dict.get valueId values of
+                                                            Nothing ->
+                                                                text ("Error: value not found for ID: " ++ valueId)
+
+                                                            Just value ->
+                                                                tr []
+                                                                    [ th [ scope "row" ]
+                                                                        [ case Dict.get propertyKey values of
+                                                                            Nothing ->
+                                                                                text
+                                                                                    ("Error: value not found for ID: "
+                                                                                        ++ propertyKey
+                                                                                    )
+
+                                                                            Just value ->
+                                                                                viewValueValue
+                                                                                    language
+                                                                                    navigate
+                                                                                    cards
+                                                                                    values
+                                                                                    value.value
+                                                                        ]
+                                                                    , td []
+                                                                        [ viewValueValue
+                                                                            language
+                                                                            navigate
+                                                                            cards
+                                                                            values
+                                                                            value.value
+                                                                        ]
+                                                                    ]
                                                     )
                                                 |> Dict.values
                                             )
@@ -170,7 +199,7 @@ viewCardContent navigate language card values =
                                             [ text
                                                 "Best of TODO"
                                               --                                             ("Best of "
-                                              --     ++ (getManyStrings usedForKeys card |> List.length |> toString)
+                                              --     ++ (getManyStrings language usedForKeys card |> List.length |> toString)
                                               -- )
                                             ]
                                         , button [ class "btn btn-default btn-xs btn-action", type' "button" ]
@@ -207,7 +236,7 @@ viewCardContent navigate language card values =
                                     ]
                                   -- , div [ class "panel-body" ]
                                   --     [ div [ class "row" ]
-                                  --         ((case getManyStrings usedForKeys card of
+                                  --         ((case getManyStrings language usedForKeys card of
                                   --             [] ->
                                   --                 [ text "TODO call-to-action" ]
                                   --             targetIds ->
@@ -233,7 +262,7 @@ viewCardContent navigate language card values =
                                         [ a [ class "show-more" ]
                                             [ text
                                                 ("Best of "
-                                                    ++ (getManyStrings usedByKeys card values |> List.length |> toString)
+                                                    ++ (getManyStrings language usedByKeys card values |> List.length |> toString)
                                                 )
                                             ]
                                         , button [ class "btn btn-default btn-xs btn-action", type' "button" ]
@@ -243,7 +272,7 @@ viewCardContent navigate language card values =
                                 ]
                               -- , div [ class "panel-body" ]
                               --     [ div [ class "row" ]
-                              --         ((case getManyStrings usedByKeys card of
+                              --         ((case getManyStrings language usedByKeys card of
                               --             [] ->
                               --                 [ text "TODO call-to-action" ]
                               --             targetIds ->
@@ -263,34 +292,6 @@ viewCardContent navigate language card values =
         ]
 
 
-
--- viewCardField : (String -> msg) -> Dict String Statement -> CardField -> Html msg
--- viewCardField navigate statements cardField =
---     case cardField of
---         StringField { format, value } ->
---             case format of
---                 Nothing ->
---                     aIfIsUrl [] value
---                 Just format ->
---                     case format of
---                         UriReference ->
---                             viewUriReferenceAsLink navigate statements value
---                         Uri ->
---                             aIfIsUrl [] value
---                         Email ->
---                             a [ href ("mailto:" ++ value) ] [ text value ]
---         NumberField float ->
---             text (toString float)
---         ArrayField cardFields ->
---             ul [ class "list-unstyled" ]
---                 (List.map
---                     (\cardField -> li [] [ viewCardField navigate statements cardField ])
---                     cardFields
---                 )
---         BijectiveUriReferenceField targetId ->
---             viewUriReferenceAsLink navigate statements targetId
-
-
 viewShowMore : number -> List (Html msg)
 viewShowMore count =
     if count > 20 then
@@ -307,65 +308,65 @@ viewShowMore count =
         []
 
 
+viewValueValue : I18n.Language -> (String -> msg) -> Dict String Card -> Dict String Value -> ValueType -> Html msg
+viewValueValue language navigate cards values value =
+    case value of
+        StringValue str ->
+            aIfIsUrl [] str
 
--- viewUriReferenceAsLink : (String -> msg) -> Dict String Statement -> String -> Html msg
--- viewUriReferenceAsLink navigate statements statementId =
---     case Dict.get statementId statements of
---         Nothing ->
---             text ("Error: the referenced statement (id: " ++ statementId ++ " ) was not found in statements.")
---         Just statement ->
---             case Routes.pathForCard statement of
---                 Just urlPath ->
---                     case statement.custom of
---                         CardCustom card ->
---                             aForPath navigate
---                                 urlPath
---                                 []
---                                 [ text
---                                     (getOneString nameKeys card values
---                                         |> Maybe.withDefault "TODO call-to-action"
---                                     )
---                                 ]
---                 Nothing ->
---                     text ("Error: impossible to determine the path of the referenced statement (id: " ++ statementId)
--- viewUriReferenceAsThumbnail : (String -> msg) -> Dict String Statement -> String -> Html msg
--- viewUriReferenceAsThumbnail navigate statements statementId =
---     case Dict.get statementId statements of
---         Nothing ->
---             text ("Error: the referenced statement (id: " ++ statementId ++ " ) was not found in statements.")
---         Just statement ->
---             case Routes.pathForCard statement of
---                 Just urlPath ->
---                     case statement.custom of
---                         CardCustom card ->
---                             let
---                                 name =
---                                     getOneString nameKeys card |> Maybe.withDefault "TODO call-to-action"
---                             in
---                                 div [ class "col-xs-6 col-md-4", onClick (navigate urlPath) ]
---                                     [ div [ class "thumbnail orga grey" ]
---                                         [ div [ class "visual" ]
---                                             [ case getImageUrl "261x140" card of
---                                                 Just url ->
---                                                     img [ alt "Logo", src url ] []
---                                                 Nothing ->
---                                                     h1 [ class "dynamic" ] [ text name ]
---                                             ]
---                                         , div [ class "caption" ]
---                                             [ h4 []
---                                                 [ aForPath navigate
---                                                     urlPath
---                                                     []
---                                                     [ text name ]
---                                                 ]
---                                             , p []
---                                                 [ text
---                                                     (getOneString descriptionKeys card
---                                                         |> Maybe.withDefault "TODO call-to-action"
---                                                     )
---                                                 ]
---                                             ]
---                                         ]
---                                     ]
---                 Nothing ->
---                     text ("Error: impossible to determine the path of the referenced statement (id: " ++ statementId)
+        WrongValue str schemaId ->
+            div []
+                [ p [ style [ ( "color", "red" ) ] ] [ text "Wrong value!" ]
+                , pre [] [ text str ]
+                , p [] [ text ("schemaId: " ++ schemaId) ]
+                ]
+
+        LocalizedStringValue values ->
+            dl []
+                (values
+                    |> Dict.toList
+                    |> List.concatMap
+                        (\( languageCode, childValue ) ->
+                            [ dt [] [ text languageCode ]
+                            , dd [] [ aIfIsUrl [] childValue ]
+                            ]
+                        )
+                )
+
+        NumberValue float ->
+            text (toString float)
+
+        ArrayValue childValues ->
+            ul [ class "list-unstyled" ]
+                (List.map
+                    (\childValue -> li [] [ viewValueValue language navigate cards values childValue ])
+                    childValues
+                )
+
+        BijectiveUriReferenceValue { targetId } ->
+            case Dict.get targetId cards of
+                Nothing ->
+                    text ("Error: target card not found for ID: " ++ targetId)
+
+                Just card ->
+                    let
+                        linkText =
+                            case getOneString language nameKeys card values of
+                                Nothing ->
+                                    targetId
+
+                                Just name ->
+                                    name
+                    in
+                        case Routes.pathForCard card of
+                            Nothing ->
+                                text
+                                    ("Error: impossible to determine the path of the referenced card (targetId: "
+                                        ++ targetId
+                                    )
+
+                            Just urlPath ->
+                                aForPath navigate
+                                    urlPath
+                                    []
+                                    [ text linkText ]

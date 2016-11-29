@@ -7,7 +7,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Html.Helpers exposing (aExternal, aForPath)
 import Http
-import I18n
+import I18n exposing (getImageUrl, getManyStrings, getOneString)
 import Set exposing (Set)
 import String
 import Task
@@ -817,12 +817,12 @@ viewThumbnail : String -> Card -> Dict String Value -> String -> CardType -> I18
 viewThumbnail urlPath card values extraClass cardType language =
     let
         name =
-            getOneString nameKeys card values |> Maybe.withDefault ""
+            getOneString language nameKeys card values |> Maybe.withDefault ""
     in
         div [ class "col-xs-6 col-md-3" ]
             [ div [ class ("thumbnail " ++ extraClass), onClick (navigate urlPath) ]
                 [ div [ class "visual" ]
-                    [ case getImageUrl "218x140" card values of
+                    [ case getImageUrl language "218x140" card values of
                         Just url ->
                             img [ alt "Logo", src url ] []
 
@@ -832,7 +832,7 @@ viewThumbnail urlPath card values extraClass cardType language =
                 , div [ class "caption" ]
                     [ h4 []
                         [ aForPath navigate urlPath [] [ text name ] ]
-                    , case getOneString descriptionKeys card values of
+                    , case getOneString language descriptionKeys card values of
                         Just description ->
                             p [] [ text description ]
 
@@ -842,7 +842,7 @@ viewThumbnail urlPath card values extraClass cardType language =
                                 [ text (I18n.translate language (I18n.CallToActionForDescription cardType)) ]
                     ]
                 , div [ class "tags" ]
-                    (case getManyStrings tagKeys card values of
+                    (case getManyStrings language tagKeys card values of
                         [] ->
                             [ span
                                 [ class "label label-default label-tool" ]

@@ -1,6 +1,8 @@
 module I18n exposing (..)
 
-import Types
+import Constants
+import Dict exposing (Dict)
+import Types exposing (..)
 
 
 -- STRINGS TO TRANSLATE
@@ -410,6 +412,139 @@ s =
 todo : Maybe a
 todo =
     Nothing
+
+
+
+-- FUNCTIONS
+
+
+getManyStrings : Language -> List String -> Card -> Dict String Value -> List String
+getManyStrings language propertyKeys card values =
+    let
+        getStrings : ValueType -> List String
+        getStrings value =
+            case value of
+                StringValue value ->
+                    [ value ]
+
+                LocalizedStringValue values ->
+                    case Dict.get (iso639_1FromLanguage language) values of
+                        Nothing ->
+                            case Dict.get "en" values of
+                                Nothing ->
+                                    []
+
+                                Just value ->
+                                    [ value ]
+
+                        Just value ->
+                            [ value ]
+
+                ArrayValue [] ->
+                    []
+
+                ArrayValue childValues ->
+                    List.concatMap getStrings childValues
+
+                NumberValue _ ->
+                    []
+
+                BijectiveUriReferenceValue _ ->
+                    []
+
+                WrongValue _ _ ->
+                    []
+    in
+        propertyKeys
+            |> List.map
+                (\propertyKey ->
+                    Dict.get propertyKey card.properties
+                        `Maybe.andThen` (\valueId -> Dict.get valueId values)
+                        |> Maybe.map (\value -> getStrings value.value)
+                        |> Maybe.withDefault []
+                )
+            |> List.filter (not << List.isEmpty)
+            |> List.head
+            |> Maybe.withDefault []
+
+
+getOneString : Language -> List String -> Card -> Dict String Value -> Maybe String
+getOneString language propertyKeys card values =
+    let
+        getString : ValueType -> Maybe String
+        getString value =
+            case value of
+                StringValue value ->
+                    Just value
+
+                LocalizedStringValue values ->
+                    case Dict.get (iso639_1FromLanguage language) values of
+                        Nothing ->
+                            Dict.get "en" values
+
+                        Just value ->
+                            Just value
+
+                ArrayValue [] ->
+                    Nothing
+
+                ArrayValue (childValue :: _) ->
+                    getString childValue
+
+                NumberValue _ ->
+                    Nothing
+
+                BijectiveUriReferenceValue _ ->
+                    Nothing
+
+                WrongValue _ _ ->
+                    Nothing
+    in
+        propertyKeys
+            |> List.map
+                (\propertyKey ->
+                    Dict.get propertyKey card.properties
+                        `Maybe.andThen` (\valueId -> Dict.get valueId values)
+                        `Maybe.andThen` (\value -> getString value.value)
+                )
+            |> Maybe.oneOf
+
+
+getName : Language -> String -> Dict String Card -> Dict String Value -> String
+getName language cardId cards values =
+    case Dict.get cardId cards of
+        Nothing ->
+            "No name"
+
+        Just card ->
+            case getOneString language nameKeys card values of
+                Nothing ->
+                    "No name"
+
+                Just name ->
+                    name
+
+
+getImageUrl : Language -> String -> Card -> Dict String Value -> Maybe String
+getImageUrl language dim card values =
+    getOneString language imageUrlPathKeys card values
+        |> Maybe.map
+            (\urlPath -> imageUrl urlPath ++ "?dim=" ++ dim)
+
+
+getImageUrlOrOgpLogo : Language -> String -> Dict String Card -> Dict String Value -> String
+getImageUrlOrOgpLogo language cardId cards values =
+    case Dict.get cardId cards of
+        Nothing ->
+            Constants.logoUrl
+
+        Just card ->
+            case getOneString language imageUrlPathKeys card values of
+                Nothing ->
+                    Constants.logoUrl
+
+                Just urlPath ->
+                    imageUrl urlPath
 
 
 languageFromIso639_1 : String -> Maybe Language

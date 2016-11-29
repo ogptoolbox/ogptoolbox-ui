@@ -64,4 +64,3 @@ aIfIsUrl attributes s =
             aExternal ([ href s ] ++ attributes) [ text s ]
         else
             text s
-

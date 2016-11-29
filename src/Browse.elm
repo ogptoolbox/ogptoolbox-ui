@@ -5,7 +5,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Html.Helpers exposing (aForPath)
-import I18n
+import I18n exposing (getImageUrl, getManyStrings, getOneString)
 import String
 import Types exposing (..)
 import Views exposing (viewLoading)
@@ -230,12 +230,12 @@ viewCard cardType navigate language values card =
                 ++ card.id
 
         name =
-            getOneString nameKeys card values |> Maybe.withDefault ""
+            getOneString language nameKeys card values |> Maybe.withDefault ""
     in
         div [ class "col-xs-12" ]
             [ div [ class "thumbnail example", onClick (navigate cardUrl) ]
                 [ div [ class "visual" ]
-                    [ case getImageUrl "95x98" card values of
+                    [ case getImageUrl language "95x98" card values of
                         Just url ->
                             img [ alt "Logo", src url ] []
 
@@ -258,7 +258,7 @@ viewCard cardType navigate language values card =
                         , text "TODO The White House"
                         ]
                     , p []
-                        (case getOneString descriptionKeys card values of
+                        (case getOneString language descriptionKeys card values of
                             Just description ->
                                 [ text description ]
 
@@ -267,7 +267,7 @@ viewCard cardType navigate language values card =
                         )
                     ]
                 , div [ class "tags" ]
-                    (case getManyStrings typeKeys card values of
+                    (case getManyStrings language typeKeys card values of
                         [] ->
                             [ text "TODO call-to-action" ]
 

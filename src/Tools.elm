@@ -6,7 +6,7 @@ import Hop.Types
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Http
-import I18n
+import I18n exposing (getImageUrlOrOgpLogo, getName)
 import Requests exposing (..)
 import Routes exposing (getSearchQuery, ToolsNestedRoute(..))
 import Set exposing (Set)
@@ -198,8 +198,8 @@ update msg model authenticationMaybe language setDocumentMetatags =
             let
                 cmd =
                     setDocumentMetatags
-                        { title = getName body.data.id body.data.cards body.data.values
-                        , imageUrl = getImageUrlOrOgpLogo body.data.id body.data.cards body.data.values
+                        { title = getName language body.data.id body.data.cards body.data.values
+                        , imageUrl = getImageUrlOrOgpLogo language body.data.id body.data.cards body.data.values
                         }
             in
                 ( Tool (Data (Loaded body)), cmd )

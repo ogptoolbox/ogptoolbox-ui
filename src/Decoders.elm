@@ -7,6 +7,13 @@ import String
 import Types exposing (..)
 
 
+bijectiveUriReferenceDecoder : Decoder BijectiveUriReference
+bijectiveUriReferenceDecoder =
+    succeed BijectiveUriReference
+        |: ("targetId" := string)
+        |: ("reverseKeyId" := string)
+
+
 popularTagDecoder : Decoder PopularTag
 popularTagDecoder =
     succeed PopularTag
@@ -100,39 +107,60 @@ valueDecoder =
         (oneOf [ ("widgetId" := string), succeed "" ])
         `andThen`
             (\( createdAt, id, schemaId, type_, widgetId ) ->
-                ("value" := valueTypeDecoder schemaId)
-                    |> map
-                        (\value ->
-                            let
-                                v : Types.Value
-                                v =
-                                    Types.Value createdAt id schemaId type_ value widgetId
-                            in
-                                v
-                        )
+                ("value" := valueValueDecoder schemaId)
+                    |> map (\value -> Types.Value createdAt id schemaId type_ value widgetId)
             )
 
 
-valueTypeDecoder : String -> Decoder ValueType
-valueTypeDecoder schemaId =
-    case schemaId of
-        "/types/string" ->
-            string |> map StringValue
+valueValueDecoder : String -> Decoder ValueType
+valueValueDecoder schemaId =
+    let
+        decoder =
+            case schemaId of
+                "/types/string" ->
+                    string |> map StringValue
 
-        "/schemas/localized-string" ->
-            dict string |> map LocalizedStringValue
+                "/types/number" ->
+                    float |> map NumberValue
 
-        "/schemas/localized-strings-array" ->
-            list (dict string) |> map (\xs -> ListValue (List.map LocalizedStringValue xs))
+                "/schemas/localized-string" ->
+                    dict string |> map LocalizedStringValue
 
-        _ ->
-            -- fail ("Unsupported schemaId: " ++ schemaId)
-            oneOf
-                [ int |> map IntValue
-                , float |> map FloatValue
-                , string |> map StringValue
-                , list string |> map (\x -> StringValue (toString x))
-                , dict string |> map (\x -> StringValue (toString x))
-                , list (dict string) |> map (\x -> StringValue (toString x))
-                , succeed (StringValue "TODO Unsupported schemaId")
-                ]
+                "/schemas/localized-strings-array" ->
+                    list (dict string) |> map (\xs -> ArrayValue (List.map LocalizedStringValue xs))
+
+                "/schemas/bijective-uri-reference" ->
+                    bijectiveUriReferenceDecoder |> map BijectiveUriReferenceValue
+
+                _ ->
+                    -- oneOf
+                    --     [ float |> map NumberValue
+                    --     , string |> map StringValue
+                    --       -- , list string |> map ArrayValue
+                    --     , dict string
+                    --         |> map
+                    --             (\decodedValue ->
+                    --                 if decodedValue |> Dict.keys |> List.all (\str -> String.length str == 2) then
+                    --                     LocalizedStringValue decodedValue
+                    --                 else
+                    --                     StringValue (toString decodedValue)
+                    --             )
+                    --       -- , succeed |> map (\x -> StringValue ("TODO Unsupported schemaId, value as string is: " ++ (toString x)))
+                    --     ]
+                    fail ("TODO Unsupported schemaId: " ++ schemaId)
+    in
+        oneOf
+            [ decoder
+            , value
+                |> map
+                    (\value ->
+                        let
+                            str =
+                                toString value
+
+                            -- _ =
+                            --     Debug.log ("WrongValue \"" ++ str ++ "\", schemaId: " ++ schemaId)
+                        in
+                            WrongValue str schemaId
+                    )
+            ]
