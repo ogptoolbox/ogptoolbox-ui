@@ -2,6 +2,7 @@ module Tools exposing (..)
 
 import Authenticator.Model
 import Browse
+import Constants
 import Hop.Types
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -191,8 +192,14 @@ update msg model authenticationMaybe language setDocumentMetatags =
                                 }
                             )
                         )
+
+                cmd =
+                    setDocumentMetatags
+                        { title = I18n.translate language (I18n.Tool I18n.Plural)
+                        , imageUrl = Constants.logoUrl
+                        }
             in
-                ( model', Cmd.none )
+                ( model', cmd )
 
         LoadedOne body ->
             let

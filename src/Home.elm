@@ -108,6 +108,8 @@ update msg model authenticationMaybe language searchQuery mountd3bubbles =
 
                 Just _ ->
                     let
+                        newSelectedTags =
+                            Set.remove deselectedTag model.selectedTags
                         newModel =
                             { model
                                 | examples = Data (Loading (getData model.examples))
@@ -116,8 +118,6 @@ update msg model authenticationMaybe language searchQuery mountd3bubbles =
                                 , tools = Data (Loading (getData model.tools))
                             }
 
-                        newSelectedTags =
-                            Set.remove deselectedTag model.selectedTags
 
                         cmds =
                             List.map (Cmd.map ForSelf)
@@ -207,7 +207,7 @@ update msg model authenticationMaybe language searchQuery mountd3bubbles =
                         , Task.perform
                             ErrorPopularTags
                             LoadedPopularTags
-                            (newTaskGetTagsPopularity language Set.empty)
+                            (newTaskGetTagsPopularity language model.selectedTags)
                         ]
             in
                 model' ! cmds
@@ -239,6 +239,8 @@ update msg model authenticationMaybe language searchQuery mountd3bubbles =
 
                 Just _ ->
                     let
+                        newSelectedTags =
+                            Set.insert selectedTag model.selectedTags
                         newModel =
                             { model
                                 | examples = Data (Loading (getData model.examples))
@@ -247,8 +249,6 @@ update msg model authenticationMaybe language searchQuery mountd3bubbles =
                                 , tools = Data (Loading (getData model.tools))
                             }
 
-                        newSelectedTags =
-                            Set.insert selectedTag model.selectedTags
 
                         cmds =
                             List.map (Cmd.map ForSelf)

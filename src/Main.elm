@@ -224,6 +224,7 @@ urlUpdate ( i18nRoute, location ) model =
 type Msg
     = AuthenticatorMsg Authenticator.Update.Msg
     | AuthenticatorRouteMsg (Maybe Authenticator.Model.Route)
+    | DeselectBubble String
     | ExamplesMsg Examples.Types.InternalMsg
     | HomeMsg Home.InternalMsg
     | Navigate String
@@ -231,6 +232,7 @@ type Msg
     | OrganizationsMsg Organizations.InternalMsg
     | Search
     | SearchInputChanged String
+    | SelectBubble String
     | ToolsMsg Tools.InternalMsg
 
 
@@ -333,6 +335,47 @@ update msg model =
             AuthenticatorRouteMsg authenticatorRouteMaybe ->
                 ( { model | authenticatorRouteMaybe = authenticatorRouteMaybe }, Cmd.none )
 
+            DeselectBubble deselectedTag ->
+                case model.i18nRoute of
+                    I18nRouteWithLanguage language route ->
+                        case route of
+                            HomeRoute ->
+                                let
+                                    ( homeModel, childCmd ) =
+                                        Home.update
+                                            (Home.DeselectBubble deselectedTag)
+                                            model.homeModel
+                                            model.authenticationMaybe
+                                            language
+                                            searchQuery
+                                            mountd3bubbles
+                                in
+                                    ( { model | homeModel = homeModel }
+                                    , Cmd.map translateHomeMsg childCmd
+                                    )
+
+                            OrganizationsRoute _ ->
+                                let
+                                    ( organizationsModel, childCmd ) =
+                                        Organizations.update
+                                            (Organizations.DeselectBubble deselectedTag)
+                                            model.organizationsModel
+                                            model.authenticationMaybe
+                                            language
+                                            searchQuery
+                                            setDocumentMetatags
+                                            mountd3bubbles
+                                in
+                                    ( { model | organizationsModel = organizationsModel }
+                                    , Cmd.map translateOrganizationsMsg childCmd
+                                    )
+
+                            _ ->
+                                ( model, Cmd.none )
+
+                    I18nRouteWithoutLanguage _ ->
+                        ( model, Cmd.none )
+
             ExamplesMsg childMsg ->
                 let
                     ( examplesModel, childCmd ) =
@@ -341,7 +384,10 @@ update msg model =
                             model.examplesModel
                             model.authenticationMaybe
                             language
+                            -- searchQuery
                             setDocumentMetatags
+
+                    -- mountd3bubbles
                 in
                     ( { model | examplesModel = examplesModel }
                     , Cmd.map translateExamplesMsg childCmd
@@ -381,7 +427,9 @@ update msg model =
                             model.organizationsModel
                             model.authenticationMaybe
                             language
+                            searchQuery
                             setDocumentMetatags
+                            mountd3bubbles
                 in
                     ( { model | organizationsModel = organizationsModel }
                     , Cmd.map translateOrganizationsMsg childCmd
@@ -407,6 +455,47 @@ update msg model =
             SearchInputChanged searchInputValue ->
                 ( { model | searchInputValue = searchInputValue }, Cmd.none )
 
+            SelectBubble selectedTag ->
+                case model.i18nRoute of
+                    I18nRouteWithLanguage language route ->
+                        case route of
+                            HomeRoute ->
+                                let
+                                    ( homeModel, childCmd ) =
+                                        Home.update
+                                            (Home.SelectBubble selectedTag)
+                                            model.homeModel
+                                            model.authenticationMaybe
+                                            language
+                                            searchQuery
+                                            mountd3bubbles
+                                in
+                                    ( { model | homeModel = homeModel }
+                                    , Cmd.map translateHomeMsg childCmd
+                                    )
+
+                            OrganizationsRoute _ ->
+                                let
+                                    ( organizationsModel, childCmd ) =
+                                        Organizations.update
+                                            (Organizations.SelectBubble selectedTag)
+                                            model.organizationsModel
+                                            model.authenticationMaybe
+                                            language
+                                            searchQuery
+                                            setDocumentMetatags
+                                            mountd3bubbles
+                                in
+                                    ( { model | organizationsModel = organizationsModel }
+                                    , Cmd.map translateOrganizationsMsg childCmd
+                                    )
+
+                            _ ->
+                                ( model, Cmd.none )
+
+                    I18nRouteWithoutLanguage _ ->
+                        ( model, Cmd.none )
+
             ToolsMsg childMsg ->
                 let
                     ( toolsModel, childCmd ) =
@@ -415,7 +504,10 @@ update msg model =
                             model.toolsModel
                             model.authenticationMaybe
                             language
+                            -- searchQuery
                             setDocumentMetatags
+
+                    -- mountd3bubbles
                 in
                     ( { model | toolsModel = toolsModel }
                     , Cmd.map translateToolsMsg childCmd
@@ -892,6 +984,6 @@ port bubbleDeselections : (String -> msg) -> Sub msg
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ bubbleSelections (HomeMsg << Home.SelectBubble)
-        , bubbleDeselections (HomeMsg << Home.DeselectBubble)
+        [ bubbleSelections SelectBubble
+        , bubbleDeselections DeselectBubble
         ]
