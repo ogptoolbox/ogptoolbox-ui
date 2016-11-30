@@ -711,9 +711,7 @@ viewExamples : String -> I18n.Language -> Int -> Dict String Value -> List Card 
 viewExamples searchQuery language count values examples =
     div [ class "row" ]
         ((examples
-            -- |> filterByCardType Example
-            |>
-                List.take 8
+            |> List.take 8
             |> List.map (\card -> viewExampleThumbnail card values language)
          )
             ++ [ div [ class "col-sm-12 text-center" ]
@@ -786,9 +784,7 @@ viewOrganizations : String -> I18n.Language -> Int -> Dict String Value -> List 
 viewOrganizations searchQuery language count values organizations =
     div [ class "row" ]
         ((organizations
-            -- |> filterByCardType Organization
-            |>
-                List.take 8
+            |> List.take 8
             |> List.map
                 (\card -> viewOrganizationThumbnail card values language)
          )
@@ -867,9 +863,7 @@ viewTools : String -> I18n.Language -> Int -> Dict String Value -> List Card -> 
 viewTools searchQuery language count values tools =
     div [ class "row" ]
         ((tools
-            -- |> filterByCardType Tool
-            |>
-                List.take 8
+            |> List.take 8
             |> List.map (\card -> viewToolThumbnail card values language)
          )
             ++ [ div [ class "col-sm-12 text-center" ]

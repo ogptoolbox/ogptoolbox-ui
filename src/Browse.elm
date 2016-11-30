@@ -207,10 +207,8 @@ view cardType counts navigate searchQuery language loadingStatus =
 
 viewCards : CardType -> (String -> msg) -> I18n.Language -> List Card -> Dict String Value -> List (Html msg)
 viewCards cardType navigate language cards values =
-    cards
-        -- |> filterByCardType cardType
-        |>
-            List.map (viewCard cardType navigate language values)
+
+            List.map (viewCard cardType navigate language values) cards
 
 
 viewCard : CardType -> (String -> msg) -> I18n.Language -> Dict String Value -> Card -> Html msg
