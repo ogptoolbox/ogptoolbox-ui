@@ -280,8 +280,8 @@ update msg model authenticationMaybe language searchQuery mountd3bubbles =
 view : Model -> String -> I18n.Language -> Html Msg
 view model searchQuery language =
     let
-        viewWebDataFor title webData viewFunction =
-            div [ class "row section" ]
+        viewWebDataFor title extraClass webData viewFunction =
+            div [ class ("row section " ++ extraClass) ]
                 [ div [ class "container" ]
                     ([ h3 [ class "zone-label" ]
                         [ text title ]
@@ -333,10 +333,12 @@ view model searchQuery language =
                    )
                 ++ [ viewWebDataFor
                         (I18n.translate language (I18n.Example I18n.Plural))
+                        ""
                         model.examples
                         viewExamples
                    , viewWebDataFor
                         (I18n.translate language (I18n.Tool I18n.Plural))
+                        "grey"
                         model.tools
                         viewTools
                    , viewCollections
@@ -823,7 +825,19 @@ viewThumbnail urlPath card values extraClass cardType language =
                             img [ alt "Logo", src url ] []
 
                         Nothing ->
-                            h1 [ class "dynamic" ] [ text name ]
+                            h1 [ class "dynamic" ]
+                                [ text
+                                    (case cardType of
+                                        Example ->
+                                            name
+
+                                        Organization ->
+                                            name
+
+                                        Tool ->
+                                            String.left 2 name
+                                    )
+                                ]
                     ]
                 , div [ class "caption" ]
                     [ h4 []
