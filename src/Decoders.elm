@@ -36,7 +36,7 @@ cardDecoder =
         |: oneOf [ ("rating" := int), succeed 0 ]
         |: oneOf [ ("ratingCount" := int), succeed 0 ]
         |: oneOf [ ("ratingSum" := int), succeed 0 ]
-        |: ("subTypes" := list string)
+        |: ("subTypeIds" := list string)
         |: oneOf [ ("tags" := list (dict string)), succeed [] ]
         |: ("type" := string)
 
@@ -46,7 +46,7 @@ dataIdDecoder =
     succeed DataId
         |: ("cards" := dict cardDecoder)
         |: ("id" := string)
-        |: ("values" := dict valueDecoder)
+        |: oneOf [ ("values" := dict valueDecoder), succeed Dict.empty ]
 
 
 dataIdBodyDecoder : Decoder DataIdBody

@@ -13,6 +13,7 @@ import Types exposing (..)
 type TranslationId
     = About
     | AddNew
+    | AddNewTool
     | AdditionalInformations
     | CallToActionForCategory
     | CallToActionForDescription Types.CardType
@@ -32,6 +33,7 @@ type TranslationId
     | Organization GrammaticalNumber
     | PageNotFound
     | PageNotFoundExplanation
+    | PublishTool
     | SeeAllAndCompare
     | Score
     | SearchInputPlaceholder
@@ -71,6 +73,12 @@ getTranslationSet translationId =
         AddNew ->
             { english = s "Add new"
             , french = s "Ajouter"
+            , spanish = todo
+            }
+
+        AddNewTool ->
+            { english = s "Add a new tool"
+            , french = todo
             , spanish = todo
             }
 
@@ -270,6 +278,12 @@ including representatives of governments and civil society organizations.
             , spanish = todo
             }
 
+        PublishTool ->
+            { english = s "Publish tool"
+            , french = todo
+            , spanish = todo
+            }
+
         SeeAllAndCompare ->
             { english = s "See all and compare"
             , french = s "Voir tous et comparer"
@@ -371,11 +385,13 @@ including representatives of governments and civil society organizations.
             , french = todo
             , spanish = todo
             }
+
         UsedFor ->
             { english = s "Used for"
             , french = todo
             , spanish = todo
             }
+
         UnexpectedPayloadExplanation ->
             { english = s "The server returned unexpected data."
             , french = todo

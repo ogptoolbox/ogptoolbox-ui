@@ -6,9 +6,7 @@ import Authenticator.Update
 import Authenticator.View
 import Constants
 import Dom.Scroll
-import Examples.State
-import Examples.Types
-import Examples.View
+import Examples
 import Help
 import Home
 import Hop.Types exposing (Location)
@@ -16,12 +14,13 @@ import Html exposing (..)
 import Html.App
 import Html.Attributes exposing (..)
 import Html.Attributes.Aria exposing (ariaHidden, ariaLabelledby)
-import Html.Events exposing (onInput, onSubmit, onWithOptions)
+import Html.Events exposing (onClick, onInput, onSubmit, onWithOptions)
 import Html.Helpers exposing (aForPath, aForPathWithLanguage)
 import I18n
 import Json.Decode
 import Navigation
 import Organizations
+import Ports exposing (setDocumentMetatags)
 import Routes
     exposing
         ( addSearchQueryToLocation
@@ -44,7 +43,7 @@ import Types exposing (..)
 import Views exposing (viewError, viewNotFound)
 
 
-main : Program String
+main : Program Flags
 main =
     Navigation.programWithFlags urlParser
         { init = init
@@ -55,6 +54,12 @@ main =
         }
 
 
+type alias Flags =
+    { language : String
+    , authentication : Maybe Authenticator.Model.Authentication
+    }
+
+
 
 -- MODEL
 
@@ -63,7 +68,8 @@ type alias Model =
     { authenticationMaybe : Maybe Authenticator.Model.Authentication
     , authenticatorModel : Authenticator.Model.Model
     , authenticatorRouteMaybe : Maybe Authenticator.Model.Route
-    , examplesModel : Examples.Types.Model
+    , displayAddNewModal : Bool
+    , examplesModel : Examples.Model
     , homeModel : Home.Model
     , i18nRoute : I18nRoute
     , location : Hop.Types.Location
@@ -74,17 +80,18 @@ type alias Model =
     }
 
 
-init : String -> ( I18nRoute, Hop.Types.Location ) -> ( Model, Cmd Msg )
-init languageStr ( i18nRoute, location ) =
-    { authenticationMaybe = Nothing
+init : Flags -> ( I18nRoute, Hop.Types.Location ) -> ( Model, Cmd Msg )
+init flags ( i18nRoute, location ) =
+    { authenticationMaybe = flags.authentication
     , authenticatorModel = Authenticator.Model.init
     , authenticatorRouteMaybe = Nothing
-    , examplesModel = Examples.State.init
+    , displayAddNewModal = False
+    , examplesModel = Examples.init
     , homeModel = Home.init
     , i18nRoute = i18nRoute
     , location = location
     , navigatorLanguage =
-        languageStr
+        flags.language
             |> String.left 2
             |> String.toLower
             |> I18n.languageFromIso639_1
@@ -120,7 +127,7 @@ urlUpdate ( i18nRoute, location ) model =
                         ExamplesRoute childRoute ->
                             let
                                 ( examplesModel, childCmd ) =
-                                    Examples.State.urlUpdate ( childRoute, location ) model.examplesModel
+                                    Examples.urlUpdate ( childRoute, location ) model.examplesModel
                             in
                                 ( { model
                                     | examplesModel = examplesModel
@@ -185,7 +192,7 @@ urlUpdate ( i18nRoute, location ) model =
                         ToolsRoute childRoute ->
                             let
                                 ( toolsModel, childCmd ) =
-                                    Tools.urlUpdate ( childRoute, location ) model.toolsModel
+                                    Tools.urlUpdate ( childRoute, location ) language model.toolsModel
                             in
                                 ( { model
                                     | toolsModel = toolsModel
@@ -225,7 +232,8 @@ type Msg
     = AuthenticatorMsg Authenticator.Update.Msg
     | AuthenticatorRouteMsg (Maybe Authenticator.Model.Route)
     | DeselectBubble String
-    | ExamplesMsg Examples.Types.InternalMsg
+    | DisplayAddNewModal Bool
+    | ExamplesMsg Examples.InternalMsg
     | HomeMsg Home.InternalMsg
     | Navigate String
     | NoOp
@@ -239,10 +247,7 @@ type Msg
 port mountd3bubbles : ( List PopularTag, List String ) -> Cmd msg
 
 
-port setDocumentMetatags : DocumentMetatags -> Cmd msg
-
-
-examplesMsgTranslation : Examples.Types.MsgTranslation Msg
+examplesMsgTranslation : Examples.MsgTranslation Msg
 examplesMsgTranslation =
     { onInternalMsg = ExamplesMsg
     , onNavigate = Navigate
@@ -270,9 +275,9 @@ toolsMsgTranslation =
     }
 
 
-translateExamplesMsg : Examples.Types.MsgTranslator Msg
+translateExamplesMsg : Examples.MsgTranslator Msg
 translateExamplesMsg =
-    Examples.State.translateMsg examplesMsgTranslation
+    Examples.translateMsg examplesMsgTranslation
 
 
 translateHomeMsg : Home.MsgTranslator Msg
@@ -376,10 +381,15 @@ update msg model =
                     I18nRouteWithoutLanguage _ ->
                         ( model, Cmd.none )
 
+            DisplayAddNewModal displayAddNewModal ->
+                ( { model | displayAddNewModal = displayAddNewModal }
+                , Cmd.none
+                )
+
             ExamplesMsg childMsg ->
                 let
                     ( examplesModel, childCmd ) =
-                        Examples.State.update
+                        Examples.update
                             childMsg
                             model.examplesModel
                             model.authenticationMaybe
@@ -499,15 +509,7 @@ update msg model =
             ToolsMsg childMsg ->
                 let
                     ( toolsModel, childCmd ) =
-                        Tools.update
-                            childMsg
-                            model.toolsModel
-                            model.authenticationMaybe
-                            language
-                            -- searchQuery
-                            setDocumentMetatags
-
-                    -- mountd3bubbles
+                        Tools.update childMsg model.toolsModel model.authenticationMaybe language
                 in
                     ( { model | toolsModel = toolsModel }
                     , Cmd.map translateToolsMsg childCmd
@@ -527,6 +529,7 @@ view model =
                     ++ content
                     ++ [ viewFooter model language
                        , viewAuthenticatorModal model language
+                       , viewAddNewModal model language
                        , viewBackdrop model
                        ]
                 )
@@ -540,6 +543,7 @@ view model =
                     ++ [ div [ class "fixed-footer" ]
                             [ text (I18n.translate language I18n.Copyright) ]
                        , viewAuthenticatorModal model language
+                       , viewAddNewModal model language
                        , viewBackdrop model
                        ]
                 )
@@ -555,7 +559,7 @@ view model =
                             [ About.view language ]
 
                     ExamplesRoute childRoute ->
-                        Examples.View.root model.authenticationMaybe model.examplesModel searchQuery language
+                        Examples.view model.authenticationMaybe model.examplesModel searchQuery language
                             |> List.map (Html.App.map translateExamplesMsg)
                             |> case childRoute of
                                 ExampleRoute _ ->
@@ -602,12 +606,95 @@ view model =
                                 ToolsIndexRoute ->
                                     fullscreenLayout language
 
+                                NewToolRoute ->
+                                    standardLayout language
+
             I18nRouteWithoutLanguage _ ->
                 standardLayout
                     I18n.English
                     [ div [ style [ ( "min-height", "60em" ) ] ]
                         [ viewError "" "" ]
                     ]
+
+
+viewAddNewModal : Model -> I18n.Language -> Html Msg
+viewAddNewModal model language =
+    if model.displayAddNewModal then
+        div
+            [ ariaLabelledby "myModalLabel"
+            , attribute "role" "dialog"
+            , attribute "tabindex" "-1"
+            , class "modal fade in"
+            , style [ ( "display", "block" ) ]
+            ]
+            [ div [ class "modal-dialog", id "login-overlay" ]
+                [ div [ class "modal-content" ]
+                    [ div [ class "modal-header" ]
+                        [ button
+                            [ class "close"
+                            , attribute "data-dismiss" "modal"
+                            , onClick (DisplayAddNewModal False)
+                            , type' "button"
+                            ]
+                            [ span [ attribute "aria-hidden" "true" ]
+                                [ text "×" ]
+                            , span [ class "sr-only" ]
+                                [ text "Close" ]
+                            ]
+                        , h4 [ class "modal-title", id "myModalLabel" ]
+                            [ text "Add an new item" ]
+                        ]
+                    , div [ class "modal-body" ]
+                        [ div [ class "row" ]
+                            [ div [ class "col-xs-12" ]
+                                [ aForPathWithLanguage
+                                    Navigate
+                                    language
+                                    "/tools/new"
+                                    [ class "media action"
+                                      -- TODO Disable if not signed-in.
+                                    , onClick (DisplayAddNewModal False)
+                                    ]
+                                    [ div [ class "media-left icon" ]
+                                        [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-wrench" ]
+                                            []
+                                        ]
+                                    , div [ class "media-body" ]
+                                        [ h4 [ class "media-heading" ]
+                                            [ text "Outil" ]
+                                        , text "Un logiciel ou services utilisé pour renforcer la démocratie."
+                                        ]
+                                    ]
+                                , a [ class "media action" ]
+                                    [ div [ class "media-left icon" ]
+                                        [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-bookmark" ]
+                                            []
+                                        ]
+                                    , div [ class "media-body" ]
+                                        [ h4 [ class "media-heading" ]
+                                            [ text "Usage" ]
+                                        , text "Un example concret et efficace d'utilisation d'un outil."
+                                        ]
+                                    ]
+                                , a [ class "media action", href "TODO-new-collection.html" ]
+                                    [ div [ class "media-left icon" ]
+                                        [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-heart" ]
+                                            []
+                                        ]
+                                    , div [ class "media-body" ]
+                                        [ h4 [ class "media-heading" ]
+                                            [ text "Collection" ]
+                                        , text "Une séléction des meilleurs outils et cas d'usage dans un contexte précis."
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+    else
+        text ""
 
 
 viewAuthenticatorModal : Model -> I18n.Language -> Html Msg
@@ -654,7 +741,7 @@ viewAuthenticatorModal model language =
 
 viewBackdrop : Model -> Html Msg
 viewBackdrop model =
-    div [ classList [ ( "modal-backdrop in", model.authenticatorRouteMaybe /= Nothing ) ] ]
+    div [ classList [ ( "modal-backdrop in", model.authenticatorRouteMaybe /= Nothing || model.displayAddNewModal ) ] ]
         []
 
 
@@ -864,7 +951,11 @@ viewHeader model language containerClass =
                         [ profileNavItem
                         , signInOrOutNavItem
                         , signUpNavItem
-                        , button [ class "btn btn-default btn-action", type' "button" ]
+                        , button
+                            [ class "btn btn-default btn-action"
+                            , onClick (DisplayAddNewModal True)
+                            , type' "button"
+                            ]
                             [ text (I18n.translate language I18n.AddNew) ]
                         ]
                     ]
@@ -986,4 +1077,5 @@ subscriptions model =
     Sub.batch
         [ bubbleSelections SelectBubble
         , bubbleDeselections DeselectBubble
+        , Sub.map ToolsMsg (Tools.subscriptions model.toolsModel)
         ]
