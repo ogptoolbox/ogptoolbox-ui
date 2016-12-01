@@ -117,19 +117,19 @@ valueValueDecoder schemaId =
     let
         decoder =
             case schemaId of
-                "/types/string" ->
+                "schema:string" ->
                     string |> map StringValue
 
-                "/types/number" ->
+                "schema:number" ->
                     float |> map NumberValue
 
-                "/schemas/localized-string" ->
+                "schema:localized-string" ->
                     dict string |> map LocalizedStringValue
 
-                "/schemas/localized-strings-array" ->
+                "schema:localized-strings-array" ->
                     list (dict string) |> map (\xs -> ArrayValue (List.map LocalizedStringValue xs))
 
-                "/schemas/bijective-uri-reference" ->
+                "schema:bijective-uri-reference" ->
                     bijectiveUriReferenceDecoder |> map BijectiveUriReferenceValue
 
                 _ ->
