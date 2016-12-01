@@ -49,8 +49,9 @@ view cardType counts navigate searchQuery language loadingStatus =
     [ div [ class "browse-tag" ]
         [ div [ class "row" ]
             [ div [ class "container-fluid" ]
-                [ img [ src "/img/bubbles2.png" ]
-                    []
+                [ div [ id "tag" ]
+                    [ div [ class "plot" ] []
+                    ]
                 , div [ class "row filters" ]
                     [ div [ class "col-md-12 text-center" ]
                         [ text "Showing results suited for                    "
@@ -99,7 +100,7 @@ view cardType counts navigate searchQuery language loadingStatus =
                                                 [ text
                                                     (case counts of
                                                         Nothing ->
-                                                            "0"
+                                                            ""
 
                                                         Just counts ->
                                                             toString counts.examples
@@ -207,8 +208,7 @@ view cardType counts navigate searchQuery language loadingStatus =
 
 viewCards : CardType -> (String -> msg) -> I18n.Language -> List Card -> Dict String Value -> List (Html msg)
 viewCards cardType navigate language cards values =
-
-            List.map (viewCard cardType navigate language values) cards
+    List.map (viewCard cardType navigate language values) cards
 
 
 viewCard : CardType -> (String -> msg) -> I18n.Language -> Dict String Value -> Card -> Html msg

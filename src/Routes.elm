@@ -49,6 +49,7 @@ type OrganizationsNestedRoute
 type ToolsNestedRoute
     = ToolRoute String
     | ToolsIndexRoute
+    | NewToolRoute
 
 
 makeUrl : String -> String
@@ -88,6 +89,7 @@ matchers =
         "/tools"
         [ match1 ToolsIndexRoute ""
         , match2 ToolRoute "/" idParser
+        , match1 NewToolRoute "/new"
         ]
     , match2 NotFoundRoute "" (regex ".*")
     ]
@@ -169,7 +171,7 @@ replaceLanguageInLocation language location =
 
 pathForCard : Card -> Maybe String
 pathForCard card =
-    List.head card.subTypes
+    List.head card.subTypeIds
         `Maybe.andThen`
             (\cardType ->
                 if List.member cardType cardTypesForExample then

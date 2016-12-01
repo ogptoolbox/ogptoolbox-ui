@@ -56,7 +56,7 @@ viewCardContent navigate language card cards values =
                 [ h1 []
                     [ text (getOneString language nameKeys card values |> Maybe.withDefault "TODO call-to-action")
                     , small []
-                        [ text (String.join ", " card.subTypes) ]
+                        [ text (String.join ", " card.subTypeIds) ]
                     ]
                 ]
             ]

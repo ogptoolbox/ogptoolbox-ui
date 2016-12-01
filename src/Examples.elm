@@ -1,16 +1,36 @@
-module Examples.State exposing (..)
+module Examples exposing (..)
 
 import Authenticator.Model
+import Browse
 import Constants
-import Examples.Types exposing (..)
+import Example
 import Hop.Types
+import Html exposing (..)
+import Html.Attributes exposing (..)
+import Http
+import I18n
 import I18n exposing (getImageUrlOrOgpLogo, getName)
 import Requests exposing (..)
 import Routes exposing (getSearchQuery, ExamplesNestedRoute(..))
 import Set exposing (Set)
 import Task
-import Types exposing (Card, DocumentMetatags)
+import Types exposing (..)
+import Views exposing (viewWebData)
 import WebData exposing (..)
+
+
+-- MODEL
+
+
+type Model
+    = Examples
+        (WebData
+            { examples : DataIdsBody
+            , organizationsCount : Int
+            , toolsCount : Int
+            }
+        )
+    | Example (WebData DataIdBody)
 
 
 init : Model
@@ -40,6 +60,33 @@ urlUpdate ( route, location ) model =
 -- UPDATE
 
 
+type ExternalMsg
+    = Navigate String
+
+
+type InternalMsg
+    = Error Http.Error
+    | LoadAll String
+    | LoadOne String
+    | LoadedAll ( DataIdsBody, DataIdsBody, DataIdsBody )
+    | LoadedOne DataIdBody
+
+
+type Msg
+    = ForParent ExternalMsg
+    | ForSelf InternalMsg
+
+
+type alias MsgTranslation parentMsg =
+    { onInternalMsg : InternalMsg -> parentMsg
+    , onNavigate : String -> parentMsg
+    }
+
+
+type alias MsgTranslator parentMsg =
+    Msg -> parentMsg
+
+
 loadAll : String -> Cmd Msg
 loadAll searchQuery =
     Task.perform (\_ -> Debug.crash "") (\_ -> ForSelf (LoadAll searchQuery)) (Task.succeed "")
@@ -48,6 +95,11 @@ loadAll searchQuery =
 loadOne : String -> Cmd Msg
 loadOne id =
     Task.perform (\_ -> Debug.crash "") (\_ -> ForSelf (LoadOne id)) (Task.succeed "")
+
+
+navigate : String -> Msg
+navigate path =
+    ForParent (Navigate path)
 
 
 translateMsg : MsgTranslation parentMsg -> MsgTranslator parentMsg
@@ -159,3 +211,47 @@ update msg model authenticationMaybe language setDocumentMetatags =
                         }
             in
                 ( Example (Data (Loaded body)), cmd )
+
+
+
+-- VIEW
+
+
+view : Maybe Authenticator.Model.Authentication -> Model -> String -> I18n.Language -> List (Html Msg)
+view authenticationMaybe model searchQuery language =
+    case model of
+        Example webData ->
+            [ div [ class "row section" ]
+                [ div [ class "container" ]
+                    (viewWebData
+                        language
+                        (\loadingStatus -> [ Example.view navigate language loadingStatus ])
+                        webData
+                    )
+                ]
+            ]
+
+        Examples webData ->
+            viewWebData
+                language
+                (\loadingStatus ->
+                    let
+                        counts =
+                            getLoadingStatusData loadingStatus
+                                |> Maybe.map
+                                    (\loadingStatus ->
+                                        { examples = loadingStatus.examples.count
+                                        , organizations = loadingStatus.organizationsCount
+                                        , tools = loadingStatus.toolsCount
+                                        }
+                                    )
+                    in
+                        Browse.view
+                            Types.Example
+                            counts
+                            navigate
+                            searchQuery
+                            language
+                            (mapLoadingStatus .examples loadingStatus)
+                )
+                webData

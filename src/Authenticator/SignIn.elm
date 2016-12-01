@@ -9,6 +9,7 @@ import Html.Attributes.Aria exposing (..)
 import Html.Events exposing (..)
 import Http
 import Json.Encode
+import Ports exposing (storeAuthentication)
 import String
 import Task
 import Types exposing (User, UserBody)
@@ -126,9 +127,9 @@ update msg model =
         Success body ->
             let
                 user =
-                    body.data
+                    Just body.data
             in
-                ( model, Cmd.none, Just user )
+                ( model, storeAuthentication user, user )
 
         UsernameInput text ->
             ( { model | username = text }, Cmd.none, Nothing )
