@@ -133,20 +133,6 @@ valueValueDecoder schemaId =
                     bijectiveUriReferenceDecoder |> map BijectiveUriReferenceValue
 
                 _ ->
-                    -- oneOf
-                    --     [ float |> map NumberValue
-                    --     , string |> map StringValue
-                    --       -- , list string |> map ArrayValue
-                    --     , dict string
-                    --         |> map
-                    --             (\decodedValue ->
-                    --                 if decodedValue |> Dict.keys |> List.all (\str -> String.length str == 2) then
-                    --                     LocalizedStringValue decodedValue
-                    --                 else
-                    --                     StringValue (toString decodedValue)
-                    --             )
-                    --       -- , succeed |> map (\x -> StringValue ("TODO Unsupported schemaId, value as string is: " ++ (toString x)))
-                    --     ]
                     fail ("TODO Unsupported schemaId: " ++ schemaId)
     in
         oneOf
