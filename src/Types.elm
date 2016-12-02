@@ -123,9 +123,19 @@ descriptionKeys =
     [ "description" ]
 
 
+imageLogoUrlPathKeys : List String
+imageLogoUrlPathKeys =
+    [ "logo" ]
+
+
+imageScreenshotUrlPathKeys : List String
+imageScreenshotUrlPathKeys =
+    [ "screenshot" ]
+
+
 imageUrlPathKeys : List String
 imageUrlPathKeys =
-    [ "logo", "screenshot" ]
+    imageLogoUrlPathKeys ++ imageScreenshotUrlPathKeys
 
 
 licenseKeys : List String

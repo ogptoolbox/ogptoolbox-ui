@@ -4,7 +4,7 @@ import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Helpers exposing (aForPath, aIfIsUrl)
-import I18n exposing (getManyStrings, getOneString, getSubTypes)
+import I18n exposing (getImageScreenshotUrl, getManyStrings, getOneString, getSubTypes)
 import Routes
 import Tool.Sidebar as Sidebar
 import Types exposing (..)
@@ -41,10 +41,57 @@ viewCard navigate language body =
                 text "Error: the card was not found."
 
             Just card ->
-                div [ class "row" ]
-                    [ Sidebar.root language card values
-                    , viewCardContent navigate language card cards values
-                    ]
+                let
+                    container =
+                        div [ class "container" ]
+                            [ div
+                                [ class "row" ]
+                                [ Sidebar.root language card values
+                                , viewCardContent navigate language card cards values
+                                ]
+                            ]
+                in
+                    if List.member "type:platform" card.subTypeIds then
+                        div []
+                            [ div [ class "banner screenshot" ]
+                                [ div [ class "row " ]
+                                    [ div [ class "col-md-12 text-center" ]
+                                        (case getImageScreenshotUrl language "2000" card values of
+                                            Just url ->
+                                                [ img [ src url ] [] ]
+
+                                            Nothing ->
+                                                []
+                                         -- TODO empty state
+                                        )
+                                    ]
+                                ]
+                            , div [ class "row pull-screenshot" ]
+                                [ div [ class "container" ]
+                                    [-- div [ class "row" ]
+                                     -- [ div [ class "col-xs-12" ]
+                                     --     [ ol [ class "breadcrumb" ]
+                                     --         [ li []
+                                     --             [ a [ href "#" ]
+                                     --                 [ text "Home" ]
+                                     --             ]
+                                     --         , li []
+                                     --             [ a [ href "#" ]
+                                     --                 [ text "Library" ]
+                                     --             ]
+                                     --         , li [ class "active" ]
+                                     --             [ text "Data" ]
+                                     --         ]
+                                     --     ]
+                                     -- ]
+                                    ]
+                                ]
+                            , div [ class "row section push-screenshot" ]
+                                [ container ]
+                            ]
+                    else
+                        div [ class "row section" ]
+                            [ container ]
 
 
 viewCardContent : (String -> msg) -> I18n.Language -> Card -> Dict String Card -> Dict String Value -> Html msg

@@ -606,7 +606,24 @@ getName language cardId cards values =
 
 getImageUrl : Language -> String -> Card -> Dict String Value -> Maybe String
 getImageUrl language dim card values =
-    getOneString language imageUrlPathKeys card values
+    case getImageLogoUrl language dim card values of
+        Nothing ->
+            getImageScreenshotUrl language dim card values
+
+        Just url ->
+            Just url
+
+
+getImageLogoUrl : Language -> String -> Card -> Dict String Value -> Maybe String
+getImageLogoUrl language dim card values =
+    getOneString language imageLogoUrlPathKeys card values
+        |> Maybe.map
+            (\urlPath -> imageUrl urlPath ++ "?dim=" ++ dim)
+
+
+getImageScreenshotUrl : Language -> String -> Card -> Dict String Value -> Maybe String
+getImageScreenshotUrl language dim card values =
+    getOneString language imageScreenshotUrlPathKeys card values
         |> Maybe.map
             (\urlPath -> imageUrl urlPath ++ "?dim=" ++ dim)
 
