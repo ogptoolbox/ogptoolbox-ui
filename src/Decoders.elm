@@ -132,6 +132,12 @@ valueValueDecoder schemaId =
                 "schema:bijective-uri-reference" ->
                     bijectiveUriReferenceDecoder |> map BijectiveUriReferenceValue
 
+                "schema:type-reference" ->
+                    string |> map ReferenceValue
+
+                "schema:uri" ->
+                    string |> map StringValue
+
                 _ ->
                     fail ("TODO Unsupported schemaId: " ++ schemaId)
     in

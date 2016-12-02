@@ -100,6 +100,7 @@ type ValueType
     | NumberValue Float
     | ArrayValue (List ValueType)
     | BijectiveUriReferenceValue BijectiveUriReference
+    | ReferenceValue String
     | WrongValue String String
 
 

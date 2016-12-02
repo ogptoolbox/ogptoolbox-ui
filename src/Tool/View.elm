@@ -49,194 +49,251 @@ viewCard navigate language body =
 
 viewCardContent : (String -> msg) -> I18n.Language -> Card -> Dict String Card -> Dict String Value -> Html msg
 viewCardContent navigate language card cards values =
-    div [ class "col-md-9 content content-right" ]
-        [ div [ class "row" ]
-            [ div [ class "col-xs-12" ]
-                [ h1 []
-                    [ text (getOneString language nameKeys card values |> Maybe.withDefault "TODO call-to-action")
-                    , small []
-                        [ text (getSubTypes language card values)
+    let
+        bestOf keys =
+            let
+                count =
+                    List.length (getManyStrings language keys card values)
+            in
+                I18n.translate language
+                    (if count == 1 then
+                        I18n.OnlyValue
+                     else
+                        I18n.BestOf count
+                    )
+    in
+        div [ class "col-md-9 content content-right" ]
+            [ div [ class "row" ]
+                [ div [ class "col-xs-12" ]
+                    [ h1 []
+                        [ text
+                            (getOneString language nameKeys card values
+                                |> Maybe.withDefault "This should never happen"
+                            )
+                        , small []
+                            [ text (getSubTypes language card values)
+                            ]
                         ]
                     ]
                 ]
-            ]
-        , div [ class "row" ]
-            [ div [ class "col-xs-12" ]
-                (case getManyStrings language typeKeys card values of
-                    [] ->
-                        [ text "TODO call-to-action" ]
+            , div [ class "row" ]
+                [ div [ class "col-xs-12" ]
+                    (case getManyStrings language typeKeys card values of
+                        [] ->
+                            [ button [ class "call-add" ] [ text "+ add a category" ] ]
 
-                    xs ->
-                        List.map
-                            (\str -> span [ class "label label-default label-tag label-maintag" ] [ text str ])
-                            xs
-                )
-            ]
-        , div [ class "row" ]
-            [ div [ class "col-xs-12" ]
-                (([ div [ class "panel panel-default" ]
-                        [ div [ class "panel-heading" ]
-                            [ div [ class "row" ]
-                                [ div [ class "col-xs-8 text-left" ]
-                                    [ h3 [ class "panel-title" ]
-                                        [ text (I18n.translate language I18n.About) ]
-                                    ]
-                                , div [ class "col-xs-4 text-right up7" ]
-                                    [ a [ class "show-more" ]
-                                        [ text
-                                            ("Best of "
-                                                ++ (getManyStrings language descriptionKeys card values
-                                                        |> List.length
-                                                        |> toString
-                                                   )
-                                            )
-                                        ]
-                                    , button
-                                        [ class "btn btn-default btn-xs btn-action"
-                                        , attribute "data-target" "#edit-content"
-                                        , attribute "data-toggle" "modal"
-                                        , type' "button"
-                                        ]
-                                        [ text "Edit" ]
-                                    ]
-                                ]
-                            ]
-                        , div [ class "panel-body" ]
-                            [ text
-                                (getOneString language descriptionKeys card values
-                                    |> Maybe.withDefault "TODO call-to-action"
-                                )
-                            ]
-                        ]
-                  ]
-                 )
-                    ++ [ div [ class "panel panel-default panel-collapse up20" ]
-                            [ div
-                                [ attribute "aria-controls" "collapseTwo"
-                                , attribute "aria-expanded" "false"
-                                , attribute "data-parent" "#accordion"
-                                , attribute "data-target" "#collapseTwo"
-                                , attribute "data-toggle" "collapse"
-                                , attribute "role" "tab"
-                                , class "panel-heading"
-                                , id "headingTwo"
-                                ]
-                                [ div [ class "row" ]
-                                    [ div [ class "col-xs-8 text-left" ]
+                        xs ->
+                            List.map
+                                (\str -> span [ class "label label-default label-tag label-maintag" ] [ text str ])
+                                xs
+                    )
+                ]
+            , div [ class "row" ]
+                [ div [ class "col-xs-12" ]
+                    (([ div [ class "panel panel-default" ]
+                            (let
+                                panelTitle =
+                                    div [ class "col-xs-8 text-left" ]
                                         [ h3 [ class "panel-title" ]
-                                            [ text (I18n.translate language I18n.AdditionalInformations) ]
+                                            [ text (I18n.translate language I18n.About) ]
                                         ]
-                                    , div [ class "col-xs-4 text-right" ]
-                                        [ a [ class "show-more pull-right" ]
-                                            [ text ("Show " ++ (card.properties |> Dict.size |> toString) ++ " more")
-                                            , span [ class "glyphicon glyphicon-menu-down" ] []
+                             in
+                                case getOneString language descriptionKeys card values of
+                                    Nothing ->
+                                        [ div [ class "panel-heading" ]
+                                            [ div [ class "row" ]
+                                                [ panelTitle ]
                                             ]
-                                        ]
-                                    ]
-                                ]
-                            , div
-                                [ attribute "aria-labelledby" "headingTwo"
-                                , classList
-                                    [ ( "panel-collapse", True )
-                                    , ( "collapse", True )
-                                    ]
-                                , id "collapseTwo"
-                                , attribute "role" "tabpanel"
-                                ]
-                                [ div [ class "panel-body nomargin" ]
-                                    [ table [ class "table table-striped" ]
-                                        [ tbody []
-                                            (card.properties
-                                                |> Dict.map
-                                                    (\propertyKey valueId ->
-                                                        case Dict.get valueId values of
-                                                            Nothing ->
-                                                                text ("Error: value not found for ID: " ++ valueId)
-
-                                                            Just value ->
-                                                                tr []
-                                                                    [ th [ scope "row" ]
-                                                                        [ case Dict.get propertyKey values of
-                                                                            Nothing ->
-                                                                                text
-                                                                                    ("Error: value not found for ID: "
-                                                                                        ++ propertyKey
-                                                                                    )
-
-                                                                            Just value ->
-                                                                                viewValueValue
-                                                                                    language
-                                                                                    navigate
-                                                                                    cards
-                                                                                    values
-                                                                                    value.value
-                                                                        ]
-                                                                    , td []
-                                                                        [ viewValueValue
-                                                                            language
-                                                                            navigate
-                                                                            cards
-                                                                            values
-                                                                            value.value
-                                                                        ]
-                                                                    ]
-                                                    )
-                                                |> Dict.values
-                                            )
-                                        ]
-                                    ]
-                                ]
-                            ]
-                       , div [ class "panel panel-default" ]
-                            [ div [ class "panel-heading" ]
-                                [ div [ class "row" ]
-                                    [ div [ class "col-xs-8 text-left" ]
-                                        [ h3 [ class "panel-title" ]
-                                            [ text (I18n.translate language I18n.UsedFor) ]
-                                        ]
-                                    , div [ class "col-xs-4 text-right up7" ]
-                                        [ a [ class "show-more" ]
-                                            [ text
-                                                "Best of TODO"
-                                              --                                             ("Best of "
-                                              --     ++ (getManyStrings language usedForKeys card |> List.length |> toString)
-                                              -- )
-                                            ]
-                                        , button [ class "btn btn-default btn-xs btn-action", type' "button" ]
-                                            [ text "Add" ]
-                                        ]
-                                    ]
-                                ]
-                            , div [ class "panel-body" ]
-                                [ div [ class "row" ]
-                                    [ div [ class "col-xs-6 col-md-4 " ]
-                                        [ div [ class "thumbnail example grey" ]
-                                            [ div [ class "visual" ]
-                                                [ img [ alt "screen", src "/img/screen1.png" ]
-                                                    []
+                                        , div [ class "panel-body" ]
+                                            [ div [ class "call-container" ]
+                                                [ p [] [ text "Any description for this tool yet." ]
+                                                , button [ class "button call-add" ] [ text "+ Add a description" ]
                                                 ]
-                                            , div [ class "caption" ]
-                                                [ div [ class "example-author-thumb" ]
-                                                    [ img [ alt "screen", src "/img/whitehouse.png" ]
+                                            ]
+                                        ]
+
+                                    Just description ->
+                                        [ div [ class "panel-heading" ]
+                                            [ div [ class "row" ]
+                                                [ panelTitle
+                                                , div [ class "col-xs-4 text-right up7" ]
+                                                    [ a [ class "show-more" ]
+                                                        [ text (bestOf descriptionKeys) ]
+                                                    , button
+                                                        [ class "btn btn-default btn-xs btn-action"
+                                                        , attribute "data-target" "#edit-content"
+                                                        , attribute "data-toggle" "modal"
+                                                        , type' "button"
+                                                        ]
+                                                        [ text "Edit" ]
+                                                    ]
+                                                ]
+                                            ]
+                                        , div [ class "panel-body" ]
+                                            [ text description ]
+                                        ]
+                            )
+                      ]
+                     )
+                        ++ [ div [ class "panel panel-default panel-collapse up20" ]
+                                [ div
+                                    [ attribute "aria-controls" "collapseTwo"
+                                    , attribute "aria-expanded" "false"
+                                    , attribute "data-parent" "#accordion"
+                                    , attribute "data-target" "#collapseTwo"
+                                    , attribute "data-toggle" "collapse"
+                                    , attribute "role" "tab"
+                                    , class "panel-heading"
+                                    , id "headingTwo"
+                                    ]
+                                    [ div [ class "row" ]
+                                        [ div [ class "col-xs-8 text-left" ]
+                                            [ h3 [ class "panel-title" ]
+                                                [ text (I18n.translate language I18n.AdditionalInformations) ]
+                                            ]
+                                        , div [ class "col-xs-4 text-right" ]
+                                            [ a [ class "show-more pull-right" ]
+                                                [ text ("Show " ++ (card.properties |> Dict.size |> toString) ++ " more")
+                                                , span [ class "glyphicon glyphicon-menu-down" ] []
+                                                ]
+                                            ]
+                                        ]
+                                    ]
+                                , div
+                                    [ attribute "aria-labelledby" "headingTwo"
+                                    , classList
+                                        [ ( "panel-collapse", True )
+                                        , ( "collapse", True )
+                                        ]
+                                    , id "collapseTwo"
+                                    , attribute "role" "tabpanel"
+                                    ]
+                                    [ div [ class "panel-body nomargin" ]
+                                        [ table [ class "table table-striped" ]
+                                            [ tbody []
+                                                (card.properties
+                                                    |> Dict.map
+                                                        (\propertyKey valueId ->
+                                                            case Dict.get valueId values of
+                                                                Nothing ->
+                                                                    text ("Error: value not found for ID: " ++ valueId)
+
+                                                                Just value ->
+                                                                    tr []
+                                                                        [ th [ scope "row" ]
+                                                                            [ case Dict.get propertyKey values of
+                                                                                Nothing ->
+                                                                                    text
+                                                                                        ("Error: value not found for ID: "
+                                                                                            ++ propertyKey
+                                                                                        )
+
+                                                                                Just value ->
+                                                                                    viewValueValue
+                                                                                        language
+                                                                                        navigate
+                                                                                        cards
+                                                                                        values
+                                                                                        value.value
+                                                                            ]
+                                                                        , td []
+                                                                            [ viewValueValue
+                                                                                language
+                                                                                navigate
+                                                                                cards
+                                                                                values
+                                                                                value.value
+                                                                            ]
+                                                                        ]
+                                                        )
+                                                    |> Dict.values
+                                                )
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                           , div [ class "panel panel-default" ]
+                                [ div [ class "panel-heading" ]
+                                    [ div [ class "row" ]
+                                        [ div [ class "col-xs-8 text-left" ]
+                                            [ h3 [ class "panel-title" ]
+                                                [ text (I18n.translate language I18n.UsedFor) ]
+                                            ]
+                                        , div [ class "col-xs-4 text-right up7" ]
+                                            [ a [ class "show-more" ]
+                                                [ text
+                                                    "Best of TODO"
+                                                  --                                             ("Best of "
+                                                  --     ++ (getManyStrings language usedForKeys card |> List.length |> toString)
+                                                  -- )
+                                                ]
+                                            , button [ class "btn btn-default btn-xs btn-action", type' "button" ]
+                                                [ text "Add" ]
+                                            ]
+                                        ]
+                                    ]
+                                , div [ class "panel-body" ]
+                                    [ div [ class "row" ]
+                                        [ div [ class "col-xs-6 col-md-4 " ]
+                                            [ div [ class "thumbnail example grey" ]
+                                                [ div [ class "visual" ]
+                                                    [ img [ alt "screen", src "/img/screen1.png" ]
                                                         []
                                                     ]
-                                                , h4 []
-                                                    [ text "OpenSpending" ]
-                                                , p []
-                                                    [ text "OpenSpending ." ]
-                                                , span [ class "label label-default label-tool" ]
-                                                    [ text "Default" ]
-                                                , span [ class "label label-default label-tool" ]
-                                                    [ text "Default" ]
-                                                , span [ class "label label-default label-tool" ]
-                                                    [ text "Default" ]
+                                                , div [ class "caption" ]
+                                                    [ div [ class "example-author-thumb" ]
+                                                        [ img [ alt "screen", src "/img/whitehouse.png" ]
+                                                            []
+                                                        ]
+                                                    , h4 []
+                                                        [ text "OpenSpending" ]
+                                                    , p []
+                                                        [ text "OpenSpending ." ]
+                                                    , span [ class "label label-default label-tool" ]
+                                                        [ text "Default" ]
+                                                    , span [ class "label label-default label-tool" ]
+                                                        [ text "Default" ]
+                                                    , span [ class "label label-default label-tool" ]
+                                                        [ text "Default" ]
+                                                    ]
                                                 ]
+                                            ]
+                                        ]
+                                      -- , div [ class "panel-body" ]
+                                      --     [ div [ class "row" ]
+                                      --         ((case getManyStrings language usedForKeys card of
+                                      --             [] ->
+                                      --                 [ text "TODO call-to-action" ]
+                                      --             targetIds ->
+                                      --                 targetIds
+                                      --                     |> List.map
+                                      --                         (\targetId ->
+                                      --                             viewUriReferenceAsThumbnail navigate statements targetId
+                                      --                         )
+                                      --                     |> List.append (viewShowMore (List.length targetIds))
+                                      --          )
+                                      --         )
+                                      --     ]
+                                    ]
+                                ]
+                           , div [ class "panel panel-default" ]
+                                [ div [ class "panel-heading" ]
+                                    [ div [ class "row" ]
+                                        [ div [ class "col-xs-8 text-left" ]
+                                            [ h3 [ class "panel-title" ]
+                                                [ text (I18n.translate language I18n.UsedBy) ]
+                                            ]
+                                        , div [ class "col-xs-4 text-right up7" ]
+                                            [ a [ class "show-more" ]
+                                                [ text (bestOf usedByKeys) ]
+                                            , button [ class "btn btn-default btn-xs btn-action", type' "button" ]
+                                                [ text "Add" ]
                                             ]
                                         ]
                                     ]
                                   -- , div [ class "panel-body" ]
                                   --     [ div [ class "row" ]
-                                  --         ((case getManyStrings language usedForKeys card of
+                                  --         ((case getManyStrings language usedByKeys card of
                                   --             [] ->
                                   --                 [ text "TODO call-to-action" ]
                                   --             targetIds ->
@@ -250,46 +307,10 @@ viewCardContent navigate language card cards values =
                                   --         )
                                   --     ]
                                 ]
-                            ]
-                       , div [ class "panel panel-default" ]
-                            [ div [ class "panel-heading" ]
-                                [ div [ class "row" ]
-                                    [ div [ class "col-xs-8 text-left" ]
-                                        [ h3 [ class "panel-title" ]
-                                            [ text (I18n.translate language I18n.UsedBy) ]
-                                        ]
-                                    , div [ class "col-xs-4 text-right up7" ]
-                                        [ a [ class "show-more" ]
-                                            [ text
-                                                ("Best of "
-                                                    ++ (getManyStrings language usedByKeys card values |> List.length |> toString)
-                                                )
-                                            ]
-                                        , button [ class "btn btn-default btn-xs btn-action", type' "button" ]
-                                            [ text "Add" ]
-                                        ]
-                                    ]
-                                ]
-                              -- , div [ class "panel-body" ]
-                              --     [ div [ class "row" ]
-                              --         ((case getManyStrings language usedByKeys card of
-                              --             [] ->
-                              --                 [ text "TODO call-to-action" ]
-                              --             targetIds ->
-                              --                 targetIds
-                              --                     |> List.map
-                              --                         (\targetId ->
-                              --                             viewUriReferenceAsThumbnail navigate statements targetId
-                              --                         )
-                              --                     |> List.append (viewShowMore (List.length targetIds))
-                              --          )
-                              --         )
-                              --     ]
-                            ]
-                       ]
-                )
+                           ]
+                    )
+                ]
             ]
-        ]
 
 
 viewShowMore : number -> List (Html msg)
@@ -370,3 +391,11 @@ viewValueValue language navigate cards values value =
                                     urlPath
                                     []
                                     [ text linkText ]
+
+        ReferenceValue propertyKey ->
+            case Dict.get propertyKey values of
+                Nothing ->
+                    text ("Error: referenced value not found for propertyKey: " ++ propertyKey)
+
+                Just subValue ->
+                    viewValueValue language navigate cards values subValue.value

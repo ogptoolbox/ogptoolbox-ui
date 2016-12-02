@@ -15,6 +15,7 @@ type TranslationId
     | AddNew
     | AddNewTool
     | AdditionalInformations
+    | BestOf Int
     | CallToActionForCategory
     | CallToActionForDescription Types.CardType
     | Close
@@ -29,6 +30,7 @@ type TranslationId
     | LanguageWord
     | License
     | NetworkErrorExplanation
+    | OnlyValue
     | OpenGovParagraph
     | Organization GrammaticalNumber
     | PageNotFound
@@ -79,6 +81,12 @@ getTranslationSet translationId =
         AddNewTool ->
             { english = s "Add a new tool"
             , french = todo
+            , spanish = todo
+            }
+
+        BestOf count ->
+            { english = s ("Best of " ++ (toString count))
+            , french = s ("Meilleur parmi " ++ (toString count))
             , spanish = todo
             }
 
@@ -234,6 +242,12 @@ getTranslationSet translationId =
         NetworkErrorExplanation ->
             { english = s "There was a network error."
             , french = todo
+            , spanish = todo
+            }
+
+        OnlyValue ->
+            { english = s "Only value"
+            , french = s "Une seule valeur"
             , spanish = todo
             }
 
@@ -483,6 +497,14 @@ getManyStrings language propertyKeys card values =
                 BijectiveUriReferenceValue _ ->
                     []
 
+                ReferenceValue propertyKey ->
+                    case Dict.get propertyKey values of
+                        Nothing ->
+                            []
+
+                        Just subValue ->
+                            getStrings subValue.value
+
                 WrongValue _ _ ->
                     []
     in
@@ -522,6 +544,9 @@ getOneString language propertyKeys card values =
 
                 BijectiveUriReferenceValue _ ->
                     Nothing
+
+                ReferenceValue propertyKey ->
+                    Dict.get propertyKey values `Maybe.andThen` (\subValue -> getString subValue.value)
 
                 WrongValue _ _ ->
                     Nothing
