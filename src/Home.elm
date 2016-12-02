@@ -124,15 +124,15 @@ update msg model authenticationMaybe language searchQuery mountd3bubbles =
                                 [ Task.perform
                                     ErrorExamples
                                     LoadedExamples
-                                    (newTaskGetExamples authenticationMaybe searchQuery "" newSelectedTags)
+                                    (newTaskGetExamples authenticationMaybe searchQuery "8" newSelectedTags)
                                 , Task.perform
                                     ErrorOrganizations
                                     LoadedOrganizations
-                                    (newTaskGetOrganizations authenticationMaybe searchQuery "" newSelectedTags)
+                                    (newTaskGetOrganizations authenticationMaybe searchQuery "8" newSelectedTags)
                                 , Task.perform
                                     ErrorTools
                                     LoadedTools
-                                    (newTaskGetTools authenticationMaybe searchQuery "" newSelectedTags)
+                                    (newTaskGetTools authenticationMaybe searchQuery "8" newSelectedTags)
                                 , Task.perform
                                     ErrorPopularTags
                                     LoadedPopularTags
@@ -195,15 +195,15 @@ update msg model authenticationMaybe language searchQuery mountd3bubbles =
                         [ Task.perform
                             ErrorExamples
                             LoadedExamples
-                            (newTaskGetExamples authenticationMaybe searchQuery "" model.selectedTags)
+                            (newTaskGetExamples authenticationMaybe searchQuery "8" model.selectedTags)
                         , Task.perform
                             ErrorOrganizations
                             LoadedOrganizations
-                            (newTaskGetOrganizations authenticationMaybe searchQuery "" model.selectedTags)
+                            (newTaskGetOrganizations authenticationMaybe searchQuery "8" model.selectedTags)
                         , Task.perform
                             ErrorTools
                             LoadedTools
-                            (newTaskGetTools authenticationMaybe searchQuery "" model.selectedTags)
+                            (newTaskGetTools authenticationMaybe searchQuery "8" model.selectedTags)
                         , Task.perform
                             ErrorPopularTags
                             LoadedPopularTags
@@ -255,15 +255,15 @@ update msg model authenticationMaybe language searchQuery mountd3bubbles =
                                 [ Task.perform
                                     ErrorExamples
                                     LoadedExamples
-                                    (newTaskGetExamples authenticationMaybe searchQuery "" newSelectedTags)
+                                    (newTaskGetExamples authenticationMaybe searchQuery "8" newSelectedTags)
                                 , Task.perform
                                     ErrorOrganizations
                                     LoadedOrganizations
-                                    (newTaskGetOrganizations authenticationMaybe searchQuery "" newSelectedTags)
+                                    (newTaskGetOrganizations authenticationMaybe searchQuery "8" newSelectedTags)
                                 , Task.perform
                                     ErrorTools
                                     LoadedTools
-                                    (newTaskGetTools authenticationMaybe searchQuery "" newSelectedTags)
+                                    (newTaskGetTools authenticationMaybe searchQuery "8" newSelectedTags)
                                 , Task.perform
                                     ErrorPopularTags
                                     LoadedPopularTags
