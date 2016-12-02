@@ -18,7 +18,7 @@ root navigate language loadingStatus =
         Loading body ->
             case body of
                 Nothing ->
-                    viewLoading
+                    viewLoading language
 
                 Just body ->
                     viewCard navigate language body
@@ -51,47 +51,42 @@ viewCard navigate language body =
                                 ]
                             ]
                 in
-                    if List.member "type:platform" card.subTypeIds then
-                        div []
-                            [ div [ class "banner screenshot" ]
-                                [ div [ class "row " ]
-                                    [ div [ class "col-md-12 text-center" ]
-                                        (case getImageScreenshotUrl language "2000" card values of
-                                            Just url ->
-                                                [ img [ src url ] [] ]
+                    case getImageScreenshotUrl language "" card values of
+                        Just url ->
+                            div []
+                                [ div [ class "banner screenshot" ]
+                                    [ div [ class "row " ]
+                                        [ div [ class "col-md-12 text-center" ]
+                                            [ img [ src url ] [] ]
+                                        ]
+                                    ]
+                                , div [ class "row pull-screenshot" ]
+                                    [ div [ class "container" ]
+                                        [-- div [ class "row" ]
+                                         -- [ div [ class "col-xs-12" ]
+                                         --     [ ol [ class "breadcrumb" ]
+                                         --         [ li []
+                                         --             [ a [ href "#" ]
+                                         --                 [ text "Home" ]
+                                         --             ]
+                                         --         , li []
+                                         --             [ a [ href "#" ]
+                                         --                 [ text "Library" ]
+                                         --             ]
+                                         --         , li [ class "active" ]
+                                         --             [ text "Data" ]
+                                         --         ]
+                                         --     ]
+                                         -- ]
+                                        ]
+                                    ]
+                                , div [ class "row section push-screenshot" ]
+                                    [ container ]
+                                ]
 
-                                            Nothing ->
-                                                []
-                                         -- TODO empty state
-                                        )
-                                    ]
-                                ]
-                            , div [ class "row pull-screenshot" ]
-                                [ div [ class "container" ]
-                                    [-- div [ class "row" ]
-                                     -- [ div [ class "col-xs-12" ]
-                                     --     [ ol [ class "breadcrumb" ]
-                                     --         [ li []
-                                     --             [ a [ href "#" ]
-                                     --                 [ text "Home" ]
-                                     --             ]
-                                     --         , li []
-                                     --             [ a [ href "#" ]
-                                     --                 [ text "Library" ]
-                                     --             ]
-                                     --         , li [ class "active" ]
-                                     --             [ text "Data" ]
-                                     --         ]
-                                     --     ]
-                                     -- ]
-                                    ]
-                                ]
-                            , div [ class "row section push-screenshot" ]
+                        Nothing ->
+                            div [ class "row section" ]
                                 [ container ]
-                            ]
-                    else
-                        div [ class "row section" ]
-                            [ container ]
 
 
 viewCardContent : (String -> msg) -> I18n.Language -> Card -> Dict String Card -> Dict String Value -> Html msg
@@ -107,7 +102,19 @@ viewCardContent navigate language card cards values =
                 else
                     text (I18n.translate language (I18n.BestOf count))
     in
-        div [ class "col-md-9 content content-right" ]
+        div
+            [ classList
+                [ ( "col-md-9 content content-right", True )
+                , ( "push-screenshot2"
+                  , case getImageScreenshotUrl language "" card values of
+                        Nothing ->
+                            False
+
+                        Just _ ->
+                            True
+                  )
+                ]
+            ]
             [ div [ class "row" ]
                 [ div [ class "col-xs-12" ]
                     [ h1 []

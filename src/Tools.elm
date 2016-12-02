@@ -359,7 +359,7 @@ view authenticationMaybe model searchQuery language =
         Tool webData ->
             viewWebData
                 language
-                (\loadingStatus -> [ Tool.View.root navigate language loadingStatus ] )
+                (\loadingStatus -> [ Tool.View.root navigate language loadingStatus ])
                 webData
 
         Tools webData ->

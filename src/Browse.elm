@@ -167,7 +167,7 @@ view cardType counts navigate searchQuery language loadingStatus =
                               in
                                 case loadingStatus of
                                     Loading body ->
-                                        [ viewLoading ]
+                                        [ viewLoading language ]
                                             ++ (case body of
                                                     Nothing ->
                                                         []

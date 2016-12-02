@@ -364,15 +364,10 @@ view : Maybe Authenticator.Model.Authentication -> Model -> String -> I18n.Langu
 view authenticationMaybe model searchQuery language =
     case model of
         Organization webData ->
-            [ div [ class "row section" ]
-                [ div [ class "container" ]
-                    (viewWebData
-                        language
-                        (\loadingStatus -> [ Organization.view navigate language loadingStatus ])
-                        webData
-                    )
-                ]
-            ]
+            viewWebData
+                language
+                (\loadingStatus -> [ Organization.view navigate language loadingStatus ])
+                webData
 
         Organizations { webData } ->
             viewWebData

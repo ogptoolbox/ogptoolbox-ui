@@ -7,8 +7,8 @@ import I18n
 import WebData exposing (LoadingStatus, WebData(..))
 
 
-viewError : String -> String -> Html msg
-viewError title message =
+viewBigMessage : String -> String -> Html msg
+viewBigMessage title message =
     div
         [ style
             [ ( "justify-content", "center" )
@@ -40,29 +40,31 @@ viewHttpError language err =
     in
         case err of
             Timeout ->
-                viewError genericTitle (I18n.translate language I18n.TimeoutExplanation)
+                viewBigMessage genericTitle (I18n.translate language I18n.TimeoutExplanation)
 
             NetworkError ->
-                viewError genericTitle (I18n.translate language I18n.NetworkErrorExplanation)
+                viewBigMessage genericTitle (I18n.translate language I18n.NetworkErrorExplanation)
 
             UnexpectedPayload string ->
-                viewError genericTitle (I18n.translate language I18n.UnexpectedPayloadExplanation)
+                viewBigMessage genericTitle (I18n.translate language I18n.UnexpectedPayloadExplanation)
 
             BadResponse code string ->
                 if code == 404 then
                     viewNotFound language
                 else
-                    viewError genericTitle string
+                    viewBigMessage genericTitle string
 
 
-viewLoading : Html msg
-viewLoading =
-    text "Data is loading and should be displayed quite soon."
+viewLoading : I18n.Language -> Html msg
+viewLoading language =
+    viewBigMessage
+        (I18n.translate language I18n.PageLoading)
+        (I18n.translate language I18n.PageLoadingExplanation)
 
 
 viewNotFound : I18n.Language -> Html msg
 viewNotFound language =
-    viewError
+    viewBigMessage
         (I18n.translate language I18n.PageNotFound)
         (I18n.translate language I18n.PageNotFoundExplanation)
 

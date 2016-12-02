@@ -36,6 +36,8 @@ type TranslationId
     | NetworkErrorExplanation
     | OpenGovParagraph
     | Organization GrammaticalNumber
+    | PageLoading
+    | PageLoadingExplanation
     | PageNotFound
     | PageNotFoundExplanation
     | PublishExample
@@ -299,6 +301,18 @@ including representatives of governments and civil society organizations.
 
                     Plural ->
                         s "Organisations"
+            , spanish = todo
+            }
+
+        PageLoading ->
+            { english = s "Page is loading"
+            , french = s "Chargement en cours"
+            , spanish = todo
+            }
+
+        PageLoadingExplanation ->
+            { english = s "Data is loading and should be displayed quite soon."
+            , french = todo
             , spanish = todo
             }
 

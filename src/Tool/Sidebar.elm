@@ -4,7 +4,7 @@ import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Helpers exposing (aExternal)
-import I18n exposing (getImageUrl, getManyStrings, getOneString)
+import I18n exposing (getImageLogoUrl, getManyStrings, getOneString)
 import Types exposing (..)
 
 
@@ -52,7 +52,7 @@ root language card values =
                 [ div [ class "col-xs-12" ]
                     [ div [ class "thumbnail orga grey" ]
                         [ div [ class "visual" ]
-                            [ case getImageUrl language "1000" card values of
+                            [ case getImageLogoUrl language "1000" card values of
                                 Just url ->
                                     img [ alt "Logo", src url ] []
 

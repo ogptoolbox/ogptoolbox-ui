@@ -40,7 +40,7 @@ import String
 import Task
 import Tools
 import Types exposing (..)
-import Views exposing (viewError, viewNotFound)
+import Views exposing (viewBigMessage, viewNotFound)
 
 
 main : Program Flags
@@ -616,7 +616,7 @@ view model =
                 standardLayout
                     I18n.English
                     [ div [ style [ ( "min-height", "60em" ) ] ]
-                        [ viewError "" "" ]
+                        [ viewBigMessage "" "" ]
                     ]
 
 
