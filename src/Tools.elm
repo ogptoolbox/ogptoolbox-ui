@@ -445,25 +445,19 @@ viewAddNew language fields imageUploadStatus =
                                 ]
                             ]
                         ]
-                      -- TODO input text
-                      -- , div [ class "col-xs-6" ]
-                      --     [ div [ class "form-group" ]
-                      --         [ label [ for "licenseField" ]
-                      --             [ text "License" ]
-                      --         , select [ class "form-control", id "licenseField" ]
-                      --             [ option []
-                      --                 [ text "1" ]
-                      --             , option []
-                      --                 [ text "2" ]
-                      --             , option []
-                      --                 [ text "3" ]
-                      --             , option []
-                      --                 [ text "4" ]
-                      --             , option []
-                      --                 [ text "5" ]
-                      --             ]
-                      --         ]
-                      --     ]
+                    , div [ class "col-xs-6" ]
+                        [ div [ class "form-group" ]
+                            [ label [ for "licenseField" ]
+                                [ text "License" ]
+                            , input
+                                [ class "form-control"
+                                , id "licenseField"
+                                , onInput (setField "License")
+                                , type' "text"
+                                ]
+                                []
+                            ]
+                        ]
                     , div [ class "col-xs-12" ]
                         [ div [ class "form-group" ]
                             [ label [ for "websiteLinkField" ]
