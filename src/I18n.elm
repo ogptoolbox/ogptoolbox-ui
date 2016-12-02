@@ -13,7 +13,11 @@ import Types exposing (..)
 type TranslationId
     = About
     | AddNew
+    | AddNewCollectionCatchPhrase
+    | AddNewExample
+    | AddNewExampleCatchPhrase
     | AddNewTool
+    | AddNewToolCatchPhrase
     | AdditionalInformations
     | BestOf Int
     | CallToActionForCategory
@@ -30,11 +34,11 @@ type TranslationId
     | LanguageWord
     | License
     | NetworkErrorExplanation
-    | OnlyValue
     | OpenGovParagraph
     | Organization GrammaticalNumber
     | PageNotFound
     | PageNotFoundExplanation
+    | PublishExample
     | PublishTool
     | SeeAllAndCompare
     | Score
@@ -78,9 +82,33 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        AddNewCollectionCatchPhrase ->
+            { english = todo
+            , french = s "Une sélection des meilleurs outils et cas d'usage dans un contexte précis."
+            , spanish = todo
+            }
+
+        AddNewExample ->
+            { english = s "Add a new use case"
+            , french = todo
+            , spanish = todo
+            }
+
+        AddNewExampleCatchPhrase ->
+            { english = todo
+            , french = s "Un exemple concret et efficace d'utilisation d'un outil."
+            , spanish = todo
+            }
+
         AddNewTool ->
             { english = s "Add a new tool"
             , french = todo
+            , spanish = todo
+            }
+
+        AddNewToolCatchPhrase ->
+            { english = todo
+            , french = s "Un logiciel ou services utilisé pour renforcer la démocratie."
             , spanish = todo
             }
 
@@ -245,12 +273,6 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
-        OnlyValue ->
-            { english = s "Only value"
-            , french = s "Une seule valeur"
-            , spanish = todo
-            }
-
         OpenGovParagraph ->
             { english = s """
 The Open Government Partnership is a multilateral initiative that aims to secure concrete commitments
@@ -288,6 +310,12 @@ including representatives of governments and civil society organizations.
 
         PageNotFoundExplanation ->
             { english = s "Sorry, but the page you were trying to view does not exist."
+            , french = todo
+            , spanish = todo
+            }
+
+        PublishExample ->
+            { english = s "Publish use case"
             , french = todo
             , spanish = todo
             }
@@ -494,7 +522,7 @@ getManyStrings language propertyKeys card values =
                 NumberValue _ ->
                     []
 
-                BijectiveUriReferenceValue _ ->
+                BijectiveCardReferenceValue _ ->
                     []
 
                 ReferenceValue propertyKey ->
@@ -542,7 +570,7 @@ getOneString language propertyKeys card values =
                 NumberValue _ ->
                     Nothing
 
-                BijectiveUriReferenceValue _ ->
+                BijectiveCardReferenceValue _ ->
                     Nothing
 
                 ReferenceValue propertyKey ->

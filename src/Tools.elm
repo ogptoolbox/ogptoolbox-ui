@@ -450,6 +450,7 @@ viewAddNew language fields imageUploadStatus =
                                 ]
                             ]
                         ]
+                      -- TODO input text
                       -- , div [ class "col-xs-6" ]
                       --     [ div [ class "form-group" ]
                       --         [ label [ for "licenseField" ]
@@ -615,8 +616,8 @@ viewAddNew language fields imageUploadStatus =
                                                         ]
 
                                                     Uploaded { contents, filename } ->
-                                                        [ img [ src ("data:" ++ contents) ] []
-                                                        , p [] [ text filename ]
+                                                        [ -- img [ src ("data:" ++ contents) ] []
+                                                          p [] [ text filename ]
                                                         ]
 
                                                     UploadError err ->

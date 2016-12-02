@@ -39,6 +39,7 @@ type I18nRoute
 type ExamplesNestedRoute
     = ExampleRoute String
     | ExamplesIndexRoute
+    | NewExampleRoute
 
 
 type OrganizationsNestedRoute
@@ -75,9 +76,11 @@ matchers =
       -- , match1 (AuthenticatorRoute Authenticator.Model.SignOutRoute) "/sign_out"
       -- , match1 (AuthenticatorRoute Authenticator.Model.SignUpRoute) "/sign_up"
     , nested1 ExamplesRoute
+        --   TODO rename all routes "examples" to "use-cases"
         "/examples"
         [ match1 ExamplesIndexRoute ""
         , match2 ExampleRoute "/" idParser
+        , match1 NewExampleRoute "/new"
         ]
     , match1 HelpRoute "/help"
     , nested1 OrganizationsRoute

@@ -127,7 +127,7 @@ urlUpdate ( i18nRoute, location ) model =
                         ExamplesRoute childRoute ->
                             let
                                 ( examplesModel, childCmd ) =
-                                    Examples.urlUpdate ( childRoute, location ) model.examplesModel
+                                    Examples.urlUpdate ( childRoute, location ) language model.examplesModel
                             in
                                 ( { model
                                     | examplesModel = examplesModel
@@ -568,6 +568,9 @@ view model =
                                 ExamplesIndexRoute ->
                                     fullscreenLayout language
 
+                                NewExampleRoute ->
+                                    standardLayout language
+
                     HelpRoute ->
                         standardLayout language
                             [ Help.view language ]
@@ -661,19 +664,26 @@ viewAddNewModal model language =
                                         ]
                                     , div [ class "media-body" ]
                                         [ h4 [ class "media-heading" ]
-                                            [ text "Outil" ]
-                                        , text "Un logiciel ou services utilisé pour renforcer la démocratie."
+                                            [ text (I18n.translate language (I18n.Tool I18n.Singular)) ]
+                                        , text (I18n.translate language I18n.AddNewToolCatchPhrase)
                                         ]
                                     ]
-                                , a [ class "media action" ]
+                                , aForPathWithLanguage
+                                    Navigate
+                                    language
+                                    "/examples/new"
+                                    [ class "media action"
+                                      -- TODO Disable if not signed-in.
+                                    , onClick (DisplayAddNewModal False)
+                                    ]
                                     [ div [ class "media-left icon" ]
                                         [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-bookmark" ]
                                             []
                                         ]
                                     , div [ class "media-body" ]
                                         [ h4 [ class "media-heading" ]
-                                            [ text "Usage" ]
-                                        , text "Un example concret et efficace d'utilisation d'un outil."
+                                            [ text (I18n.translate language (I18n.Example I18n.Singular)) ]
+                                        , text (I18n.translate language I18n.AddNewExampleCatchPhrase)
                                         ]
                                     ]
                                 , a [ class "media action", href "TODO-new-collection.html" ]
@@ -683,8 +693,8 @@ viewAddNewModal model language =
                                         ]
                                     , div [ class "media-body" ]
                                         [ h4 [ class "media-heading" ]
-                                            [ text "Collection" ]
-                                        , text "Une séléction des meilleurs outils et cas d'usage dans un contexte précis."
+                                            [ text (I18n.translate language (I18n.Collection I18n.Singular)) ]
+                                        , text (I18n.translate language I18n.AddNewCollectionCatchPhrase)
                                         ]
                                     ]
                                 ]

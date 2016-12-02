@@ -55,12 +55,10 @@ viewCardContent navigate language card cards values =
                 count =
                     List.length (getManyStrings language keys card values)
             in
-                I18n.translate language
-                    (if count == 1 then
-                        I18n.OnlyValue
-                     else
-                        I18n.BestOf count
-                    )
+                if count == 1 then
+                    text ""
+                else
+                    text (I18n.translate language (I18n.BestOf count))
     in
         div [ class "col-md-9 content content-right" ]
             [ div [ class "row" ]
@@ -106,7 +104,7 @@ viewCardContent navigate language card cards values =
                                             ]
                                         , div [ class "panel-body" ]
                                             [ div [ class "call-container" ]
-                                                [ p [] [ text "Any description for this tool yet." ]
+                                                [ p [] [ text "No description for this tool yet." ]
                                                 , button [ class "button call-add" ] [ text "+ Add a description" ]
                                                 ]
                                             ]
@@ -118,7 +116,7 @@ viewCardContent navigate language card cards values =
                                                 [ panelTitle
                                                 , div [ class "col-xs-4 text-right up7" ]
                                                     [ a [ class "show-more" ]
-                                                        [ text (bestOf descriptionKeys) ]
+                                                        [ bestOf descriptionKeys ]
                                                     , button
                                                         [ class "btn btn-default btn-xs btn-action"
                                                         , attribute "data-target" "#edit-content"
@@ -268,7 +266,7 @@ viewCardContent navigate language card cards values =
                                       --                 targetIds
                                       --                     |> List.map
                                       --                         (\targetId ->
-                                      --                             viewUriReferenceAsThumbnail navigate statements targetId
+                                      --                             viewCardReferenceAsThumbnail navigate statements targetId
                                       --                         )
                                       --                     |> List.append (viewShowMore (List.length targetIds))
                                       --          )
@@ -285,7 +283,7 @@ viewCardContent navigate language card cards values =
                                             ]
                                         , div [ class "col-xs-4 text-right up7" ]
                                             [ a [ class "show-more" ]
-                                                [ text (bestOf usedByKeys) ]
+                                                [ bestOf usedByKeys ]
                                             , button [ class "btn btn-default btn-xs btn-action", type' "button" ]
                                                 [ text "Add" ]
                                             ]
@@ -300,7 +298,7 @@ viewCardContent navigate language card cards values =
                                   --                 targetIds
                                   --                     |> List.map
                                   --                         (\targetId ->
-                                  --                             viewUriReferenceAsThumbnail navigate statements targetId
+                                  --                             viewCardReferenceAsThumbnail navigate statements targetId
                                   --                         )
                                   --                     |> List.append (viewShowMore (List.length targetIds))
                                   --          )
@@ -364,7 +362,7 @@ viewValueValue language navigate cards values value =
                     childValues
                 )
 
-        BijectiveUriReferenceValue { targetId } ->
+        BijectiveCardReferenceValue { targetId } ->
             case Dict.get targetId cards of
                 Nothing ->
                     text ("Error: target card not found for ID: " ++ targetId)

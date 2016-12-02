@@ -5,7 +5,7 @@ import Dict exposing (Dict)
 import String
 
 
-type alias BijectiveUriReference =
+type alias BijectiveCardReference =
     { targetId : String
     , reverseKeyId : String
     }
@@ -99,7 +99,7 @@ type ValueType
     | LocalizedStringValue (Dict String String)
     | NumberValue Float
     | ArrayValue (List ValueType)
-    | BijectiveUriReferenceValue BijectiveUriReference
+    | BijectiveCardReferenceValue BijectiveCardReference
     | ReferenceValue String
     | WrongValue String String
 

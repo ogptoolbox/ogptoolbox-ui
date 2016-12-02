@@ -7,9 +7,9 @@ import String
 import Types exposing (..)
 
 
-bijectiveUriReferenceDecoder : Decoder BijectiveUriReference
-bijectiveUriReferenceDecoder =
-    succeed BijectiveUriReference
+bijectiveCardReferenceDecoder : Decoder BijectiveCardReference
+bijectiveCardReferenceDecoder =
+    succeed BijectiveCardReference
         |: ("targetId" := string)
         |: ("reverseKeyId" := string)
 
@@ -129,14 +129,20 @@ valueValueDecoder schemaId =
                 "schema:localized-strings-array" ->
                     list (dict string) |> map (\xs -> ArrayValue (List.map LocalizedStringValue xs))
 
-                "schema:bijective-uri-reference" ->
-                    bijectiveUriReferenceDecoder |> map BijectiveUriReferenceValue
+                "schema:bijective-card-reference" ->
+                    bijectiveCardReferenceDecoder |> map BijectiveCardReferenceValue
 
                 "schema:type-reference" ->
                     string |> map ReferenceValue
 
+                "schema:type-references-array" ->
+                    list (string) |> map (\xs -> ArrayValue (List.map ReferenceValue xs))
+
                 "schema:uri" ->
                     string |> map StringValue
+
+                "schema:uris-array" ->
+                    list (string) |> map (\xs -> ArrayValue (List.map StringValue xs))
 
                 _ ->
                     fail ("TODO Unsupported schemaId: " ++ schemaId)
