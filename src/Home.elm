@@ -837,7 +837,7 @@ viewThumbnail urlPath card values extraClass cardType language =
         div [ class "col-xs-6 col-md-3" ]
             [ div [ class ("thumbnail " ++ extraClass), onClick (navigate urlPath) ]
                 [ div [ class "visual" ]
-                    [ case getImageUrl language "218x140" card values of
+                    [ case getImageUrl language "1000" card values of
                         Just url ->
                             img [ alt "Logo", src url ] []
 

@@ -246,7 +246,7 @@ viewCard cardType navigate language values card =
         div [ class "col-xs-12" ]
             [ div [ class "thumbnail example", onClick (navigate cardUrl) ]
                 [ div [ class "visual" ]
-                    [ case getImageUrl language "95x98" card values of
+                    [ case getImageUrl language "300" card values of
                         Just url ->
                             img [ alt "Logo", src url ] []
 
