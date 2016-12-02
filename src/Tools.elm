@@ -477,7 +477,7 @@ viewAddNew language fields imageUploadStatus =
                                 , id "websiteLinkField"
                                 , onInput (setField "Website")
                                 , placeholder "Enter the address of the informational website"
-                                , type' "text"
+                                , type' "url"
                                 ]
                                 []
                             ]
@@ -489,7 +489,7 @@ viewAddNew language fields imageUploadStatus =
                                 , id "downloadLinkField"
                                 , onInput (setField "Download")
                                 , placeholder "Enter the address to download the tool"
-                                , type' "text"
+                                , type' "url"
                                 ]
                                 []
                             ]
