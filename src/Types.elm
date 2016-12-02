@@ -163,14 +163,14 @@ usedByKeys =
 
 cardTypesForExample : List String
 cardTypesForExample =
-    [ "Final Use" ]
+    [ "type:use-case" ]
 
 
 cardTypesForOrganization : List String
 cardTypesForOrganization =
-    [ "Organization" ]
+    [ "type:organization" ]
 
 
 cardTypesForTool : List String
 cardTypesForTool =
-    [ "Software", "Platform" ]
+    [ "type:software", "type:platform" ]
