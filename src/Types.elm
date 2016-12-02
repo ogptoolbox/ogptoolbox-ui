@@ -19,6 +19,7 @@ type alias Card =
     , rating : Int
     , ratingCount : Int
     , ratingSum : Int
+    , references : Dict String (List String)
     , subTypeIds : List String
     , tags : List (Dict String String)
     , type_ : String

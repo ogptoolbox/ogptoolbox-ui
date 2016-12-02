@@ -1,11 +1,13 @@
 module Tool.View exposing (..)
 
+import Browse
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Helpers exposing (aForPath, aIfIsUrl)
-import I18n exposing (getImageScreenshotUrl, getManyStrings, getOneString, getSubTypes)
+import I18n exposing (getImageScreenshotUrl, getImageUrl, getManyStrings, getOneString, getSubTypes)
 import Routes
+import String
 import Tool.Sidebar as Sidebar
 import Types exposing (..)
 import Views exposing (viewLoading)
@@ -123,8 +125,7 @@ viewCardContent navigate language card cards values =
                                 |> Maybe.withDefault "This should never happen"
                             )
                         , small []
-                            [ text (getSubTypes language card values)
-                            ]
+                            [ text (getSubTypes language card values |> String.join ", ") ]
                         ]
                     ]
                 ]
@@ -271,61 +272,32 @@ viewCardContent navigate language card cards values =
                                             [ h3 [ class "panel-title" ]
                                                 [ text (I18n.translate language I18n.UsedFor) ]
                                             ]
-                                        , div [ class "col-xs-4 text-right up7" ]
-                                            [ a [ class "show-more" ]
-                                                [ text
-                                                    "Best of TODO"
-                                                  --                                             ("Best of "
-                                                  --     ++ (getManyStrings language usedForKeys card |> List.length |> toString)
-                                                  -- )
-                                                ]
-                                            , button [ class "btn btn-default btn-xs btn-action", type' "button" ]
-                                                [ text "Add" ]
-                                            ]
                                         ]
                                     ]
                                 , div [ class "panel-body" ]
-                                    [ div [ class "row" ]
-                                        [ div [ class "col-xs-6 col-md-4 " ]
-                                            [ div [ class "thumbnail example grey" ]
-                                                [ div [ class "visual" ]
-                                                    [ img [ alt "screen", src "/img/screen1.png" ]
-                                                        []
-                                                    ]
-                                                , div [ class "caption" ]
-                                                    [ div [ class "example-author-thumb" ]
-                                                        [ img [ alt "screen", src "/img/whitehouse.png" ]
-                                                            []
-                                                        ]
-                                                    , h4 []
-                                                        [ text "OpenSpending" ]
-                                                    , p []
-                                                        [ text "OpenSpending ." ]
-                                                    , span [ class "label label-default label-tool" ]
-                                                        [ text "Default" ]
-                                                    , span [ class "label label-default label-tool" ]
-                                                        [ text "Default" ]
-                                                    , span [ class "label label-default label-tool" ]
-                                                        [ text "Default" ]
-                                                    ]
+                                    [ case Dict.get "type:software" card.references of
+                                        Nothing ->
+                                            div [ class "call-container" ]
+                                                [ p [] [ text "No use case listed for this tool yet." ]
+                                                , button [ class "button call-add" ] [ text "+ Add a use case" ]
                                                 ]
-                                            ]
-                                        ]
-                                      -- , div [ class "panel-body" ]
-                                      --     [ div [ class "row" ]
-                                      --         ((case getManyStrings language usedForKeys card of
-                                      --             [] ->
-                                      --                 [ text "TODO call-to-action" ]
-                                      --             targetIds ->
-                                      --                 targetIds
-                                      --                     |> List.map
-                                      --                         (\targetId ->
-                                      --                             viewCardReferenceAsThumbnail navigate statements targetId
-                                      --                         )
-                                      --                     |> List.append (viewShowMore (List.length targetIds))
-                                      --          )
-                                      --         )
-                                      --     ]
+
+                                        Just cardIds ->
+                                            div [ class "row list" ]
+                                                [ div [ class "col-xs-12" ]
+                                                    (List.filterMap
+                                                        (\cardId ->
+                                                            Dict.get cardId cards
+                                                                |> Maybe.map
+                                                                    (Browse.viewCardListItem
+                                                                        navigate
+                                                                        language
+                                                                        values
+                                                                    )
+                                                        )
+                                                        cardIds
+                                                    )
+                                                ]
                                     ]
                                 ]
                            , div [ class "panel panel-default" ]

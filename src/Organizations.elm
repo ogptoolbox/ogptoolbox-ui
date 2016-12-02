@@ -5,7 +5,6 @@ import Browse
 import Constants
 import Hop.Types
 import Html exposing (..)
-import Html.Attributes exposing (..)
 import Http
 import I18n exposing (getImageUrlOrOgpLogo, getName)
 import Organization

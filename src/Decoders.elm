@@ -36,6 +36,7 @@ cardDecoder =
         |: oneOf [ ("rating" := int), succeed 0 ]
         |: oneOf [ ("ratingCount" := int), succeed 0 ]
         |: oneOf [ ("ratingSum" := int), succeed 0 ]
+        |: oneOf [ ("references" := dict (list string)), succeed Dict.empty ]
         |: ("subTypeIds" := list string)
         |: oneOf [ ("tags" := list (dict string)), succeed [] ]
         |: ("type" := string)

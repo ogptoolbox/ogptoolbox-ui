@@ -657,7 +657,7 @@ getImageUrlOrOgpLogo language cardId cards values =
                     imageUrl urlPath
 
 
-getSubTypes : Language -> Card -> Dict String Value -> String
+getSubTypes : Language -> Card -> Dict String Value -> List String
 getSubTypes language card values =
     card.subTypeIds
         |> List.map
@@ -680,7 +680,6 @@ getSubTypes language card values =
                                 "This should not happen"
                 )
             )
-        |> String.join ", "
 
 
 getValueByPreferredLanguage : Language -> Dict String String -> Maybe String

@@ -5,7 +5,8 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Html.Helpers exposing (aForPath)
-import I18n exposing (getImageUrl, getManyStrings, getOneString)
+import I18n exposing (getImageUrl, getManyStrings, getOneString, getSubTypes)
+import Routes
 import String
 import Types exposing (..)
 import Views exposing (viewLoading)
@@ -173,21 +174,21 @@ view cardType counts navigate searchQuery language loadingStatus =
                                                         []
 
                                                     Just body ->
-                                                        viewCards
-                                                            cardType
+                                                        [ viewCardListItems
                                                             navigate
                                                             language
                                                             (getOrderedCards body)
                                                             body.data.values
+                                                        ]
                                                )
 
                                     Loaded body ->
-                                        viewCards
-                                            cardType
+                                        [ viewCardListItems
                                             navigate
                                             language
                                             (getOrderedCards body)
                                             body.data.values
+                                        ]
                              )
                                 ++ (let
                                         count =
@@ -219,77 +220,80 @@ view cardType counts navigate searchQuery language loadingStatus =
     ]
 
 
-viewCards : CardType -> (String -> msg) -> I18n.Language -> List Card -> Dict String Value -> List (Html msg)
-viewCards cardType navigate language cards values =
-    List.map (viewCard cardType navigate language values) cards
+viewCardListItems : (String -> msg) -> I18n.Language -> List Card -> Dict String Value -> Html msg
+viewCardListItems navigate language cards values =
+    div [ class "col-xs-12" ]
+        (List.map (viewCardListItem navigate language values) cards)
 
 
-viewCard : CardType -> (String -> msg) -> I18n.Language -> Dict String Value -> Card -> Html msg
-viewCard cardType navigate language values card =
+viewCardListItem : (String -> msg) -> I18n.Language -> Dict String Value -> Card -> Html msg
+viewCardListItem navigate language values card =
     let
-        cardUrl =
-            (case cardType of
-                Example ->
-                    "/examples/"
-
-                Organization ->
-                    "/organizations/"
-
-                Tool ->
-                    "/tools/"
-            )
-                ++ card.id
-
         name =
             getOneString language nameKeys card values |> Maybe.withDefault ""
+
+        urlPath =
+            Routes.pathForCard card
     in
-        div [ class "col-xs-12" ]
-            [ div [ class "thumbnail example", onClick (navigate cardUrl) ]
-                [ div [ class "visual" ]
-                    [ case getImageUrl language "300" card values of
-                        Just url ->
-                            img [ alt "Logo", src url ] []
+        div
+            ([ class "thumbnail example" ]
+                ++ (case urlPath of
+                        Nothing ->
+                            []
+
+                        Just urlPath ->
+                            [ onClick (navigate urlPath) ]
+                   )
+            )
+            [ div [ class "visual" ]
+                [ case getImageUrl language "300" card values of
+                    Just url ->
+                        img [ alt "Logo", src url ] []
+
+                    Nothing ->
+                        h1 [ class "dynamic" ] [ text name ]
+                ]
+            , div [ class "caption" ]
+                [ h4 []
+                    [ (case urlPath of
+                        Nothing ->
+                            text name
+
+                        Just urlPath ->
+                            aForPath navigate
+                                urlPath
+                                []
+                                [ text name ]
+                      )
+                    , small []
+                        [ text (getSubTypes language card values |> String.join ", ") ]
+                    ]
+                  -- , div [ class "example-author" ]
+                  --     [ img [ alt "screen", src "/img/TODO.png" ]
+                  --         []
+                  --     , text "TODO The White House"
+                  --     ]
+                , p []
+                    (case getOneString language descriptionKeys card values of
+                        Just description ->
+                            [ text description ]
 
                         Nothing ->
-                            h1 [ class "dynamic" ] [ text name ]
-                    ]
-                , div [ class "caption" ]
-                    [ h4 []
-                        [ aForPath
-                            navigate
-                            cardUrl
                             []
-                            [ text name ]
-                        , small []
-                            [ text (I18n.translate language I18n.Software) ]
-                        ]
-                    , div [ class "example-author" ]
-                        [ img [ alt "screen", src "/img/TODO.png" ]
-                            []
-                        , text "TODO The White House"
-                        ]
-                    , p []
-                        (case getOneString language descriptionKeys card values of
-                            Just description ->
-                                [ text description ]
-
-                            Nothing ->
-                                []
-                        )
-                    ]
-                , div [ class "tags" ]
-                    (case getManyStrings language typeKeys card values of
-                        [] ->
-                            [ text "TODO call-to-action" ]
-
-                        xs ->
-                            List.map
-                                (\str ->
-                                    span
-                                        [ class "label label-default label-tool" ]
-                                        [ text str ]
-                                )
-                                xs
                     )
                 ]
+            , div [ class "tags" ]
+                (case getManyStrings language typeKeys card values of
+                    [] ->
+                        [ text "TODO call-to-action" ]
+
+                    xs ->
+                        List.map
+                            (\str ->
+                                span
+                                    [ class "label label-default label-tool" ]
+                                    [ text str ]
+                            )
+                            xs
+                )
             ]
