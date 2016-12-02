@@ -1073,5 +1073,7 @@ subscriptions model =
     Sub.batch
         [ bubbleSelections SelectBubble
         , bubbleDeselections DeselectBubble
+        , Sub.map ExamplesMsg (Examples.subscriptions model.examplesModel)
+        , Sub.map OrganizationsMsg (Organizations.subscriptions model.organizationsModel)
         , Sub.map ToolsMsg (Tools.subscriptions model.toolsModel)
         ]
