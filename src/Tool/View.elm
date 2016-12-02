@@ -4,9 +4,8 @@ import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Helpers exposing (aForPath, aIfIsUrl)
-import I18n exposing (getManyStrings, getOneString)
+import I18n exposing (getManyStrings, getOneString, getSubTypes)
 import Routes
-import String
 import Tool.Sidebar as Sidebar
 import Types exposing (..)
 import Views exposing (viewLoading)
@@ -56,7 +55,8 @@ viewCardContent navigate language card cards values =
                 [ h1 []
                     [ text (getOneString language nameKeys card values |> Maybe.withDefault "TODO call-to-action")
                     , small []
-                        [ text (String.join ", " card.subTypeIds) ]
+                        [ text (getSubTypes language card values)
+                        ]
                     ]
                 ]
             ]

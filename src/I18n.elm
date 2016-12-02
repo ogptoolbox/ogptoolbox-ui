@@ -573,6 +573,32 @@ getImageUrlOrOgpLogo language cardId cards values =
                     imageUrl urlPath
 
 
+getSubTypes : Language -> Card -> Dict String Value -> String
+getSubTypes language card values =
+    card.subTypeIds
+        |> List.map
+            (\subTypeId ->
+                (case Dict.get subTypeId values of
+                    Nothing ->
+                        "Error: value not found for ID: " ++ subTypeId
+
+                    Just { value } ->
+                        case value of
+                            LocalizedStringValue localizedValues ->
+                                case Dict.get (iso639_1FromLanguage language) localizedValues of
+                                    Nothing ->
+                                        "Error: localized value not found for ID: " ++ subTypeId
+
+                                    Just localizedValue ->
+                                        localizedValue
+
+                            _ ->
+                                "This should not happen"
+                )
+            )
+        |> String.join ", "
+
+
 getValueByPreferredLanguage : Language -> Dict String String -> Maybe String
 getValueByPreferredLanguage language valueByLanguage =
     let
