@@ -16,6 +16,8 @@ type TranslationId
     | AddNewCollectionCatchPhrase
     | AddNewExample
     | AddNewExampleCatchPhrase
+    | AddNewOrganization
+    | AddNewOrganizationCatchPhrase
     | AddNewTool
     | AddNewToolCatchPhrase
     | AdditionalInformations
@@ -99,6 +101,18 @@ getTranslationSet translationId =
         AddNewExampleCatchPhrase ->
             { english = todo
             , french = s "Un exemple concret et efficace d'utilisation d'un outil."
+            , spanish = todo
+            }
+
+        AddNewOrganization ->
+            { english = s "Add a new organization"
+            , french = todo
+            , spanish = todo
+            }
+
+        AddNewOrganizationCatchPhrase ->
+            { english = todo
+            , french = todo
             , spanish = todo
             }
 

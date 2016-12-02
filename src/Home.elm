@@ -8,6 +8,7 @@ import Html.Events exposing (onClick)
 import Html.Helpers exposing (aExternal, aForPath)
 import Http
 import I18n exposing (getImageUrl, getManyStrings, getOneString)
+import Ports exposing (mountd3bubbles)
 import Set exposing (Set)
 import String
 import Task
@@ -97,9 +98,8 @@ update :
     -> Maybe Authenticator.Model.Authentication
     -> I18n.Language
     -> String
-    -> (( List PopularTag, List String ) -> Cmd Msg)
     -> ( Model, Cmd Msg )
-update msg model authenticationMaybe language searchQuery mountd3bubbles =
+update msg model authenticationMaybe language searchQuery =
     case msg of
         DeselectBubble deselectedTag ->
             case getData model.popularTags of
@@ -224,7 +224,10 @@ update msg model authenticationMaybe language searchQuery mountd3bubbles =
 
         LoadedPopularTags popularTags ->
             ( { model | popularTags = Data (Loaded popularTags) }
-            , mountd3bubbles ( popularTags, model.selectedTags |> Set.toList )
+            , mountd3bubbles
+                { popularTags = popularTags
+                , selectedTags = model.selectedTags |> Set.toList
+                }
             )
 
         LoadedTools body ->
@@ -436,14 +439,11 @@ viewBanner =
                             [ div [ class "container-fluid" ]
                                 [ div [ class "row" ]
                                     [ div [ class "col-md-12 text-center" ]
-                                        [ div [ id "tag" ]
-                                            [ div [ class "plot" ] []
-                                            ]
-                                        ]
+                                        [ div [ class "bubbles" ] [] ]
                                     ]
-                                , div [ class "row filters" ]
-                                    [ viewSlide1
-                                    ]
+                                  -- , div [ class "row filters" ]
+                                  --     [ viewSlide1
+                                  --     ]
                                 ]
                             ]
                         , div [ class "item text-center" ]

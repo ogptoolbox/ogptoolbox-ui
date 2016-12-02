@@ -45,6 +45,7 @@ type ExamplesNestedRoute
 type OrganizationsNestedRoute
     = OrganizationRoute String
     | OrganizationsIndexRoute
+    | NewOrganizationRoute
 
 
 type ToolsNestedRoute

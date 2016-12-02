@@ -3,13 +3,19 @@ module Organizations exposing (..)
 import Authenticator.Model
 import Browse
 import Constants
+import Dict exposing (Dict)
 import Hop.Types
 import Html exposing (..)
 import Http
+import Html.Attributes exposing (..)
+import Html.Events exposing (on, onClick, onInput, onSubmit, targetValue)
 import I18n exposing (getImageUrlOrOgpLogo, getName)
+import Json.Decode as Decode
+import Navigation
 import Organization
+import Ports exposing (ImagePortData, fileSelected, fileContentRead, mountd3bubbles, setDocumentMetatags)
 import Requests exposing (..)
-import Routes exposing (getSearchQuery, OrganizationsNestedRoute(..))
+import Routes exposing (getSearchQuery, I18nRoute(..), makeUrlWithLanguage, OrganizationsNestedRoute(..))
 import Set exposing (Set)
 import Task
 import Types exposing (..)
@@ -17,7 +23,22 @@ import Views exposing (viewWebData)
 import WebData exposing (..)
 
 
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub InternalMsg
+subscriptions model =
+    fileContentRead ImageRead
+
+
+
 -- MODEL
+
+
+type UploadStatus
+    = NotUploaded
+    | Uploaded ImagePortData
+    | UploadError Http.Error
 
 
 type Model
@@ -32,6 +53,10 @@ type Model
         , selectedTags : Set String
         }
     | Organization (WebData DataIdBody)
+    | NewOrganization
+        { fields : Dict String String
+        , imageUploadStatus : UploadStatus
+        }
 
 
 init : Model
@@ -43,8 +68,8 @@ init =
 -- ROUTING
 
 
-urlUpdate : ( OrganizationsNestedRoute, Hop.Types.Location ) -> Model -> ( Model, Cmd Msg )
-urlUpdate ( route, location ) model =
+urlUpdate : ( OrganizationsNestedRoute, Hop.Types.Location ) -> I18n.Language -> Model -> ( Model, Cmd Msg )
+urlUpdate ( route, location ) language model =
     let
         searchQuery =
             getSearchQuery location
@@ -54,7 +79,27 @@ urlUpdate ( route, location ) model =
                 ( model, loadOne organizationId )
 
             OrganizationsIndexRoute ->
-                ( model, loadAll searchQuery )
+                let
+                    cmds =
+                        [ loadAll searchQuery
+                        , setDocumentMetatags
+                            { title = I18n.translate language (I18n.Organization I18n.Plural)
+                            , imageUrl = Constants.logoUrl
+                            }
+                        ]
+                in
+                    model ! cmds
+
+            NewOrganizationRoute ->
+                ( NewOrganization
+                    { fields = Dict.fromList [ ( "Types", "type:organization" ) ]
+                    , imageUploadStatus = NotUploaded
+                    }
+                , setDocumentMetatags
+                    { title = I18n.translate language I18n.AddNewOrganization
+                    , imageUrl = Constants.logoUrl
+                    }
+                )
 
 
 
@@ -73,6 +118,13 @@ type InternalMsg
     | LoadedAll ( DataIdsBody, DataIdsBody, List PopularTag, DataIdsBody )
     | LoadedOne DataIdBody
     | SelectBubble String
+    | SetField String String
+    | SubmitFields
+    | SubmittedFields DataIdBody
+    | ImageSelected
+    | ImageRead ImagePortData
+    | ImageUploaded String
+    | ImageUploadError Http.Error
 
 
 type Msg
@@ -121,20 +173,18 @@ update :
     -> Maybe Authenticator.Model.Authentication
     -> I18n.Language
     -> String
-    -> (DocumentMetatags -> Cmd Msg)
-    -> (( List PopularTag, List String ) -> Cmd Msg)
     -> ( Model, Cmd Msg )
-update msg model authenticationMaybe language searchQuery setDocumentMetatags mountd3bubbles =
+update msg model authenticationMaybe language searchQuery =
     case msg of
         DeselectBubble deselectedTag ->
             let
                 subModel =
                     case model of
-                        Organization _ ->
-                            Debug.crash "Should not happen"
-
                         Organizations subModel ->
                             subModel
+
+                        _ ->
+                            Debug.crash "Should not happen"
 
                 ( newSubModel, cmd ) =
                     case getData subModel.webData of
@@ -193,8 +243,55 @@ update msg model authenticationMaybe language searchQuery setDocumentMetatags mo
 
                         Organizations x ->
                             Organizations { x | webData = Failure err }
+
+                        NewOrganization _ ->
+                            model
             in
                 ( model', Cmd.none )
+
+        ImageSelected ->
+            case model of
+                NewOrganization _ ->
+                    ( model, fileSelected "logoField" )
+
+                _ ->
+                    Debug.crash "Should never happen"
+
+        ImageRead data ->
+            case model of
+                NewOrganization subModel ->
+                    let
+                        newModel =
+                            NewOrganization { subModel | imageUploadStatus = Uploaded data }
+
+                        cmd =
+                            Cmd.map ForSelf
+                                (Task.perform
+                                    ImageUploadError
+                                    ImageUploaded
+                                    (newTaskPostUploadImage authenticationMaybe data.contents)
+                                )
+                    in
+                        ( newModel, cmd )
+
+                _ ->
+                    Debug.crash "Should never happen"
+
+        ImageUploaded str ->
+            -- TODO
+            ( model, Cmd.none )
+
+        ImageUploadError err ->
+            case model of
+                NewOrganization subModel ->
+                    let
+                        newModel =
+                            NewOrganization { subModel | imageUploadStatus = UploadError err }
+                    in
+                        ( newModel, Cmd.none )
+
+                _ ->
+                    Debug.crash "Should never happen"
 
         LoadAll searchQuery ->
             let
@@ -204,16 +301,19 @@ update msg model authenticationMaybe language searchQuery setDocumentMetatags mo
                             Organization _ ->
                                 Nothing
 
+                            NewOrganization _ ->
+                                Nothing
+
                             Organizations { webData } ->
                                 getData webData
                         )
 
-                model' =
+                newModel =
                     case model of
                         Organizations x ->
                             Organizations { x | webData = Data loadingStatus }
 
-                        Organization _ ->
+                        _ ->
                             Debug.crash "Should never happen"
 
                 cmd =
@@ -229,7 +329,7 @@ update msg model authenticationMaybe language searchQuery setDocumentMetatags mo
                             )
                         )
             in
-                ( model', cmd )
+                ( newModel, cmd )
 
         LoadOne organizationId ->
             let
@@ -239,6 +339,9 @@ update msg model authenticationMaybe language searchQuery setDocumentMetatags mo
                             Organization (Data (Loading (getData webData)))
 
                         Organizations _ ->
+                            Organization (Data (Loading Nothing))
+
+                        NewOrganization _ ->
                             Organization (Data (Loading Nothing))
 
                 cmd =
@@ -251,11 +354,11 @@ update msg model authenticationMaybe language searchQuery setDocumentMetatags mo
             let
                 subModel =
                     case model of
-                        Organization _ ->
-                            Debug.crash "Should not happen"
-
                         Organizations subModel ->
                             subModel
+
+                        _ ->
+                            Debug.crash "Should not happen"
 
                 newSubModel =
                     { subModel
@@ -280,7 +383,10 @@ update msg model authenticationMaybe language searchQuery setDocumentMetatags mo
                         { title = I18n.translate language (I18n.Organization I18n.Plural)
                         , imageUrl = Constants.logoUrl
                         }
-                    , mountd3bubbles ( popularTags, newSubModel.selectedTags |> Set.toList )
+                    , mountd3bubbles
+                        { popularTags = popularTags
+                        , selectedTags = newSubModel.selectedTags |> Set.toList
+                        }
                     ]
             in
                 newModel ! cmds
@@ -299,11 +405,11 @@ update msg model authenticationMaybe language searchQuery setDocumentMetatags mo
             let
                 subModel =
                     case model of
-                        Organization _ ->
-                            Debug.crash "Should not happen"
-
                         Organizations subModel ->
                             subModel
+
+                        _ ->
+                            Debug.crash "Should not happen"
 
                 ( newSubModel, cmd ) =
                     case getData subModel.webData of
@@ -354,6 +460,46 @@ update msg model authenticationMaybe language searchQuery setDocumentMetatags mo
             in
                 ( Organizations newSubModel, cmd )
 
+        SetField name value ->
+            case model of
+                NewOrganization subModel ->
+                    ( NewOrganization { subModel | fields = Dict.insert name value subModel.fields }, Cmd.none )
+
+                _ ->
+                    Debug.crash "Should never happen"
+
+        SubmitFields ->
+            case model of
+                NewOrganization { fields } ->
+                    let
+                        cmd =
+                            Task.perform
+                                Error
+                                SubmittedFields
+                                (newTaskPostCardsEasy authenticationMaybe fields language)
+                                |> Cmd.map ForSelf
+                    in
+                        ( model, cmd )
+
+                _ ->
+                    Debug.crash "Should never happen"
+
+        SubmittedFields body ->
+            case model of
+                NewOrganization { fields } ->
+                    let
+                        urlPath =
+                            "/organization/" ++ body.data.id
+
+                        cmd =
+                            makeUrlWithLanguage language urlPath
+                                |> Navigation.newUrl
+                    in
+                        ( model, cmd )
+
+                _ ->
+                    Debug.crash "Should never happen"
+
 
 
 -- VIEW
@@ -392,3 +538,179 @@ view authenticationMaybe model searchQuery language =
                             (mapLoadingStatus .organizations loadingStatus)
                 )
                 webData
+
+        NewOrganization { fields, imageUploadStatus } ->
+            [ viewAddNew language fields imageUploadStatus ]
+
+
+viewAddNew : I18n.Language -> Dict String String -> UploadStatus -> Html Msg
+viewAddNew language fields imageUploadStatus =
+    let
+        setField =
+            (\k v -> ForSelf (SetField k v))
+
+        viewForm =
+            div [ class "col-xs-12" ]
+                [ div [ class "row section-form" ]
+                    [ div [ class "col-xs-12" ]
+                        [ div [ class "form-group" ]
+                            [ label [ for "nameField" ]
+                                [ text "Name" ]
+                            , input
+                                [ class "form-control"
+                                , id "nameField"
+                                , onInput (setField "Name")
+                                , placeholder "What's the official name of the use case?"
+                                , required True
+                                , type' "text"
+                                ]
+                                []
+                            ]
+                        , div [ class "form-group" ]
+                            [ label [ for "aboutField" ]
+                                [ text "About" ]
+                            , input
+                                [ class "form-control"
+                                , id "aboutField"
+                                , onInput (setField "Description")
+                                , placeholder "Add a complete description"
+                                , type' "text"
+                                ]
+                                []
+                            ]
+                        ]
+                    ]
+                , div [ class "row section-form" ]
+                    [ -- TODO input text
+                      -- , div [ class "col-xs-6" ]
+                      --     [ div [ class "form-group" ]
+                      --         [ label [ for "licenseField" ]
+                      --             [ text "License" ]
+                      --         , select [ class "form-control", id "licenseField" ]
+                      --             [ option []
+                      --                 [ text "1" ]
+                      --             , option []
+                      --                 [ text "2" ]
+                      --             , option []
+                      --                 [ text "3" ]
+                      --             , option []
+                      --                 [ text "4" ]
+                      --             , option []
+                      --                 [ text "5" ]
+                      --             ]
+                      --         ]
+                      --     ]
+                      div [ class "col-xs-12" ]
+                        [ div [ class "form-group" ]
+                            [ label [ for "websiteLinkField" ]
+                                [ text "Website link" ]
+                            , input
+                                [ class "form-control"
+                                , id "websiteLinkField"
+                                , onInput (setField "Website")
+                                , placeholder "Enter the address of the informational website"
+                                , type' "url"
+                                ]
+                                []
+                            ]
+                        ]
+                    ]
+                ]
+    in
+        Html.form
+            [ onSubmit (ForSelf SubmitFields)
+            ]
+            [ div [ class "row section" ]
+                [ div [ class "container" ]
+                    [ div [ class "row" ]
+                        [ div [ class "col-md-12 content content-left" ]
+                            [ div [ class "row" ]
+                                [ div [ class "col-xs-12" ]
+                                    [ h1 []
+                                        [ text (I18n.translate language I18n.AddNewExample) ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    , div [ class "row" ]
+                        [ div [ class "col-md-9 content content-left" ]
+                            [ div [ class "row" ]
+                                [ viewForm
+                                ]
+                            ]
+                        , div [ class "col-md-3 sidebar" ]
+                            [ div [ class "row" ]
+                                [ div [ class "col-xs-12" ]
+                                    [ div [ class "thumbnail orga grey" ]
+                                        [ div [ class "upload-container" ]
+                                            [ label [ for "logoField" ]
+                                                [ text "Logo" ]
+                                            , div [ class "upload-zone" ]
+                                                (case imageUploadStatus of
+                                                    NotUploaded ->
+                                                        [ span
+                                                            [ attribute "aria-hidden" "true"
+                                                            , class "glyphicon glyphicon-camera"
+                                                            ]
+                                                            []
+                                                        , text "Upload image"
+                                                        ]
+
+                                                    Uploaded { contents, filename } ->
+                                                        [ -- img [ src ("data:" ++ contents) ] []
+                                                          p [] [ text filename ]
+                                                        ]
+
+                                                    UploadError err ->
+                                                        [ span
+                                                            [ attribute "aria-hidden" "true"
+                                                            , class "glyphicon glyphicon-camera"
+                                                            ]
+                                                            []
+                                                        , text ("Error: " ++ (toString err))
+                                                          -- TODO
+                                                        ]
+                                                )
+                                            , input
+                                                [ id "logoField"
+                                                , on "change" (Decode.succeed (ForSelf ImageSelected))
+                                                , type' "file"
+                                                ]
+                                                []
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                              -- , div [ class "row" ]
+                              --     [ div [ class "col-xs-12" ]
+                              --         [ i []
+                              --             [ text "Maecenas " ]
+                              --         ]
+                              --     ]
+                            ]
+                        ]
+                    ]
+                ]
+            , div [ class "row section-form last" ]
+                [ div [ class "container" ]
+                    [ div [ class "col-md-9 content content-left" ]
+                        [ button
+                            [ class "btn btn-default pull-right"
+                            , disabled
+                                (case imageUploadStatus of
+                                    NotUploaded ->
+                                        False
+
+                                    Uploaded _ ->
+                                        False
+
+                                    UploadError _ ->
+                                        True
+                                )
+                            , type' "submit"
+                            ]
+                            [ text (I18n.translate language I18n.PublishExample) ]
+                        ]
+                    ]
+                ]
+            ]

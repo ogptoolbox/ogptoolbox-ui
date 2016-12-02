@@ -550,7 +550,7 @@ function mount(options) {
         width: 'auto',
         height: 490,
         wrapper: '#tag',
-        container: '#tag .plot',
+        container: options.selector,
         data: options.data,
         bubbles: {
             bubbles_per_px: 0.02,

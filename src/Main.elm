@@ -39,7 +39,6 @@ import Routes
 import String
 import Task
 import Tools
-import Types exposing (..)
 import Views exposing (viewBigMessage, viewNotFound)
 
 
@@ -153,7 +152,6 @@ urlUpdate ( i18nRoute, location ) model =
                                         model.authenticationMaybe
                                         language
                                         searchQuery
-                                        mountd3bubbles
 
                                 newModel =
                                     { model
@@ -180,7 +178,7 @@ urlUpdate ( i18nRoute, location ) model =
                         OrganizationsRoute childRoute ->
                             let
                                 ( organizationsModel, childCmd ) =
-                                    Organizations.urlUpdate ( childRoute, location ) model.organizationsModel
+                                    Organizations.urlUpdate ( childRoute, location ) language model.organizationsModel
                             in
                                 ( { model
                                     | organizationsModel = organizationsModel
@@ -242,9 +240,6 @@ type Msg
     | SearchInputChanged String
     | SelectBubble String
     | ToolsMsg Tools.InternalMsg
-
-
-port mountd3bubbles : ( List PopularTag, List String ) -> Cmd msg
 
 
 examplesMsgTranslation : Examples.MsgTranslation Msg
@@ -353,7 +348,6 @@ update msg model =
                                             model.authenticationMaybe
                                             language
                                             searchQuery
-                                            mountd3bubbles
                                 in
                                     ( { model | homeModel = homeModel }
                                     , Cmd.map translateHomeMsg childCmd
@@ -368,8 +362,6 @@ update msg model =
                                             model.authenticationMaybe
                                             language
                                             searchQuery
-                                            setDocumentMetatags
-                                            mountd3bubbles
                                 in
                                     ( { model | organizationsModel = organizationsModel }
                                     , Cmd.map translateOrganizationsMsg childCmd
@@ -394,10 +386,7 @@ update msg model =
                             model.examplesModel
                             model.authenticationMaybe
                             language
-                            -- searchQuery
-                            setDocumentMetatags
-
-                    -- mountd3bubbles
+                            searchQuery
                 in
                     ( { model | examplesModel = examplesModel }
                     , Cmd.map translateExamplesMsg childCmd
@@ -412,7 +401,6 @@ update msg model =
                             model.authenticationMaybe
                             language
                             searchQuery
-                            mountd3bubbles
                 in
                     ( { model | homeModel = homeModel }
                     , Cmd.map translateHomeMsg childCmd
@@ -438,8 +426,6 @@ update msg model =
                             model.authenticationMaybe
                             language
                             searchQuery
-                            setDocumentMetatags
-                            mountd3bubbles
                 in
                     ( { model | organizationsModel = organizationsModel }
                     , Cmd.map translateOrganizationsMsg childCmd
@@ -478,7 +464,6 @@ update msg model =
                                             model.authenticationMaybe
                                             language
                                             searchQuery
-                                            mountd3bubbles
                                 in
                                     ( { model | homeModel = homeModel }
                                     , Cmd.map translateHomeMsg childCmd
@@ -493,8 +478,6 @@ update msg model =
                                             model.authenticationMaybe
                                             language
                                             searchQuery
-                                            setDocumentMetatags
-                                            mountd3bubbles
                                 in
                                     ( { model | organizationsModel = organizationsModel }
                                     , Cmd.map translateOrganizationsMsg childCmd
@@ -598,6 +581,9 @@ view model =
 
                                 OrganizationsIndexRoute ->
                                     fullscreenLayout language
+
+                                NewOrganizationRoute ->
+                                    standardLayout language
 
                     ToolsRoute childRoute ->
                         Tools.view model.authenticationMaybe model.toolsModel searchQuery language

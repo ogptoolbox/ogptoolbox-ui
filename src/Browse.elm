@@ -50,29 +50,27 @@ view cardType counts navigate searchQuery language loadingStatus =
     [ div [ class "browse-tag" ]
         [ div [ class "row" ]
             [ div [ class "container-fluid" ]
-                [ div [ id "tag" ]
-                    [ div [ class "plot" ] []
-                    ]
-                , div [ class "row filters" ]
-                    [ div [ class "col-md-12 text-center" ]
-                        [ text "Showing results suited for                    "
-                        , a
-                            [ class "btn btn-default dropdown-toggle"
-                            , attribute "data-slide-to" "2"
-                            , href "#carousel-example-generic"
-                            , attribute "role" "button"
-                            ]
-                            [ text "all organizations                    " ]
-                        , text "and available in                     "
-                        , a
-                            [ class "btn btn-default dropdown-toggle"
-                            , attribute "data-slide-to" "3"
-                            , href "#carousel-example-generic"
-                            , attribute "role" "button"
-                            ]
-                            [ text "English                    " ]
-                        ]
-                    ]
+                [ div [ class "bubbles" ] [ ]
+                  -- , div [ class "row filters" ]
+                  --     [ div [ class "col-md-12 text-center" ]
+                  --         [ text "Showing results suited for                    "
+                  --         , a
+                  --             [ class "btn btn-default dropdown-toggle"
+                  --             , attribute "data-slide-to" "2"
+                  --             , href "#carousel-example-generic"
+                  --             , attribute "role" "button"
+                  --             ]
+                  --             [ text "all organizations                    " ]
+                  --         , text "and available in                     "
+                  --         , a
+                  --             [ class "btn btn-default dropdown-toggle"
+                  --             , attribute "data-slide-to" "3"
+                  --             , href "#carousel-example-generic"
+                  --             , attribute "role" "button"
+                  --             ]
+                  --             [ text "English                    " ]
+                  --         ]
+                  --     ]
                 ]
             ]
         ]

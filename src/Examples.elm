@@ -13,7 +13,7 @@ import Http
 import I18n exposing (getImageUrlOrOgpLogo, getName)
 import Json.Decode as Decode
 import Navigation
-import Ports exposing (ImagePortData, fileSelected, fileContentRead, setDocumentMetatags)
+import Ports exposing (ImagePortData, fileSelected, fileContentRead, mountd3bubbles, setDocumentMetatags)
 import Requests exposing (..)
 import Routes exposing (getSearchQuery, I18nRoute(..), makeUrlWithLanguage, ExamplesNestedRoute(..))
 import Set exposing (Set)
@@ -43,12 +43,15 @@ type UploadStatus
 
 type Model
     = Examples
-        (WebData
-            { examples : DataIdsBody
-            , organizationsCount : Int
-            , toolsCount : Int
-            }
-        )
+        { webData :
+            WebData
+                { examples : DataIdsBody
+                , organizationsCount : Int
+                , popularTags : List PopularTag
+                , toolsCount : Int
+                }
+        , selectedTags : Set String
+        }
     | Example (WebData DataIdBody)
     | NewExample
         { fields : Dict String String
@@ -58,7 +61,7 @@ type Model
 
 init : Model
 init =
-    Examples NotAsked
+    Examples { webData = NotAsked, selectedTags = Set.empty }
 
 
 
@@ -108,11 +111,13 @@ type ExternalMsg
 
 
 type InternalMsg
-    = Error Http.Error
+    = DeselectBubble String
+    | Error Http.Error
     | LoadAll String
     | LoadOne String
-    | LoadedAll ( DataIdsBody, DataIdsBody, DataIdsBody )
+    | LoadedAll ( DataIdsBody, DataIdsBody, List PopularTag, DataIdsBody )
     | LoadedOne DataIdBody
+    | SelectBubble String
     | SetField String String
     | SubmitFields
     | SubmittedFields DataIdBody
@@ -162,15 +167,64 @@ translateMsg { onInternalMsg, onNavigate } msg =
             onInternalMsg internalMsg
 
 
-update :
-    InternalMsg
-    -> Model
-    -> Maybe Authenticator.Model.Authentication
-    -> I18n.Language
-    -> (DocumentMetatags -> Cmd Msg)
-    -> ( Model, Cmd Msg )
-update msg model authenticationMaybe language setDocumentMetatags =
+update : InternalMsg -> Model -> Maybe Authenticator.Model.Authentication -> I18n.Language -> String -> ( Model, Cmd Msg )
+update msg model authenticationMaybe language searchQuery =
     case msg of
+        DeselectBubble deselectedTag ->
+            let
+                subModel =
+                    case model of
+                        Examples subModel ->
+                            subModel
+
+                        _ ->
+                            Debug.crash "Should not happen"
+
+                ( newSubModel, cmd ) =
+                    case getData subModel.webData of
+                        Nothing ->
+                            ( subModel, Cmd.none )
+
+                        Just webData ->
+                            let
+                                newSelectedTags =
+                                    Set.remove deselectedTag subModel.selectedTags
+
+                                newWebData =
+                                    Data
+                                        (Loading
+                                            (Just
+                                                { webData
+                                                    | examples = webData.examples
+                                                    , organizationsCount = webData.organizationsCount
+                                                    , popularTags = webData.popularTags
+                                                    , toolsCount = webData.toolsCount
+                                                }
+                                            )
+                                        )
+
+                                newSubModel =
+                                    { webData = newWebData
+                                    , selectedTags = newSelectedTags
+                                    }
+
+                                cmd =
+                                    Cmd.map ForSelf
+                                        (Task.perform
+                                            Error
+                                            LoadedAll
+                                            (Task.map4 (,,,)
+                                                (newTaskGetExamples authenticationMaybe searchQuery "" newSelectedTags)
+                                                (newTaskGetOrganizations authenticationMaybe searchQuery "1" newSelectedTags)
+                                                (newTaskGetTagsPopularity language newSelectedTags)
+                                                (newTaskGetTools authenticationMaybe searchQuery "1" newSelectedTags)
+                                            )
+                                        )
+                            in
+                                ( newSubModel, cmd )
+            in
+                ( Examples newSubModel, cmd )
+
         Error err ->
             let
                 _ =
@@ -181,8 +235,8 @@ update msg model authenticationMaybe language setDocumentMetatags =
                         Example _ ->
                             Example (Failure err)
 
-                        Examples _ ->
-                            Examples (Failure err)
+                        Examples x ->
+                            Examples { x | webData = Failure err }
 
                         NewExample _ ->
                             model
@@ -244,26 +298,32 @@ update msg model authenticationMaybe language setDocumentMetatags =
                             NewExample _ ->
                                 Nothing
 
-                            Examples webData ->
+                            Examples { webData } ->
                                 getData webData
                         )
 
-                model' =
-                    Examples (Data loadingStatus)
+                newModel =
+                    case model of
+                        Examples x ->
+                            Examples { x | webData = Data loadingStatus }
+
+                        _ ->
+                            Debug.crash "Should never happen"
 
                 cmd =
                     Cmd.map ForSelf
                         (Task.perform
                             Error
                             LoadedAll
-                            (Task.map3 (,,)
+                            (Task.map4 (,,,)
                                 (newTaskGetExamples authenticationMaybe searchQuery "" Set.empty)
                                 (newTaskGetOrganizations authenticationMaybe searchQuery "1" Set.empty)
+                                (newTaskGetTagsPopularity language Set.empty)
                                 (newTaskGetTools authenticationMaybe searchQuery "1" Set.empty)
                             )
                         )
             in
-                ( model', cmd )
+                ( newModel, cmd )
 
         LoadOne exampleId ->
             let
@@ -284,26 +344,46 @@ update msg model authenticationMaybe language setDocumentMetatags =
             in
                 ( model', cmd )
 
-        LoadedAll ( examples, organizations, tools ) ->
+        LoadedAll ( examples, organizations, popularTags, tools ) ->
             let
-                model' =
-                    Examples
-                        (Data
-                            (Loaded
-                                { examples = examples
-                                , organizationsCount = organizations.count
-                                , toolsCount = tools.count
-                                }
-                            )
-                        )
+                subModel =
+                    case model of
+                        Examples subModel ->
+                            subModel
 
-                cmd =
-                    setDocumentMetatags
+                        _ ->
+                            Debug.crash "Should not happen"
+
+                newSubModel =
+                    { subModel
+                        | webData =
+                            Data
+                                (Loading
+                                    (Just
+                                        { examples = examples
+                                        , organizationsCount = organizations.count
+                                        , popularTags = popularTags
+                                        , toolsCount = tools.count
+                                        }
+                                    )
+                                )
+                    }
+
+                newModel =
+                    Examples newSubModel
+
+                cmds =
+                    [ setDocumentMetatags
                         { title = I18n.translate language (I18n.Example I18n.Plural)
                         , imageUrl = Constants.logoUrl
                         }
+                    , mountd3bubbles
+                        { popularTags = popularTags
+                        , selectedTags = newSubModel.selectedTags |> Set.toList
+                        }
+                    ]
             in
-                ( model', cmd )
+                newModel ! cmds
 
         LoadedOne body ->
             let
@@ -314,6 +394,65 @@ update msg model authenticationMaybe language setDocumentMetatags =
                         }
             in
                 ( Example (Data (Loaded body)), cmd )
+
+        SelectBubble selectedTag ->
+            let
+                subModel =
+                    case model of
+                        Examples subModel ->
+                            subModel
+
+                        _ ->
+                            Debug.crash "Should not happen"
+
+                ( newSubModel, cmd ) =
+                    case getData subModel.webData of
+                        Nothing ->
+                            let
+                                _ =
+                                    Debug.log "Examples Nothing" True
+                            in
+                                ( subModel, Cmd.none )
+
+                        Just webData ->
+                            let
+                                newSelectedTags =
+                                    Set.insert selectedTag subModel.selectedTags
+
+                                newWebData =
+                                    Data
+                                        (Loading
+                                            (Just
+                                                { webData
+                                                    | examples = webData.examples
+                                                    , organizationsCount = webData.organizationsCount
+                                                    , popularTags = webData.popularTags
+                                                    , toolsCount = webData.toolsCount
+                                                }
+                                            )
+                                        )
+
+                                newSubModel =
+                                    { webData = newWebData
+                                    , selectedTags = newSelectedTags
+                                    }
+
+                                cmd =
+                                    Cmd.map ForSelf
+                                        (Task.perform
+                                            Error
+                                            LoadedAll
+                                            (Task.map4 (,,,)
+                                                (newTaskGetExamples authenticationMaybe searchQuery "" newSelectedTags)
+                                                (newTaskGetOrganizations authenticationMaybe searchQuery "1" newSelectedTags)
+                                                (newTaskGetTagsPopularity language newSelectedTags)
+                                                (newTaskGetTools authenticationMaybe searchQuery "1" newSelectedTags)
+                                            )
+                                        )
+                            in
+                                ( newSubModel, cmd )
+            in
+                ( Examples newSubModel, cmd )
 
         SetField name value ->
             case model of
@@ -369,7 +508,7 @@ view authenticationMaybe model searchQuery language =
                 (\loadingStatus -> [ Example.view navigate language loadingStatus ])
                 webData
 
-        Examples webData ->
+        Examples { webData } ->
             viewWebData
                 language
                 (\loadingStatus ->

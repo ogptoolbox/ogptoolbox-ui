@@ -1,6 +1,6 @@
 port module Ports exposing (..)
 
-import Types exposing (DocumentMetatags, User)
+import Types exposing (DocumentMetatags, PopularTag, User)
 
 
 -- DOCUMENT METATAGS
@@ -30,3 +30,14 @@ port fileContentRead : (ImagePortData -> msg) -> Sub msg
 
 
 port storeAuthentication : Maybe User -> Cmd msg
+
+
+
+-- BUBBLES
+
+
+port mountd3bubbles :
+    { popularTags : List PopularTag
+    , selectedTags : List String
+    }
+    -> Cmd msg
