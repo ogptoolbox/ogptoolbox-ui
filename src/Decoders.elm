@@ -117,11 +117,8 @@ valueValueDecoder schemaId =
     let
         decoder =
             case schemaId of
-                "schema:string" ->
-                    string |> map StringValue
-
-                "schema:number" ->
-                    float |> map NumberValue
+                "schema:bijective-card-reference" ->
+                    bijectiveCardReferenceDecoder |> map BijectiveCardReferenceValue
 
                 "schema:localized-string" ->
                     dict string |> map LocalizedStringValue
@@ -129,20 +126,26 @@ valueValueDecoder schemaId =
                 "schema:localized-strings-array" ->
                     list (dict string) |> map (\xs -> ArrayValue (List.map LocalizedStringValue xs))
 
-                "schema:bijective-card-reference" ->
-                    bijectiveCardReferenceDecoder |> map BijectiveCardReferenceValue
+                "schema:number" ->
+                    float |> map NumberValue
+
+                "schema:string" ->
+                    string |> map StringValue
+
+                "schema:strings-array" ->
+                    list string |> map (\xs -> ArrayValue (List.map StringValue xs))
 
                 "schema:type-reference" ->
                     string |> map ReferenceValue
 
                 "schema:type-references-array" ->
-                    list (string) |> map (\xs -> ArrayValue (List.map ReferenceValue xs))
+                    list string |> map (\xs -> ArrayValue (List.map ReferenceValue xs))
 
                 "schema:uri" ->
                     string |> map StringValue
 
                 "schema:uris-array" ->
-                    list (string) |> map (\xs -> ArrayValue (List.map StringValue xs))
+                    list string |> map (\xs -> ArrayValue (List.map StringValue xs))
 
                 _ ->
                     fail ("TODO Unsupported schemaId: " ++ schemaId)
