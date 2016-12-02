@@ -289,29 +289,42 @@ view model searchQuery language =
                         ++ (viewWebData
                                 language
                                 (\loadingStatus ->
-                                    case loadingStatus of
-                                        Loading maybeStatement ->
-                                            case maybeStatement of
-                                                Nothing ->
-                                                    []
+                                    let
+                                        getOrderedCards body =
+                                            List.map
+                                                (\id ->
+                                                    case Dict.get id body.data.cards of
+                                                        Nothing ->
+                                                            Debug.crash "Should never happen"
 
-                                                Just body ->
-                                                    [ viewFunction
-                                                        searchQuery
-                                                        language
-                                                        body.count
-                                                        body.data.values
-                                                        (Dict.values body.data.cards)
-                                                    ]
+                                                        Just card ->
+                                                            card
+                                                )
+                                                body.data.ids
+                                    in
+                                        case loadingStatus of
+                                            Loading maybeStatement ->
+                                                case maybeStatement of
+                                                    Nothing ->
+                                                        []
 
-                                        Loaded body ->
-                                            [ viewFunction
-                                                searchQuery
-                                                language
-                                                body.count
-                                                body.data.values
-                                                (Dict.values body.data.cards)
-                                            ]
+                                                    Just body ->
+                                                        [ viewFunction
+                                                            searchQuery
+                                                            language
+                                                            body.count
+                                                            body.data.values
+                                                            (getOrderedCards body)
+                                                        ]
+
+                                            Loaded body ->
+                                                [ viewFunction
+                                                    searchQuery
+                                                    language
+                                                    body.count
+                                                    body.data.values
+                                                    (getOrderedCards body)
+                                                ]
                                 )
                                 webData
                            )

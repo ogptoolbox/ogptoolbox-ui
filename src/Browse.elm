@@ -152,29 +152,42 @@ view cardType counts navigate searchQuery language loadingStatus =
                                 ]
                             ]
                        , div [ class "row list p90" ]
-                            ((case loadingStatus of
-                                Loading body ->
-                                    [ viewLoading ]
-                                        ++ (case body of
+                            ((let
+                                getOrderedCards body =
+                                    List.map
+                                        (\id ->
+                                            case Dict.get id body.data.cards of
                                                 Nothing ->
-                                                    []
+                                                    Debug.crash "Should never happen"
 
-                                                Just body ->
-                                                    viewCards
-                                                        cardType
-                                                        navigate
-                                                        language
-                                                        (Dict.values body.data.cards)
-                                                        body.data.values
-                                           )
+                                                Just card ->
+                                                    card
+                                        )
+                                        body.data.ids
+                              in
+                                case loadingStatus of
+                                    Loading body ->
+                                        [ viewLoading ]
+                                            ++ (case body of
+                                                    Nothing ->
+                                                        []
 
-                                Loaded body ->
-                                    viewCards
-                                        cardType
-                                        navigate
-                                        language
-                                        (Dict.values body.data.cards)
-                                        body.data.values
+                                                    Just body ->
+                                                        viewCards
+                                                            cardType
+                                                            navigate
+                                                            language
+                                                            (getOrderedCards body)
+                                                            body.data.values
+                                               )
+
+                                    Loaded body ->
+                                        viewCards
+                                            cardType
+                                            navigate
+                                            language
+                                            (getOrderedCards body)
+                                            body.data.values
                              )
                                 ++ (let
                                         count =
