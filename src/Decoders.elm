@@ -136,6 +136,12 @@ valueValueDecoder schemaId =
                 "schema:strings-array" ->
                     list string |> map (\xs -> ArrayValue (List.map StringValue xs))
 
+                "schema:tag-reference" ->
+                    string |> map ReferenceValue
+
+                "schema:tag-references-array" ->
+                    list string |> map (\xs -> ArrayValue (List.map ReferenceValue xs))
+
                 "schema:type-reference" ->
                     string |> map ReferenceValue
 
