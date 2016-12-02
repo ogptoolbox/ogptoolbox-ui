@@ -4,7 +4,7 @@ import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Helpers exposing (aExternal)
-import I18n exposing (getImageUrl,getManyStrings, getOneString)
+import I18n exposing (getImageUrl, getManyStrings, getOneString)
 import Types exposing (..)
 
 
