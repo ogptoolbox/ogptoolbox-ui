@@ -125,16 +125,19 @@ a {
 
 .row.fixed {
     position: fixed;
-    z-index: 1000;
+    left: 50%;
+    right: 0;
+    padding: 0 22px;
+    margin: 0;
+    z-index: 100000;
     background: white;
-    padding-right: 30px;
 }
 
 ul.nav.nav-pills {
     width: 100%;
     border: 1px solid lighten(@lighter, 10%);
     border-radius: 4px;
-    margin: 30px 0 25px;
+    margin: 25px 0 25px;
 
     &>li {
 
@@ -392,6 +395,7 @@ ol.breadcrumb {
     background-color: @dark;
     height: 100%;
     overflow: hidden;
+
 }
 
 .banner {
@@ -660,9 +664,19 @@ p.info-box  {
 
     &.label-maintag {
         border-radius: 3px;
-        padding: 4px 14px;
+        padding: 4px 10px;
         margin-right: 3px;
         font-size: 12px;
+    }
+    & .label-language {
+        background: none;
+        color: #a7a7a7;
+        padding: 0;
+        margin: 0 5px 0 0;
+        font-style: normal;
+        border: none;
+        top: 0px;
+        font-size: 80% !important;
     }
 
     :hover {
@@ -677,6 +691,19 @@ p.info-box  {
     font-size: 11px !important;
     font-weight: 300;
     color: #444;
+}
+.label-language {
+    border-radius: 2px;
+    border: 1px solid #a7a7a7;
+    padding: 1px 3px;
+    margin: 0 5px 0 0;
+    font-size: 9px !important;
+    text-transform: uppercase;
+    color: #a7a7a7;
+    font-style: normal;
+    position: relative;
+    top: -1px;
+
 }
 
 .panel.panel-default.up20 {
@@ -1090,6 +1117,10 @@ a.show-more {
     vertical-align: middle;
     display: table-cell;
 
+}
+
+.to-translate {
+        font-style: italic;
 }
 
 //SHOW THUMBNAILS IN A LIST INSTEAD OF GRID
@@ -1520,7 +1551,9 @@ body, html, #main, .main-container {
     height:100%;
     width: 50%;
     float: left;
-    position: relative;
+    position: absolute;
+    left: 0;
+    right: 50%;
 
     img {
         margin: auto;
@@ -1543,8 +1576,13 @@ body, html, #main, .main-container {
 }
 
 .scroll-content {
-    overflow: auto;
+    overflow-y: scroll;
+    overflow-x: hidden;
     height: 100%;
+    position: absolute;
+    left: 50%;
+    right: 0;
+
 }
 .row.browse {
     padding: 150px 30px;
@@ -1756,3 +1794,325 @@ table.compare {
     }
 
 }
+
+//ABOUT
+
+// Background Cover Mixin
+
+.background-cover() {
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+}
+
+.text-primary {
+    color: @light-blue;
+}
+
+p.large {
+    font-size: 16px;
+}
+
+
+.img-centered {
+    margin: 0 auto;
+}
+
+.bg-light-gray {
+    background-color: @light-grey;
+}
+
+
+header {
+    background-image: url('../img/bg_world.png');
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-position: center center;
+    .background-cover;
+    text-align: center;
+    color: white;
+    background-color: @dark;
+    .intro-text {
+            padding-top: 200px;
+            padding-bottom: 200px;
+            .intro-lead-in {
+                font-style: italic;
+                font-size: 30px;
+                line-height: 40px;
+                margin-bottom: 25px;
+            }
+            .intro-heading {
+                font-weight: 400;
+                font-size: 75px;
+                line-height: 75px;
+                margin-bottom: 20px;
+            }
+        }
+}
+
+
+
+// Global Section Styles
+
+section {
+    padding: 100px 0;
+    h2.section-heading {
+        font-size: 40px;
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+    h3.section-subheading {
+        font-size: 18px;
+        ;
+        text-transform: none;
+        font-style: italic;
+        font-weight: 400;
+        margin-bottom: 75px;
+    }
+    p {
+        margin-top: 15px;
+        font-size: 17px;
+        line-height: 1.75;
+    }
+}
+
+@media(min-width:768px) {
+    section {
+        padding: 150px 0;
+    }
+}
+
+// Services Section
+
+.service-heading {
+    margin: 15px 0;
+    text-transform: none;
+    font-weight: 600;
+    font-size: 20px;
+}
+.service-text {
+    margin: 15px 30px 50px;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5em;
+}
+
+
+// Timeline
+
+.timeline {
+    list-style: none;
+    padding: 0;
+    position: relative;
+    &:before {
+        top: 0;
+        bottom: 0;
+        position: absolute;
+        content: "";
+        width: 2px;
+        background-color: #f1f1f1;
+        left: 40px;
+        margin-left: -1.5px;
+    }
+    > li {
+        margin-bottom: 50px;
+        position: relative;
+        min-height: 50px;
+        &:before,
+        &:after {
+            content: " ";
+            display: table;
+        }
+        &:after {
+            clear: both;
+        }
+        .timeline-panel {
+            width: 100%;
+            float: right;
+            padding: 0 20px 0 100px;
+            position: relative;
+            text-align: left;
+            &:before {
+                border-left-width: 0;
+                border-right-width: 15px;
+                left: -15px;
+                right: auto;
+            }
+            &:after {
+                border-left-width: 0;
+                border-right-width: 14px;
+                left: -14px;
+                right: auto;
+            }
+        }
+        .timeline-image {
+            left: 0;
+            margin-left: 0;
+            width: 80px;
+            height: 80px;
+            position: absolute;
+            z-index: 100;
+            background-color: @light-blue;
+            color: white;
+            border-radius: 100%;
+            border: 7px solid #f1f1f1;
+            text-align: center;
+            h4 {
+                font-size: 10px;
+                margin-top: 12px;
+                line-height: 1.2em;
+            }
+        }
+        &.timeline-inverted > .timeline-panel {
+            float: right;
+            text-align: left;
+            padding: 0 20px 0 100px;
+            &:before {
+                border-left-width: 0;
+                border-right-width: 15px;
+                left: -15px;
+                right: auto;
+            }
+            &:after {
+                border-left-width: 0;
+                border-right-width: 14px;
+                left: -14px;
+                right: auto;
+            }
+        }
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+    .timeline-heading {
+        h4 {
+            margin-top: 0;
+            color: inherit;
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 8px;
+            &.subheading {
+                text-transform: none;
+                font-size: 21px;
+            }
+        }
+    }
+    .timeline-body {
+        .timeline-text  {
+            margin: 8px 0;
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 1.5em;
+        }
+    }
+}
+
+@media(min-width:768px) {
+    .timeline {
+        &:before {
+            left: 50%;
+        }
+        > li {
+            margin-bottom: 100px;
+            min-height: 100px;
+            .timeline-panel {
+                width: 41%;
+                float: left;
+                padding: 0 20px 20px 30px;
+                text-align: right;
+            }
+            .timeline-image {
+                width: 100px;
+                height: 100px;
+                left: 50%;
+                margin-left: -50px;
+                h4 {
+                    font-size: 13px;
+                    margin-top: 16px;
+                }
+            }
+            &.timeline-inverted > .timeline-panel {
+                float: right;
+                text-align: left;
+                padding: 0 30px 20px 20px;
+            }
+        }
+    }
+}
+
+@media(min-width:992px) {
+    .timeline {
+        > li {
+            min-height: 150px;
+            .timeline-panel {
+                padding: 0 20px 20px;
+            }
+            .timeline-image {
+                width: 150px;
+                height: 150px;
+                margin-left: -75px;
+                h4 {
+                    font-size: 18px;
+                    margin-top: 30px;
+                }
+            }
+            &.timeline-inverted > .timeline-panel {
+                padding: 0 20px 20px;
+            }
+        }
+    }
+}
+
+@media(min-width:1200px) {
+    .timeline {
+        > li {
+            min-height: 170px;
+            .timeline-panel {
+                padding: 0 20px 20px 100px;
+            }
+            .timeline-image {
+                width: 170px;
+                height: 170px;
+                margin-left: -85px;
+                h4 {
+                    margin-top: 40px;
+                }
+            }
+            &.timeline-inverted > .timeline-panel {
+                padding: 0 100px 20px 20px;
+            }
+        }
+    }
+}
+
+
+// Clients Aside
+
+aside.clients {
+    a {
+    height: 140px;
+    display: block;
+    overflow: hidden;
+    vertical-align: middle;
+    text-align: center;
+    position: relative;
+    margin-bottom: 30px;
+    }
+
+    img {
+            height: auto;
+    width: auto;
+    max-height: 65%;
+    max-width: 65%;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    }
+}
+
+
