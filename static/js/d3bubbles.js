@@ -548,7 +548,8 @@ function installPolyfill () {
 function mount(options) {
     var tagcloud = new D3Bubbles({
         width: 'auto',
-        height: 490,
+        //TEMPORARY: It will be 490px when filter row will be displayed 
+        height: 550,
         wrapper: '#tag',
         container: '#tag .plot',
         data: options.data,
