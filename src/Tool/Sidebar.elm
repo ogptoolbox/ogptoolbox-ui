@@ -143,7 +143,7 @@ root language card values =
                                         ]
                                     , div [ class "panel-body" ]
                                         (List.map
-                                            (\tag -> span [ class "label label-default label-tag" ] [ text tag ])
+                                            (\tag -> a [ class "label label-default label-tag" ] [ text tag ])
                                             tags
                                         )
                                     ]
