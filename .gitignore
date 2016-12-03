@@ -1,3 +1,5 @@
 node_modules
 elm-stuff
 dist
+
+src/Configuration.elm
