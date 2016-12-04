@@ -1,13 +1,5 @@
 // VARIABLES
-@lighter: #53585c;
-@dark: #3f454a;
-@darker: #33383c;
-@darkest: #25282b;
-@light-grey: #f7f7f7;
-@mid-grey: #595959;
-@line-grey: #ececec;
-@dark-grey: #4b4b4b;
-@light-blue: #25b5ff;
+@import "../../bootstrap.config.less";
 
 @screenshot-size: 380px;
 
@@ -80,18 +72,18 @@ a {
         background: none;
         padding: 5px 20px;
         margin-top: 21px;
-        text-shadow: none;  
+        text-shadow: none;
         border-radius: 3px;
 
         &:hover     {
             color: white;
             background: @light-blue;
-        } 
+        }
         &:active, &:focus     {
             color: white;
             background: #2590ff;
             border-color: #2590ff;
-        } 
+        }
     }
     &.btn-action2     {
         border: 2px solid @light-blue;
@@ -108,50 +100,50 @@ a {
             color: white;
             background: #2590ff;
             border-color: #2590ff;
-        } 
+        }
     }
     &.btn-action3     {
         background: none;
         border: 1px solid #a7a7a7;
         padding: 6px 20px;
         color: grey;
-        font-size: 13px; 
-        margin-top: 1px;       
+        font-size: 13px;
+        margin-top: 1px;
 
         &:hover     {
             color: white;
             background: @light-blue;
             border-color: @light-blue;
-        } 
-    } 
+        }
+    }
     &.btn-action4     {
         background: none;
         border: 1px solid rgba(0,0,0, 0.4);
         padding: 2px 10px;
         color: rgba(0,0,0, 0.5);
-        font-size: 12px; 
-        margin-top: -2px;       
+        font-size: 12px;
+        margin-top: -2px;
 
         &:hover     {
             color: white;
             background: rgba(0,0,0, 0.4);
             border-color: rgba(0,0,0, 0);
-        } 
-    } 
+        }
+    }
     &.btn-action-negative     {
         background: none;
         border: 1px solid rgba(255, 255, 255, 0.8);
         padding: 2px 10px;
         color: rgba(255, 255, 255, 0.8);
-        font-size: 12px; 
-        margin-top: -2px;       
+        font-size: 12px;
+        margin-top: -2px;
 
         &:hover     {
             color: grey;
             background: rgba(255, 255, 255, 0.8);
             border-color: rgba(255, 255, 255, 0.8);
-        } 
-    } 
+        }
+    }
 
 }
 
@@ -244,7 +236,7 @@ ul.nav.nav-pills {
            background-color: #6c747b;
            color: white;
         }
-     
+
 }
 
 .banner-button {
@@ -273,7 +265,7 @@ nav.navbar.navbar-default {
     display: block;
     width: 191px;
     height: 25px;
-    background: url(../img/ogptoolbox-logo.png) no-repeat no-repeat ; 
+    background: url(../img/ogptoolbox-logo.png) no-repeat no-repeat ;
     background-size: 191px ;
     margin: 27px 0 25px;
     margin-left: 0px !important;
@@ -596,7 +588,7 @@ p.info-box  {
 
 
 
-// MAIN CONTENT 
+// MAIN CONTENT
 .content    {
 
     &.min {
@@ -662,7 +654,7 @@ p.info-box  {
         border-radius: 20px;
         font-size: 13px;
         margin: 5px 5px 3px 0px;
-        line-height: 30px;      
+        line-height: 30px;
         }
     }
 
@@ -763,7 +755,7 @@ p.info-box  {
 }
 .label-language {
     border-radius: 2px;
-    border: 1px solid #a7a7a7; 
+    border: 1px solid #a7a7a7;
     padding: 1px 3px;
     margin: 0 5px 0 0;
     font-size: 9px !important;
@@ -780,7 +772,7 @@ p.info-box  {
 }
 
 .pull-screenshot {
-    margin-top: -(@screenshot-size); 
+    margin-top: -(@screenshot-size);
 }
 .push-screenshot {
     margin-top: (@screenshot-size) - 190px;
@@ -981,7 +973,7 @@ h4.zone-label {
                 right: 0;
                 bottom: 0;
                 opacity: 0.5;
-            }   
+            }
         }
         .caption {
             color: white;
@@ -1029,7 +1021,7 @@ h4.zone-label {
         img     {
             width: 100%;
             opacity: 0.9;
-        }   
+        }
     }
 
 
@@ -1115,7 +1107,7 @@ a.show-more {
     font-size: 12px;
 
     &:hover  {
-        color: @light-blue; 
+        color: @light-blue;
         text-decoration: none;
     }
 
@@ -1168,7 +1160,7 @@ a.show-more {
     margin-bottom: 70px;
     margin-top: 10px;
 
-    p { 
+    p {
         text-align: center;
         margin: 20px 0 15px;
     }
@@ -1269,7 +1261,7 @@ a.show-more {
             }
         }
 
-        .tags { 
+        .tags {
             padding-left: 15px;
             overflow: hidden;
             padding-bottom: 0px;
@@ -1297,7 +1289,7 @@ a.show-more {
 .table tr.editable:hover {
     background: @line-grey;
 
-    &:after {   
+    &:after {
         content: "Edit";
         text-transform: uppercase;
         font-size: 9px;
@@ -1412,7 +1404,7 @@ table {
 
         .big .form-control {
             width: 490px;
-            border-radius: 0px;           
+            border-radius: 0px;
         }
         .big .btn.btn-default {
             padding: 6px 14px;
@@ -1613,7 +1605,7 @@ body, html, #main, .main-container {
     top: 0;
     width:100%;
     background:yellow;
-    z-index: 10000;   
+    z-index: 10000;
 }
 
 .browse-tag {
@@ -2201,3 +2193,7 @@ h3.user-mail {
     font-weight: 300;
 }
 
+//LOADER
+.loader {
+    margin: 30px 0;
+}
