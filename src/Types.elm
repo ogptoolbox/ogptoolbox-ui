@@ -27,9 +27,9 @@ type alias Card =
 
 
 type CardType
-    = Example
-    | Organization
-    | Tool
+    = ExampleCard
+    | OrganizationCard
+    | ToolCard
 
 
 type alias DataId =
@@ -103,6 +103,37 @@ type ValueType
     | BijectiveCardReferenceValue BijectiveCardReference
     | ReferenceValue String
     | WrongValue String String
+
+
+getCardType : Card -> CardType
+getCardType card =
+    case List.head card.subTypeIds of
+        Nothing ->
+            Debug.crash "urlPathForCard: unhandled case"
+
+        Just subTypeId ->
+            if List.member subTypeId cardTypesForExample then
+                ExampleCard
+            else if List.member subTypeId cardTypesForOrganization then
+                OrganizationCard
+            else if List.member subTypeId cardTypesForTool then
+                ToolCard
+            else
+                Debug.crash "urlPathForCard: unhandled case"
+
+
+getOrderedCards : DataIds -> List Card
+getOrderedCards { cards, ids } =
+    List.map
+        (\id ->
+            case Dict.get id cards of
+                Nothing ->
+                    Debug.crash "Should never happen"
+
+                Just card ->
+                    card
+        )
+        ids
 
 
 imageUrl : String -> String

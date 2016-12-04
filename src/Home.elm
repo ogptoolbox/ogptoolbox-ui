@@ -7,8 +7,9 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Html.Helpers exposing (aExternal, aForPath)
 import Http
-import I18n exposing (getImageUrl, getManyStrings, getOneString)
+import I18n exposing (getImageUrl, getManyStrings, getName, getOneString)
 import Ports exposing (mountd3bubbles)
+import Routes
 import Set exposing (Set)
 import String
 import Task
@@ -282,88 +283,48 @@ update msg model authenticationMaybe language searchQuery =
 
 view : Model -> String -> I18n.Language -> Html Msg
 view model searchQuery language =
-    let
-        viewWebDataFor title extraClass webData viewFunction =
-            div [ class ("row section " ++ extraClass) ]
-                [ div [ class "container" ]
-                    ([ h3 [ class "zone-label" ]
-                        [ text title ]
-                     ]
-                        ++ (viewWebData
-                                language
-                                (\loadingStatus ->
-                                    let
-                                        getOrderedCards body =
-                                            List.map
-                                                (\id ->
-                                                    case Dict.get id body.data.cards of
-                                                        Nothing ->
-                                                            Debug.crash "Should never happen"
-
-                                                        Just card ->
-                                                            card
-                                                )
-                                                body.data.ids
-                                    in
-                                        case loadingStatus of
-                                            Loading maybeStatement ->
-                                                case maybeStatement of
-                                                    Nothing ->
-                                                        []
-
-                                                    Just body ->
-                                                        [ viewFunction
-                                                            searchQuery
-                                                            language
-                                                            body.count
-                                                            body.data.values
-                                                            (getOrderedCards body)
-                                                        ]
-
-                                            Loaded body ->
-                                                [ viewFunction
-                                                    searchQuery
-                                                    language
-                                                    body.count
-                                                    body.data.values
-                                                    (getOrderedCards body)
-                                                ]
-                                )
-                                webData
-                           )
-                    )
-                ]
-    in
-        div []
-            ([ viewBanner
-             , viewMetrics language model
-             ]
-                ++ (if String.isEmpty searchQuery then
-                        []
-                    else
-                        [ div [ class "row section" ]
-                            [ div [ class "container" ]
-                                [ h1 [] [ text (I18n.translate language (I18n.SearchResults searchQuery)) ] ]
-                            ]
+    div []
+        ([ viewBanner
+         , viewMetrics language model
+         ]
+            ++ (if String.isEmpty searchQuery then
+                    []
+                else
+                    [ div [ class "row section" ]
+                        [ div [ class "container" ]
+                            [ h1 [] [ text (I18n.translate language (I18n.SearchResults searchQuery)) ] ]
                         ]
-                   )
-                ++ [ viewWebDataFor
-                        (I18n.translate language (I18n.Example I18n.Plural))
-                        ""
-                        model.examples
-                        viewExamples
-                   , viewWebDataFor
-                        (I18n.translate language (I18n.Tool I18n.Plural))
-                        "grey"
-                        model.tools
-                        viewTools
-                   , viewCollections
-                     --    , viewWebDataFor
-                     --         (I18n.translate language (I18n.Organization I18n.Plural))
-                     --         model.organizations
-                     --         viewOrganizations
-                   ]
-            )
+                    ]
+               )
+            ++ [ div [ class "row section" ]
+                    [ div [ class "container" ]
+                        ([ h3 [ class "zone-label" ]
+                            [ text (I18n.translate language (I18n.Example I18n.Plural)) ]
+                         ]
+                            ++ (viewWebData language
+                                    (\loadingStatus ->
+                                        [ viewThumbnails "example grey" searchQuery language loadingStatus ]
+                                    )
+                                    model.examples
+                               )
+                        )
+                    ]
+               , div [ class "row section grey" ]
+                    [ div [ class "container" ]
+                        ([ h3 [ class "zone-label" ]
+                            [ text (I18n.translate language (I18n.Tool I18n.Plural)) ]
+                         ]
+                            ++ (viewWebData language
+                                    (\loadingStatus ->
+                                        [ viewThumbnails "tool" searchQuery language loadingStatus ]
+                                    )
+                                    model.tools
+                               )
+                        )
+                    ]
+               , viewCollections
+               ]
+        )
 
 
 viewBanner : Html Msg
@@ -717,57 +678,22 @@ viewCollections =
         ]
 
 
-viewExampleThumbnail : Card -> Dict String Value -> I18n.Language -> Html Msg
-viewExampleThumbnail card values language =
-    let
-        urlPath =
-            "/examples/" ++ card.id
-    in
-        viewThumbnail urlPath card values "example grey" Types.Example language
-
-
-viewExamples : String -> I18n.Language -> Int -> Dict String Value -> List Card -> Html Msg
-viewExamples searchQuery language count values examples =
-    div [ class "row" ]
-        ((examples
-            |> List.take 8
-            |> List.map (\card -> viewExampleThumbnail card values language)
-         )
-            ++ [ div [ class "col-sm-12 text-center" ]
-                    [ aForPath navigate
-                        ("/examples?q=" ++ searchQuery)
-                        [ class "show-more" ]
-                        [ text (I18n.translate language (I18n.ShowAll count))
-                        , span [ class "glyphicon glyphicon-menu-down" ] []
-                        ]
-                    ]
-               ]
-        )
-
-
 viewMetric : WebData DataIdsBody -> Html msg
 viewMetric webData =
-    text
-        (case webData of
-            NotAsked ->
-                "-"
+    case webData of
+        NotAsked ->
+            text ""
 
-            Failure _ ->
-                "-"
+        Failure _ ->
+            text "-"
 
-            Data loadingStatus ->
-                case loadingStatus of
-                    Loading maybeStatements ->
-                        case maybeStatements of
-                            Nothing ->
-                                ""
+        Data loadingStatus ->
+            case loadingStatus of
+                Loading _ ->
+                    img [ alt "loading", src "/img/mini-loader.gif" ] []
 
-                            Just body ->
-                                toString body.count
-
-                    Loaded body ->
-                        toString body.count
-        )
+                Loaded body ->
+                    text (toString body.count)
 
 
 viewMetrics : I18n.Language -> Model -> Html msg
@@ -799,43 +725,23 @@ viewMetrics language model =
         ]
 
 
-viewOrganizations : String -> I18n.Language -> Int -> Dict String Value -> List Card -> Html Msg
-viewOrganizations searchQuery language count values organizations =
-    div [ class "row" ]
-        ((organizations
-            |> List.take 8
-            |> List.map
-                (\card -> viewOrganizationThumbnail card values language)
-         )
-            ++ [ div [ class "col-sm-12 text-center" ]
-                    [ aForPath navigate
-                        ("/organizations?q=" ++ searchQuery)
-                        [ class "show-more" ]
-                        [ text (I18n.translate language (I18n.ShowAll count))
-                        , span [ class "glyphicon glyphicon-menu-down" ] []
-                        ]
-                    ]
-               ]
-        )
-
-
-viewOrganizationThumbnail : Card -> Dict String Value -> I18n.Language -> Html Msg
-viewOrganizationThumbnail card values language =
-    let
-        urlPath =
-            "/organizations/" ++ card.id
-    in
-        viewThumbnail urlPath card values "orga grey" Types.Organization language
-
-
-viewThumbnail : String -> Card -> Dict String Value -> String -> CardType -> I18n.Language -> Html Msg
-viewThumbnail urlPath card values extraClass cardType language =
+viewThumbnail : String -> I18n.Language -> Dict String Value -> Card -> Html Msg
+viewThumbnail thumbnailExtraClasses language values card =
     let
         name =
-            getOneString language nameKeys card values |> Maybe.withDefault ""
+            getName language card values
+
+        urlPath =
+            Routes.urlPathForCard card
+
+        cardType =
+            getCardType card
     in
         div [ class "col-xs-6 col-md-3" ]
-            [ div [ class ("thumbnail " ++ extraClass), onClick (navigate urlPath) ]
+            [ div
+                [ class ("thumbnail " ++ thumbnailExtraClasses)
+                , onClick (navigate urlPath)
+                ]
                 [ div [ class "visual" ]
                     [ case getImageUrl language "1000" card values of
                         Just url ->
@@ -845,13 +751,13 @@ viewThumbnail urlPath card values extraClass cardType language =
                             h1 [ class "dynamic" ]
                                 [ text
                                     (case cardType of
-                                        Example ->
+                                        ExampleCard ->
                                             name
 
-                                        Organization ->
-                                            name
+                                        OrganizationCard ->
+                                            String.left 1 name
 
-                                        Tool ->
+                                        ToolCard ->
                                             String.left 2 name
                                     )
                                 ]
@@ -890,29 +796,58 @@ viewThumbnail urlPath card values extraClass cardType language =
             ]
 
 
-viewTools : String -> I18n.Language -> Int -> Dict String Value -> List Card -> Html Msg
-viewTools searchQuery language count values tools =
+viewThumbnailLoading : String -> Html Msg
+viewThumbnailLoading thumbnailExtraClasses =
+    div [ class "col-xs-6 col-md-3" ]
+        [ div [ class ("thumbnail " ++ thumbnailExtraClasses) ]
+            ([ div [ class "visual" ]
+                [ h1 [ class "dynamic" ] [ text "..." ] ]
+             , div [ class "caption" ]
+                [ h4 [] [ text "..." ]
+                , p [] [ text "..." ]
+                ]
+             ]
+                ++ [ div [ class "tags" ]
+                        (List.repeat 3
+                            (span
+                                [ class "label label-default label-tool" ]
+                                [ text "..." ]
+                            )
+                        )
+                   ]
+            )
+        ]
+
+
+viewThumbnails : String -> String -> I18n.Language -> LoadingStatus DataIdsBody -> Html Msg
+viewThumbnails thumbnailExtraClasses searchQuery language loadingStatus =
     div [ class "row" ]
-        ((tools
-            |> List.take 8
-            |> List.map (\card -> viewToolThumbnail card values language)
-         )
-            ++ [ div [ class "col-sm-12 text-center" ]
-                    [ aForPath navigate
-                        ("/tools?q=" ++ searchQuery)
-                        [ class "show-more" ]
-                        [ text (I18n.translate language (I18n.ShowAll count))
-                        , span [ class "glyphicon glyphicon-menu-down" ] []
-                        ]
-                    ]
-               ]
+        (case loadingStatus of
+            Loading _ ->
+                (List.repeat 8 (viewThumbnailLoading thumbnailExtraClasses))
+
+            Loaded body ->
+                let
+                    firstCard =
+                        body.data.cards |> Dict.values |> List.head
+                in
+                    (List.map
+                        (viewThumbnail thumbnailExtraClasses language body.data.values)
+                        (getOrderedCards body.data)
+                    )
+                        ++ (case firstCard of
+                                Nothing ->
+                                    []
+
+                                Just firstCard ->
+                                    [ div [ class "col-sm-12 text-center" ]
+                                        [ aForPath navigate
+                                            ((Routes.urlBasePathForCard firstCard) ++ "?q=" ++ searchQuery)
+                                            [ class "show-more" ]
+                                            [ text (I18n.translate language (I18n.ShowAll body.count))
+                                            , span [ class "glyphicon glyphicon-menu-down" ] []
+                                            ]
+                                        ]
+                                    ]
+                           )
         )
-
-
-viewToolThumbnail : Card -> Dict String Value -> I18n.Language -> Html Msg
-viewToolThumbnail card values language =
-    let
-        urlPath =
-            "/tools/" ++ card.id
-    in
-        viewThumbnail urlPath card values "tool" Types.Tool language

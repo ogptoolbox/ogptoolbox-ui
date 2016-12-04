@@ -23,7 +23,7 @@ type TranslationId
     | AdditionalInformations
     | BestOf Int
     | CallToActionForCategory
-    | CallToActionForDescription Types.CardType
+    | CallToActionForDescription CardType
     | Close
     | Collection GrammaticalNumber
     | Copyright
@@ -36,6 +36,8 @@ type TranslationId
     | LanguageWord
     | License
     | NetworkErrorExplanation
+    | NoExampleFound
+    | NoToolFound
     | OpenGovParagraph
     | Organization GrammaticalNumber
     | PageLoading
@@ -143,33 +145,33 @@ getTranslationSet translationId =
         CallToActionForDescription cardType ->
             { english =
                 case cardType of
-                    Types.Example ->
+                    ExampleCard ->
                         s "Add a description for this use case"
 
-                    Types.Organization ->
+                    OrganizationCard ->
                         s "Add a description for this organization"
 
-                    Types.Tool ->
+                    ToolCard ->
                         s "Add a description for this tool"
             , french =
                 case cardType of
-                    Types.Example ->
+                    ExampleCard ->
                         todo
 
-                    Types.Organization ->
+                    OrganizationCard ->
                         todo
 
-                    Types.Tool ->
+                    ToolCard ->
                         todo
             , spanish =
                 case cardType of
-                    Types.Example ->
+                    ExampleCard ->
                         todo
 
-                    Types.Organization ->
+                    OrganizationCard ->
                         todo
 
-                    Types.Tool ->
+                    ToolCard ->
                         todo
             }
 
@@ -285,6 +287,18 @@ getTranslationSet translationId =
 
         NetworkErrorExplanation ->
             { english = s "There was a network error."
+            , french = todo
+            , spanish = todo
+            }
+
+        NoExampleFound ->
+            { english = s "No use case found"
+            , french = todo
+            , spanish = todo
+            }
+
+        NoToolFound ->
+            { english = s "No tool found"
             , french = todo
             , spanish = todo
             }
@@ -617,19 +631,14 @@ getOneString language propertyKeys card values =
             |> Maybe.oneOf
 
 
-getName : Language -> String -> Dict String Card -> Dict String Value -> String
-getName language cardId cards values =
-    case Dict.get cardId cards of
+getName : Language -> Card -> Dict String Value -> String
+getName language card values =
+    case getOneString language nameKeys card values of
         Nothing ->
-            "No name"
+            Debug.crash "getName: unhandled case"
 
-        Just card ->
-            case getOneString language nameKeys card values of
-                Nothing ->
-                    "No name"
-
-                Just name ->
-                    name
+        Just name ->
+            name
 
 
 getImageUrl : Language -> String -> Card -> Dict String Value -> Maybe String

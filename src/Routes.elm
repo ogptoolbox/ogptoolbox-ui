@@ -19,12 +19,15 @@ import Types exposing (..)
 type Route
     = AboutRoute
       -- | AuthenticatorRoute Authenticator.Model.Route
-    | ExamplesRoute ExamplesNestedRoute
+      -- | ExamplesRoute ExamplesNestedRoute
     | HelpRoute
     | HomeRoute
     | NotFoundRoute String
-    | OrganizationsRoute OrganizationsNestedRoute
-    | ToolsRoute ToolsNestedRoute
+
+
+
+-- | OrganizationsRoute OrganizationsNestedRoute
+-- | ToolsRoute ToolsNestedRoute
 
 
 type I18nRoute
@@ -34,24 +37,18 @@ type I18nRoute
 
 
 -- NESTED ROUTES
-
-
-type ExamplesNestedRoute
-    = ExampleRoute String
-    | ExamplesIndexRoute
-    | NewExampleRoute
-
-
-type OrganizationsNestedRoute
-    = OrganizationRoute String
-    | OrganizationsIndexRoute
-    | NewOrganizationRoute
-
-
-type ToolsNestedRoute
-    = ToolRoute String
-    | ToolsIndexRoute
-    | NewToolRoute
+-- type ExamplesNestedRoute
+--     = ExampleRoute String
+--     | ExamplesIndexRoute
+--     | NewExampleRoute
+-- type OrganizationsNestedRoute
+--     = OrganizationRoute String
+--     | OrganizationsIndexRoute
+--     | NewOrganizationRoute
+-- type ToolsNestedRoute
+--     = ToolRoute String
+--     | ToolsIndexRoute
+--     | NewToolRoute
 
 
 makeUrl : String -> String
@@ -76,25 +73,25 @@ matchers =
       -- , match1 (AuthenticatorRoute Authenticator.Model.SignInRoute) "/sign_in"
       -- , match1 (AuthenticatorRoute Authenticator.Model.SignOutRoute) "/sign_out"
       -- , match1 (AuthenticatorRoute Authenticator.Model.SignUpRoute) "/sign_up"
-    , nested1 ExamplesRoute
-        --   TODO rename all routes "examples" to "use-cases"
-        "/examples"
-        [ match1 ExamplesIndexRoute ""
-        , match2 ExampleRoute "/" idParser
-        , match1 NewExampleRoute "/new"
-        ]
+      -- , nested1 ExamplesRoute
+      --     --   TODO rename all routes "examples" to "use-cases"
+      --     "/examples"
+      --     [ match1 ExamplesIndexRoute ""
+      --     , match2 ExampleRoute "/" idParser
+      --     , match1 NewExampleRoute "/new"
+      --     ]
     , match1 HelpRoute "/help"
-    , nested1 OrganizationsRoute
-        "/organizations"
-        [ match1 OrganizationsIndexRoute ""
-        , match2 OrganizationRoute "/" idParser
-        ]
-    , nested1 ToolsRoute
-        "/tools"
-        [ match1 ToolsIndexRoute ""
-        , match2 ToolRoute "/" idParser
-        , match1 NewToolRoute "/new"
-        ]
+      -- , nested1 OrganizationsRoute
+      --     "/organizations"
+      --     [ match1 OrganizationsIndexRoute ""
+      --     , match2 OrganizationRoute "/" idParser
+      --     ]
+      -- , nested1 ToolsRoute
+      --     "/tools"
+      --     [ match1 ToolsIndexRoute ""
+      --     , match2 ToolRoute "/" idParser
+      --     , match1 NewToolRoute "/new"
+      --     ]
     , match2 NotFoundRoute "" (regex ".*")
     ]
 
@@ -173,17 +170,24 @@ replaceLanguageInLocation language location =
 -- REVERSE
 
 
-pathForCard : Card -> Maybe String
-pathForCard card =
-    List.head card.subTypeIds
-        `Maybe.andThen`
-            (\cardType ->
-                if List.member cardType cardTypesForExample then
-                    Just ("/examples/" ++ card.id)
-                else if List.member cardType cardTypesForOrganization then
-                    Just ("/organizations/" ++ card.id)
-                else if List.member cardType cardTypesForTool then
-                    Just ("/tools/" ++ card.id)
-                else
-                    Nothing
-            )
+urlBasePathForCardType : CardType -> String
+urlBasePathForCardType cardType =
+    case cardType of
+        ExampleCard ->
+            "/examples/"
+
+        OrganizationCard ->
+            "/organizations/"
+
+        ToolCard ->
+            "/tools/"
+
+
+urlBasePathForCard : Card -> String
+urlBasePathForCard card =
+    urlBasePathForCardType (getCardType card)
+
+
+urlPathForCard : Card -> String
+urlPathForCard card =
+    (urlBasePathForCard card) ++ card.id

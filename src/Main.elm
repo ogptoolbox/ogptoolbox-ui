@@ -6,7 +6,10 @@ import Authenticator.Update
 import Authenticator.View
 import Constants
 import Dom.Scroll
-import Examples
+
+
+-- import Examples
+
 import Help
 import Home
 import Hop.Types exposing (Location)
@@ -15,30 +18,22 @@ import Html.App
 import Html.Attributes exposing (..)
 import Html.Attributes.Aria exposing (ariaHidden, ariaLabelledby)
 import Html.Events exposing (onClick, onInput, onSubmit, onWithOptions)
-import Html.Helpers exposing (aForPath, aForPathWithLanguage)
+import Html.Helpers exposing (aForPath)
 import I18n
 import Json.Decode
 import Navigation
-import Organizations
+
+
+-- import Organizations
+
 import Ports exposing (setDocumentMetatags)
-import Routes
-    exposing
-        ( addSearchQueryToLocation
-        , ExamplesNestedRoute(..)
-        , getSearchQuery
-        , I18nRoute(..)
-        , makeUrl
-        , makeUrlFromLocation
-        , makeUrlWithLanguage
-        , OrganizationsNestedRoute(..)
-        , Route(..)
-        , ToolsNestedRoute(..)
-        , replaceLanguageInLocation
-        , urlParser
-        )
+import Routes exposing (..)
 import String
 import Task
-import Tools
+
+
+-- import Tools
+
 import Views exposing (viewBigMessage, viewNotFound)
 
 
@@ -67,15 +62,18 @@ type alias Model =
     { authenticationMaybe : Maybe Authenticator.Model.Authentication
     , authenticatorModel : Authenticator.Model.Model
     , authenticatorRouteMaybe : Maybe Authenticator.Model.Route
-    , displayAddNewModal : Bool
-    , examplesModel : Examples.Model
+    , displayAddNewModal :
+        Bool
+        -- , examplesModel : Examples.Model
     , homeModel : Home.Model
     , i18nRoute : I18nRoute
     , location : Hop.Types.Location
-    , navigatorLanguage : Maybe I18n.Language
-    , organizationsModel : Organizations.Model
-    , searchInputValue : String
-    , toolsModel : Tools.Model
+    , navigatorLanguage :
+        Maybe I18n.Language
+        -- , organizationsModel : Organizations.Model
+    , searchInputValue :
+        String
+        -- , toolsModel : Tools.Model
     }
 
 
@@ -84,8 +82,9 @@ init flags ( i18nRoute, location ) =
     { authenticationMaybe = flags.authentication
     , authenticatorModel = Authenticator.Model.init
     , authenticatorRouteMaybe = Nothing
-    , displayAddNewModal = False
-    , examplesModel = Examples.init
+    , displayAddNewModal =
+        False
+        -- , examplesModel = Examples.init
     , homeModel = Home.init
     , i18nRoute = i18nRoute
     , location = location
@@ -94,9 +93,10 @@ init flags ( i18nRoute, location ) =
             |> String.left 2
             |> String.toLower
             |> I18n.languageFromIso639_1
-    , organizationsModel = Organizations.init
-    , searchInputValue = ""
-    , toolsModel = Tools.init
+        -- , organizationsModel = Organizations.init
+    , searchInputValue =
+        ""
+        -- , toolsModel = Tools.init
     }
         |> urlUpdate ( i18nRoute, location )
 
@@ -123,18 +123,17 @@ urlUpdate ( i18nRoute, location ) model =
                                 }
                             )
 
-                        ExamplesRoute childRoute ->
-                            let
-                                ( examplesModel, childCmd ) =
-                                    Examples.urlUpdate ( childRoute, location ) language model.examplesModel
-                            in
-                                ( { model
-                                    | examplesModel = examplesModel
-                                    , searchInputValue = searchQuery
-                                  }
-                                , Cmd.map translateExamplesMsg childCmd
-                                )
-
+                        -- ExamplesRoute childRoute ->
+                        --     let
+                        --         ( examplesModel, childCmd ) =
+                        --             Examples.urlUpdate ( childRoute, location ) language model.examplesModel
+                        --     in
+                        --         ( { model
+                        --             | examplesModel = examplesModel
+                        --             , searchInputValue = searchQuery
+                        --           }
+                        --         , Cmd.map translateExamplesMsg childCmd
+                        --         )
                         HelpRoute ->
                             ( model
                             , setDocumentMetatags
@@ -175,30 +174,28 @@ urlUpdate ( i18nRoute, location ) model =
                                 }
                             )
 
-                        OrganizationsRoute childRoute ->
-                            let
-                                ( organizationsModel, childCmd ) =
-                                    Organizations.urlUpdate ( childRoute, location ) language model.organizationsModel
-                            in
-                                ( { model
-                                    | organizationsModel = organizationsModel
-                                    , searchInputValue = searchQuery
-                                  }
-                                , Cmd.map translateOrganizationsMsg childCmd
-                                )
-
-                        ToolsRoute childRoute ->
-                            let
-                                ( toolsModel, childCmd ) =
-                                    Tools.urlUpdate ( childRoute, location ) language model.toolsModel
-                            in
-                                ( { model
-                                    | toolsModel = toolsModel
-                                    , searchInputValue = searchQuery
-                                  }
-                                , Cmd.map translateToolsMsg childCmd
-                                )
-
+                -- OrganizationsRoute childRoute ->
+                --     let
+                --         ( organizationsModel, childCmd ) =
+                --             Organizations.urlUpdate ( childRoute, location ) language model.organizationsModel
+                --     in
+                --         ( { model
+                --             | organizationsModel = organizationsModel
+                --             , searchInputValue = searchQuery
+                --           }
+                --         , Cmd.map translateOrganizationsMsg childCmd
+                --         )
+                -- ToolsRoute childRoute ->
+                --     let
+                --         ( toolsModel, childCmd ) =
+                --             Tools.urlUpdate ( childRoute, location ) language model.toolsModel
+                --     in
+                --         ( { model
+                --             | toolsModel = toolsModel
+                --             , searchInputValue = searchQuery
+                --           }
+                --         , Cmd.map translateToolsMsg childCmd
+                --         )
                 I18nRouteWithoutLanguage urlPath ->
                     let
                         language =
@@ -231,22 +228,23 @@ type Msg
     | AuthenticatorRouteMsg (Maybe Authenticator.Model.Route)
     | DeselectBubble String
     | DisplayAddNewModal Bool
-    | ExamplesMsg Examples.InternalMsg
+      -- | ExamplesMsg Examples.InternalMsg
     | HomeMsg Home.InternalMsg
     | Navigate String
     | NoOp
-    | OrganizationsMsg Organizations.InternalMsg
+      -- | OrganizationsMsg Organizations.InternalMsg
     | Search
     | SearchInputChanged String
     | SelectBubble String
-    | ToolsMsg Tools.InternalMsg
 
 
-examplesMsgTranslation : Examples.MsgTranslation Msg
-examplesMsgTranslation =
-    { onInternalMsg = ExamplesMsg
-    , onNavigate = Navigate
-    }
+
+-- | ToolsMsg Tools.InternalMsg
+-- examplesMsgTranslation : Examples.MsgTranslation Msg
+-- examplesMsgTranslation =
+--     { onInternalMsg = ExamplesMsg
+--     , onNavigate = Navigate
+--     }
 
 
 homeMsgTranslation : Home.MsgTranslation Msg
@@ -256,23 +254,20 @@ homeMsgTranslation =
     }
 
 
-organizationsMsgTranslation : Organizations.MsgTranslation Msg
-organizationsMsgTranslation =
-    { onInternalMsg = OrganizationsMsg
-    , onNavigate = Navigate
-    }
 
-
-toolsMsgTranslation : Tools.MsgTranslation Msg
-toolsMsgTranslation =
-    { onInternalMsg = ToolsMsg
-    , onNavigate = Navigate
-    }
-
-
-translateExamplesMsg : Examples.MsgTranslator Msg
-translateExamplesMsg =
-    Examples.translateMsg examplesMsgTranslation
+-- organizationsMsgTranslation : Organizations.MsgTranslation Msg
+-- organizationsMsgTranslation =
+--     { onInternalMsg = OrganizationsMsg
+--     , onNavigate = Navigate
+--     }
+-- toolsMsgTranslation : Tools.MsgTranslation Msg
+-- toolsMsgTranslation =
+--     { onInternalMsg = ToolsMsg
+--     , onNavigate = Navigate
+--     }
+-- translateExamplesMsg : Examples.MsgTranslator Msg
+-- translateExamplesMsg =
+--     Examples.translateMsg examplesMsgTranslation
 
 
 translateHomeMsg : Home.MsgTranslator Msg
@@ -280,14 +275,13 @@ translateHomeMsg =
     Home.translateMsg homeMsgTranslation
 
 
-translateOrganizationsMsg : Organizations.MsgTranslator Msg
-translateOrganizationsMsg =
-    Organizations.translateMsg organizationsMsgTranslation
 
-
-translateToolsMsg : Tools.MsgTranslator Msg
-translateToolsMsg =
-    Tools.translateMsg toolsMsgTranslation
+-- translateOrganizationsMsg : Organizations.MsgTranslator Msg
+-- translateOrganizationsMsg =
+--     Organizations.translateMsg organizationsMsgTranslation
+-- translateToolsMsg : Tools.MsgTranslator Msg
+-- translateToolsMsg =
+--     Tools.translateMsg toolsMsgTranslation
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -353,20 +347,19 @@ update msg model =
                                     , Cmd.map translateHomeMsg childCmd
                                     )
 
-                            OrganizationsRoute _ ->
-                                let
-                                    ( organizationsModel, childCmd ) =
-                                        Organizations.update
-                                            (Organizations.DeselectBubble deselectedTag)
-                                            model.organizationsModel
-                                            model.authenticationMaybe
-                                            language
-                                            searchQuery
-                                in
-                                    ( { model | organizationsModel = organizationsModel }
-                                    , Cmd.map translateOrganizationsMsg childCmd
-                                    )
-
+                            -- OrganizationsRoute _ ->
+                            --     let
+                            --         ( organizationsModel, childCmd ) =
+                            --             Organizations.update
+                            --                 (Organizations.DeselectBubble deselectedTag)
+                            --                 model.organizationsModel
+                            --                 model.authenticationMaybe
+                            --                 language
+                            --                 searchQuery
+                            --     in
+                            --         ( { model | organizationsModel = organizationsModel }
+                            --         , Cmd.map translateOrganizationsMsg childCmd
+                            --         )
                             _ ->
                                 ( model, Cmd.none )
 
@@ -378,20 +371,19 @@ update msg model =
                 , Cmd.none
                 )
 
-            ExamplesMsg childMsg ->
-                let
-                    ( examplesModel, childCmd ) =
-                        Examples.update
-                            childMsg
-                            model.examplesModel
-                            model.authenticationMaybe
-                            language
-                            searchQuery
-                in
-                    ( { model | examplesModel = examplesModel }
-                    , Cmd.map translateExamplesMsg childCmd
-                    )
-
+            -- ExamplesMsg childMsg ->
+            --     let
+            --         ( examplesModel, childCmd ) =
+            --             Examples.update
+            --                 childMsg
+            --                 model.examplesModel
+            --                 model.authenticationMaybe
+            --                 language
+            --                 searchQuery
+            --     in
+            --         ( { model | examplesModel = examplesModel }
+            --         , Cmd.map translateExamplesMsg childCmd
+            --         )
             HomeMsg childMsg ->
                 let
                     ( homeModel, childCmd ) =
@@ -417,20 +409,19 @@ update msg model =
             NoOp ->
                 ( model, Cmd.none )
 
-            OrganizationsMsg childMsg ->
-                let
-                    ( organizationsModel, childCmd ) =
-                        Organizations.update
-                            childMsg
-                            model.organizationsModel
-                            model.authenticationMaybe
-                            language
-                            searchQuery
-                in
-                    ( { model | organizationsModel = organizationsModel }
-                    , Cmd.map translateOrganizationsMsg childCmd
-                    )
-
+            -- OrganizationsMsg childMsg ->
+            --     let
+            --         ( organizationsModel, childCmd ) =
+            --             Organizations.update
+            --                 childMsg
+            --                 model.organizationsModel
+            --                 model.authenticationMaybe
+            --                 language
+            --                 searchQuery
+            --     in
+            --         ( { model | organizationsModel = organizationsModel }
+            --         , Cmd.map translateOrganizationsMsg childCmd
+            --         )
             Search ->
                 let
                     urlPath =
@@ -469,37 +460,35 @@ update msg model =
                                     , Cmd.map translateHomeMsg childCmd
                                     )
 
-                            OrganizationsRoute _ ->
-                                let
-                                    ( organizationsModel, childCmd ) =
-                                        Organizations.update
-                                            (Organizations.SelectBubble selectedTag)
-                                            model.organizationsModel
-                                            model.authenticationMaybe
-                                            language
-                                            searchQuery
-                                in
-                                    ( { model | organizationsModel = organizationsModel }
-                                    , Cmd.map translateOrganizationsMsg childCmd
-                                    )
-
+                            -- OrganizationsRoute _ ->
+                            --     let
+                            --         ( organizationsModel, childCmd ) =
+                            --             Organizations.update
+                            --                 (Organizations.SelectBubble selectedTag)
+                            --                 model.organizationsModel
+                            --                 model.authenticationMaybe
+                            --                 language
+                            --                 searchQuery
+                            --     in
+                            --         ( { model | organizationsModel = organizationsModel }
+                            --         , Cmd.map translateOrganizationsMsg childCmd
+                            --         )
                             _ ->
                                 ( model, Cmd.none )
 
                     I18nRouteWithoutLanguage _ ->
                         ( model, Cmd.none )
 
-            ToolsMsg childMsg ->
-                let
-                    ( toolsModel, childCmd ) =
-                        Tools.update childMsg model.toolsModel model.authenticationMaybe language
-                in
-                    ( { model | toolsModel = toolsModel }
-                    , Cmd.map translateToolsMsg childCmd
-                    )
 
 
-
+-- ToolsMsg childMsg ->
+--     let
+--         ( toolsModel, childCmd ) =
+--             Tools.update childMsg model.toolsModel model.authenticationMaybe language
+--     in
+--         ( { model | toolsModel = toolsModel }
+--         , Cmd.map translateToolsMsg childCmd
+--         )
 -- VIEW
 
 
@@ -541,19 +530,16 @@ view model =
                         standardLayout language
                             [ About.view language ]
 
-                    ExamplesRoute childRoute ->
-                        Examples.view model.authenticationMaybe model.examplesModel searchQuery language
-                            |> List.map (Html.App.map translateExamplesMsg)
-                            |> case childRoute of
-                                ExampleRoute _ ->
-                                    standardLayout language
-
-                                ExamplesIndexRoute ->
-                                    fullscreenLayout language
-
-                                NewExampleRoute ->
-                                    standardLayout language
-
+                    -- ExamplesRoute childRoute ->
+                    --     Examples.view model.authenticationMaybe model.examplesModel searchQuery language
+                    --         |> List.map (Html.App.map translateExamplesMsg)
+                    --         |> case childRoute of
+                    --             ExampleRoute _ ->
+                    --                 standardLayout language
+                    --             ExamplesIndexRoute ->
+                    --                 fullscreenLayout language
+                    --             NewExampleRoute ->
+                    --                 standardLayout language
                     HelpRoute ->
                         standardLayout language
                             [ Help.view language ]
@@ -572,32 +558,26 @@ view model =
                                 ]
                             ]
 
-                    OrganizationsRoute childRoute ->
-                        Organizations.view model.authenticationMaybe model.organizationsModel searchQuery language
-                            |> List.map (Html.App.map translateOrganizationsMsg)
-                            |> case childRoute of
-                                OrganizationRoute _ ->
-                                    standardLayout language
-
-                                OrganizationsIndexRoute ->
-                                    fullscreenLayout language
-
-                                NewOrganizationRoute ->
-                                    standardLayout language
-
-                    ToolsRoute childRoute ->
-                        Tools.view model.authenticationMaybe model.toolsModel searchQuery language
-                            |> List.map (Html.App.map translateToolsMsg)
-                            |> case childRoute of
-                                ToolRoute _ ->
-                                    standardLayout language
-
-                                ToolsIndexRoute ->
-                                    fullscreenLayout language
-
-                                NewToolRoute ->
-                                    standardLayout language
-
+            -- OrganizationsRoute childRoute ->
+            --     Organizations.view model.authenticationMaybe model.organizationsModel searchQuery language
+            --         |> List.map (Html.App.map translateOrganizationsMsg)
+            --         |> case childRoute of
+            --             OrganizationRoute _ ->
+            --                 standardLayout language
+            --             OrganizationsIndexRoute ->
+            --                 fullscreenLayout language
+            --             NewOrganizationRoute ->
+            --                 standardLayout language
+            -- ToolsRoute childRoute ->
+            --     Tools.view model.authenticationMaybe model.toolsModel searchQuery language
+            --         |> List.map (Html.App.map translateToolsMsg)
+            --         |> case childRoute of
+            --             ToolRoute _ ->
+            --                 standardLayout language
+            --             ToolsIndexRoute ->
+            --                 fullscreenLayout language
+            --             NewToolRoute ->
+            --                 standardLayout language
             I18nRouteWithoutLanguage _ ->
                 standardLayout
                     I18n.English
@@ -636,9 +616,8 @@ viewAddNewModal model language =
                     , div [ class "modal-body" ]
                         [ div [ class "row" ]
                             [ div [ class "col-xs-12" ]
-                                [ aForPathWithLanguage
+                                [ aForPath
                                     Navigate
-                                    language
                                     "/tools/new"
                                     [ class "media action"
                                       -- TODO Disable if not signed-in.
@@ -654,9 +633,8 @@ viewAddNewModal model language =
                                         , text (I18n.translate language I18n.AddNewToolCatchPhrase)
                                         ]
                                     ]
-                                , aForPathWithLanguage
+                                , aForPath
                                     Navigate
-                                    language
                                     "/examples/new"
                                     [ class "media action"
                                       -- TODO Disable if not signed-in.
@@ -859,9 +837,8 @@ viewHeader model language containerClass =
             case model.authenticationMaybe of
                 Just authentication ->
                     li []
-                        [ aForPathWithLanguage
+                        [ aForPath
                             Navigate
-                            language
                             "/profile"
                             []
                             [ text authentication.name ]
@@ -934,9 +911,8 @@ viewHeader model language containerClass =
                             , span [ class "icon-bar" ]
                                 []
                             ]
-                        , aForPathWithLanguage
+                        , aForPath
                             Navigate
-                            language
                             "/"
                             [ class "navbar-brand" ]
                             [ text "OGPtoolbox" ]
@@ -979,57 +955,50 @@ viewHeader model language containerClass =
                     , div [ class "collapse navbar-collapse", id "bs-example-navbar-collapse-1" ]
                         [ ul [ class "nav navbar-nav" ]
                             [ li []
-                                [ aForPathWithLanguage
+                                [ aForPath
                                     Navigate
-                                    language
                                     "/"
                                     []
                                     [ text (I18n.translate language I18n.Home) ]
                                 ]
                             , li []
-                                [ aForPathWithLanguage
+                                [ aForPath
                                     Navigate
-                                    language
                                     "/about"
                                     []
                                     [ text (I18n.translate language I18n.About) ]
                                 ]
                             , li []
-                                [ aForPathWithLanguage
+                                [ aForPath
                                     Navigate
-                                    language
                                     "/tools"
                                     []
                                     [ text (I18n.translate language (I18n.Tool I18n.Plural)) ]
                                 ]
                             , li []
-                                [ aForPathWithLanguage
+                                [ aForPath
                                     Navigate
-                                    language
                                     "/examples"
                                     []
                                     [ text (I18n.translate language (I18n.Example I18n.Plural)) ]
                                 ]
                               -- , li []
-                              --     [ aForPathWithLanguage
+                              --     [ aForPath
                               --         Navigate
-                              --         language
                               --         "/organizations"
                               --         []
                               --         [ text (I18n.translate language (I18n.Organization I18n.Plural)) ]
                               --     ]
                             , li []
-                                [ aForPathWithLanguage
+                                [ aForPath
                                     Navigate
-                                    language
                                     "/collections"
                                     []
                                     [ text (I18n.translate language (I18n.Collection I18n.Plural)) ]
                                 ]
                             , li []
-                                [ aForPathWithLanguage
+                                [ aForPath
                                     Navigate
-                                    language
                                     "/help"
                                     []
                                     [ text (I18n.translate language I18n.Help) ]
@@ -1073,7 +1042,7 @@ subscriptions model =
     Sub.batch
         [ bubbleSelections SelectBubble
         , bubbleDeselections DeselectBubble
-        , Sub.map ExamplesMsg (Examples.subscriptions model.examplesModel)
-        , Sub.map OrganizationsMsg (Organizations.subscriptions model.organizationsModel)
-        , Sub.map ToolsMsg (Tools.subscriptions model.toolsModel)
+          -- , Sub.map ExamplesMsg (Examples.subscriptions model.examplesModel)
+          -- , Sub.map OrganizationsMsg (Organizations.subscriptions model.organizationsModel)
+          -- , Sub.map ToolsMsg (Tools.subscriptions model.toolsModel)
         ]

@@ -84,14 +84,6 @@ newTaskGetCardsOfType cardTypes authenticationMaybe searchQuery limit tags =
             )
 
 
-newTaskGetExample :
-    Maybe Authenticator.Model.Authentication
-    -> String
-    -> Task Http.Error DataIdBody
-newTaskGetExample =
-    newTaskGetCardOfType
-
-
 newTaskGetExamples :
     Maybe Authenticator.Model.Authentication
     -> String
@@ -100,14 +92,6 @@ newTaskGetExamples :
     -> Task Http.Error DataIdsBody
 newTaskGetExamples =
     newTaskGetCardsOfType cardTypesForExample
-
-
-newTaskGetOrganization :
-    Maybe Authenticator.Model.Authentication
-    -> String
-    -> Task Http.Error DataIdBody
-newTaskGetOrganization =
-    newTaskGetCardOfType
 
 
 newTaskGetOrganizations :
@@ -138,14 +122,6 @@ newTaskGetTagsPopularity language tags =
                 , body = Http.empty
                 }
             )
-
-
-newTaskGetTool :
-    Maybe Authenticator.Model.Authentication
-    -> String
-    -> Task Http.Error DataIdBody
-newTaskGetTool =
-    newTaskGetCardOfType
 
 
 newTaskGetTools :

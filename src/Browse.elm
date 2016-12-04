@@ -26,13 +26,13 @@ cardTypeCount cardType counts =
     Maybe.map
         (\{ examples, organizations, tools } ->
             case cardType of
-                Example ->
+                ExampleCard ->
                     examples
 
-                Organization ->
+                OrganizationCard ->
                     organizations
 
-                Tool ->
+                ToolCard ->
                     tools
         )
         counts
@@ -50,7 +50,7 @@ view cardType counts navigate searchQuery language loadingStatus =
     [ div [ class "browse-tag" ]
         [ div [ class "row" ]
             [ div [ class "container-fluid" ]
-                [ div [ class "bubbles" ] [ ]
+                [ div [ class "bubbles" ] []
                   -- , div [ class "row filters" ]
                   --     [ div [ class "col-md-12 text-center" ]
                   --         [ text "Showing results suited for                    "
@@ -88,7 +88,7 @@ view cardType counts navigate searchQuery language loadingStatus =
                             [ div [ class "col-xs-12" ]
                                 [ ul [ class "nav nav-pills nav-justified", attribute "role" "tablist" ]
                                     [ li
-                                        [ classList [ ( "active", cardType == Example ) ]
+                                        [ classList [ ( "active", cardType == ExampleCard ) ]
                                         , attribute "role" "presentation"
                                         ]
                                         [ aForPath navigate
@@ -108,7 +108,7 @@ view cardType counts navigate searchQuery language loadingStatus =
                                             ]
                                         ]
                                     , li
-                                        [ classList [ ( "active", cardType == Tool ) ]
+                                        [ classList [ ( "active", cardType == ToolCard ) ]
                                         , attribute "role" "presentation"
                                         ]
                                         [ aForPath navigate
@@ -128,7 +128,7 @@ view cardType counts navigate searchQuery language loadingStatus =
                                             ]
                                         ]
                                     , li
-                                        [ classList [ ( "active", cardType == Organization ) ]
+                                        [ classList [ ( "active", cardType == OrganizationCard ) ]
                                         , attribute "role" "presentation"
                                         ]
                                         [ aForPath navigate
@@ -228,21 +228,15 @@ viewCardListItem : (String -> msg) -> I18n.Language -> Dict String Value -> Card
 viewCardListItem navigate language values card =
     let
         name =
-            getOneString language nameKeys card values |> Maybe.withDefault ""
+            getName language  card values
 
         urlPath =
-            Routes.pathForCard card
+            Routes.urlPathForCard card
     in
         div
-            ([ class "thumbnail example" ]
-                ++ (case urlPath of
-                        Nothing ->
-                            []
-
-                        Just urlPath ->
-                            [ onClick (navigate urlPath) ]
-                   )
-            )
+            [ class "thumbnail example"
+            , onClick (navigate urlPath)
+            ]
             [ div [ class "visual" ]
                 [ case getImageUrl language "300" card values of
                     Just url ->
@@ -253,16 +247,10 @@ viewCardListItem navigate language values card =
                 ]
             , div [ class "caption" ]
                 [ h4 []
-                    [ (case urlPath of
-                        Nothing ->
-                            text name
-
-                        Just urlPath ->
-                            aForPath navigate
-                                urlPath
-                                []
-                                [ text name ]
-                      )
+                    [ aForPath navigate
+                        urlPath
+                        []
+                        [ text name ]
                     , small []
                         [ text (getSubTypes language card values |> String.join ", ") ]
                     ]

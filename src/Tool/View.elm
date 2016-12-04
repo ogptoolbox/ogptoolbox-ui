@@ -120,10 +120,7 @@ viewCardContent navigate language card cards values =
             [ div [ class "row" ]
                 [ div [ class "col-xs-12" ]
                     [ h1 []
-                        [ text
-                            (getOneString language nameKeys card values
-                                |> Maybe.withDefault "This should never happen"
-                            )
+                        [ text (getName language card values)
                         , small []
                             [ text (getSubTypes language card values |> String.join ", ") ]
                         ]
@@ -402,19 +399,14 @@ viewValueValue language navigate cards values value =
 
                                 Just name ->
                                     name
-                    in
-                        case Routes.pathForCard card of
-                            Nothing ->
-                                text
-                                    ("Error: impossible to determine the path of the referenced card; targetId: "
-                                        ++ targetId
-                                    )
 
-                            Just urlPath ->
-                                aForPath navigate
-                                    urlPath
-                                    []
-                                    [ text linkText ]
+                        urlPath =
+                            Routes.urlPathForCard card
+                    in
+                        aForPath navigate
+                            urlPath
+                            []
+                            [ text linkText ]
 
         ReferenceValue propertyKey ->
             case Dict.get propertyKey values of
