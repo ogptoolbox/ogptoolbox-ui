@@ -105,7 +105,7 @@ viewCardContent navigate language card cards values =
         div
             [ classList
                 [ ( "col-md-9 content content-right", True )
-                , ( "push-screenshot2"
+                , ( "push-screenshot"
                   , case getImageScreenshotUrl language "" card values of
                         Nothing ->
                             False
