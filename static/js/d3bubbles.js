@@ -558,7 +558,7 @@ function mount(options) {
         },
         radius: {
             min:30,
-            max:180
+            max:100
         },
         colors: {
             bubbles:['#656a6e', '#4cc7c8'],
