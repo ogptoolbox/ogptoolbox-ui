@@ -124,12 +124,8 @@ viewHttpError language err =
 
 viewLoading : I18n.Language -> Html msg
 viewLoading language =
-    div []
-        [ viewBigMessage
-            (I18n.translate language I18n.PageLoading)
-            (I18n.translate language I18n.PageLoadingExplanation)
-        , img [ class "loader", src "/img/loader.gif" ] []
-        ]
+    div [ style [ ( "height", "100em" ) ] ]
+        [ img [ class "loader", src "/img/loader.gif" ] [] ]
 
 
 viewNotFound : I18n.Language -> Html msg

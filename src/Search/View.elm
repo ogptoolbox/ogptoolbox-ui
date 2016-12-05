@@ -1,6 +1,7 @@
 module Search.View exposing (..)
 
 import Constants
+import Hop.Types
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Helpers exposing (aForPath)
@@ -13,8 +14,8 @@ import Views exposing (viewCardListItem, viewLoading, viewWebData)
 import WebData exposing (getData, getLoadingStatusData, LoadingStatus(..), WebData(..))
 
 
-view : Model -> CardType -> String -> I18n.Language -> Html Msg
-view { organizations, tools, useCases } activeCardType searchQuery language =
+view : Model -> CardType -> I18n.Language -> Hop.Types.Location -> Html Msg
+view { organizations, tools, useCases } activeCardType language location =
     let
         webData =
             case activeCardType of
@@ -68,11 +69,7 @@ view { organizations, tools, useCases } activeCardType searchQuery language =
                                 ]
                                 [ aForPath navigate
                                     ((Routes.urlBasePathForCardType cardType)
-                                        ++ (if String.isEmpty searchQuery then
-                                                ""
-                                            else
-                                                "?q=" ++ searchQuery
-                                           )
+                                        ++ (Routes.queryStringForParams [ "q", "tagIds" ] location)
                                     )
                                     []
                                     [ text (I18n.translate language (translationId I18n.Plural))
