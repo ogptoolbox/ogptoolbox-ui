@@ -17,6 +17,7 @@ type TranslationId
     | AboutCategories
     | AboutCategoriesContent1
     | AboutCategoriesContent2
+    | AboutCategoriesContentLink
     | AboutContribution
     | AboutContributionContent
     | AboutCredits
@@ -113,187 +114,192 @@ getTranslationSet translationId =
             , spanish = todo
             }
         AboutAccess ->
-            { english = todo
+            { english = s "How can I access OGP Toolbox Data?"
             , french = s "Comment puis-je accéder aux données de l'OGP Toolbox ?"
             , spanish = todo
             }
         AboutAccessContent ->
-            { english = todo
+            { english = s "Harvested data are stocked on a framagit drop and accessible under a cc-0 license:"
             , french = s "Les données moissonnées sont stockées sur un dépôt Framagit et disponible sous licence cc-0:"
             , spanish = todo
             }
         AboutCategories ->
-            { english = todo
+            { english = s "How are tools and use cases categorized?"
             , french = s "Comment sont catégorisés les outils et les usages ?"
             , spanish = todo
             }
         AboutCategoriesContent1 ->
-            { english = todo
+            { english = s "Rather than classify each tools (and their use cases) in great monolithic and exclusive categories (i.e. \"a tool cannot be in more than one category at a time\"), the platform is based on tags (labels), which enable to qualify each tool and each usage with as many key words you deem necessary. This is called social tagging or \"folksonomy\""
             , french = s "Plutôt que de classer les outils (et leurs usages) dans de grandes catégories monolithiques et exclusives (i.e. \"un outil ne peut pas être dans plus d'une catégorie à la fois\"), la plateforme repose sur un système de \"tags\" (labels), permettant de qualifier chaque outil et chaque usage avec autant de mots clés que vous jugerez nécessaire. C'est ce qu'on appelle \"tagging\" social ou \"folksonomie\""
             , spanish = todo
             }
         AboutCategoriesContent2 ->
-            { english = todo
+            { english = s "These tags are represented by clickable bubbles. By navigating in different \"bubbles\" (tags), you will thus be able to find a tool associated to multiple key words."
             , french = s "Ces tags sont représentés sous forme de bulles cliquables. En naviguant dans des \"bulles\" (tags) différentes, vous pourrez ainsi retrouver le même outil dès lors qu'il est associé à plusieurs mots-clés."
             , spanish = todo
             }
+        AboutCategoriesContentLink ->
+            { english = s "https://en.wikipedia.org/wiki/Folksonomy"
+            , french = s "https://fr.wikipedia.org/wiki/Folksonomie"
+            , spanish = todo
+            }
         AboutContribution ->
-            { english = todo
+            { english = s "How can I add information about a tool, a use case or a collection?"
             , french = s "Comment puis-je renseigner un outil, un cas d'usage, une collection ?"
             , spanish = todo
             }
         AboutContributionContent ->
-            { english = todo
+            { english = s "Very simply. You only have to create an account on the platform and click on \"Add\" at the top right of the screen and you will be guided."
             , french = s "C'est très simple. Il suffit tout d'abord de créer un compte sur la plateforme. Ensuite, cliquer sur \"Ajouter\" en haut à droite et vous serez guidé."
             , spanish = todo
             }
         AboutCredits ->
-            { english = todo
+            { english = s "Credits"
             , french = s "Crédits"
             , spanish = todo
             }
         AboutCreditsContent ->
-            { english = todo
+            { english = s "The bubble tag navigation système is based on"
             , french = s "Le système de navigations des tag par bulles est basé sur la solution"
             , spanish = todo
             }
         AboutData ->
-            { english = todo
+            { english = s "What is the source of the data?"
             , french = s "D'où proviennent les données ?"
             , spanish = todo
             }
         AboutDataContent0 ->
-            { english = todo
+            { english = s "The OGP Toolbox data originates from multiple sources:"
             , french = s "Les données de l'OGP Toolbox proviennent de sources multiples :"
             , spanish = todo
             }
         AboutDataContent1 ->
-            { english = todo
+            { english = s "Existing catalogs are regularly harvested to feed and update the data base!"
             , french = s "Des catalogues existants sont moissonnés régulièrement pour alimenter et mettre à jour la base de données :"
             , spanish = todo
             }
         AboutDataContent2 ->
-            { english = todo
+            { english = s "OGP Toolbox users can create new technical pages, use cases and organizations, or edit existing pages."
             , french = s "Les utilisateurs de l'OGP Toolbox peuvent créer de nouvelles fiches d'outil, de cas d'usage et d'organisation, ou éditer des fiches existantes."
             , spanish = todo
             }
         AboutDev ->
-            { english = todo
+            { english = s "Who developed the OGP Toolbox?"
             , french = s "Qui a développé l'OGP Toolbox ?"
             , spanish = todo
             }
         AboutDevContent ->
-            { english = todo
+            { english = s "The OGP Toolbox is a free software developed by Etalab, the Prime Minister taskforce in charge of open data and open government French policy, on behalf of the OGP community. Co-created by the open government and the civic tech international community throughout 2016, the OGP Toolbox is one of the foremost deliverable of the Global Summit of the Open Government Partnership (7, 8 and 9 December 2016)."
             , french = s "L'OGP Toolbox a été développée par Etalab, service du Premier Ministre en charge de l'ouverture des données publiques et du gouvernement ouvert de la France, pour le compte de la communauté du Partenariat du Gouvernement Ouvert. Co-créé avec les communautés internationales du gouvernement ouvert et de la civic tech tout au long de l'année 2016, l'OGP Toolbox est un des principaux livrables du Sommet mondial du Partenariat pour un Gouvernement Ouvert (7, 8 et 9 décembre 2016)."
             , spanish = todo
             }
         AboutLanguages ->
-            { english = todo
+            { english = s "Which are the available languages?"
             , french = s "Dans quelles langues est disponible la plateforme ?"
             , spanish = todo
             }
         AboutLanguagesContent ->
-            { english = todo
+            { english = s "The OGP Toolbox is available in English and French. The Platform is crowdsourced, which means that beyond the online interface (translated by Etalab), every content element can be modified and translated by users. This especially concerns tools, use description and tags enabling to categorize them (see below). Content elements will be displayed in the language you configured. If an element is not available in your language, it will be displayed in English by default. Your turn to translate it! "
             , french = s "OGP Toolbox est disponible en Anglais et en Français. La plateforme est crowdsourcée ce qui signifie qu'au-delà de l'interface du site Internet traduit par nos soins, chaque élément de contenu peut être modifié et traduit par les utilisateurs, notamment les descriptions des outils et des usages et les tags permettant de les catégoriser ( voir ci-dessous). Les éléments de contenu s'afficheront en priorité dans la langue que vous aurez paramétrée. Si un élément n'est pas disponible dans votre langue, il s'affiche en anglais par défaut, et vous invite à le traduire."
             , spanish = todo
             }
         AboutLead ->
-            { english = todo
+            { english = s "All the answers to your questions about the OGP Toolbox"
             , french = s "Mieux comprendre l'OGP Toolbox"
             , spanish = todo
             }
         AboutLegal ->
-            { english = todo
+            { english = s "Legal notices"
             , french = s "Mentions légales"
             , spanish = todo
             }
         AboutLegalContent ->
-            { english = todo
+            { english = s "OGPtoolobox.org is edited by the Etalab taskforce, a Prime Minister service, 39 quai André Citroën 75015 PARIS."
             , french = s "OGPtoolobox.org est édité par la mission Etalab, service du Premier Ministre, 39 quai André Citroën 75015 PARIS."
             , spanish = todo
             }
         AboutModeration ->
-            { english = todo
+            { english = s "How are contributions moderated?"
             , french = s "Comment puis-je renseigner un outil, un cas d'usage, une collection ?"
             , spanish = todo
             }
         AboutModerationContent ->
-            { english = todo
+            { english = s "The OGP Toolbox is based on community moderation. Data from the harvested catalogues and users’ contributions are automatically sort out through an open vote system. For each field, the most popular suggested description is highlighted in the tool leaflet, use case or organization. The vote on available propositions is accessible by clicking on the \"edit\" button at the right of each field."
             , french = s "C'est très simple. Il suffit tout d'abord de créer un compte sur la plateforme. Ensuite, cliquer sur \"Ajouter\" en haut à droite et vous serez guidé."
             , spanish = todo
             }
         AboutTarget ->
-            { english = todo
+            { english = s "For which user did we design this platform?"
             , french = s "À qui est destinée l'OGP Toolbox ?"
             , spanish = todo
             }
         AboutTargetContent ->
-            { english = todo
+            { english = s "The OGP is intended to all public and private actors and to civil society that develop projects to reinforce democracy and promote transparency, participation and collaboration in public action. Every engaged citizen willing to be introduced to new tools and to discover use cases will be able to simply access relevant information, and to contact users’ community."
             , french = s "L'OGP Toolbox est destinée à tous les acteurs publics, privés et de la société civile portant des projets pour renforcer la démocratie et promouvoir la transparence, la participation et la collaboration dans l'action publique. Tout citoyen engagé voulant s'initier à de nouveaux outils et en découvrir les cas d'usages pourra accéder facilement aux informations pertinentes."
             , spanish = todo
             }
         AboutTypes ->
-            { english = s "What can I find in the OGP Toolbox ?"
+            { english = s "What can I find in the OGP Toolbox?"
             , french = s "Qu'est-ce-qu'on peut trouver dans l'OGP Toolbox ?"
             , spanish = todo
             }
         AboutTypesContent ->
-            { english = todo
+            { english = s "On the platform you can find 4 types of content:"
             , french = s "La plateforme référence 4 types d'objets :"
             , spanish = todo
             }
         AboutTypesContentTool ->
-            { english = todo
+            { english = s "Computer programs or services, available online or through mobile applications."
             , french = s "Programme informatique ou service, disponible sur le web ou via des applications mobiles."
             , spanish = todo
             }
         AboutTypesContentExample ->
-            { english = todo
+            { english = s "Example of a concrete use cases of one or multiple tools by an actor, encompassing a participatory dimension."
             , french = s "Exemple concret d'utilisation d'un ou plusieurs outils par un acteur, avec une dimension de participation citoyenne."
             , spanish = todo
             }
         AboutTypesContentActor ->
-            { english = todo
+            { english = s "Users or tools developers, who are part of the public sphere (government, subnational, administration), the private sphere (businesses…), the civil society (non-profit organizations…) or are simple citizens."
             , french = s "Utilisateur ou développeur d'outil, faisant partie de la sphère publique (Etat, collectivité, administration...) ou privée (entreprise...), de la société civile (association, ONG...) ou simple citoyen."
             , spanish = todo
             }
         AboutTypesContentCollection ->
-            { english = todo
+            { english = s "A series of solutions gathered by an actor to push them forward, for example \"Tools used by the French Government\", \"Online consultations tools\"…."
             , french = s "Le code comporte trois composants, chacun étant stocké sur un dépôt Framagit :"            
             , spanish = todo
             }
         AboutSource ->
-            { english = todo
+            { english = s "How can I access the code of the OGP Toolbox?"
             , french = s "Comment puis-je accéder au code de l'OGP Toolbox ?"
             , spanish = todo
             }
         AboutSourceContent ->
-            { english = todo
+            { english = s "The code includes three components, each of which is stocked on a framagit drop:"
             , french = s "La plateforme référence 4 types d'objets :"
             , spanish = todo
             }
         AboutWhat ->
-            { english = todo
+            { english = s "What is the OGP Toolbox?"
             , french = s "Qu'est ce que l'OGP Toolbox ?"
             , spanish = todo
             }
         AboutWhatContent ->
-            { english = todo
+            { english = s "The OGP Toolbox is a collaborative platform which identify digital tools (software and online services) used throughout the world to enhance democracy and promote transparency, participation and collaborative in public action. This crowdsourced catalog gathers tools developed and used by public actors (governments, administrations, parliaments, subnational) and civil society actors (non-profit organizations, informal movements and involved citizens). The OGP Toolbox is conceived as a social network: concrete use cases, technical criterions tested by the community and advices as series of tools in order to benefit from the savoir-faire of actors who already used the available solutions. The platform thus identifies 4 entities: "
             , french = s "L'OGP Toolbox est une plateforme collaborative qui recense les outils numériques (logiciels et services en ligne) utilisés dans le monde entier pour renforcer la démocratie et promouvoir la transparence, la participation et la collaboration dans l'action publique. Ce catalogue crowdsourcé rassemble des outils développés et utilisés par des acteurs publics (gouvernements, administrations, parlements et collectivités territoriales), comme des acteurs du secteur privé (entreprises et start-ups) ou des acteurs de la société civile (associations, mouvements et citoyens engagés). L'OGP Toolbox est conçue comme un réseau social : des cas d'usages concrets, des critères techniques expertisés par la communauté et des recommandations sous forme de collections d'outils permettent de profiter du savoir-faire des acteurs ayant déjà utilisé les solutions disponibles. "
             , spanish = todo
             }
         AboutWhy ->
-            { english = todo
+            { english = s "What is the use for the OGP Toolbox?"
             , french = s "À quoi sert l'OGP Toolbox ? "
             , spanish = todo
             }
         AboutWhyContent1 ->
-            { english = todo
+            { english = s "The OGP Toolbox aims at reinforcing public and private actor’s and civil society’s ability to act through resources and shared experiences. The objective is to facilitate cooperation and the implementation of concrete engagements related to the open government through the command of digital tools."
             , french = s "L'OGP Toolbox vise à renforcer le pouvoir d'agir des acteurs publics, privés et de la société civile à travers le partage de ressources et d'expériences. L'objectif est de faciliter la mise en oeuvre concrète d'engagements et de coopérations liées au gouvernement ouvert grâce à la maîtrise des outils numériques."
             , spanish = todo
             }
         AboutWhyContent2 ->
-            { english = todo
+            { english = s "The platform enables to find the most adapted tool to each project or initiative through search and comparison by categories, use cases, organization or technical criterion, to simplify its access and its technical handle."
             , french = s "La plateforme permet de trouver l'outil le mieux adapté à chaque projet ou initiative à travers des recherches et des comparaisons par catégorie, cas d'usage, organisation ou critère technique, ainsi que d'en simplifier l'accès et la prise en main."
             , spanish = todo
             }

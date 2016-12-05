@@ -174,8 +174,8 @@ view language =
                 [ div [ class "col-md-12" ]
                     [ p []
                         [ text (I18n.translate language (I18n.AboutCategoriesContent1))
-                        , a [ href "https://fr.wikipedia.org/wiki/Folksonomie", target "_blank"]
-                            [ text "( https://fr.wikipedia.org/wiki/Folksonomie )" ]
+                        , a [ href (I18n.translate language (I18n.AboutCategoriesContentLink)), target "_blank"]
+                            [ text ( " (" ++ (I18n.translate language (I18n.AboutCategoriesContentLink)) ++ "). ") ]
                         , text (I18n.translate language (I18n.AboutCategoriesContent2))
                         ]
                     ]
