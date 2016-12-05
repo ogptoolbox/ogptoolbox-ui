@@ -6,7 +6,7 @@ import Combine exposing (Parser)
 import Dict exposing (Dict)
 import Hop
 import Hop.Matchers exposing (match1, match2, nested1, regex)
-import Hop.Types exposing (Location)
+import Hop.Types
 import I18n
 import Navigation
 import String
@@ -58,7 +58,7 @@ makeUrl path =
     Hop.makeUrl routerConfig path
 
 
-makeUrlFromLocation : Location -> String
+makeUrlFromLocation : Hop.Types.Location -> String
 makeUrlFromLocation location =
     Hop.makeUrlFromLocation routerConfig location
 
@@ -143,12 +143,33 @@ urlParser =
 -- UPDATE LOCATION
 
 
-getSearchQuery : Location -> String
+getSearchQuery : Hop.Types.Location -> String
 getSearchQuery location =
     Dict.get "q" location.query |> Maybe.withDefault ""
 
 
-replaceLanguageInLocation : I18n.Language -> Location -> String
+queryStringForParams : List String -> Hop.Types.Location -> String
+queryStringForParams params location =
+    let
+        keptParams =
+            params
+                |> List.filterMap
+                    (\k ->
+                        Dict.get k location.query
+                            |> Maybe.map (\v -> ( k, v ))
+                    )
+    in
+        if List.isEmpty keptParams then
+            ""
+        else
+            "?"
+                ++ (keptParams
+                        |> List.map (\( k, v ) -> k ++ "=" ++ v)
+                        |> String.join "&"
+                   )
+
+
+replaceLanguageInLocation : I18n.Language -> Hop.Types.Location -> String
 replaceLanguageInLocation language location =
     let
         urlWithoutLanguage =

@@ -1,10 +1,15 @@
 module Search.State exposing (..)
 
 import Authenticator.Model
+import Dict exposing (Dict)
+import Hop
+import Hop.Types
 import I18n
 import Ports
 import Requests
+import Routes
 import Search.Types exposing (..)
+import String
 import Task
 import Types exposing (..)
 import WebData exposing (LoadingStatus(..), getData, WebData(..))
@@ -49,9 +54,9 @@ update :
     -> Model
     -> Maybe Authenticator.Model.Authentication
     -> I18n.Language
-    -> String
+    -> Hop.Types.Location
     -> ( Model, Cmd Msg )
-update msg model authentication language searchQuery =
+update msg model authentication language location =
     let
         requestsCmds selectedTags =
             let
@@ -60,6 +65,9 @@ update msg model authentication language searchQuery =
 
                 selectedTagIds =
                     List.map .tagId selectedTags
+
+                searchQuery =
+                    Routes.getSearchQuery location
             in
                 List.map (Cmd.map ForSelf)
                     [ Task.perform
@@ -79,71 +87,70 @@ update msg model authentication language searchQuery =
                         PopularTagsLoadSuccess
                         (Requests.getTagsPopularity selectedTagIds)
                     ]
+
+        navigateCmd selectedTags =
+            location
+                |> Hop.removeQuery "tagIds"
+                |> Hop.addQuery
+                    (Dict.fromList [ ( "tagIds", selectedTags |> List.map .tagId |> String.join "," ) ])
+                |> Routes.makeUrlFromLocation
+                |> navigate
+                |> (\msg -> Task.perform (\_ -> Debug.crash "") (\_ -> msg) (Task.succeed ()))
     in
         case msg of
             BubbleDeselect deselectedTag ->
-                case getData model.popularTagsData of
-                    Nothing ->
-                        ( model, Cmd.none )
+                let
+                    newSelectedTags =
+                        remove deselectedTag model.selectedTags
 
-                    Just _ ->
-                        let
-                            newSelectedTags =
-                                remove deselectedTag model.selectedTags
-
-                            newModel =
-                                { model
-                                    | organizations = Data (Loading (getData model.organizations))
-                                    , selectedTags = newSelectedTags
-                                    , tools = Data (Loading (getData model.tools))
-                                    , useCases = Data (Loading (getData model.useCases))
-                                }
-                        in
-                            newModel ! requestsCmds newSelectedTags
+                    newModel =
+                        { model
+                            | organizations = Data (Loading (getData model.organizations))
+                            , selectedTags = newSelectedTags
+                            , tools = Data (Loading (getData model.tools))
+                            , useCases = Data (Loading (getData model.useCases))
+                        }
+                in
+                    newModel ! (navigateCmd newSelectedTags :: requestsCmds newSelectedTags)
 
             BubbleSelect selectedTag ->
-                case getData model.popularTagsData of
-                    Nothing ->
-                        ( model, Cmd.none )
-
-                    Just _ ->
-                        let
-                            newSelectedTags =
-                                if List.member selectedTag model.selectedTags then
-                                    model.selectedTags
-                                else
-                                    selectedTag :: model.selectedTags
-
-                            newModel =
-                                { model
-                                    | organizations = Data (Loading (getData model.organizations))
-                                    , selectedTags = newSelectedTags
-                                    , tools = Data (Loading (getData model.tools))
-                                    , useCases = Data (Loading (getData model.useCases))
-                                }
-                        in
-                            newModel ! requestsCmds newSelectedTags
-
-            Load searchQuery ->
                 let
-                    model' =
+                    newSelectedTags =
+                        if List.member selectedTag model.selectedTags then
+                            model.selectedTags
+                        else
+                            selectedTag :: model.selectedTags
+
+                    newModel =
+                        { model
+                            | organizations = Data (Loading (getData model.organizations))
+                            , selectedTags = newSelectedTags
+                            , tools = Data (Loading (getData model.tools))
+                            , useCases = Data (Loading (getData model.useCases))
+                        }
+                in
+                    newModel ! (navigateCmd newSelectedTags :: requestsCmds newSelectedTags)
+
+            Load ->
+                let
+                    newModel =
                         { model
                             | organizations = Data (Loading (getData model.organizations))
                             , tools = Data (Loading (getData model.tools))
                             , useCases = Data (Loading (getData model.useCases))
                         }
                 in
-                    model' ! requestsCmds model.selectedTags
+                    newModel ! requestsCmds model.selectedTags
 
             OrganizationsLoadError err ->
                 let
                     _ =
                         Debug.log "Search.State OrganizationsLoadError" err
 
-                    model' =
+                    newModel =
                         { model | organizations = Failure err }
                 in
-                    ( model', Cmd.none )
+                    ( newModel, Cmd.none )
 
             OrganizationsLoadSuccess body ->
                 ( { model | organizations = Data (Loaded body) }
@@ -155,47 +162,68 @@ update msg model authentication language searchQuery =
                     _ =
                         Debug.log "Search.State PopularTagsLoadError" err
 
-                    model' =
+                    newModel =
                         { model | popularTagsData = Failure err }
                 in
-                    ( model', Cmd.none )
+                    ( newModel, Cmd.none )
 
             PopularTagsLoadSuccess popularTagsData ->
                 let
+                    getLocalizedString value =
+                        case value.value of
+                            LocalizedStringValue valueByLanguage ->
+                                case I18n.getValueByPreferredLanguage language valueByLanguage of
+                                    Nothing ->
+                                        Debug.crash "update PopularTagsLoadSuccess"
+
+                                    Just tag ->
+                                        tag
+
+                            _ ->
+                                Debug.crash "update PopularTagsLoadSuccess"
+
+                    selectedTags =
+                        case Dict.get "tagIds" location.query of
+                            Nothing ->
+                                []
+
+                            Just tagIds ->
+                                tagIds
+                                    |> String.split ","
+                                    |> List.filterMap
+                                        (\tagId ->
+                                            Dict.get tagId popularTagsData.values
+                                                |> Maybe.map
+                                                    (\value ->
+                                                        { count = 50
+                                                        , tag = getLocalizedString value
+                                                        , tagId = tagId
+                                                        }
+                                                    )
+                                        )
+
                     newModel =
-                        { model | popularTagsData = Data (Loaded popularTagsData) }
+                        { model
+                            | popularTagsData = Data (Loaded popularTagsData)
+                            , selectedTags = selectedTags
+                        }
 
-                    tagIdToTag { count, tagId } =
-                        let
-                            tag =
-                                getValue tagId popularTagsData.values
-                                    |> (\value ->
-                                            case value.value of
-                                                LocalizedStringValue valueByLanguage ->
-                                                    case I18n.getValueByPreferredLanguage language valueByLanguage of
-                                                        Nothing ->
-                                                            Debug.crash "Search.State.update PopularTagsLoadSuccess"
-
-                                                        Just tag ->
-                                                            tag
-
-                                                _ ->
-                                                    Debug.crash "Search.State.update PopularTagsLoadSuccess"
-                                       )
-                        in
-                            { count = count
-                            , tag = tag
-                            , tagId = tagId
-                            }
-
-                    -- TODO move this
                     popularTags =
-                        List.map tagIdToTag popularTagsData.popularity
+                        List.map
+                            (\{ count, tagId } ->
+                                { count = count
+                                , tag =
+                                    getValue tagId popularTagsData.values
+                                        |> getLocalizedString
+                                , tagId = tagId
+                                }
+                            )
+                            popularTagsData.popularity
 
                     cmd =
                         Ports.mountd3bubbles
                             { popularTags = popularTags
-                            , selectedTags = model.selectedTags
+                            , selectedTags = selectedTags
                             }
                 in
                     ( newModel, cmd )
@@ -205,10 +233,10 @@ update msg model authentication language searchQuery =
                     _ =
                         Debug.log "Search.State ToolsLoadError" err
 
-                    model' =
+                    newModel =
                         { model | tools = Failure err }
                 in
-                    ( model', Cmd.none )
+                    ( newModel, Cmd.none )
 
             ToolsLoadSuccess body ->
                 ( { model | tools = Data (Loaded body) }
@@ -220,10 +248,10 @@ update msg model authentication language searchQuery =
                     _ =
                         Debug.log "Search.State UseCasesLoadError" err
 
-                    model' =
+                    newModel =
                         { model | useCases = Failure err }
                 in
-                    ( model', Cmd.none )
+                    ( newModel, Cmd.none )
 
             UseCasesLoadSuccess body ->
                 ( { model | useCases = Data (Loaded body) }
