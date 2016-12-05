@@ -35,13 +35,3 @@ getLoadingStatusData loadingStatus =
 
         Loaded data ->
             Just data
-
-
-mapLoadingStatus : (a -> b) -> LoadingStatus a -> LoadingStatus b
-mapLoadingStatus f loadingStatus =
-    case loadingStatus of
-        Loading data ->
-            Loading (Maybe.map f data)
-
-        Loaded data ->
-            Loaded (f data)

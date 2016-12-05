@@ -41,3 +41,9 @@ port mountd3bubbles :
     , selectedTags : List String
     }
     -> Cmd msg
+
+
+port bubbleSelections : (String -> msg) -> Sub msg
+
+
+port bubbleDeselections : (String -> msg) -> Sub msg

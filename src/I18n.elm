@@ -14,12 +14,12 @@ type TranslationId
     = About
     | AddNew
     | AddNewCollectionCatchPhrase
-    | AddNewExample
-    | AddNewExampleCatchPhrase
     | AddNewOrganization
     | AddNewOrganizationCatchPhrase
     | AddNewTool
     | AddNewToolCatchPhrase
+    | AddNewUseCase
+    | AddNewUseCaseCatchPhrase
     | AdditionalInformations
     | BestOf Int
     | CallToActionForCategory
@@ -27,7 +27,6 @@ type TranslationId
     | Close
     | Collection GrammaticalNumber
     | Copyright
-    | Example GrammaticalNumber
     | GenericError
     | HeaderTitle
     | Help
@@ -36,16 +35,15 @@ type TranslationId
     | LanguageWord
     | License
     | NetworkErrorExplanation
-    | NoExampleFound
-    | NoToolFound
     | OpenGovParagraph
     | Organization GrammaticalNumber
     | PageLoading
     | PageLoadingExplanation
     | PageNotFound
     | PageNotFoundExplanation
-    | PublishExample
+    | PublishOrganization
     | PublishTool
+    | PublishUseCase
     | SeeAllAndCompare
     | Score
     | SearchInputPlaceholder
@@ -60,6 +58,7 @@ type TranslationId
     | TimeoutExplanation
     | Tool GrammaticalNumber
     | Type
+    | UseCase GrammaticalNumber
     | UsedBy
     | UsedFor
     | UnexpectedPayloadExplanation
@@ -94,13 +93,13 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
-        AddNewExample ->
+        AddNewUseCase ->
             { english = s "Add a new use case"
             , french = todo
             , spanish = todo
             }
 
-        AddNewExampleCatchPhrase ->
+        AddNewUseCaseCatchPhrase ->
             { english = todo
             , french = s "Un exemple concret et efficace d'utilisation d'un outil."
             , spanish = todo
@@ -145,7 +144,7 @@ getTranslationSet translationId =
         CallToActionForDescription cardType ->
             { english =
                 case cardType of
-                    ExampleCard ->
+                    UseCaseCard ->
                         s "Add a description for this use case"
 
                     OrganizationCard ->
@@ -155,7 +154,7 @@ getTranslationSet translationId =
                         s "Add a description for this tool"
             , french =
                 case cardType of
-                    ExampleCard ->
+                    UseCaseCard ->
                         todo
 
                     OrganizationCard ->
@@ -165,7 +164,7 @@ getTranslationSet translationId =
                         todo
             , spanish =
                 case cardType of
-                    ExampleCard ->
+                    UseCaseCard ->
                         todo
 
                     OrganizationCard ->
@@ -203,30 +202,6 @@ getTranslationSet translationId =
             { english = s "© 2016 Open Government Partnership"
             , french = s "© 2016 Partenariat pour un Gouvernement Ouvert"
             , spanish = todo
-            }
-
-        Example number ->
-            { english =
-                case number of
-                    Singular ->
-                        s "Use case"
-
-                    Plural ->
-                        s "Use cases"
-            , french =
-                case number of
-                    Singular ->
-                        todo
-
-                    Plural ->
-                        todo
-            , spanish =
-                case number of
-                    Singular ->
-                        todo
-
-                    Plural ->
-                        todo
             }
 
         GenericError ->
@@ -291,18 +266,6 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
-        NoExampleFound ->
-            { english = s "No use case found"
-            , french = todo
-            , spanish = todo
-            }
-
-        NoToolFound ->
-            { english = s "No tool found"
-            , french = todo
-            , spanish = todo
-            }
-
         OpenGovParagraph ->
             { english = s """
 The Open Government Partnership is a multilateral initiative that aims to secure concrete commitments
@@ -356,8 +319,14 @@ including representatives of governments and civil society organizations.
             , spanish = todo
             }
 
-        PublishExample ->
+        PublishUseCase ->
             { english = s "Publish use case"
+            , french = todo
+            , spanish = todo
+            }
+
+        PublishOrganization ->
+            { english = s "Publish organization"
             , french = todo
             , spanish = todo
             }
@@ -462,6 +431,30 @@ including representatives of governments and civil society organizations.
             { english = s "Type"
             , french = s "Type"
             , spanish = todo
+            }
+
+        UseCase number ->
+            { english =
+                case number of
+                    Singular ->
+                        s "Use case"
+
+                    Plural ->
+                        s "Use cases"
+            , french =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , spanish =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
             }
 
         UsedBy ->

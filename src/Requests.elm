@@ -14,11 +14,11 @@ import Types exposing (..)
 import Task exposing (Task)
 
 
-newTaskGetCardOfType : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
-newTaskGetCardOfType authenticationMaybe cardId =
+getCard : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
+getCard authentication cardId =
     let
         authenticationHeaders =
-            case authenticationMaybe of
+            case authentication of
                 Just authentication ->
                     [ ( "Retruco-API-Key", authentication.apiKey ) ]
 
@@ -35,17 +35,17 @@ newTaskGetCardOfType authenticationMaybe cardId =
             )
 
 
-newTaskGetCardsOfType :
-    List String
-    -> Maybe Authenticator.Model.Authentication
+getCards :
+    Maybe Authenticator.Model.Authentication
     -> String
-    -> String
+    -> Maybe Int
     -> Set String
+    -> List String
     -> Task Http.Error DataIdsBody
-newTaskGetCardsOfType cardTypes authenticationMaybe searchQuery limit tags =
+getCards authentication searchQuery limit tags cardTypes =
     let
         authenticationHeaders =
-            case authenticationMaybe of
+            case authentication of
                 Just authentication ->
                     [ ( "Retruco-API-Key", authentication.apiKey ) ]
 
@@ -66,11 +66,7 @@ newTaskGetCardsOfType cardTypes authenticationMaybe searchQuery limit tags =
                                         else
                                             Just ("term=" ++ searchQuery)
                                        )
-                                     , (if String.isEmpty limit then
-                                            Nothing
-                                        else
-                                            Just ("limit=" ++ limit)
-                                       )
+                                     , limit |> Maybe.map (\limit -> "limit=" ++ (toString limit))
                                      ]
                                         |> List.filterMap identity
                                     )
@@ -84,28 +80,8 @@ newTaskGetCardsOfType cardTypes authenticationMaybe searchQuery limit tags =
             )
 
 
-newTaskGetExamples :
-    Maybe Authenticator.Model.Authentication
-    -> String
-    -> String
-    -> Set String
-    -> Task Http.Error DataIdsBody
-newTaskGetExamples =
-    newTaskGetCardsOfType cardTypesForExample
-
-
-newTaskGetOrganizations :
-    Maybe Authenticator.Model.Authentication
-    -> String
-    -> String
-    -> Set String
-    -> Task Http.Error DataIdsBody
-newTaskGetOrganizations =
-    newTaskGetCardsOfType cardTypesForOrganization
-
-
-newTaskGetTagsPopularity : I18n.Language -> Set String -> Task Http.Error (List PopularTag)
-newTaskGetTagsPopularity language tags =
+getTagsPopularity : I18n.Language -> Set String -> Task Http.Error (List PopularTag)
+getTagsPopularity language tags =
     let
         url =
             apiUrl
@@ -124,25 +100,15 @@ newTaskGetTagsPopularity language tags =
             )
 
 
-newTaskGetTools :
-    Maybe Authenticator.Model.Authentication
-    -> String
-    -> String
-    -> Set String
-    -> Task Http.Error DataIdsBody
-newTaskGetTools =
-    newTaskGetCardsOfType cardTypesForTool
-
-
-newTaskPostCardsEasy :
+postCardsEasy :
     Maybe Authenticator.Model.Authentication
     -> Dict String String
     -> I18n.Language
     -> Task Http.Error DataIdBody
-newTaskPostCardsEasy authenticationMaybe fields language =
+postCardsEasy authentication fields language =
     let
         authenticationHeaders =
-            case authenticationMaybe of
+            case authentication of
                 Just authentication ->
                     [ ( "Retruco-API-Key", authentication.apiKey ) ]
 
@@ -188,11 +154,11 @@ newTaskPostCardsEasy authenticationMaybe fields language =
             )
 
 
-newTaskPostUploadImage : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error String
-newTaskPostUploadImage authenticationMaybe contents =
+postUploadImage : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error String
+postUploadImage authentication contents =
     let
         authenticationHeaders =
-            case authenticationMaybe of
+            case authentication of
                 Just authentication ->
                     [ ( "Retruco-API-Key", authentication.apiKey ) ]
 

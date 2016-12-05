@@ -1,284 +1,17 @@
 module Home exposing (..)
 
-import Authenticator.Model
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Html.Helpers exposing (aExternal, aForPath)
-import Http
 import I18n exposing (getImageUrl, getManyStrings, getName, getOneString)
-import Ports exposing (mountd3bubbles)
 import Routes
-import Set exposing (Set)
+import Search.Types exposing (..)
 import String
-import Task
 import Types exposing (..)
-import Requests exposing (newTaskGetExamples, newTaskGetOrganizations, newTaskGetTagsPopularity, newTaskGetTools)
 import Views exposing (viewWebData)
-import WebData exposing (LoadingStatus(..), getData, mapLoadingStatus, WebData(..))
-
-
--- MODEL
-
-
-type alias Model =
-    { examples : WebData DataIdsBody
-    , organizations : WebData DataIdsBody
-    , popularTags : WebData (List PopularTag)
-    , selectedTags : Set String
-    , tools : WebData DataIdsBody
-    }
-
-
-init : Model
-init =
-    { examples = NotAsked
-    , organizations = NotAsked
-    , popularTags = NotAsked
-    , selectedTags = Set.empty
-    , tools = NotAsked
-    }
-
-
-
--- UPDATE
-
-
-type ExternalMsg
-    = Navigate String
-
-
-type InternalMsg
-    = DeselectBubble String
-    | ErrorExamples Http.Error
-    | ErrorOrganizations Http.Error
-    | ErrorPopularTags Http.Error
-    | ErrorTools Http.Error
-    | Load String
-    | LoadedExamples DataIdsBody
-    | LoadedOrganizations DataIdsBody
-    | LoadedPopularTags (List PopularTag)
-    | LoadedTools DataIdsBody
-    | SelectBubble String
-
-
-type Msg
-    = ForParent ExternalMsg
-    | ForSelf InternalMsg
-
-
-type alias MsgTranslation parentMsg =
-    { onInternalMsg : InternalMsg -> parentMsg
-    , onNavigate : String -> parentMsg
-    }
-
-
-type alias MsgTranslator parentMsg =
-    Msg -> parentMsg
-
-
-navigate : String -> Msg
-navigate path =
-    ForParent (Navigate path)
-
-
-translateMsg : MsgTranslation parentMsg -> MsgTranslator parentMsg
-translateMsg { onInternalMsg, onNavigate } msg =
-    case msg of
-        ForParent (Navigate path) ->
-            onNavigate path
-
-        ForSelf internalMsg ->
-            onInternalMsg internalMsg
-
-
-update :
-    InternalMsg
-    -> Model
-    -> Maybe Authenticator.Model.Authentication
-    -> I18n.Language
-    -> String
-    -> ( Model, Cmd Msg )
-update msg model authenticationMaybe language searchQuery =
-    case msg of
-        DeselectBubble deselectedTag ->
-            case getData model.popularTags of
-                Nothing ->
-                    ( model, Cmd.none )
-
-                Just _ ->
-                    let
-                        newSelectedTags =
-                            Set.remove deselectedTag model.selectedTags
-
-                        newModel =
-                            { model
-                                | examples = Data (Loading (getData model.examples))
-                                , organizations = Data (Loading (getData model.organizations))
-                                , selectedTags = newSelectedTags
-                                , tools = Data (Loading (getData model.tools))
-                            }
-
-                        cmds =
-                            List.map (Cmd.map ForSelf)
-                                [ Task.perform
-                                    ErrorExamples
-                                    LoadedExamples
-                                    (newTaskGetExamples authenticationMaybe searchQuery "8" newSelectedTags)
-                                , Task.perform
-                                    ErrorOrganizations
-                                    LoadedOrganizations
-                                    (newTaskGetOrganizations authenticationMaybe searchQuery "8" newSelectedTags)
-                                , Task.perform
-                                    ErrorTools
-                                    LoadedTools
-                                    (newTaskGetTools authenticationMaybe searchQuery "8" newSelectedTags)
-                                , Task.perform
-                                    ErrorPopularTags
-                                    LoadedPopularTags
-                                    (newTaskGetTagsPopularity language newSelectedTags)
-                                ]
-                    in
-                        newModel ! cmds
-
-        ErrorExamples err ->
-            let
-                _ =
-                    Debug.log "Home ErrorExamples" err
-
-                model' =
-                    { model | examples = Failure err }
-            in
-                ( model', Cmd.none )
-
-        ErrorOrganizations err ->
-            let
-                _ =
-                    Debug.log "Home ErrorOrganizations" err
-
-                model' =
-                    { model | organizations = Failure err }
-            in
-                ( model', Cmd.none )
-
-        ErrorPopularTags err ->
-            let
-                _ =
-                    Debug.log "Home ErrorPopularTags" err
-
-                model' =
-                    { model | popularTags = Failure err }
-            in
-                ( model', Cmd.none )
-
-        ErrorTools err ->
-            let
-                _ =
-                    Debug.log "Home ErrorTools" err
-
-                model' =
-                    { model | tools = Failure err }
-            in
-                ( model', Cmd.none )
-
-        Load searchQuery ->
-            let
-                model' =
-                    { model
-                        | examples = Data (Loading (getData model.examples))
-                        , organizations = Data (Loading (getData model.organizations))
-                        , tools = Data (Loading (getData model.tools))
-                    }
-
-                cmds =
-                    List.map (Cmd.map ForSelf)
-                        [ Task.perform
-                            ErrorExamples
-                            LoadedExamples
-                            (newTaskGetExamples authenticationMaybe searchQuery "8" model.selectedTags)
-                        , Task.perform
-                            ErrorOrganizations
-                            LoadedOrganizations
-                            (newTaskGetOrganizations authenticationMaybe searchQuery "8" model.selectedTags)
-                        , Task.perform
-                            ErrorTools
-                            LoadedTools
-                            (newTaskGetTools authenticationMaybe searchQuery "8" model.selectedTags)
-                        , Task.perform
-                            ErrorPopularTags
-                            LoadedPopularTags
-                            (newTaskGetTagsPopularity language model.selectedTags)
-                        ]
-            in
-                model' ! cmds
-
-        LoadedExamples body ->
-            ( { model | examples = Data (Loaded body) }
-            , Cmd.none
-            )
-
-        LoadedOrganizations body ->
-            ( { model | organizations = Data (Loaded body) }
-            , Cmd.none
-            )
-
-        LoadedPopularTags popularTags ->
-            ( { model | popularTags = Data (Loaded popularTags) }
-            , mountd3bubbles
-                { popularTags = popularTags
-                , selectedTags = model.selectedTags |> Set.toList
-                }
-            )
-
-        LoadedTools body ->
-            ( { model | tools = Data (Loaded body) }
-            , Cmd.none
-            )
-
-        SelectBubble selectedTag ->
-            case getData model.popularTags of
-                Nothing ->
-                    ( model, Cmd.none )
-
-                Just _ ->
-                    let
-                        newSelectedTags =
-                            Set.insert selectedTag model.selectedTags
-
-                        newModel =
-                            { model
-                                | examples = Data (Loading (getData model.examples))
-                                , organizations = Data (Loading (getData model.organizations))
-                                , selectedTags = newSelectedTags
-                                , tools = Data (Loading (getData model.tools))
-                            }
-
-                        cmds =
-                            List.map (Cmd.map ForSelf)
-                                [ Task.perform
-                                    ErrorExamples
-                                    LoadedExamples
-                                    (newTaskGetExamples authenticationMaybe searchQuery "8" newSelectedTags)
-                                , Task.perform
-                                    ErrorOrganizations
-                                    LoadedOrganizations
-                                    (newTaskGetOrganizations authenticationMaybe searchQuery "8" newSelectedTags)
-                                , Task.perform
-                                    ErrorTools
-                                    LoadedTools
-                                    (newTaskGetTools authenticationMaybe searchQuery "8" newSelectedTags)
-                                , Task.perform
-                                    ErrorPopularTags
-                                    LoadedPopularTags
-                                    (newTaskGetTagsPopularity language newSelectedTags)
-                                ]
-                    in
-                        newModel ! cmds
-
-
-
--- VIEW
+import WebData exposing (..)
 
 
 view : Model -> String -> I18n.Language -> Html Msg
@@ -299,14 +32,12 @@ view model searchQuery language =
             ++ [ div [ class "row section" ]
                     [ div [ class "container" ]
                         ([ h3 [ class "zone-label" ]
-                            [ text (I18n.translate language (I18n.Example I18n.Plural)) ]
+                            [ text (I18n.translate language (I18n.UseCase I18n.Plural)) ]
                          ]
-                            ++ (viewWebData language
-                                    (\loadingStatus ->
-                                        [ viewThumbnails "example grey" searchQuery language loadingStatus ]
-                                    )
-                                    model.examples
-                               )
+                            ++ [ viewWebData language
+                                    (viewThumbnails "example grey" searchQuery language)
+                                    model.useCases
+                               ]
                         )
                     ]
                , div [ class "row section grey" ]
@@ -314,12 +45,10 @@ view model searchQuery language =
                         ([ h3 [ class "zone-label" ]
                             [ text (I18n.translate language (I18n.Tool I18n.Plural)) ]
                          ]
-                            ++ (viewWebData language
-                                    (\loadingStatus ->
-                                        [ viewThumbnails "tool" searchQuery language loadingStatus ]
-                                    )
+                            ++ [ viewWebData language
+                                    (viewThumbnails "tool" searchQuery language)
                                     model.tools
-                               )
+                               ]
                         )
                     ]
                , viewCollections
@@ -702,9 +431,9 @@ viewMetrics language model =
         [ div [ class "container" ]
             [ div [ class "col-xs-4 text-center" ]
                 [ span [ class "metric-label" ]
-                    [ text (I18n.translate language (I18n.Example I18n.Plural)) ]
+                    [ text (I18n.translate language (I18n.UseCase I18n.Plural)) ]
                 , h3 []
-                    [ viewMetric model.examples
+                    [ viewMetric model.useCases
                     ]
                 ]
             , div [ class "col-xs-4 text-center" ]
@@ -751,14 +480,14 @@ viewThumbnail thumbnailExtraClasses language values card =
                             h1 [ class "dynamic" ]
                                 [ text
                                     (case cardType of
-                                        ExampleCard ->
-                                            name
-
                                         OrganizationCard ->
                                             String.left 1 name
 
                                         ToolCard ->
                                             String.left 2 name
+
+                                        UseCaseCard ->
+                                            name
                                     )
                                 ]
                     ]

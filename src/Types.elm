@@ -27,7 +27,7 @@ type alias Card =
 
 
 type CardType
-    = ExampleCard
+    = UseCaseCard
     | OrganizationCard
     | ToolCard
 
@@ -105,35 +105,36 @@ type ValueType
     | WrongValue String String
 
 
+getCard : Dict String Card -> String -> Card
+getCard cards id =
+    case Dict.get id cards of
+        Nothing ->
+            Debug.crash "getCard: Should never happen"
+
+        Just card ->
+            card
+
+
 getCardType : Card -> CardType
 getCardType card =
     case List.head card.subTypeIds of
         Nothing ->
-            Debug.crash "urlPathForCard: unhandled case"
+            Debug.crash "getCardType: unhandled case"
 
         Just subTypeId ->
-            if List.member subTypeId cardTypesForExample then
-                ExampleCard
+            if List.member subTypeId cardTypesForUseCase then
+                UseCaseCard
             else if List.member subTypeId cardTypesForOrganization then
                 OrganizationCard
             else if List.member subTypeId cardTypesForTool then
                 ToolCard
             else
-                Debug.crash "urlPathForCard: unhandled case"
+                Debug.crash "getCardType: unhandled case"
 
 
 getOrderedCards : DataIds -> List Card
 getOrderedCards { cards, ids } =
-    List.map
-        (\id ->
-            case Dict.get id cards of
-                Nothing ->
-                    Debug.crash "Should never happen"
-
-                Just card ->
-                    card
-        )
-        ids
+    List.map (getCard cards) ids
 
 
 imageUrl : String -> String
@@ -204,11 +205,6 @@ usedByKeys =
 -- CARD TYPES
 
 
-cardTypesForExample : List String
-cardTypesForExample =
-    [ "type:use-case" ]
-
-
 cardTypesForOrganization : List String
 cardTypesForOrganization =
     [ "type:organization" ]
@@ -217,3 +213,8 @@ cardTypesForOrganization =
 cardTypesForTool : List String
 cardTypesForTool =
     [ "type:software", "type:platform" ]
+
+
+cardTypesForUseCase : List String
+cardTypesForUseCase =
+    [ "type:use-case" ]

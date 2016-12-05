@@ -17,11 +17,11 @@ update msg model =
     case msg of
         SignInMsg subMsg ->
             let
-                ( signIn, signInEffect, authenticationMaybe ) =
+                ( signIn, signInEffect, authentication ) =
                     SignIn.update subMsg model.signIn
 
                 model' =
-                    { model | authenticationMaybe = authenticationMaybe, signIn = signIn }
+                    { model | authentication = authentication, signIn = signIn }
             in
                 ( model', Cmd.map SignInMsg signInEffect )
 
@@ -31,16 +31,16 @@ update msg model =
                     SignOut.update subMsg model.signOut
 
                 model' =
-                    { model | authenticationMaybe = Nothing, signOut = signOut }
+                    { model | authentication = Nothing, signOut = signOut }
             in
                 ( model', Cmd.map SignOutMsg signOutEffect )
 
         SignUpMsg subMsg ->
             let
-                ( signUp, signUpEffect, authenticationMaybe ) =
+                ( signUp, signUpEffect, authentication ) =
                     SignUp.update subMsg model.signUp
 
                 model' =
-                    { model | authenticationMaybe = authenticationMaybe, signUp = signUp }
+                    { model | authentication = authentication, signUp = signUp }
             in
                 ( model', Cmd.map SignUpMsg signUpEffect )

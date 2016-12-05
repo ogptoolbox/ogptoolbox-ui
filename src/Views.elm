@@ -1,9 +1,15 @@
 module Views exposing (..)
 
+import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (..)
+import Html.Helpers exposing (aForPath)
 import Http exposing (Error(..))
-import I18n
+import I18n exposing (getImageUrl, getName, getManyStrings, getOneString, getSubTypes)
+import Routes
+import String
+import Types exposing (..)
 import WebData exposing (LoadingStatus, WebData(..))
 
 
@@ -32,6 +38,67 @@ viewBigMessage title message =
         ]
 
 
+viewCardListItem : (String -> msg) -> I18n.Language -> Dict String Value -> Card -> Html msg
+viewCardListItem navigate language values card =
+    let
+        name =
+            getName language card values
+
+        urlPath =
+            Routes.urlPathForCard card
+    in
+        div
+            [ class "thumbnail example"
+            , onClick (navigate urlPath)
+            ]
+            [ div [ class "visual" ]
+                [ case getImageUrl language "300" card values of
+                    Just url ->
+                        img [ alt "Logo", src url ] []
+
+                    Nothing ->
+                        h1 [ class "dynamic" ] [ text name ]
+                ]
+            , div [ class "caption" ]
+                [ h4 []
+                    [ aForPath navigate
+                        urlPath
+                        []
+                        [ text name ]
+                    , small []
+                        [ text (getSubTypes language card values |> String.join ", ") ]
+                    ]
+                  -- , div [ class "example-author" ]
+                  --     [ img [ alt "screen", src "/img/TODO.png" ]
+                  --         []
+                  --     , text "TODO The White House"
+                  --     ]
+                , p []
+                    (case getOneString language descriptionKeys card values of
+                        Just description ->
+                            [ text description ]
+
+                        Nothing ->
+                            []
+                    )
+                ]
+            , div [ class "tags" ]
+                (case getManyStrings language typeKeys card values of
+                    [] ->
+                        [ text "TODO call-to-action" ]
+
+                    xs ->
+                        List.map
+                            (\str ->
+                                span
+                                    [ class "label label-default label-tool" ]
+                                    [ text str ]
+                            )
+                            xs
+                )
+            ]
+
+
 viewHttpError : I18n.Language -> Http.Error -> Html msg
 viewHttpError language err =
     let
@@ -57,9 +124,12 @@ viewHttpError language err =
 
 viewLoading : I18n.Language -> Html msg
 viewLoading language =
-    viewBigMessage
-        (I18n.translate language I18n.PageLoading)
-        (I18n.translate language I18n.PageLoadingExplanation)
+    div []
+        [ viewBigMessage
+            (I18n.translate language I18n.PageLoading)
+            (I18n.translate language I18n.PageLoadingExplanation)
+        , img [ class "loader", src "/img/loader.gif" ] []
+        ]
 
 
 viewNotFound : I18n.Language -> Html msg
@@ -69,14 +139,15 @@ viewNotFound language =
         (I18n.translate language I18n.PageNotFoundExplanation)
 
 
-viewWebData : I18n.Language -> (LoadingStatus a -> List (Html msg)) -> WebData a -> List (Html msg)
+viewWebData : I18n.Language -> (LoadingStatus a -> Html msg) -> WebData a -> Html msg
 viewWebData language viewSuccess webData =
     case webData of
         NotAsked ->
-            [ text "" ]
+            div [ class "text-center" ]
+                [ viewLoading language ]
 
         Failure err ->
-            [ viewHttpError language err ]
+            viewHttpError language err
 
         Data loadingStatus ->
             viewSuccess loadingStatus

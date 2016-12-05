@@ -1,98 +1,96 @@
-module Tool.View exposing (..)
+module Card.View exposing (..)
 
-import Browse
+import Card.Types exposing (..)
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Helpers exposing (aForPath, aIfIsUrl)
-import I18n exposing (getImageScreenshotUrl, getImageUrl, getManyStrings, getOneString, getSubTypes)
+import Html.Helpers exposing (aExternal, aForPath, aIfIsUrl)
+import I18n exposing (getImageLogoUrl, getImageScreenshotUrl, getImageUrl, getManyStrings, getName, getOneString, getSubTypes)
 import Routes
 import String
-import Tool.Sidebar as Sidebar
 import Types exposing (..)
-import Views exposing (viewLoading)
+import Views exposing (viewCardListItem, viewLoading, viewWebData)
 import WebData exposing (LoadingStatus(..))
 
 
-root : (String -> msg) -> I18n.Language -> LoadingStatus DataIdBody -> Html msg
-root navigate language loadingStatus =
-    case loadingStatus of
-        Loading body ->
-            case body of
-                Nothing ->
-                    viewLoading language
+view : Model -> I18n.Language -> Html Msg
+view model language =
+    viewWebData
+        language
+        (\loadingStatus ->
+            case loadingStatus of
+                Loading _ ->
+                    div [ class "text-center" ]
+                        [ viewLoading language ]
 
-                Just body ->
-                    viewCard navigate language body
+                Loaded body ->
+                    viewCard language body
+        )
+        model
 
-        Loaded body ->
-            viewCard navigate language body
 
-
-viewCard : (String -> msg) -> I18n.Language -> DataIdBody -> Html msg
-viewCard navigate language body =
+viewCard : I18n.Language -> DataIdBody -> Html Msg
+viewCard language body =
     let
         cards =
             body.data.cards
 
         values =
             body.data.values
-    in
-        case Dict.get body.data.id cards of
-            Nothing ->
-                text "Error: the card was not found."
 
-            Just card ->
-                let
-                    container =
-                        div [ class "container" ]
-                            [ div
-                                [ class "row" ]
-                                [ Sidebar.root language card values
-                                , viewCardContent navigate language card cards values
+        card =
+            getCard cards body.data.id
+    in
+        let
+            container =
+                div [ class "container" ]
+                    [ div
+                        [ class "row" ]
+                        [ viewSidebar language card values
+                        , viewCardContent language card cards values
+                        ]
+                    ]
+        in
+            case getImageScreenshotUrl language "" card values of
+                Just url ->
+                    div []
+                        [ div [ class "banner screenshot" ]
+                            [ div [ class "row " ]
+                                [ div [ class "col-md-12 text-center" ]
+                                    [ img [ src url ] [] ]
                                 ]
                             ]
-                in
-                    case getImageScreenshotUrl language "" card values of
-                        Just url ->
-                            div []
-                                [ div [ class "banner screenshot" ]
-                                    [ div [ class "row " ]
-                                        [ div [ class "col-md-12 text-center" ]
-                                            [ img [ src url ] [] ]
-                                        ]
-                                    ]
-                                , div [ class "row pull-screenshot" ]
-                                    [ div [ class "container" ]
-                                        [-- div [ class "row" ]
-                                         -- [ div [ class "col-xs-12" ]
-                                         --     [ ol [ class "breadcrumb" ]
-                                         --         [ li []
-                                         --             [ a [ href "#" ]
-                                         --                 [ text "Home" ]
-                                         --             ]
-                                         --         , li []
-                                         --             [ a [ href "#" ]
-                                         --                 [ text "Library" ]
-                                         --             ]
-                                         --         , li [ class "active" ]
-                                         --             [ text "Data" ]
-                                         --         ]
-                                         --     ]
-                                         -- ]
-                                        ]
-                                    ]
-                                , div [ class "row section push-screenshot" ]
-                                    [ container ]
+                        , div [ class "row pull-screenshot" ]
+                            [ div [ class "container" ]
+                                [-- div [ class "row" ]
+                                 -- [ div [ class "col-xs-12" ]
+                                 --     [ ol [ class "breadcrumb" ]
+                                 --         [ li []
+                                 --             [ a [ href "#" ]
+                                 --                 [ text "Home" ]
+                                 --             ]
+                                 --         , li []
+                                 --             [ a [ href "#" ]
+                                 --                 [ text "Library" ]
+                                 --             ]
+                                 --         , li [ class "active" ]
+                                 --             [ text "Data" ]
+                                 --         ]
+                                 --     ]
+                                 -- ]
                                 ]
+                            ]
+                        , div [ class "row section push-screenshot" ]
+                            [ container ]
+                        ]
 
-                        Nothing ->
-                            div [ class "row section" ]
-                                [ container ]
+                Nothing ->
+                    div [ class "row section" ]
+                        [ container ]
 
 
-viewCardContent : (String -> msg) -> I18n.Language -> Card -> Dict String Card -> Dict String Value -> Html msg
-viewCardContent navigate language card cards values =
+viewCardContent : I18n.Language -> Card -> Dict String Card -> Dict String Value -> Html Msg
+viewCardContent language card cards values =
     let
         bestOf keys =
             let
@@ -241,7 +239,6 @@ viewCardContent navigate language card cards values =
                                                                                 Just value ->
                                                                                     viewValueValue
                                                                                         language
-                                                                                        navigate
                                                                                         cards
                                                                                         values
                                                                                         value.value
@@ -249,7 +246,6 @@ viewCardContent navigate language card cards values =
                                                                         , td []
                                                                             [ viewValueValue
                                                                                 language
-                                                                                navigate
                                                                                 cards
                                                                                 values
                                                                                 value.value
@@ -286,7 +282,7 @@ viewCardContent navigate language card cards values =
                                                         (\cardId ->
                                                             Dict.get cardId cards
                                                                 |> Maybe.map
-                                                                    (Browse.viewCardListItem
+                                                                    (viewCardListItem
                                                                         navigate
                                                                         language
                                                                         values
@@ -334,24 +330,171 @@ viewCardContent navigate language card cards values =
             ]
 
 
-viewShowMore : number -> List (Html msg)
-viewShowMore count =
-    if count > 20 then
-        -- TODO Do not hardcode limit
-        [ div [ class "col-sm-12 text-center" ]
-            [ a [ class "show-more" ]
-                [ text ("Show all " ++ (toString count))
-                , span [ class "glyphicon glyphicon-menu-down" ]
-                    []
+
+-- viewShowMore : number -> List (Html msg)
+-- viewShowMore count =
+--     if count > 20 then
+--         -- TODO Do not hardcode limit
+--         [ div [ class "col-sm-12 text-center" ]
+--             [ a [ class "show-more" ]
+--                 [ text ("Show all " ++ (toString count))
+--                 , span [ class "glyphicon glyphicon-menu-down" ]
+--                     []
+--                 ]
+--             ]
+--         ]
+--     else
+--         []
+
+
+viewSidebar : I18n.Language -> Card -> Dict String Value -> Html Msg
+viewSidebar language card values =
+    -- let
+    --     viewSimilarTools =
+    --         div [ class "row" ]
+    --             [ div [ class "col-xs-12" ]
+    --                 [ div [ class "panel panel-default panel-side" ]
+    --                     [ div [ class "panel-heading" ]
+    --                         [ div [ class "row" ]
+    --                             [ div [ class "col-xs-7 text-left" ]
+    --                                 [ h6 [ class "panel-title" ]
+    --                                     [ text (I18n.translate language I18n.SimilarTools) ]
+    --                                 ]
+    --                             , div [ class "col-xs-5 text-right label-small" ]
+    --                                 [ text (I18n.translate language I18n.Score) ]
+    --                             ]
+    --                         ]
+    --                     , div [ class "panel-body chart" ]
+    --                         [ table [ class "table" ]
+    --                             [ tbody []
+    --                                 [ tr []
+    --                                     [ th [ class "tool-icon-small", scope "row" ]
+    --                                         [ img [ src "/img/TODO.png" ]
+    --                                             []
+    --                                         ]
+    --                                     , td []
+    --                                         [ text "TODO Udata" ]
+    --                                     , td [ class "text-right label-small" ]
+    --                                         [ text "TODO 50.367" ]
+    --                                     ]
+    --                                 ]
+    --                             ]
+    --                         , button [ class "btn btn-default btn-xs btn-action btn-block", type' "button" ]
+    --                             [ text (I18n.translate language I18n.SeeAllAndCompare) ]
+    --                         ]
+    --                     ]
+    --                 ]
+    --             ]
+    -- in
+    div [ class "col-md-3 sidebar" ]
+        [ div [ class "row" ]
+            [ div [ class "col-xs-12" ]
+                [ div [ class "thumbnail orga grey" ]
+                    [ div [ class "visual" ]
+                        [ case getImageLogoUrl language "1000" card values of
+                            Just url ->
+                                img [ alt "Logo", src url ] []
+
+                            Nothing ->
+                                div [ class "call-container" ]
+                                    [ button [ class "button call-add" ]
+                                        [ text "+ Add a logo" ]
+                                    ]
+                        ]
+                    , div [ class "caption" ]
+                        [ table [ class "table" ]
+                            [ tbody []
+                                [ tr [ class "editable" ]
+                                    [ td [ class "table-label" ]
+                                        [ text (I18n.translate language I18n.Type) ]
+                                    , td []
+                                        [ text "TODO type" ]
+                                    ]
+                                , tr [ class "editable" ]
+                                    [ td [ class "table-label" ]
+                                        [ text (I18n.translate language I18n.License) ]
+                                    , td []
+                                        [ text (getOneString language licenseKeys card values |> Maybe.withDefault "") ]
+                                    ]
+                                , let
+                                    firstTd =
+                                        td [ class "table-label" ]
+                                            [ text (I18n.translate language I18n.Website) ]
+                                  in
+                                    case getOneString language urlKeys card values of
+                                        Nothing ->
+                                            tr []
+                                                [ firstTd
+                                                , td []
+                                                    [ button [ class "button call-add" ]
+                                                        [ text "+ Add a link" ]
+                                                    ]
+                                                ]
+
+                                        Just url ->
+                                            tr [ class "editable" ]
+                                                [ firstTd
+                                                , td [] [ aExternal [ href url ] [ text url ] ]
+                                                ]
+                                , tr []
+                                    [ td [ attribute "colspan" "2" ]
+                                        [ button [ class "btn btn-default btn-action btn-block", type' "button" ]
+                                            [ text (I18n.translate language I18n.UseIt) ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
                 ]
             ]
+        , div [ class "row" ]
+            [ div [ class "col-xs-12" ]
+                [ div [ class "panel panel-default panel-side" ]
+                    (let
+                        panelTitle =
+                            div [ class "col-xs-7 text-left" ]
+                                [ h6 [ class "panel-title" ]
+                                    [ text (I18n.translate language I18n.Tags) ]
+                                ]
+                     in
+                        case getManyStrings language tagKeys card values of
+                            [] ->
+                                [ div [ class "panel-heading" ]
+                                    [ div [ class "row" ] [ panelTitle ] ]
+                                , div [ class "panel-body" ]
+                                    [ div [ class "call-container" ]
+                                        [ button [ class "button call-add" ]
+                                            [ text "+ Add a tag" ]
+                                        ]
+                                    ]
+                                ]
+
+                            tags ->
+                                [ div [ class "panel-heading" ]
+                                    [ div [ class "row" ]
+                                        [ panelTitle
+                                        , div [ class "col-xs-5 text-right up7" ]
+                                            [ button [ class "btn btn-default btn-xs btn-action", type' "button" ]
+                                                [ text "Edit" ]
+                                            ]
+                                        ]
+                                    ]
+                                , div [ class "panel-body" ]
+                                    (List.map
+                                        (\tag -> span [ class "label label-default label-tag" ] [ text tag ])
+                                        tags
+                                    )
+                                ]
+                    )
+                ]
+            ]
+          -- , viewSimilarTools -- TODO
         ]
-    else
-        []
 
 
-viewValueValue : I18n.Language -> (String -> msg) -> Dict String Card -> Dict String Value -> ValueType -> Html msg
-viewValueValue language navigate cards values value =
+viewValueValue : I18n.Language -> Dict String Card -> Dict String Value -> ValueType -> Html Msg
+viewValueValue language cards values value =
     case value of
         StringValue str ->
             aIfIsUrl [] str
@@ -381,7 +524,7 @@ viewValueValue language navigate cards values value =
         ArrayValue childValues ->
             ul [ class "list-unstyled" ]
                 (List.map
-                    (\childValue -> li [] [ viewValueValue language navigate cards values childValue ])
+                    (\childValue -> li [] [ viewValueValue language cards values childValue ])
                     childValues
                 )
 
@@ -414,4 +557,4 @@ viewValueValue language navigate cards values value =
                     text ("Error: referenced value not found for propertyKey: " ++ propertyKey)
 
                 Just subValue ->
-                    viewValueValue language navigate cards values subValue.value
+                    viewValueValue language cards values subValue.value
