@@ -996,22 +996,6 @@ viewHeader model language containerClass =
                                 [ aForPathWithLanguage
                                     Navigate
                                     language
-                                    "/"
-                                    []
-                                    [ text (I18n.translate language I18n.Home) ]
-                                ]
-                            , li []
-                                [ aForPathWithLanguage
-                                    Navigate
-                                    language
-                                    "/about"
-                                    []
-                                    [ text (I18n.translate language I18n.About) ]
-                                ]
-                            , li []
-                                [ aForPathWithLanguage
-                                    Navigate
-                                    language
                                     "/tools"
                                     []
                                     [ text (I18n.translate language (I18n.Tool I18n.Plural)) ]
@@ -1044,9 +1028,9 @@ viewHeader model language containerClass =
                                 [ aForPathWithLanguage
                                     Navigate
                                     language
-                                    "/help"
+                                    "/about"
                                     []
-                                    [ text (I18n.translate language I18n.Help) ]
+                                    [ text (I18n.translate language I18n.About) ]
                                 ]
                             ]
                         , Html.form
