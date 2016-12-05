@@ -777,7 +777,8 @@ translate language translationId =
     in
         Maybe.oneOf
             [ translateHelp language
-            , translateHelp English |> Maybe.map (\str -> "(EN) " ++ str)
+            , translateHelp English
+              -- |> Maybe.map (\str -> "(EN) " ++ str)
             ]
             |> Maybe.withDefault
                 ("TODO translate the ID "
