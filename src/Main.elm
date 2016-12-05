@@ -14,7 +14,6 @@ import Constants
 import Decoders
 import Dict exposing (Dict)
 import Dom.Scroll
-import Help
 import Home
 import Hop.Types exposing (Location)
 import Html exposing (..)
@@ -174,14 +173,6 @@ urlUpdate ( i18nRoute, location ) model =
                                 ( model
                                 , Ports.setDocumentMetatags
                                     { title = I18n.translate language I18n.About
-                                    , imageUrl = Constants.logoUrl
-                                    }
-                                )
-
-                            HelpRoute ->
-                                ( model
-                                , Ports.setDocumentMetatags
-                                    { title = I18n.translate language I18n.Help
                                     , imageUrl = Constants.logoUrl
                                     }
                                 )
@@ -562,10 +553,6 @@ view model =
                 case route of
                     AboutRoute ->
                         About.view language
-                            |> standardLayout language
-
-                    HelpRoute ->
-                        Help.view language
                             |> standardLayout language
 
                     HomeRoute ->
@@ -1075,7 +1062,7 @@ viewHeader model language containerClass =
                                 [ aForPath
                                     Navigate
                                     language
-                                    "/about"
+                                    "/help"
                                     []
                                     [ text (I18n.translate language I18n.About) ]
                                 ]

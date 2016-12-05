@@ -1,7 +1,5 @@
 module Routes exposing (..)
 
--- import Authenticator.Model
-
 import Combine exposing (Parser)
 import Dict exposing (Dict)
 import Hop
@@ -18,7 +16,6 @@ import Types exposing (..)
 
 type Route
     = AboutRoute
-    | HelpRoute
     | HomeRoute
     | NotFoundRoute String
     | OrganizationsRoute OrganizationsNestedRoute
@@ -71,8 +68,7 @@ makeUrlWithLanguage language urlPath =
 matchers : List (Hop.Types.PathMatcher Route)
 matchers =
     [ match1 HomeRoute ""
-    , match1 AboutRoute "/about"
-    , match1 HelpRoute "/help"
+    , match1 AboutRoute "/help"
     , nested1 OrganizationsRoute
         "/organizations"
         [ match1 OrganizationsIndexRoute ""
