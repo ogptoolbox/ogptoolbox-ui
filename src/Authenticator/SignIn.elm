@@ -9,7 +9,7 @@ import Html.Attributes.Aria exposing (..)
 import Html.Events exposing (..)
 import Http
 import Json.Encode
-import Ports exposing (storeAuthentication)
+import Ports
 import String
 import Task
 import Types exposing (User, UserBody)
@@ -61,7 +61,7 @@ update msg model =
         Error err ->
             let
                 _ =
-                    Debug.log "Sign In Error" err
+                    Debug.log "Authenticator.SignIn Error" err
             in
                 ( model, Cmd.none, Nothing )
 
@@ -129,7 +129,7 @@ update msg model =
                 user =
                     Just body.data
             in
-                ( model, storeAuthentication user, user )
+                ( model, Ports.storeAuthentication user, user )
 
         UsernameInput text ->
             ( { model | username = text }, Cmd.none, Nothing )

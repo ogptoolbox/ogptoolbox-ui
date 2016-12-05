@@ -3,7 +3,7 @@ module Authenticator.SignOut exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Ports exposing (storeAuthentication)
+import Ports
 
 
 -- MODEL
@@ -30,7 +30,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Submit ->
-            ( model, storeAuthentication Nothing )
+            ( model, Ports.storeAuthentication Nothing )
 
 
 

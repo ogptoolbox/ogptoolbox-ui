@@ -551,7 +551,7 @@ function mount(options) {
         //TEMPORARY: It will be 490px when filter row will be displayed 
         height: 550,
         wrapper: '#tag',
-        container: '#tag .plot',
+        container: options.selector,
         data: options.data,
         bubbles: {
             bubbles_per_px: 0.02,
@@ -559,7 +559,7 @@ function mount(options) {
         },
         radius: {
             min:30,
-            max:180
+            max:100
         },
         colors: {
             bubbles:['#656a6e', '#4cc7c8'],

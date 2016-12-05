@@ -3,7 +3,6 @@ module Html.Helpers exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onWithOptions)
-import I18n
 import Json.Decode
 import Regex
 import Routes exposing (makeUrl, makeUrlWithLanguage)
@@ -32,24 +31,6 @@ aForPath navigate urlPath attributes children =
             ++ attributes
         )
         children
-
-
-aForPathWithLanguage : (String -> msg) -> I18n.Language -> String -> List (Attribute msg) -> List (Html msg) -> Html msg
-aForPathWithLanguage navigate language urlPath attributes children =
-    let
-        urlPathWithLanguage =
-            makeUrlWithLanguage language urlPath
-    in
-        a
-            ([ href urlPathWithLanguage
-             , onWithOptions
-                "click"
-                { stopPropagation = True, preventDefault = True }
-                (Json.Decode.succeed (navigate urlPathWithLanguage))
-             ]
-                ++ attributes
-            )
-            children
 
 
 aIfIsUrl : List (Attribute msg) -> String -> Html msg

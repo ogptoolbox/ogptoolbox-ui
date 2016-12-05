@@ -1,6 +1,6 @@
 // pull in desired CSS/LESS files
 require('../css/ogp-style.less');
-require('../css/retruco.less');
+// require('../css/retruco.less');
 require('../css/bubbles.less');
 
 
@@ -61,32 +61,42 @@ main.ports.setDocumentMetatags.subscribe(function(metatags) {
 
 
 main.ports.mountd3bubbles.subscribe(function(data) {
-    var popularTags = data[0];
-    var selectedTags = data[1];
+    // Remove previous D3 bubbles instances if present in the DOM.
+    Array.prototype.forEach.call( document.querySelectorAll("svg.D3Bubbles"), function( node ) {
+        node.parentNode.removeChild( node );
+    });
     // Use rAF in order to be sure that the port Cmd is called after view is rendered.
     rAF(function() {
-        var bubbles = popularTags.map(function(popularTag) {
-            return { name: popularTag.tag, radius: popularTag.count };
+        var bubbles = data.popularTags.map(function(popularTag) {
+            return {
+                name: popularTag.tag,
+                radius: popularTag.count,
+                tag: popularTag.tag,
+                tagId: popularTag.tagId
+             };
         });
-        if (selectedTags.length) {
-            bubbles = bubbles.concat(selectedTags.map(function(selectedTag) {
-                var maxRadius = Math.max.apply(null, popularTags.map(function(popularTag) {
+        if (data.selectedTags.length) {
+            bubbles = bubbles.concat(data.selectedTags.map(function(selectedTag) {
+                var maxRadius = Math.max.apply(null, data.popularTags.map(function(popularTag) {
                     return popularTag.count;
                 }));
-                return { name: selectedTag, radius: maxRadius * 1.33, type: "selected" };
+                return {
+                    name: selectedTag.tag,
+                    radius: selectedTag.count || maxRadius * 1.33,
+                    tag: selectedTag.tag,
+                    tagId: selectedTag.tagId,
+                    type: "selected"
+                };
             }));
         } else {
             var centerBubble = { name: "Open government", radius: 150, type: "main" };
             bubbles = bubbles.concat(centerBubble);
         }
         d3Bubbles.mount({
+            selector: ".bubbles",
             data: bubbles,
-            onSelect: function (bubble) {
-                main.ports.bubbleSelections.send(bubble.name);
-            },
-            onDeselect: function (bubble) {
-                main.ports.bubbleDeselections.send(bubble.name);
-            },
+            onSelect: main.ports.bubbleSelections.send,
+            onDeselect: main.ports.bubbleDeselections.send,
         });
     })
 });

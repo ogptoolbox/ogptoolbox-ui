@@ -52,14 +52,16 @@ type TranslationId
     | Actor GrammaticalNumber
     | AddNew
     | AddNewCollectionCatchPhrase
-    | AddNewExample
-    | AddNewExampleCatchPhrase
+    | AddNewOrganization
+    | AddNewOrganizationCatchPhrase
     | AddNewTool
     | AddNewToolCatchPhrase
+    | AddNewUseCase
+    | AddNewUseCaseCatchPhrase
     | AdditionalInformations
     | BestOf Int
     | CallToActionForCategory
-    | CallToActionForDescription Types.CardType
+    | CallToActionForDescription CardType
     | Close
     | Collection GrammaticalNumber
     | Copyright
@@ -78,12 +80,12 @@ type TranslationId
     | PageLoadingExplanation
     | PageNotFound
     | PageNotFoundExplanation
-    | PublishExample
+    | PublishOrganization
     | PublishTool
+    | PublishUseCase
     | SeeAllAndCompare
     | Score
     | SearchInputPlaceholder
-    | SearchResults String
     | ShowAll Int
     | SignIn
     | SignOut
@@ -94,6 +96,7 @@ type TranslationId
     | TimeoutExplanation
     | Tool GrammaticalNumber
     | Type
+    | UseCase GrammaticalNumber
     | UsedBy
     | UsedFor
     | UnexpectedPayloadExplanation
@@ -336,15 +339,27 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
-        AddNewExample ->
+        AddNewUseCase ->
             { english = s "Add a new use case"
             , french = todo
             , spanish = todo
             }
 
-        AddNewExampleCatchPhrase ->
+        AddNewUseCaseCatchPhrase ->
             { english = todo
             , french = s "Un exemple concret et efficace d'utilisation d'un outil."
+            , spanish = todo
+            }
+
+        AddNewOrganization ->
+            { english = s "Add a new organization"
+            , french = todo
+            , spanish = todo
+            }
+
+        AddNewOrganizationCatchPhrase ->
+            { english = todo
+            , french = todo
             , spanish = todo
             }
 
@@ -375,33 +390,33 @@ getTranslationSet translationId =
         CallToActionForDescription cardType ->
             { english =
                 case cardType of
-                    Types.Example ->
+                    UseCaseCard ->
                         s "Add a description for this use case"
 
-                    Types.Organization ->
+                    OrganizationCard ->
                         s "Add a description for this organization"
 
-                    Types.Tool ->
+                    ToolCard ->
                         s "Add a description for this tool"
             , french =
                 case cardType of
-                    Types.Example ->
+                    UseCaseCard ->
                         todo
 
-                    Types.Organization ->
+                    OrganizationCard ->
                         todo
 
-                    Types.Tool ->
+                    ToolCard ->
                         todo
             , spanish =
                 case cardType of
-                    Types.Example ->
+                    UseCaseCard ->
                         todo
 
-                    Types.Organization ->
+                    OrganizationCard ->
                         todo
 
-                    Types.Tool ->
+                    ToolCard ->
                         todo
             }
 
@@ -434,7 +449,6 @@ getTranslationSet translationId =
             , french = s "© 2016 Partenariat pour un Gouvernement Ouvert"
             , spanish = todo
             }
-
         Example number ->
             { english =
                 case number of
@@ -458,7 +472,6 @@ getTranslationSet translationId =
                     Plural ->
                         todo
             }
-
         GenericError ->
             { english = s "Something wrong happened!"
             , french = s "Quelque chose s'est mal passé !"
@@ -574,8 +587,14 @@ including representatives of governments and civil society organizations.
             , spanish = todo
             }
 
-        PublishExample ->
+        PublishUseCase ->
             { english = s "Publish use case"
+            , french = todo
+            , spanish = todo
+            }
+
+        PublishOrganization ->
+            { english = s "Publish organization"
             , french = todo
             , spanish = todo
             }
@@ -601,12 +620,6 @@ including representatives of governments and civil society organizations.
         SearchInputPlaceholder ->
             { english = s "Search for a tool, example or organization"
             , french = s "Rechercher un outil, un exemple ou une organisation"
-            , spanish = todo
-            }
-
-        SearchResults searchQuery ->
-            { english = s ("Search results for \"" ++ searchQuery ++ "\"")
-            , french = s ("Résultats de recherche pour « " ++ searchQuery ++ " »")
             , spanish = todo
             }
 
@@ -680,6 +693,30 @@ including representatives of governments and civil society organizations.
             { english = s "Type"
             , french = s "Type"
             , spanish = todo
+            }
+
+        UseCase number ->
+            { english =
+                case number of
+                    Singular ->
+                        s "Use case"
+
+                    Plural ->
+                        s "Use cases"
+            , french =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , spanish =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
             }
 
         UsedBy ->
@@ -773,11 +810,11 @@ getManyStrings language propertyKeys card values =
                         Just value ->
                             [ value ]
 
-                ArrayValue [] ->
+                CardIdArrayValue ids ->
                     []
 
-                ArrayValue childValues ->
-                    List.concatMap getStrings childValues
+                CardIdValue cardId ->
+                    []
 
                 NumberValue _ ->
                     []
@@ -785,8 +822,11 @@ getManyStrings language propertyKeys card values =
                 BijectiveCardReferenceValue _ ->
                     []
 
-                ReferenceValue propertyKey ->
-                    case Dict.get propertyKey values of
+                ValueIdArrayValue ids ->
+                    List.concatMap (\id -> getStrings (ValueIdValue id)) ids
+
+                ValueIdValue valueId ->
+                    case Dict.get valueId values of
                         Nothing ->
                             []
 
@@ -821,11 +861,14 @@ getOneString language propertyKeys card values =
                 LocalizedStringValue valueByLanguage ->
                     getValueByPreferredLanguage language valueByLanguage
 
-                ArrayValue [] ->
+                CardIdArrayValue _ ->
                     Nothing
 
-                ArrayValue (childValue :: _) ->
-                    getString childValue
+                ValueIdArrayValue [] ->
+                    Nothing
+
+                ValueIdArrayValue (childValue :: _) ->
+                    getString (ValueIdValue childValue)
 
                 NumberValue _ ->
                     Nothing
@@ -833,8 +876,11 @@ getOneString language propertyKeys card values =
                 BijectiveCardReferenceValue _ ->
                     Nothing
 
-                ReferenceValue propertyKey ->
-                    Dict.get propertyKey values `Maybe.andThen` (\subValue -> getString subValue.value)
+                CardIdValue cardId ->
+                    Nothing
+
+                ValueIdValue valueId ->
+                    Dict.get valueId values `Maybe.andThen` (\subValue -> getString subValue.value)
 
                 WrongValue _ _ ->
                     Nothing
@@ -849,19 +895,14 @@ getOneString language propertyKeys card values =
             |> Maybe.oneOf
 
 
-getName : Language -> String -> Dict String Card -> Dict String Value -> String
-getName language cardId cards values =
-    case Dict.get cardId cards of
+getName : Language -> Card -> Dict String Value -> String
+getName language card values =
+    case getOneString language nameKeys card values of
         Nothing ->
-            "No name"
+            Debug.crash "getName: unhandled case"
 
-        Just card ->
-            case getOneString language nameKeys card values of
-                Nothing ->
-                    "No name"
-
-                Just name ->
-                    name
+        Just name ->
+            name
 
 
 getImageUrl : Language -> String -> Card -> Dict String Value -> Maybe String
@@ -903,7 +944,7 @@ getImageUrlOrOgpLogo language cardId cards values =
                     imageUrl urlPath
 
 
-getSubTypes : Language -> Card -> Dict String Value -> String
+getSubTypes : Language -> Card -> Dict String Value -> List String
 getSubTypes language card values =
     card.subTypeIds
         |> List.map
@@ -926,7 +967,6 @@ getSubTypes language card values =
                                 "This should not happen"
                 )
             )
-        |> String.join ", "
 
 
 getValueByPreferredLanguage : Language -> Dict String String -> Maybe String
@@ -1006,7 +1046,8 @@ translate language translationId =
     in
         Maybe.oneOf
             [ translateHelp language
-            , translateHelp English |> Maybe.map (\str -> "(EN) " ++ str)
+            , translateHelp English
+              -- |> Maybe.map (\str -> "(EN) " ++ str)
             ]
             |> Maybe.withDefault
                 ("TODO translate the ID "

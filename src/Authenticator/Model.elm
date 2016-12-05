@@ -11,7 +11,7 @@ type alias Authentication =
 
 
 type alias Model =
-    { authenticationMaybe : Maybe Authentication
+    { authentication : Maybe Authentication
     , signIn : SignIn.Model
     , signOut : SignOut.Model
     , signUp : SignUp.Model
@@ -26,7 +26,7 @@ type Route
 
 init : Model
 init =
-    { authenticationMaybe = Nothing
+    { authentication = Nothing
     , signIn = SignIn.init
     , signOut = SignOut.init
     , signUp = SignUp.init

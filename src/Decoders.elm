@@ -18,12 +18,17 @@ popularTagDecoder : Decoder PopularTag
 popularTagDecoder =
     succeed PopularTag
         |: ("count" := (string `customDecoder` String.toFloat))
-        |: ("tag" := string)
+        |: ("tagId" := string)
 
 
-popularTagsDecoder : Decoder (List PopularTag)
-popularTagsDecoder =
-    ("data" := list popularTagDecoder)
+popularTagsDataDecoder : Decoder PopularTagsData
+popularTagsDataDecoder =
+    ("data"
+        := (succeed PopularTagsData
+                |: ("popularity" := list popularTagDecoder)
+                |: (oneOf [ ("values" := dict valueDecoder), succeed Dict.empty ])
+           )
+    )
 
 
 cardDecoder : Decoder Card
@@ -36,6 +41,7 @@ cardDecoder =
         |: oneOf [ ("rating" := int), succeed 0 ]
         |: oneOf [ ("ratingCount" := int), succeed 0 ]
         |: oneOf [ ("ratingSum" := int), succeed 0 ]
+        |: oneOf [ ("references" := dict (list string)), succeed Dict.empty ]
         |: ("subTypeIds" := list string)
         |: oneOf [ ("tags" := list (dict string)), succeed [] ]
         |: ("type" := string)
@@ -117,32 +123,29 @@ valueValueDecoder schemaId =
     let
         decoder =
             case schemaId of
-                "schema:string" ->
-                    string |> map StringValue
+                "schema:bijective-card-reference" ->
+                    bijectiveCardReferenceDecoder |> map BijectiveCardReferenceValue
 
-                "schema:number" ->
-                    float |> map NumberValue
+                "schema:card-id" ->
+                    string |> map CardIdValue
+
+                "schema:card-ids-array" ->
+                    list string |> map CardIdArrayValue
 
                 "schema:localized-string" ->
                     dict string |> map LocalizedStringValue
 
-                "schema:localized-strings-array" ->
-                    list (dict string) |> map (\xs -> ArrayValue (List.map LocalizedStringValue xs))
+                "schema:number" ->
+                    float |> map NumberValue
 
-                "schema:bijective-card-reference" ->
-                    bijectiveCardReferenceDecoder |> map BijectiveCardReferenceValue
-
-                "schema:type-reference" ->
-                    string |> map ReferenceValue
-
-                "schema:type-references-array" ->
-                    list (string) |> map (\xs -> ArrayValue (List.map ReferenceValue xs))
+                "schema:string" ->
+                    string |> map StringValue
 
                 "schema:uri" ->
                     string |> map StringValue
 
-                "schema:uris-array" ->
-                    list (string) |> map (\xs -> ArrayValue (List.map StringValue xs))
+                "schema:value-ids-array" ->
+                    list string |> map ValueIdArrayValue
 
                 _ ->
                     fail ("TODO Unsupported schemaId: " ++ schemaId)

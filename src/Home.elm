@@ -1,596 +1,130 @@
 module Home exposing (..)
 
-import Authenticator.Model
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import Html.Helpers exposing (aExternal, aForPath)
-import Http
-import I18n exposing (getImageUrl, getManyStrings, getOneString)
-import Set exposing (Set)
+import I18n exposing (getImageUrl, getManyStrings, getName, getOneString)
+import Routes
+import Search.Types exposing (..)
 import String
-import Task
 import Types exposing (..)
-import Requests exposing (newTaskGetExamples, newTaskGetOrganizations, newTaskGetTagsPopularity, newTaskGetTools)
 import Views exposing (viewWebData)
-import WebData exposing (LoadingStatus(..), getData, mapLoadingStatus, WebData(..))
-
-
--- MODEL
-
-
-type alias Model =
-    { examples : WebData DataIdsBody
-    , organizations : WebData DataIdsBody
-    , popularTags : WebData (List PopularTag)
-    , selectedTags : Set String
-    , tools : WebData DataIdsBody
-    }
-
-
-init : Model
-init =
-    { examples = NotAsked
-    , organizations = NotAsked
-    , popularTags = NotAsked
-    , selectedTags = Set.empty
-    , tools = NotAsked
-    }
-
-
-
--- UPDATE
-
-
-type ExternalMsg
-    = Navigate String
-
-
-type InternalMsg
-    = DeselectBubble String
-    | ErrorExamples Http.Error
-    | ErrorOrganizations Http.Error
-    | ErrorPopularTags Http.Error
-    | ErrorTools Http.Error
-    | Load String
-    | LoadedExamples DataIdsBody
-    | LoadedOrganizations DataIdsBody
-    | LoadedPopularTags (List PopularTag)
-    | LoadedTools DataIdsBody
-    | SelectBubble String
-
-
-type Msg
-    = ForParent ExternalMsg
-    | ForSelf InternalMsg
-
-
-type alias MsgTranslation parentMsg =
-    { onInternalMsg : InternalMsg -> parentMsg
-    , onNavigate : String -> parentMsg
-    }
-
-
-type alias MsgTranslator parentMsg =
-    Msg -> parentMsg
-
-
-navigate : String -> Msg
-navigate path =
-    ForParent (Navigate path)
-
-
-translateMsg : MsgTranslation parentMsg -> MsgTranslator parentMsg
-translateMsg { onInternalMsg, onNavigate } msg =
-    case msg of
-        ForParent (Navigate path) ->
-            onNavigate path
-
-        ForSelf internalMsg ->
-            onInternalMsg internalMsg
-
-
-update :
-    InternalMsg
-    -> Model
-    -> Maybe Authenticator.Model.Authentication
-    -> I18n.Language
-    -> String
-    -> (( List PopularTag, List String ) -> Cmd Msg)
-    -> ( Model, Cmd Msg )
-update msg model authenticationMaybe language searchQuery mountd3bubbles =
-    case msg of
-        DeselectBubble deselectedTag ->
-            case getData model.popularTags of
-                Nothing ->
-                    ( model, Cmd.none )
-
-                Just _ ->
-                    let
-                        newSelectedTags =
-                            Set.remove deselectedTag model.selectedTags
-
-                        newModel =
-                            { model
-                                | examples = Data (Loading (getData model.examples))
-                                , organizations = Data (Loading (getData model.organizations))
-                                , selectedTags = newSelectedTags
-                                , tools = Data (Loading (getData model.tools))
-                            }
-
-                        cmds =
-                            List.map (Cmd.map ForSelf)
-                                [ Task.perform
-                                    ErrorExamples
-                                    LoadedExamples
-                                    (newTaskGetExamples authenticationMaybe searchQuery "8" newSelectedTags)
-                                , Task.perform
-                                    ErrorOrganizations
-                                    LoadedOrganizations
-                                    (newTaskGetOrganizations authenticationMaybe searchQuery "8" newSelectedTags)
-                                , Task.perform
-                                    ErrorTools
-                                    LoadedTools
-                                    (newTaskGetTools authenticationMaybe searchQuery "8" newSelectedTags)
-                                , Task.perform
-                                    ErrorPopularTags
-                                    LoadedPopularTags
-                                    (newTaskGetTagsPopularity language newSelectedTags)
-                                ]
-                    in
-                        newModel ! cmds
-
-        ErrorExamples err ->
-            let
-                _ =
-                    Debug.log "Home ErrorExamples" err
-
-                model' =
-                    { model | examples = Failure err }
-            in
-                ( model', Cmd.none )
-
-        ErrorOrganizations err ->
-            let
-                _ =
-                    Debug.log "Home ErrorOrganizations" err
-
-                model' =
-                    { model | organizations = Failure err }
-            in
-                ( model', Cmd.none )
-
-        ErrorPopularTags err ->
-            let
-                _ =
-                    Debug.log "Home ErrorPopularTags" err
-
-                model' =
-                    { model | popularTags = Failure err }
-            in
-                ( model', Cmd.none )
-
-        ErrorTools err ->
-            let
-                _ =
-                    Debug.log "Home ErrorTools" err
-
-                model' =
-                    { model | tools = Failure err }
-            in
-                ( model', Cmd.none )
-
-        Load searchQuery ->
-            let
-                model' =
-                    { model
-                        | examples = Data (Loading (getData model.examples))
-                        , organizations = Data (Loading (getData model.organizations))
-                        , tools = Data (Loading (getData model.tools))
-                    }
-
-                cmds =
-                    List.map (Cmd.map ForSelf)
-                        [ Task.perform
-                            ErrorExamples
-                            LoadedExamples
-                            (newTaskGetExamples authenticationMaybe searchQuery "8" model.selectedTags)
-                        , Task.perform
-                            ErrorOrganizations
-                            LoadedOrganizations
-                            (newTaskGetOrganizations authenticationMaybe searchQuery "8" model.selectedTags)
-                        , Task.perform
-                            ErrorTools
-                            LoadedTools
-                            (newTaskGetTools authenticationMaybe searchQuery "8" model.selectedTags)
-                        , Task.perform
-                            ErrorPopularTags
-                            LoadedPopularTags
-                            (newTaskGetTagsPopularity language model.selectedTags)
-                        ]
-            in
-                model' ! cmds
-
-        LoadedExamples body ->
-            ( { model | examples = Data (Loaded body) }
-            , Cmd.none
-            )
-
-        LoadedOrganizations body ->
-            ( { model | organizations = Data (Loaded body) }
-            , Cmd.none
-            )
-
-        LoadedPopularTags popularTags ->
-            ( { model | popularTags = Data (Loaded popularTags) }
-            , mountd3bubbles ( popularTags, model.selectedTags |> Set.toList )
-            )
-
-        LoadedTools body ->
-            ( { model | tools = Data (Loaded body) }
-            , Cmd.none
-            )
-
-        SelectBubble selectedTag ->
-            case getData model.popularTags of
-                Nothing ->
-                    ( model, Cmd.none )
-
-                Just _ ->
-                    let
-                        newSelectedTags =
-                            Set.insert selectedTag model.selectedTags
-
-                        newModel =
-                            { model
-                                | examples = Data (Loading (getData model.examples))
-                                , organizations = Data (Loading (getData model.organizations))
-                                , selectedTags = newSelectedTags
-                                , tools = Data (Loading (getData model.tools))
-                            }
-
-                        cmds =
-                            List.map (Cmd.map ForSelf)
-                                [ Task.perform
-                                    ErrorExamples
-                                    LoadedExamples
-                                    (newTaskGetExamples authenticationMaybe searchQuery "8" newSelectedTags)
-                                , Task.perform
-                                    ErrorOrganizations
-                                    LoadedOrganizations
-                                    (newTaskGetOrganizations authenticationMaybe searchQuery "8" newSelectedTags)
-                                , Task.perform
-                                    ErrorTools
-                                    LoadedTools
-                                    (newTaskGetTools authenticationMaybe searchQuery "8" newSelectedTags)
-                                , Task.perform
-                                    ErrorPopularTags
-                                    LoadedPopularTags
-                                    (newTaskGetTagsPopularity language newSelectedTags)
-                                ]
-                    in
-                        newModel ! cmds
-
-
-
--- VIEW
+import WebData exposing (..)
 
 
 view : Model -> String -> I18n.Language -> Html Msg
 view model searchQuery language =
-    let
-        viewWebDataFor title extraClass webData viewFunction =
-            div [ class ("row section " ++ extraClass) ]
-                [ div [ class "container" ]
-                    ([ h3 [ class "zone-label" ]
-                        [ text title ]
-                     ]
-                        ++ (viewWebData
-                                language
-                                (\loadingStatus ->
-                                    let
-                                        getOrderedCards body =
-                                            List.map
-                                                (\id ->
-                                                    case Dict.get id body.data.cards of
-                                                        Nothing ->
-                                                            Debug.crash "Should never happen"
-
-                                                        Just card ->
-                                                            card
-                                                )
-                                                body.data.ids
-                                    in
-                                        case loadingStatus of
-                                            Loading maybeStatement ->
-                                                case maybeStatement of
-                                                    Nothing ->
-                                                        []
-
-                                                    Just body ->
-                                                        [ viewFunction
-                                                            searchQuery
-                                                            language
-                                                            body.count
-                                                            body.data.values
-                                                            (getOrderedCards body)
-                                                        ]
-
-                                            Loaded body ->
-                                                [ viewFunction
-                                                    searchQuery
-                                                    language
-                                                    body.count
-                                                    body.data.values
-                                                    (getOrderedCards body)
-                                                ]
-                                )
-                                webData
-                           )
-                    )
-                ]
-    in
-        div []
-            ([ viewBanner
-             , viewMetrics language model
-             ]
-                ++ (if String.isEmpty searchQuery then
-                        []
-                    else
-                        [ div [ class "row section" ]
-                            [ div [ class "container" ]
-                                [ h1 [] [ text (I18n.translate language (I18n.SearchResults searchQuery)) ] ]
-                            ]
-                        ]
-                   )
-                ++ [ viewWebDataFor
-                        (I18n.translate language (I18n.Example I18n.Plural))
-                        ""
-                        model.examples
-                        viewExamples
-                   , viewWebDataFor
-                        (I18n.translate language (I18n.Tool I18n.Plural))
-                        "grey"
-                        model.tools
-                        viewTools
-                   , viewCollections
-                     --    , viewWebDataFor
-                     --         (I18n.translate language (I18n.Organization I18n.Plural))
-                     --         model.organizations
-                     --         viewOrganizations
-                   ]
-            )
+    div []
+        ([ viewBanner
+         , viewMetrics language model
+         ]
+            ++ [ div [ class "row section" ]
+                    [ div [ class "container" ]
+                        ([ h3 [ class "zone-label" ]
+                            [ text (I18n.translate language (I18n.UseCase I18n.Plural)) ]
+                         ]
+                            ++ [ viewWebData language
+                                    (viewThumbnails "example grey" searchQuery language)
+                                    model.useCases
+                               ]
+                        )
+                    ]
+               , div [ class "row section grey" ]
+                    [ div [ class "container" ]
+                        ([ h3 [ class "zone-label" ]
+                            [ text (I18n.translate language (I18n.Tool I18n.Plural)) ]
+                         ]
+                            ++ [ viewWebData language
+                                    (viewThumbnails "tool" searchQuery language)
+                                    model.tools
+                               ]
+                        )
+                    ]
+               , viewCollections
+               ]
+        )
 
 
 viewBanner : Html Msg
 viewBanner =
-    let
-        viewSlide1 =
-            div [ class "col-md-12 text-center" ]
-                [ text "Showing results suited for"
-                , div [ class "dropdown dropdown-filter dropup" ]
-                    [ a
-                        [ class "btn btn-default dropdown-toggle"
-                        , attribute "data-slide-to" "2"
-                        , href "#carousel-example-generic"
-                        , attribute "role" "button"
-                        ]
-                        [ text "all organizations"
-                        , span [ class "caret" ]
-                            []
-                        ]
-                    , ul [ attribute "aria-labelledby" "dropdownMenu1", class "dropdown-menu" ]
-                        [ li []
-                            [ a [ href "#" ]
-                                [ text "all organizations" ]
-                            ]
-                        , li []
-                            [ a [ href "#" ]
-                                [ text "Local government" ]
-                            ]
-                        , li []
-                            [ a [ href "#" ]
-                                [ text "Regional government" ]
-                            ]
-                        ]
-                    ]
-                , text "and available in"
-                , div [ class "dropdown dropdown-filter dropup" ]
-                    [ a
-                        [ class "btn btn-default dropdown-toggle"
-                        , attribute "data-slide-to" "3"
-                        , href "#carousel-example-generic"
-                        , attribute "role" "button"
-                        ]
-                        [ text "English"
-                        , span [ class "caret" ]
-                            []
-                        ]
-                    , ul [ attribute "aria-labelledby" "dropdownMenu1", class "dropdown-menu" ]
-                        [ li []
-                            [ a [ href "#" ]
-                                [ text "Français" ]
-                            ]
-                        , li []
-                            [ a [ href "#" ]
-                                [ text "Espanol" ]
-                            ]
-                        , li []
-                            [ a [ href "#" ]
-                                [ text "Deutsch" ]
-                            ]
-                        , li []
-                            [ a [ href "#" ]
-                                [ text "Italiano" ]
-                            ]
-                        ]
-                    ]
-                ]
-    in
-        div [ class "banner" ]
-            [ div [ class "row " ]
-                [ div [ class "carousel slide", attribute "data-ride" "", id "carousel-example-generic" ]
-                    [ div [ class "carousel-inner ", attribute "role" "listbox" ]
-                        [ div [ class "item active text-center" ]
-                            [ div [ class "container-fluid" ]
-                                [ div [ class "row" ]
-                                    [ div [ class "col-md-12 text-center" ]
-                                        [ div [ id "tag" ]
-                                            [ div [ class "plot" ] []
-                                            ]
-                                        ]
-                                    ]
-                                , div [ class "row filters" ]
-                                    [ viewSlide1
-                                    ]
+    -- let
+    --     viewSlide1 =
+    --         div [ class "col-md-12 text-center" ]
+    --             [ text "Showing results suited for"
+    --             , div [ class "dropdown dropdown-filter dropup" ]
+    --                 [ a
+    --                     [ class "btn btn-default dropdown-toggle"
+    --                     , attribute "data-slide-to" "2"
+    --                     , href "#carousel-example-generic"
+    --                     , attribute "role" "button"
+    --                     ]
+    --                     [ text "all organizations"
+    --                     , span [ class "caret" ]
+    --                         []
+    --                     ]
+    --                 , ul [ attribute "aria-labelledby" "dropdownMenu1", class "dropdown-menu" ]
+    --                     [ li []
+    --                         [ a [ href "#" ]
+    --                             [ text "all organizations" ]
+    --                         ]
+    --                     , li []
+    --                         [ a [ href "#" ]
+    --                             [ text "Local government" ]
+    --                         ]
+    --                     , li []
+    --                         [ a [ href "#" ]
+    --                             [ text "Regional government" ]
+    --                         ]
+    --                     ]
+    --                 ]
+    --             , text "and available in"
+    --             , div [ class "dropdown dropdown-filter dropup" ]
+    --                 [ a
+    --                     [ class "btn btn-default dropdown-toggle"
+    --                     , attribute "data-slide-to" "3"
+    --                     , href "#carousel-example-generic"
+    --                     , attribute "role" "button"
+    --                     ]
+    --                     [ text "English"
+    --                     , span [ class "caret" ]
+    --                         []
+    --                     ]
+    --                 , ul [ attribute "aria-labelledby" "dropdownMenu1", class "dropdown-menu" ]
+    --                     [ li []
+    --                         [ a [ href "#" ]
+    --                             [ text "Français" ]
+    --                         ]
+    --                     , li []
+    --                         [ a [ href "#" ]
+    --                             [ text "Espanol" ]
+    --                         ]
+    --                     , li []
+    --                         [ a [ href "#" ]
+    --                             [ text "Deutsch" ]
+    --                         ]
+    --                     , li []
+    --                         [ a [ href "#" ]
+    --                             [ text "Italiano" ]
+    --                         ]
+    --                     ]
+    --                 ]
+    --             ]
+    -- in
+    div [ class "banner" ]
+        [ div [ class "row " ]
+            [ div [ class "carousel slide", attribute "data-ride" "", id "carousel-example-generic" ]
+                [ div [ class "carousel-inner ", attribute "role" "listbox" ]
+                    [ div [ class "item active text-center" ]
+                        [ div [ class "container-fluid" ]
+                            [ div [ class "row" ]
+                                [ div [ class "col-md-12 text-center" ]
+                                    [ div [ class "bubbles" ] [] ]
                                 ]
-                            ]
-                        , div [ class "item text-center" ]
-                            [ div [ class "container" ]
-                                [ div [ class "row form-title" ]
-                                    [ div [ class "col-md-12 text-center " ]
-                                        [ h2 []
-                                            [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-education" ]
-                                                []
-                                            , text "Which kind of organization are your intrested in ?"
-                                            ]
-                                        ]
-                                    ]
-                                , div [ class "row form-content" ]
-                                    [ div [ class "col-md-3 text-center" ]
-                                        [ div [ class "radio" ]
-                                            [ label []
-                                                [ input
-                                                    [ attribute "checked" ""
-                                                    , id "optionsRadios1"
-                                                    , name "optionsRadios"
-                                                    , type' "radio"
-                                                    , value "option1"
-                                                    ]
-                                                    []
-                                                , text "All organizations"
-                                                ]
-                                            ]
-                                        ]
-                                    , div [ class "col-md-3 text-center" ]
-                                        [ div [ class "radio" ]
-                                            [ label []
-                                                [ input
-                                                    [ attribute "checked" ""
-                                                    , id "optionsRadios1"
-                                                    , name "optionsRadios"
-                                                    , type' "radio"
-                                                    , value "option1"
-                                                    ]
-                                                    []
-                                                , text "Local government"
-                                                ]
-                                            ]
-                                        ]
-                                    , div [ class "col-md-3 text-center" ]
-                                        [ div [ class "radio" ]
-                                            [ label []
-                                                [ input
-                                                    [ attribute "checked" ""
-                                                    , id "optionsRadios1"
-                                                    , name "optionsRadios"
-                                                    , type' "radio"
-                                                    , value "option1"
-                                                    ]
-                                                    []
-                                                , text "Regional government"
-                                                ]
-                                            ]
-                                        ]
-                                    , div [ class "col-md-3 text-center" ]
-                                        [ div [ class "radio" ]
-                                            [ label []
-                                                [ input
-                                                    [ attribute "checked" ""
-                                                    , id "optionsRadios1"
-                                                    , name "optionsRadios"
-                                                    , type' "radio"
-                                                    , value "option1"
-                                                    ]
-                                                    []
-                                                , text "National government"
-                                                ]
-                                            ]
-                                        ]
-                                    , div [ class "col-md-3 text-center" ]
-                                        [ div [ class "radio" ]
-                                            [ label []
-                                                [ input
-                                                    [ attribute "checked" ""
-                                                    , id "optionsRadios1"
-                                                    , name "optionsRadios"
-                                                    , type' "radio"
-                                                    , value "option1"
-                                                    ]
-                                                    []
-                                                , text "Political organization"
-                                                ]
-                                            ]
-                                        ]
-                                    , div [ class "col-md-3 text-center" ]
-                                        [ div [ class "radio" ]
-                                            [ label []
-                                                [ input
-                                                    [ attribute "checked" ""
-                                                    , id "optionsRadios1"
-                                                    , name "optionsRadios"
-                                                    , type' "radio"
-                                                    , value "option1"
-                                                    ]
-                                                    []
-                                                , text "Political movement"
-                                                ]
-                                            ]
-                                        ]
-                                    , div [ class "col-md-3 text-center" ]
-                                        [ div [ class "radio" ]
-                                            [ label []
-                                                [ input
-                                                    [ attribute "checked" ""
-                                                    , id "optionsRadios1"
-                                                    , name "optionsRadios"
-                                                    , type' "radio"
-                                                    , value "option1"
-                                                    ]
-                                                    []
-                                                , text "Non-profit organization"
-                                                ]
-                                            ]
-                                        ]
-                                    , div [ class "col-md-3 text-center" ]
-                                        [ div [ class "radio" ]
-                                            [ label []
-                                                [ input
-                                                    [ attribute "checked" ""
-                                                    , id "optionsRadios1"
-                                                    , name "optionsRadios"
-                                                    , type' "radio"
-                                                    , value "option1"
-                                                    ]
-                                                    []
-                                                , text "For-profit organization"
-                                                ]
-                                            ]
-                                        ]
-                                    ]
-                                , div [ class "row" ]
-                                    [ div [ class "col-md-12 text-center" ]
-                                        [ a
-                                            [ class "btn btn-primary btn-lg"
-                                            , attribute "data-slide-to" "1"
-                                            , href "#carousel-example-generic"
-                                            , attribute "role" "button"
-                                            ]
-                                            [ text "Continue" ]
-                                        ]
-                                    ]
-                                ]
+                              -- , div [ class "row filters" ]
+                              --     [ viewSlide1
+                              --     ]
                             ]
                         ]
                     , div [ class "item text-center" ]
@@ -598,25 +132,130 @@ viewBanner =
                             [ div [ class "row form-title" ]
                                 [ div [ class "col-md-12 text-center " ]
                                     [ h2 []
-                                        [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-globe" ]
+                                        [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-education" ]
                                             []
-                                        , text "Which language do you use ?"
+                                        , text "Which kind of organization are your intrested in ?"
                                         ]
                                     ]
                                 ]
                             , div [ class "row form-content" ]
                                 [ div [ class "col-md-3 text-center" ]
-                                    [ div [ class "checkbox" ]
+                                    [ div [ class "radio" ]
                                         [ label []
                                             [ input
                                                 [ attribute "checked" ""
                                                 , id "optionsRadios1"
                                                 , name "optionsRadios"
-                                                , type' "checkbox"
+                                                , type' "radio"
                                                 , value "option1"
                                                 ]
                                                 []
-                                            , text "English                    "
+                                            , text "All organizations"
+                                            ]
+                                        ]
+                                    ]
+                                , div [ class "col-md-3 text-center" ]
+                                    [ div [ class "radio" ]
+                                        [ label []
+                                            [ input
+                                                [ attribute "checked" ""
+                                                , id "optionsRadios1"
+                                                , name "optionsRadios"
+                                                , type' "radio"
+                                                , value "option1"
+                                                ]
+                                                []
+                                            , text "Local government"
+                                            ]
+                                        ]
+                                    ]
+                                , div [ class "col-md-3 text-center" ]
+                                    [ div [ class "radio" ]
+                                        [ label []
+                                            [ input
+                                                [ attribute "checked" ""
+                                                , id "optionsRadios1"
+                                                , name "optionsRadios"
+                                                , type' "radio"
+                                                , value "option1"
+                                                ]
+                                                []
+                                            , text "Regional government"
+                                            ]
+                                        ]
+                                    ]
+                                , div [ class "col-md-3 text-center" ]
+                                    [ div [ class "radio" ]
+                                        [ label []
+                                            [ input
+                                                [ attribute "checked" ""
+                                                , id "optionsRadios1"
+                                                , name "optionsRadios"
+                                                , type' "radio"
+                                                , value "option1"
+                                                ]
+                                                []
+                                            , text "National government"
+                                            ]
+                                        ]
+                                    ]
+                                , div [ class "col-md-3 text-center" ]
+                                    [ div [ class "radio" ]
+                                        [ label []
+                                            [ input
+                                                [ attribute "checked" ""
+                                                , id "optionsRadios1"
+                                                , name "optionsRadios"
+                                                , type' "radio"
+                                                , value "option1"
+                                                ]
+                                                []
+                                            , text "Political organization"
+                                            ]
+                                        ]
+                                    ]
+                                , div [ class "col-md-3 text-center" ]
+                                    [ div [ class "radio" ]
+                                        [ label []
+                                            [ input
+                                                [ attribute "checked" ""
+                                                , id "optionsRadios1"
+                                                , name "optionsRadios"
+                                                , type' "radio"
+                                                , value "option1"
+                                                ]
+                                                []
+                                            , text "Political movement"
+                                            ]
+                                        ]
+                                    ]
+                                , div [ class "col-md-3 text-center" ]
+                                    [ div [ class "radio" ]
+                                        [ label []
+                                            [ input
+                                                [ attribute "checked" ""
+                                                , id "optionsRadios1"
+                                                , name "optionsRadios"
+                                                , type' "radio"
+                                                , value "option1"
+                                                ]
+                                                []
+                                            , text "Non-profit organization"
+                                            ]
+                                        ]
+                                    ]
+                                , div [ class "col-md-3 text-center" ]
+                                    [ div [ class "radio" ]
+                                        [ label []
+                                            [ input
+                                                [ attribute "checked" ""
+                                                , id "optionsRadios1"
+                                                , name "optionsRadios"
+                                                , type' "radio"
+                                                , value "option1"
+                                                ]
+                                                []
+                                            , text "For-profit organization"
                                             ]
                                         ]
                                     ]
@@ -635,8 +274,50 @@ viewBanner =
                             ]
                         ]
                     ]
+                , div [ class "item text-center" ]
+                    [ div [ class "container" ]
+                        [ div [ class "row form-title" ]
+                            [ div [ class "col-md-12 text-center " ]
+                                [ h2 []
+                                    [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-globe" ]
+                                        []
+                                    , text "Which language do you use ?"
+                                    ]
+                                ]
+                            ]
+                        , div [ class "row form-content" ]
+                            [ div [ class "col-md-3 text-center" ]
+                                [ div [ class "checkbox" ]
+                                    [ label []
+                                        [ input
+                                            [ attribute "checked" ""
+                                            , id "optionsRadios1"
+                                            , name "optionsRadios"
+                                            , type' "checkbox"
+                                            , value "option1"
+                                            ]
+                                            []
+                                        , text "English                    "
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        , div [ class "row" ]
+                            [ div [ class "col-md-12 text-center" ]
+                                [ a
+                                    [ class "btn btn-primary btn-lg"
+                                    , attribute "data-slide-to" "1"
+                                    , href "#carousel-example-generic"
+                                    , attribute "role" "button"
+                                    ]
+                                    [ text "Continue" ]
+                                ]
+                            ]
+                        ]
+                    ]
                 ]
             ]
+        ]
 
 
 viewCollections : Html Msg
@@ -717,57 +398,22 @@ viewCollections =
         ]
 
 
-viewExampleThumbnail : Card -> Dict String Value -> I18n.Language -> Html Msg
-viewExampleThumbnail card values language =
-    let
-        urlPath =
-            "/examples/" ++ card.id
-    in
-        viewThumbnail urlPath card values "example grey" Types.Example language
-
-
-viewExamples : String -> I18n.Language -> Int -> Dict String Value -> List Card -> Html Msg
-viewExamples searchQuery language count values examples =
-    div [ class "row" ]
-        ((examples
-            |> List.take 8
-            |> List.map (\card -> viewExampleThumbnail card values language)
-         )
-            ++ [ div [ class "col-sm-12 text-center" ]
-                    [ aForPath navigate
-                        ("/examples?q=" ++ searchQuery)
-                        [ class "show-more" ]
-                        [ text (I18n.translate language (I18n.ShowAll count))
-                        , span [ class "glyphicon glyphicon-menu-down" ] []
-                        ]
-                    ]
-               ]
-        )
-
-
 viewMetric : WebData DataIdsBody -> Html msg
 viewMetric webData =
-    text
-        (case webData of
-            NotAsked ->
-                "-"
+    case webData of
+        NotAsked ->
+            text ""
 
-            Failure _ ->
-                "-"
+        Failure _ ->
+            text "-"
 
-            Data loadingStatus ->
-                case loadingStatus of
-                    Loading maybeStatements ->
-                        case maybeStatements of
-                            Nothing ->
-                                ""
+        Data loadingStatus ->
+            case loadingStatus of
+                Loading _ ->
+                    img [ alt "loading", src "/img/mini-loader.gif" ] []
 
-                            Just body ->
-                                toString body.count
-
-                    Loaded body ->
-                        toString body.count
-        )
+                Loaded body ->
+                    text (toString body.count)
 
 
 viewMetrics : I18n.Language -> Model -> Html msg
@@ -776,9 +422,9 @@ viewMetrics language model =
         [ div [ class "container" ]
             [ div [ class "col-xs-4 text-center" ]
                 [ span [ class "metric-label" ]
-                    [ text (I18n.translate language (I18n.Example I18n.Plural)) ]
+                    [ text (I18n.translate language (I18n.UseCase I18n.Plural)) ]
                 , h3 []
-                    [ viewMetric model.examples
+                    [ viewMetric model.useCases
                     ]
                 ]
             , div [ class "col-xs-4 text-center" ]
@@ -799,43 +445,23 @@ viewMetrics language model =
         ]
 
 
-viewOrganizations : String -> I18n.Language -> Int -> Dict String Value -> List Card -> Html Msg
-viewOrganizations searchQuery language count values organizations =
-    div [ class "row" ]
-        ((organizations
-            |> List.take 8
-            |> List.map
-                (\card -> viewOrganizationThumbnail card values language)
-         )
-            ++ [ div [ class "col-sm-12 text-center" ]
-                    [ aForPath navigate
-                        ("/organizations?q=" ++ searchQuery)
-                        [ class "show-more" ]
-                        [ text (I18n.translate language (I18n.ShowAll count))
-                        , span [ class "glyphicon glyphicon-menu-down" ] []
-                        ]
-                    ]
-               ]
-        )
-
-
-viewOrganizationThumbnail : Card -> Dict String Value -> I18n.Language -> Html Msg
-viewOrganizationThumbnail card values language =
-    let
-        urlPath =
-            "/organizations/" ++ card.id
-    in
-        viewThumbnail urlPath card values "orga grey" Types.Organization language
-
-
-viewThumbnail : String -> Card -> Dict String Value -> String -> CardType -> I18n.Language -> Html Msg
-viewThumbnail urlPath card values extraClass cardType language =
+viewThumbnail : String -> I18n.Language -> Dict String Value -> Card -> Html Msg
+viewThumbnail thumbnailExtraClasses language values card =
     let
         name =
-            getOneString language nameKeys card values |> Maybe.withDefault ""
+            getName language card values
+
+        urlPath =
+            Routes.urlPathForCard card
+
+        cardType =
+            getCardType card
     in
         div [ class "col-xs-6 col-md-3" ]
-            [ div [ class ("thumbnail " ++ extraClass), onClick (navigate urlPath) ]
+            [ div
+                [ class ("thumbnail " ++ thumbnailExtraClasses)
+                , onClick (navigate urlPath)
+                ]
                 [ div [ class "visual" ]
                     [ case getImageUrl language "1000" card values of
                         Just url ->
@@ -845,14 +471,14 @@ viewThumbnail urlPath card values extraClass cardType language =
                             h1 [ class "dynamic" ]
                                 [ text
                                     (case cardType of
-                                        Example ->
-                                            name
+                                        OrganizationCard ->
+                                            String.left 1 name
 
-                                        Organization ->
-                                            name
-
-                                        Tool ->
+                                        ToolCard ->
                                             String.left 2 name
+
+                                        UseCaseCard ->
+                                            name
                                     )
                                 ]
                     ]
@@ -890,29 +516,64 @@ viewThumbnail urlPath card values extraClass cardType language =
             ]
 
 
-viewTools : String -> I18n.Language -> Int -> Dict String Value -> List Card -> Html Msg
-viewTools searchQuery language count values tools =
+viewThumbnailLoading : String -> Html Msg
+viewThumbnailLoading thumbnailExtraClasses =
+    div [ class "col-xs-6 col-md-3" ]
+        [ div [ class ("thumbnail " ++ thumbnailExtraClasses) ]
+            ([ div [ class "visual" ]
+                [ h1 [ class "dynamic" ] [ text "..." ] ]
+             , div [ class "caption" ]
+                [ h4 [] [ text "..." ]
+                , p [] [ text "..." ]
+                ]
+             ]
+                ++ [ div [ class "tags" ]
+                        (List.repeat 3
+                            (span
+                                [ class "label label-default label-tool" ]
+                                [ text "..." ]
+                            )
+                        )
+                   ]
+            )
+        ]
+
+
+viewThumbnails : String -> String -> I18n.Language -> LoadingStatus DataIdsBody -> Html Msg
+viewThumbnails thumbnailExtraClasses searchQuery language loadingStatus =
     div [ class "row" ]
-        ((tools
-            |> List.take 8
-            |> List.map (\card -> viewToolThumbnail card values language)
-         )
-            ++ [ div [ class "col-sm-12 text-center" ]
-                    [ aForPath navigate
-                        ("/tools?q=" ++ searchQuery)
-                        [ class "show-more" ]
-                        [ text (I18n.translate language (I18n.ShowAll count))
-                        , span [ class "glyphicon glyphicon-menu-down" ] []
-                        ]
-                    ]
-               ]
+        (case loadingStatus of
+            Loading _ ->
+                (List.repeat 8 (viewThumbnailLoading thumbnailExtraClasses))
+
+            Loaded body ->
+                let
+                    firstCard =
+                        body.data.cards |> Dict.values |> List.head
+                in
+                    (List.map
+                        (viewThumbnail thumbnailExtraClasses language body.data.values)
+                        (getOrderedCards body.data)
+                    )
+                        ++ (case firstCard of
+                                Nothing ->
+                                    []
+
+                                Just firstCard ->
+                                    [ div [ class "col-sm-12 text-center" ]
+                                        [ aForPath navigate
+                                            ((Routes.urlBasePathForCard firstCard)
+                                                ++ (if String.isEmpty searchQuery then
+                                                        ""
+                                                    else
+                                                        "?q=" ++ searchQuery
+                                                   )
+                                            )
+                                            [ class "show-more" ]
+                                            [ text (I18n.translate language (I18n.ShowAll body.count))
+                                            , span [ class "glyphicon glyphicon-menu-down" ] []
+                                            ]
+                                        ]
+                                    ]
+                           )
         )
-
-
-viewToolThumbnail : Card -> Dict String Value -> I18n.Language -> Html Msg
-viewToolThumbnail card values language =
-    let
-        urlPath =
-            "/tools/" ++ card.id
-    in
-        viewThumbnail urlPath card values "tool" Types.Tool language

@@ -8,17 +8,16 @@ import Http
 import I18n
 import Json.Decode as Decode
 import Json.Encode as Encode
-import Set exposing (Set)
 import String
 import Types exposing (..)
 import Task exposing (Task)
 
 
-newTaskGetCardOfType : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
-newTaskGetCardOfType authenticationMaybe cardId =
+getCard : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
+getCard authentication cardId =
     let
         authenticationHeaders =
-            case authenticationMaybe of
+            case authentication of
                 Just authentication ->
                     [ ( "Retruco-API-Key", authentication.apiKey ) ]
 
@@ -28,24 +27,24 @@ newTaskGetCardOfType authenticationMaybe cardId =
         Http.fromJson dataIdBodyDecoder
             (Http.send Http.defaultSettings
                 { verb = "GET"
-                , url = apiUrl ++ "objects/" ++ cardId ++ "?show=values&depth=1"
+                , url = apiUrl ++ "objects/" ++ cardId ++ "?show=references&show=values&depth=2"
                 , headers = ( "Accept", "application/json" ) :: authenticationHeaders
                 , body = Http.empty
                 }
             )
 
 
-newTaskGetCardsOfType :
-    List String
-    -> Maybe Authenticator.Model.Authentication
+getCards :
+    Maybe Authenticator.Model.Authentication
     -> String
-    -> String
-    -> Set String
+    -> Maybe Int
+    -> List String
+    -> List String
     -> Task Http.Error DataIdsBody
-newTaskGetCardsOfType cardTypes authenticationMaybe searchQuery limit tags =
+getCards authentication searchQuery limit tagIds cardTypes =
     let
         authenticationHeaders =
-            case authenticationMaybe of
+            case authentication of
                 Just authentication ->
                     [ ( "Retruco-API-Key", authentication.apiKey ) ]
 
@@ -66,15 +65,11 @@ newTaskGetCardsOfType cardTypes authenticationMaybe searchQuery limit tags =
                                         else
                                             Just ("term=" ++ searchQuery)
                                        )
-                                     , (if String.isEmpty limit then
-                                            Nothing
-                                        else
-                                            Just ("limit=" ++ limit)
-                                       )
+                                     , limit |> Maybe.map (\limit -> "limit=" ++ (toString limit))
                                      ]
                                         |> List.filterMap identity
                                     )
-                                        ++ (Set.map (\tag -> "tag=" ++ tag) tags |> Set.toList)
+                                        ++ (List.map (\tagId -> "tag=" ++ tagId) tagIds)
                                    )
                                 |> String.join "&"
                            )
@@ -84,53 +79,15 @@ newTaskGetCardsOfType cardTypes authenticationMaybe searchQuery limit tags =
             )
 
 
-newTaskGetExample :
-    Maybe Authenticator.Model.Authentication
-    -> String
-    -> Task Http.Error DataIdBody
-newTaskGetExample =
-    newTaskGetCardOfType
-
-
-newTaskGetExamples :
-    Maybe Authenticator.Model.Authentication
-    -> String
-    -> String
-    -> Set String
-    -> Task Http.Error DataIdsBody
-newTaskGetExamples =
-    newTaskGetCardsOfType cardTypesForExample
-
-
-newTaskGetOrganization :
-    Maybe Authenticator.Model.Authentication
-    -> String
-    -> Task Http.Error DataIdBody
-newTaskGetOrganization =
-    newTaskGetCardOfType
-
-
-newTaskGetOrganizations :
-    Maybe Authenticator.Model.Authentication
-    -> String
-    -> String
-    -> Set String
-    -> Task Http.Error DataIdsBody
-newTaskGetOrganizations =
-    newTaskGetCardsOfType cardTypesForOrganization
-
-
-newTaskGetTagsPopularity : I18n.Language -> Set String -> Task Http.Error (List PopularTag)
-newTaskGetTagsPopularity language tags =
+getTagsPopularity : List String -> Task Http.Error PopularTagsData
+getTagsPopularity tagIds =
     let
         url =
             apiUrl
-                ++ "cards/tags-popularity?type=type:use-case&language="
-                ++ I18n.iso639_1FromLanguage language
-                ++ "&"
-                ++ ((Set.map (\tag -> "tag=" ++ tag) tags) |> Set.toList |> String.join "&")
+                ++ "cards/tags-popularity?type=use-case&"
+                ++ ((List.map (\tagId -> "tag=" ++ tagId) tagIds) |> String.join "&")
     in
-        Http.fromJson popularTagsDecoder
+        Http.fromJson popularTagsDataDecoder
             (Http.send Http.defaultSettings
                 { verb = "GET"
                 , url = url
@@ -140,33 +97,15 @@ newTaskGetTagsPopularity language tags =
             )
 
 
-newTaskGetTool :
-    Maybe Authenticator.Model.Authentication
-    -> String
-    -> Task Http.Error DataIdBody
-newTaskGetTool =
-    newTaskGetCardOfType
-
-
-newTaskGetTools :
-    Maybe Authenticator.Model.Authentication
-    -> String
-    -> String
-    -> Set String
-    -> Task Http.Error DataIdsBody
-newTaskGetTools =
-    newTaskGetCardsOfType cardTypesForTool
-
-
-newTaskPostCardsEasy :
+postCardsEasy :
     Maybe Authenticator.Model.Authentication
     -> Dict String String
     -> I18n.Language
     -> Task Http.Error DataIdBody
-newTaskPostCardsEasy authenticationMaybe fields language =
+postCardsEasy authentication fields language =
     let
         authenticationHeaders =
-            case authenticationMaybe of
+            case authentication of
                 Just authentication ->
                     [ ( "Retruco-API-Key", authentication.apiKey ) ]
 
@@ -212,11 +151,11 @@ newTaskPostCardsEasy authenticationMaybe fields language =
             )
 
 
-newTaskPostUploadImage : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error String
-newTaskPostUploadImage authenticationMaybe contents =
+postUploadImage : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error String
+postUploadImage authentication contents =
     let
         authenticationHeaders =
-            case authenticationMaybe of
+            case authentication of
                 Just authentication ->
                     [ ( "Retruco-API-Key", authentication.apiKey ) ]
 

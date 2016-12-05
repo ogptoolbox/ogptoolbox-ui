@@ -19,6 +19,7 @@ type alias Card =
     , rating : Int
     , ratingCount : Int
     , ratingSum : Int
+    , references : Dict String (List String)
     , subTypeIds : List String
     , tags : List (Dict String String)
     , type_ : String
@@ -26,9 +27,9 @@ type alias Card =
 
 
 type CardType
-    = Example
-    | Organization
-    | Tool
+    = UseCaseCard
+    | OrganizationCard
+    | ToolCard
 
 
 type alias DataId =
@@ -67,7 +68,13 @@ type alias DocumentMetatags =
 
 type alias PopularTag =
     { count : Float
-    , tag : String
+    , tagId : String
+    }
+
+
+type alias PopularTagsData =
+    { popularity : List PopularTag
+    , values : Dict String Value
     }
 
 
@@ -98,10 +105,55 @@ type ValueType
     = StringValue String
     | LocalizedStringValue (Dict String String)
     | NumberValue Float
-    | ArrayValue (List ValueType)
     | BijectiveCardReferenceValue BijectiveCardReference
-    | ReferenceValue String
+    | CardIdValue String
+    | CardIdArrayValue (List String)
+    | ValueIdValue String
+    | ValueIdArrayValue (List String)
     | WrongValue String String
+
+
+getCard : Dict String Card -> String -> Card
+getCard cards id =
+    -- TODO flip args like getValue
+    case Dict.get id cards of
+        Nothing ->
+            Debug.crash "getCard: Should never happen"
+
+        Just card ->
+            card
+
+
+getCardType : Card -> CardType
+getCardType card =
+    case List.head card.subTypeIds of
+        Nothing ->
+            Debug.crash "getCardType: unhandled case"
+
+        Just subTypeId ->
+            if List.member subTypeId cardTypesForUseCase then
+                UseCaseCard
+            else if List.member subTypeId cardTypesForOrganization then
+                OrganizationCard
+            else if List.member subTypeId cardTypesForTool then
+                ToolCard
+            else
+                Debug.crash "getCardType: unhandled case"
+
+
+getOrderedCards : DataIds -> List Card
+getOrderedCards { cards, ids } =
+    List.map (getCard cards) ids
+
+
+getValue : String -> Dict String Value -> Value
+getValue id values =
+    case Dict.get id values of
+        Nothing ->
+            Debug.crash "getValue: Should never happen"
+
+        Just value ->
+            value
 
 
 imageUrl : String -> String
@@ -172,16 +224,16 @@ usedByKeys =
 -- CARD TYPES
 
 
-cardTypesForExample : List String
-cardTypesForExample =
-    [ "type:use-case" ]
-
-
 cardTypesForOrganization : List String
 cardTypesForOrganization =
-    [ "type:organization" ]
+    [ "organization" ]
 
 
 cardTypesForTool : List String
 cardTypesForTool =
-    [ "type:software", "type:platform" ]
+    [ "software", "platform" ]
+
+
+cardTypesForUseCase : List String
+cardTypesForUseCase =
+    [ "use-case" ]

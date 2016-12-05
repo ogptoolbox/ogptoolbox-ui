@@ -116,6 +116,34 @@ a {
             border-color: @light-blue;
         }
     }
+    &.btn-action4     {
+        background: none;
+        border: 1px solid rgba(0,0,0, 0.4);
+        padding: 2px 10px;
+        color: rgba(0,0,0, 0.5);
+        font-size: 12px;
+        margin-top: -2px;
+
+        &:hover     {
+            color: white;
+            background: rgba(0,0,0, 0.4);
+            border-color: rgba(0,0,0, 0);
+        }
+    }
+    &.btn-action-negative     {
+        background: none;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        padding: 2px 10px;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 12px;
+        margin-top: -2px;
+
+        &:hover     {
+            color: grey;
+            background: rgba(255, 255, 255, 0.8);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+    }
 
 }
 
@@ -182,6 +210,39 @@ ul.nav.nav-pills {
     }
 
 }
+
+.alert {
+        border-radius: 0;
+        z-index: 100000;
+        background-image: none;
+        border: none;
+        color: rgba(0, 0, 0, 0.6);
+        padding: 10px 15px;
+        height: 46px;
+        line-height: 26px;
+        box-shadow: none;
+        text-shadow: none;
+
+        &.alert-success {
+           background-image: none;
+           background-color: #c7f7c4;
+        }
+        &.alert-danger {
+           background-image: none;
+           background-color: #fbcdcd;
+        }
+        &.alert-info {
+           background-image: none;
+           background-color: #6c747b;
+           color: white;
+        }
+
+}
+
+.banner-button {
+    margin-top: 15px;
+}
+
 
 // NAVIGATION
 nav.navbar.navbar-default {
@@ -1598,6 +1659,13 @@ body, html, #main, .main-container {
         bottom: 30px;
         width: 100%;
     }
+    .alert {
+        margin-top: 150px;
+        position: absolute;
+        left: 0;
+        right: 0;
+        z-index: 100000;
+    }
 }
 
 .scroll-content {
@@ -2140,4 +2208,18 @@ aside.clients {
     }
 }
 
+// USER PROFILE
+h1.user-name {
+    font-size: 70px;
+    margin: 0 0 5px;
+}
+h3.user-mail {
+    font-size: 26px;
+    margin: 0 0 40px;
+    font-weight: 300;
+}
 
+//LOADER
+.loader {
+    margin: 30px 0;
+}
