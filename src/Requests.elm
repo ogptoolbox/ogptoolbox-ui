@@ -69,7 +69,10 @@ getCards authentication searchQuery limit tagIds cardTypes =
                                      ]
                                         |> List.filterMap identity
                                     )
-                                        ++ (List.map (\tagId -> "tag=" ++ tagId) tagIds)
+                                        ++ (tagIds
+                                                |> List.filter (\s -> not (String.isEmpty s))
+                                                |> List.map (\tagId -> "tag=" ++ tagId)
+                                           )
                                    )
                                 |> String.join "&"
                            )
@@ -85,7 +88,11 @@ getTagsPopularity tagIds =
         url =
             apiUrl
                 ++ "cards/tags-popularity?type=use-case&"
-                ++ ((List.map (\tagId -> "tag=" ++ tagId) tagIds) |> String.join "&")
+                ++ (tagIds
+                        |> List.filter (\s -> not (String.isEmpty s))
+                        |> List.map (\tagId -> "tag=" ++ tagId)
+                        |> String.join "&"
+                   )
     in
         Http.fromJson popularTagsDataDecoder
             (Http.send Http.defaultSettings
