@@ -19,7 +19,7 @@ modalTitle route =
             "Sign out and contribute later"
 
         SignUpRoute ->
-            "Sign up to contribute"
+            "Create your account"
 
 
 viewModalBody : Route -> Model -> Html Msg

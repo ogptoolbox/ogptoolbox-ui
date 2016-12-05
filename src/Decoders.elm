@@ -91,6 +91,9 @@ dataIdsBodyDecoder =
 userDecoder : Decoder User
 userDecoder =
     succeed User
+        -- Workaround a bug in ports that removes false values.
+        |:
+            oneOf [ ("activated" := bool), succeed False ]
         |: ("apiKey" := string)
         |: ("email" := string)
         |: ("name" := string)

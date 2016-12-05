@@ -79,7 +79,8 @@ type alias PopularTagsData =
 
 
 type alias User =
-    { apiKey : String
+    { activated : Bool
+    , apiKey : String
     , email : String
     , name : String
     , urlName : String

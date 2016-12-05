@@ -248,7 +248,7 @@ viewModalBody model =
             , div [ class "col-xs-6" ]
                 [ div [ class "well well-right" ]
                     [ p [ class "lead" ]
-                        [ text "Create your account now" ]
+                        [ text "Sign in your account now" ]
                     , ul [ class "list-unstyled", attribute "style" "line-height: 2" ]
                         [ li []
                             [ span [ class "fa fa-check text-success" ]
@@ -270,17 +270,24 @@ viewModalBody model =
                                 []
                             , text "Create a page for your organization "
                             ]
-                        , li []
-                            [ a [ href "/read-more/" ]
-                                [ u []
-                                    [ text "TODO Read more" ]
-                                ]
-                            ]
+                          -- , li []
+                          --     [ a [ href "/read-more/" ]
+                          --         [ u []
+                          --             [ text "TODO Read more" ]
+                          --         ]
+                          --     ]
                         ]
-                    , p []
-                        [ a [ class "btn btn-block btn-default ", href "/new-customer/" ]
-                            [ text "TODO Register now!" ]
-                        ]
+                      -- , p []
+                      --     [ a
+                      --         [ class "btn btn-block btn-default "
+                      --         , href "#"
+                      --         , onWithOptions
+                      --             "click"
+                      --             { preventDefault = True, stopPropagation = False }
+                      --             (Json.Decode.succeed (AuthenticatorRouteMsg (Just Authenticator.Model.SignUpRoute)))
+                      --         ]
+                      --         [ text (I18n.translate language I18n.RegisterNow) ]
+                      --     ]
                     ]
                 ]
             ]

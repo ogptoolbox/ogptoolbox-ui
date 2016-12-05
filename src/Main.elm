@@ -11,6 +11,7 @@ import Card.State
 import Card.Types
 import Card.View
 import Constants
+import Decoders
 import Dict exposing (Dict)
 import Dom.Scroll
 import Help
@@ -50,7 +51,7 @@ main =
 
 type alias Flags =
     { language : String
-    , authentication : Maybe Authenticator.Model.Authentication
+    , authentication : Json.Decode.Value
     }
 
 
@@ -76,7 +77,9 @@ type alias Model =
 init : Flags -> ( I18nRoute, Hop.Types.Location ) -> ( Model, Cmd Msg )
 init flags ( i18nRoute, location ) =
     { addNewModel = AddNew.State.init
-    , authentication = flags.authentication
+    , authentication =
+        Json.Decode.decodeValue Decoders.userDecoder flags.authentication
+            |> Result.toMaybe
     , authenticatorModel = Authenticator.Model.init
     , authenticatorRouteMaybe = Nothing
     , cardModel = Card.State.init
@@ -522,7 +525,9 @@ view model =
     let
         standardLayout language content =
             div []
-                ([ viewHeader model language "container" ]
+                ([ viewHeader model language "container"
+                 , viewAlert model language
+                 ]
                     ++ [ content
                        , viewFooter model language
                        , viewAuthenticatorModal model language
@@ -534,7 +539,9 @@ view model =
         fullscreenLayout language content =
             div [ class "main-container" ]
                 ([ div [ class "fixed-header" ]
-                    [ viewHeader model language "container-fluid" ]
+                    [ viewHeader model language "container-fluid"
+                    , viewAlert model language
+                    ]
                  ]
                     ++ [ content
                        , div [ class "fixed-footer" ]
@@ -711,6 +718,27 @@ viewAddNewModal model language =
             ]
     else
         text ""
+
+
+viewAlert : Model -> I18n.Language -> Html Msg
+viewAlert model language =
+    case model.authentication of
+        Nothing ->
+            text ""
+
+        Just authentication ->
+            if authentication.activated then
+                text ""
+            else
+                div [ class "alert alert-success alert-dismissible", attribute "role" "alert" ]
+                    [ div [ class "container" ]
+                        [ button [ attribute "aria-label" "Close", class "close", attribute "data-dismiss" "alert", type' "button" ]
+                            [ span [ attribute "aria-hidden" "true" ]
+                                [ text "×" ]
+                            ]
+                        , text (I18n.translate language I18n.EmailSentForAccountActivation)
+                        ]
+                    ]
 
 
 viewAuthenticatorModal : Model -> I18n.Language -> Html Msg

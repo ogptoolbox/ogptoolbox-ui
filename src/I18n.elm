@@ -27,6 +27,7 @@ type TranslationId
     | Close
     | Collection GrammaticalNumber
     | Copyright
+    | EmailSentForAccountActivation
     | GenericError
     | HeaderTitle
     | Help
@@ -44,6 +45,7 @@ type TranslationId
     | PublishOrganization
     | PublishTool
     | PublishUseCase
+    | RegisterNow
     | SeeAllAndCompare
     | Score
     | SearchInputPlaceholder
@@ -203,6 +205,12 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        EmailSentForAccountActivation ->
+            { english = s "An email has been sent. Click the link it contains, to activate your account."
+            , french = s "Un courriel vous a été envoyé. Cliquez sur le lien qu'il contient pour activer votre compte."
+            , spanish = todo
+            }
+
         GenericError ->
             { english = s "Something wrong happened!"
             , french = s "Quelque chose s'est mal passé !"
@@ -333,6 +341,12 @@ including representatives of governments and civil society organizations.
         PublishTool ->
             { english = s "Publish tool"
             , french = todo
+            , spanish = todo
+            }
+
+        RegisterNow ->
+            { english = s "Register now!"
+            , french = s "Inscrivez vous maintenant !"
             , spanish = todo
             }
 
