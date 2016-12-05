@@ -35,7 +35,6 @@ import String
 import Task
 import Types exposing (..)
 import Views exposing (viewBigMessage, viewNotFound)
-import WebData exposing (..)
 
 
 main : Program Flags
@@ -995,20 +994,6 @@ viewHeader model language containerClass =
                             [ li []
                                 [ aForPath
                                     Navigate
-                                    "/"
-                                    []
-                                    [ text (I18n.translate language I18n.Home) ]
-                                ]
-                            , li []
-                                [ aForPath
-                                    Navigate
-                                    "/about"
-                                    []
-                                    [ text (I18n.translate language I18n.About) ]
-                                ]
-                            , li []
-                                [ aForPath
-                                    Navigate
                                     "/tools"
                                     []
                                     [ text (I18n.translate language (I18n.Tool I18n.Plural)) ]
@@ -1037,9 +1022,9 @@ viewHeader model language containerClass =
                             , li []
                                 [ aForPath
                                     Navigate
-                                    "/help"
+                                    "/about"
                                     []
-                                    [ text (I18n.translate language I18n.Help) ]
+                                    [ text (I18n.translate language I18n.About) ]
                                 ]
                             ]
                         , Html.form

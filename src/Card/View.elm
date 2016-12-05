@@ -178,7 +178,9 @@ viewCardContent language card cards values =
                                                 ]
                                             ]
                                         , div [ class "panel-body" ]
-                                            [ p [] [ text description ] ]
+                                            [ p []
+                                                [ text description ]
+                                            ]
                                         ]
                             )
                       ]

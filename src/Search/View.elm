@@ -8,7 +8,6 @@ import Html.Helpers exposing (aForPath)
 import I18n exposing (getImageUrl, getManyStrings, getOneString, getSubTypes)
 import Routes
 import Search.Types exposing (..)
-import String
 import Types exposing (..)
 import Views exposing (viewCardListItem, viewLoading, viewWebData)
 import WebData exposing (getData, getLoadingStatusData, LoadingStatus(..), WebData(..))
