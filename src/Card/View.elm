@@ -105,7 +105,7 @@ viewCardContent language card cards values =
         div
             [ classList
                 [ ( "col-md-9 content content-right", True )
-                , ( "push-screenshot2"
+                , ( "push-screenshot"
                   , case getImageScreenshotUrl language "" card values of
                         Nothing ->
                             False
@@ -178,7 +178,7 @@ viewCardContent language card cards values =
                                                 ]
                                             ]
                                         , div [ class "panel-body" ]
-                                            [ text description ]
+                                            [ p [] [ text description ] ]
                                         ]
                             )
                       ]
