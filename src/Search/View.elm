@@ -95,7 +95,7 @@ view { organizations, tools, useCases } activeCardType searchQuery language =
             [ div [ class "browse-tag" ]
                 [ div [ class "row" ]
                     [ div [ class "container-fluid" ]
-                        [ div [ class "bubbles" ] []
+                        [ div [ class "tag" ] [ div [ class "bubbles" ] [] ]
                           -- , div [ class "row filters" ]
                           --     [ div [ class "col-md-12 text-center" ]
                           --         [ text "Showing results suited for"
