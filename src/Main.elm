@@ -112,17 +112,52 @@ urlUpdate ( i18nRoute, location ) model =
                     let
                         indexRoute translationId =
                             let
-                                ( newSearchModel, searchCmd ) =
+                                getLocalizedString value =
+                                    case value.value of
+                                        LocalizedStringValue valueByLanguage ->
+                                            case I18n.getValueByPreferredLanguage language valueByLanguage of
+                                                Nothing ->
+                                                    Debug.crash "indexRoute"
+
+                                                Just tag ->
+                                                    tag
+
+                                        _ ->
+                                            Debug.crash "indexRoute"
+
+                                selectedTags =
+                                    case Dict.get "tagIds" location.query of
+                                        Nothing ->
+                                            []
+
+                                        Just tagIds ->
+                                            tagIds
+                                                |> String.split ","
+                                                |> List.map
+                                                    (\tagId ->
+                                                        { count = 50
+                                                        , tag = ""
+                                                        , tagId = tagId
+                                                        }
+                                                    )
+
+                                searchModel =
+                                    model.searchModel
+
+                                newSearchModel =
+                                    { searchModel | selectedTags = selectedTags }
+
+                                ( newSearchModel2, searchCmd ) =
                                     Search.State.update
                                         Search.Types.Load
-                                        model.searchModel
+                                        newSearchModel
                                         model.authentication
                                         language
                                         location
 
                                 newModel =
                                     { model
-                                        | searchModel = newSearchModel
+                                        | searchModel = newSearchModel2
                                         , searchInputValue = searchQuery
                                     }
                             in

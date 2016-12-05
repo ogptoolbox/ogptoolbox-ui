@@ -58,36 +58,6 @@ update :
     -> ( Model, Cmd Msg )
 update msg model authentication language location =
     let
-        requestsCmds selectedTags =
-            let
-                limit =
-                    Just 8
-
-                selectedTagIds =
-                    List.map .tagId selectedTags
-
-                searchQuery =
-                    Routes.getSearchQuery location
-            in
-                List.map (Cmd.map ForSelf)
-                    [ Task.perform
-                        OrganizationsLoadError
-                        OrganizationsLoadSuccess
-                        (Requests.getCards authentication searchQuery limit selectedTagIds cardTypesForOrganization)
-                    , Task.perform
-                        ToolsLoadError
-                        ToolsLoadSuccess
-                        (Requests.getCards authentication searchQuery limit selectedTagIds cardTypesForTool)
-                    , Task.perform
-                        UseCasesLoadError
-                        UseCasesLoadSuccess
-                        (Requests.getCards authentication searchQuery limit selectedTagIds cardTypesForUseCase)
-                    , Task.perform
-                        PopularTagsLoadError
-                        PopularTagsLoadSuccess
-                        (Requests.getTagsPopularity selectedTagIds)
-                    ]
-
         navigateCmd selectedTags =
             location
                 |> Hop.removeQuery "tagIds"
@@ -111,12 +81,12 @@ update msg model authentication language location =
                             , useCases = Data (Loading (getData model.useCases))
                         }
                 in
-                    newModel ! (navigateCmd newSelectedTags :: requestsCmds newSelectedTags)
+                    ( newModel, navigateCmd newSelectedTags )
 
             BubbleSelect selectedTag ->
                 let
                     newSelectedTags =
-                        if List.member selectedTag model.selectedTags then
+                        if List.member selectedTag.tagId (List.map .tagId model.selectedTags) then
                             model.selectedTags
                         else
                             selectedTag :: model.selectedTags
@@ -129,7 +99,7 @@ update msg model authentication language location =
                             , useCases = Data (Loading (getData model.useCases))
                         }
                 in
-                    newModel ! (navigateCmd newSelectedTags :: requestsCmds newSelectedTags)
+                    ( newModel, navigateCmd newSelectedTags )
 
             Load ->
                 let
@@ -139,8 +109,56 @@ update msg model authentication language location =
                             , tools = Data (Loading (getData model.tools))
                             , useCases = Data (Loading (getData model.useCases))
                         }
+
+                    requestsCmds =
+                        let
+                            limit =
+                                Just 8
+
+                            selectedTagIds =
+                                List.map .tagId model.selectedTags
+
+                            searchQuery =
+                                Routes.getSearchQuery location
+                        in
+                            List.map (Cmd.map ForSelf)
+                                [ Task.perform
+                                    OrganizationsLoadError
+                                    OrganizationsLoadSuccess
+                                    (Requests.getCards
+                                        authentication
+                                        searchQuery
+                                        limit
+                                        selectedTagIds
+                                        cardTypesForOrganization
+                                    )
+                                , Task.perform
+                                    ToolsLoadError
+                                    ToolsLoadSuccess
+                                    (Requests.getCards
+                                        authentication
+                                        searchQuery
+                                        limit
+                                        selectedTagIds
+                                        cardTypesForTool
+                                    )
+                                , Task.perform
+                                    UseCasesLoadError
+                                    UseCasesLoadSuccess
+                                    (Requests.getCards
+                                        authentication
+                                        searchQuery
+                                        limit
+                                        selectedTagIds
+                                        cardTypesForUseCase
+                                    )
+                                , Task.perform
+                                    PopularTagsLoadError
+                                    PopularTagsLoadSuccess
+                                    (Requests.getTagsPopularity selectedTagIds)
+                                ]
                 in
-                    newModel ! requestsCmds model.selectedTags
+                    newModel ! requestsCmds
 
             OrganizationsLoadError err ->
                 let
