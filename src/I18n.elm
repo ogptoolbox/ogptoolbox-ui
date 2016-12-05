@@ -1017,12 +1017,12 @@ getValueByPreferredLanguage language valueByLanguage =
                     if String.isEmpty (String.trim s) then
                         Nothing
                     else
-                        Just
-                            (if languageCode == userLanguageCode then
-                                s
-                             else
-                                "(" ++ (String.toUpper languageCode) ++ ") " ++ s
-                            )
+                        -- (if languageCode == userLanguageCode then
+                        --     s
+                        --  else
+                        --     "(" ++ (String.toUpper languageCode) ++ ") " ++ s
+                        -- )
+                        Just s
                 )
             |> List.head
 
