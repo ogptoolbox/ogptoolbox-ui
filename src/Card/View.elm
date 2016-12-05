@@ -268,7 +268,7 @@ viewCardContent language card cards values =
                                         ]
                                     ]
                                 , div [ class "panel-body" ]
-                                    [ case Dict.get "type:software" card.references of
+                                    [ case Dict.get "software" card.references of
                                         Nothing ->
                                             div [ class "call-container" ]
                                                 [ p [] [ text "No use case listed for this tool yet." ]
@@ -495,50 +495,18 @@ viewSidebar language card values =
 
 viewValueValue : I18n.Language -> Dict String Card -> Dict String Value -> ValueType -> Html Msg
 viewValueValue language cards values value =
-    case value of
-        StringValue str ->
-            aIfIsUrl [] str
-
-        WrongValue str schemaId ->
-            div []
-                [ p [ style [ ( "color", "red" ) ] ] [ text "Wrong value!" ]
-                , pre [] [ text str ]
-                , p [] [ text ("schemaId: " ++ schemaId) ]
-                ]
-
-        LocalizedStringValue values ->
-            dl []
-                (values
-                    |> Dict.toList
-                    |> List.concatMap
-                        (\( languageCode, childValue ) ->
-                            [ dt [] [ text languageCode ]
-                            , dd [] [ aIfIsUrl [] childValue ]
-                            ]
-                        )
-                )
-
-        NumberValue float ->
-            text (toString float)
-
-        ArrayValue childValues ->
-            ul [ class "list-unstyled" ]
-                (List.map
-                    (\childValue -> li [] [ viewValueValue language cards values childValue ])
-                    childValues
-                )
-
-        BijectiveCardReferenceValue { targetId } ->
-            case Dict.get targetId cards of
+    let
+        cardLink cardId =
+            case Dict.get cardId cards of
                 Nothing ->
-                    text ("Error: target card not found for ID: " ++ targetId)
+                    text ("Error: target card not found for ID: " ++ cardId)
 
                 Just card ->
                     let
                         linkText =
                             case getOneString language nameKeys card values of
                                 Nothing ->
-                                    targetId
+                                    cardId
 
                                 Just name ->
                                     name
@@ -550,11 +518,57 @@ viewValueValue language cards values value =
                             urlPath
                             []
                             [ text linkText ]
+    in
+        case value of
+            StringValue str ->
+                aIfIsUrl [] str
 
-        ReferenceValue propertyKey ->
-            case Dict.get propertyKey values of
-                Nothing ->
-                    text ("Error: referenced value not found for propertyKey: " ++ propertyKey)
+            WrongValue str schemaId ->
+                div []
+                    [ p [ style [ ( "color", "red" ) ] ] [ text "Wrong value!" ]
+                    , pre [] [ text str ]
+                    , p [] [ text ("schemaId: " ++ schemaId) ]
+                    ]
 
-                Just subValue ->
-                    viewValueValue language cards values subValue.value
+            LocalizedStringValue values ->
+                dl []
+                    (values
+                        |> Dict.toList
+                        |> List.concatMap
+                            (\( languageCode, childValue ) ->
+                                [ dt [] [ text languageCode ]
+                                , dd [] [ aIfIsUrl [] childValue ]
+                                ]
+                            )
+                    )
+
+            NumberValue float ->
+                text (toString float)
+
+            CardIdArrayValue childValues ->
+                ul [ class "list-unstyled" ]
+                    (List.map
+                        (\childValue -> li [] [ viewValueValue language cards values (CardIdValue childValue) ])
+                        childValues
+                    )
+
+            ValueIdArrayValue childValues ->
+                ul [ class "list-unstyled" ]
+                    (List.map
+                        (\childValue -> li [] [ viewValueValue language cards values (ValueIdValue childValue) ])
+                        childValues
+                    )
+
+            BijectiveCardReferenceValue { targetId } ->
+                cardLink targetId
+
+            CardIdValue cardId ->
+                cardLink cardId
+
+            ValueIdValue valueId ->
+                case Dict.get valueId values of
+                    Nothing ->
+                        text ("Error: referenced value not found for valueId: " ++ valueId)
+
+                    Just subValue ->
+                        viewValueValue language cards values subValue.value

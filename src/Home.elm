@@ -20,15 +20,6 @@ view model searchQuery language =
         ([ viewBanner
          , viewMetrics language model
          ]
-            ++ (if String.isEmpty searchQuery then
-                    []
-                else
-                    [ div [ class "row section" ]
-                        [ div [ class "container" ]
-                            [ h1 [] [ text (I18n.translate language (I18n.SearchResults searchQuery)) ] ]
-                        ]
-                    ]
-               )
             ++ [ div [ class "row section" ]
                     [ div [ class "container" ]
                         ([ h3 [ class "zone-label" ]
@@ -571,12 +562,13 @@ viewThumbnails thumbnailExtraClasses searchQuery language loadingStatus =
                                 Just firstCard ->
                                     [ div [ class "col-sm-12 text-center" ]
                                         [ aForPath navigate
-                                            ((Routes.urlBasePathForCard firstCard) ++ (
-                                            if String.isEmpty searchQuery then
-                                                ""
-                                            else
-                                                "?q=" ++ searchQuery
-                                       ))
+                                            ((Routes.urlBasePathForCard firstCard)
+                                                ++ (if String.isEmpty searchQuery then
+                                                        ""
+                                                    else
+                                                        "?q=" ++ searchQuery
+                                                   )
+                                            )
                                             [ class "show-more" ]
                                             [ text (I18n.translate language (I18n.ShowAll body.count))
                                             , span [ class "glyphicon glyphicon-menu-down" ] []

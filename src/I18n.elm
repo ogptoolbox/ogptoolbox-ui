@@ -47,7 +47,6 @@ type TranslationId
     | SeeAllAndCompare
     | Score
     | SearchInputPlaceholder
-    | SearchResults String
     | ShowAll Int
     | SignIn
     | SignOut
@@ -355,12 +354,6 @@ including representatives of governments and civil society organizations.
             , spanish = todo
             }
 
-        SearchResults searchQuery ->
-            { english = s ("Search results for \"" ++ searchQuery ++ "\"")
-            , french = s ("Résultats de recherche pour « " ++ searchQuery ++ " »")
-            , spanish = todo
-            }
-
         ShowAll count ->
             { english = s ("Show all " ++ (toString count))
             , french = s ("Voir tous (" ++ (toString count) ++ ")")
@@ -548,11 +541,11 @@ getManyStrings language propertyKeys card values =
                         Just value ->
                             [ value ]
 
-                ArrayValue [] ->
+                CardIdArrayValue ids ->
                     []
 
-                ArrayValue childValues ->
-                    List.concatMap getStrings childValues
+                CardIdValue cardId ->
+                    []
 
                 NumberValue _ ->
                     []
@@ -560,8 +553,11 @@ getManyStrings language propertyKeys card values =
                 BijectiveCardReferenceValue _ ->
                     []
 
-                ReferenceValue propertyKey ->
-                    case Dict.get propertyKey values of
+                ValueIdArrayValue ids ->
+                    List.concatMap (\id -> getStrings (ValueIdValue id)) ids
+
+                ValueIdValue valueId ->
+                    case Dict.get valueId values of
                         Nothing ->
                             []
 
@@ -596,11 +592,14 @@ getOneString language propertyKeys card values =
                 LocalizedStringValue valueByLanguage ->
                     getValueByPreferredLanguage language valueByLanguage
 
-                ArrayValue [] ->
+                CardIdArrayValue _ ->
                     Nothing
 
-                ArrayValue (childValue :: _) ->
-                    getString childValue
+                ValueIdArrayValue [] ->
+                    Nothing
+
+                ValueIdArrayValue (childValue :: _) ->
+                    getString (ValueIdValue childValue)
 
                 NumberValue _ ->
                     Nothing
@@ -608,8 +607,11 @@ getOneString language propertyKeys card values =
                 BijectiveCardReferenceValue _ ->
                     Nothing
 
-                ReferenceValue propertyKey ->
-                    Dict.get propertyKey values `Maybe.andThen` (\subValue -> getString subValue.value)
+                CardIdValue cardId ->
+                    Nothing
+
+                ValueIdValue valueId ->
+                    Dict.get valueId values `Maybe.andThen` (\subValue -> getString subValue.value)
 
                 WrongValue _ _ ->
                     Nothing

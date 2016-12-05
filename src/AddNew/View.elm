@@ -173,9 +173,9 @@ viewTool model language =
                                         |> Decode.map (\x -> ForSelf (SetField "Types" x))
                                     )
                                 ]
-                                [ option [ value "type:software" ]
+                                [ option [ value "software" ]
                                     [ text "Software" ]
-                                , option [ value "type:platform" ]
+                                , option [ value "platform" ]
                                     [ text "Platform" ]
                                 ]
                             ]

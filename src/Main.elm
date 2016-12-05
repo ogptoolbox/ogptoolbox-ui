@@ -216,7 +216,7 @@ urlUpdate ( i18nRoute, location ) model =
 
                                             newAddNewModel =
                                                 { addNewModel
-                                                    | fields = Dict.fromList [ ( "Types", "type:organization" ) ]
+                                                    | fields = Dict.fromList [ ( "Types", "organization" ) ]
                                                 }
 
                                             newModel =
@@ -256,7 +256,7 @@ urlUpdate ( i18nRoute, location ) model =
 
                                             newAddNewModel =
                                                 { addNewModel
-                                                    | fields = Dict.fromList [ ( "Types", "type:software" ) ]
+                                                    | fields = Dict.fromList [ ( "Types", "software" ) ]
                                                 }
 
                                             newModel =
@@ -296,7 +296,7 @@ urlUpdate ( i18nRoute, location ) model =
 
                                             newAddNewModel =
                                                 { addNewModel
-                                                    | fields = Dict.fromList [ ( "Types", "type:use-case" ) ]
+                                                    | fields = Dict.fromList [ ( "Types", "use-case" ) ]
                                                 }
 
                                             newModel =

@@ -68,7 +68,13 @@ type alias DocumentMetatags =
 
 type alias PopularTag =
     { count : Float
-    , tag : String
+    , tagId : String
+    }
+
+
+type alias PopularTagsData =
+    { popularity : List PopularTag
+    , values : Dict String Value
     }
 
 
@@ -99,14 +105,17 @@ type ValueType
     = StringValue String
     | LocalizedStringValue (Dict String String)
     | NumberValue Float
-    | ArrayValue (List ValueType)
     | BijectiveCardReferenceValue BijectiveCardReference
-    | ReferenceValue String
+    | CardIdValue String
+    | CardIdArrayValue (List String)
+    | ValueIdValue String
+    | ValueIdArrayValue (List String)
     | WrongValue String String
 
 
 getCard : Dict String Card -> String -> Card
 getCard cards id =
+    -- TODO flip args like getValue
     case Dict.get id cards of
         Nothing ->
             Debug.crash "getCard: Should never happen"
@@ -135,6 +144,16 @@ getCardType card =
 getOrderedCards : DataIds -> List Card
 getOrderedCards { cards, ids } =
     List.map (getCard cards) ids
+
+
+getValue : String -> Dict String Value -> Value
+getValue id values =
+    case Dict.get id values of
+        Nothing ->
+            Debug.crash "getValue: Should never happen"
+
+        Just value ->
+            value
 
 
 imageUrl : String -> String
@@ -207,14 +226,14 @@ usedByKeys =
 
 cardTypesForOrganization : List String
 cardTypesForOrganization =
-    [ "type:organization" ]
+    [ "organization" ]
 
 
 cardTypesForTool : List String
 cardTypesForTool =
-    [ "type:software", "type:platform" ]
+    [ "software", "platform" ]
 
 
 cardTypesForUseCase : List String
 cardTypesForUseCase =
-    [ "type:use-case" ]
+    [ "use-case" ]

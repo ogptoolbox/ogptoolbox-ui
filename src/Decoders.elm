@@ -18,12 +18,17 @@ popularTagDecoder : Decoder PopularTag
 popularTagDecoder =
     succeed PopularTag
         |: ("count" := (string `customDecoder` String.toFloat))
-        |: ("tag" := string)
+        |: ("tagId" := string)
 
 
-popularTagsDecoder : Decoder (List PopularTag)
-popularTagsDecoder =
-    ("data" := list popularTagDecoder)
+popularTagsDataDecoder : Decoder PopularTagsData
+popularTagsDataDecoder =
+    ("data"
+        := (succeed PopularTagsData
+                |: ("popularity" := list popularTagDecoder)
+                |: (oneOf [ ("values" := dict valueDecoder), succeed Dict.empty ])
+           )
+    )
 
 
 cardDecoder : Decoder Card
@@ -121,11 +126,14 @@ valueValueDecoder schemaId =
                 "schema:bijective-card-reference" ->
                     bijectiveCardReferenceDecoder |> map BijectiveCardReferenceValue
 
+                "schema:card-id" ->
+                    string |> map CardIdValue
+
+                "schema:card-ids-array" ->
+                    list string |> map CardIdArrayValue
+
                 "schema:localized-string" ->
                     dict string |> map LocalizedStringValue
-
-                "schema:localized-strings-array" ->
-                    list (dict string) |> map (\xs -> ArrayValue (List.map LocalizedStringValue xs))
 
                 "schema:number" ->
                     float |> map NumberValue
@@ -133,26 +141,11 @@ valueValueDecoder schemaId =
                 "schema:string" ->
                     string |> map StringValue
 
-                "schema:strings-array" ->
-                    list string |> map (\xs -> ArrayValue (List.map StringValue xs))
-
-                "schema:tag-reference" ->
-                    string |> map ReferenceValue
-
-                "schema:tag-references-array" ->
-                    list string |> map (\xs -> ArrayValue (List.map ReferenceValue xs))
-
-                "schema:type-reference" ->
-                    string |> map ReferenceValue
-
-                "schema:type-references-array" ->
-                    list string |> map (\xs -> ArrayValue (List.map ReferenceValue xs))
-
                 "schema:uri" ->
                     string |> map StringValue
 
-                "schema:uris-array" ->
-                    list string |> map (\xs -> ArrayValue (List.map StringValue xs))
+                "schema:value-ids-array" ->
+                    list string |> map ValueIdArrayValue
 
                 _ ->
                     fail ("TODO Unsupported schemaId: " ++ schemaId)

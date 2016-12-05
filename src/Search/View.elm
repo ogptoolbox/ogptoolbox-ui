@@ -128,19 +128,11 @@ view { organizations, tools, useCases } activeCardType searchQuery language =
             , div [ class "scroll-content" ]
                 [ div [ class "row browse" ]
                     [ div [ class "container-fluid" ]
-                        ((if String.isEmpty searchQuery then
-                            []
-                          else
-                            [ div [ class "row" ]
-                                [ h1 [] [ text (I18n.translate language (I18n.SearchResults searchQuery)) ] ]
-                            ]
-                         )
-                            ++ [ div [ class "row fixed" ]
-                                    [ viewPills ]
-                               , div [ class "row list p90" ]
-                                    [ viewCardListItems ]
-                               ]
-                        )
+                        [ div [ class "row fixed" ]
+                            [ viewPills ]
+                        , div [ class "row list p90" ]
+                            [ viewCardListItems ]
+                        ]
                     ]
                 ]
             ]

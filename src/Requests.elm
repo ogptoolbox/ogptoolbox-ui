@@ -8,7 +8,6 @@ import Http
 import I18n
 import Json.Decode as Decode
 import Json.Encode as Encode
-import Set exposing (Set)
 import String
 import Types exposing (..)
 import Task exposing (Task)
@@ -39,10 +38,10 @@ getCards :
     Maybe Authenticator.Model.Authentication
     -> String
     -> Maybe Int
-    -> Set String
+    -> List String
     -> List String
     -> Task Http.Error DataIdsBody
-getCards authentication searchQuery limit tags cardTypes =
+getCards authentication searchQuery limit tagIds cardTypes =
     let
         authenticationHeaders =
             case authentication of
@@ -70,7 +69,7 @@ getCards authentication searchQuery limit tags cardTypes =
                                      ]
                                         |> List.filterMap identity
                                     )
-                                        ++ (Set.map (\tag -> "tag=" ++ tag) tags |> Set.toList)
+                                        ++ (List.map (\tagId -> "tag=" ++ tagId) tagIds)
                                    )
                                 |> String.join "&"
                            )
@@ -80,17 +79,15 @@ getCards authentication searchQuery limit tags cardTypes =
             )
 
 
-getTagsPopularity : I18n.Language -> Set String -> Task Http.Error (List PopularTag)
-getTagsPopularity language tags =
+getTagsPopularity : List String -> Task Http.Error PopularTagsData
+getTagsPopularity tagIds =
     let
         url =
             apiUrl
-                ++ "cards/tags-popularity?type=type:use-case&language="
-                ++ I18n.iso639_1FromLanguage language
-                ++ "&"
-                ++ ((Set.map (\tag -> "tag=" ++ tag) tags) |> Set.toList |> String.join "&")
+                ++ "cards/tags-popularity?type=use-case&"
+                ++ ((List.map (\tagId -> "tag=" ++ tagId) tagIds) |> String.join "&")
     in
-        Http.fromJson popularTagsDecoder
+        Http.fromJson popularTagsDataDecoder
             (Http.send Http.defaultSettings
                 { verb = "GET"
                 , url = url

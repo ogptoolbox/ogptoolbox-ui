@@ -1,15 +1,15 @@
 module Search.Types exposing (..)
 
 import Http
-import Set exposing (Set)
+import Ports
 import Types exposing (..)
 import WebData exposing (..)
 
 
 type alias Model =
     { organizations : WebData DataIdsBody
-    , popularTags : WebData (List PopularTag)
-    , selectedTags : Set String
+    , popularTagsData : WebData PopularTagsData
+    , selectedTags : List Ports.D3BubblesPopularTag
     , tools : WebData DataIdsBody
     , useCases : WebData DataIdsBody
     }
@@ -20,14 +20,14 @@ type ExternalMsg
 
 
 type InternalMsg
-    = BubbleDeselect String
-    | BubbleSelect String
+    = BubbleDeselect Ports.D3BubblesPopularTag
+    | BubbleSelect Ports.D3BubblesPopularTag
     | UseCasesLoadSuccess DataIdsBody
     | Load String
     | OrganizationsLoadError Http.Error
     | OrganizationsLoadSuccess DataIdsBody
     | PopularTagsLoadError Http.Error
-    | PopularTagsLoadSuccess (List PopularTag)
+    | PopularTagsLoadSuccess PopularTagsData
     | ToolsLoadError Http.Error
     | ToolsLoadSuccess DataIdsBody
     | UseCasesLoadError Http.Error

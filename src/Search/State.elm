@@ -5,17 +5,32 @@ import I18n
 import Ports
 import Requests
 import Search.Types exposing (..)
-import Set exposing (Set)
 import Task
 import Types exposing (..)
 import WebData exposing (LoadingStatus(..), getData, WebData(..))
 
 
+{-| Remove the first occurrence of a value from a list.
+from List.Extra
+-}
+remove : a -> List a -> List a
+remove x xs =
+    case xs of
+        [] ->
+            []
+
+        y :: ys ->
+            if x == y then
+                ys
+            else
+                y :: remove x ys
+
+
 init : Model
 init =
     { organizations = NotAsked
-    , popularTags = NotAsked
-    , selectedTags = Set.empty
+    , popularTagsData = NotAsked
+    , selectedTags = []
     , tools = NotAsked
     , useCases = NotAsked
     }
@@ -38,39 +53,43 @@ update :
     -> ( Model, Cmd Msg )
 update msg model authentication language searchQuery =
     let
-        limit =
-            Just 8
+        requestsCmds selectedTags =
+            let
+                limit =
+                    Just 8
 
-        requestsCmds =
-            List.map (Cmd.map ForSelf)
-                [ Task.perform
-                    OrganizationsLoadError
-                    OrganizationsLoadSuccess
-                    (Requests.getCards authentication searchQuery limit model.selectedTags cardTypesForOrganization)
-                , Task.perform
-                    ToolsLoadError
-                    ToolsLoadSuccess
-                    (Requests.getCards authentication searchQuery limit model.selectedTags cardTypesForTool)
-                , Task.perform
-                    UseCasesLoadError
-                    UseCasesLoadSuccess
-                    (Requests.getCards authentication searchQuery limit model.selectedTags cardTypesForUseCase)
-                , Task.perform
-                    PopularTagsLoadError
-                    PopularTagsLoadSuccess
-                    (Requests.getTagsPopularity language model.selectedTags)
-                ]
+                selectedTagIds =
+                    List.map .tagId selectedTags
+            in
+                List.map (Cmd.map ForSelf)
+                    [ Task.perform
+                        OrganizationsLoadError
+                        OrganizationsLoadSuccess
+                        (Requests.getCards authentication searchQuery limit selectedTagIds cardTypesForOrganization)
+                    , Task.perform
+                        ToolsLoadError
+                        ToolsLoadSuccess
+                        (Requests.getCards authentication searchQuery limit selectedTagIds cardTypesForTool)
+                    , Task.perform
+                        UseCasesLoadError
+                        UseCasesLoadSuccess
+                        (Requests.getCards authentication searchQuery limit selectedTagIds cardTypesForUseCase)
+                    , Task.perform
+                        PopularTagsLoadError
+                        PopularTagsLoadSuccess
+                        (Requests.getTagsPopularity selectedTagIds)
+                    ]
     in
         case msg of
             BubbleDeselect deselectedTag ->
-                case getData model.popularTags of
+                case getData model.popularTagsData of
                     Nothing ->
                         ( model, Cmd.none )
 
                     Just _ ->
                         let
                             newSelectedTags =
-                                Set.remove deselectedTag model.selectedTags
+                                remove deselectedTag model.selectedTags
 
                             newModel =
                                 { model
@@ -80,17 +99,20 @@ update msg model authentication language searchQuery =
                                     , useCases = Data (Loading (getData model.useCases))
                                 }
                         in
-                            newModel ! requestsCmds
+                            newModel ! requestsCmds newSelectedTags
 
             BubbleSelect selectedTag ->
-                case getData model.popularTags of
+                case getData model.popularTagsData of
                     Nothing ->
                         ( model, Cmd.none )
 
                     Just _ ->
                         let
                             newSelectedTags =
-                                Set.insert selectedTag model.selectedTags
+                                if List.member selectedTag model.selectedTags then
+                                    model.selectedTags
+                                else
+                                    selectedTag :: model.selectedTags
 
                             newModel =
                                 { model
@@ -100,7 +122,7 @@ update msg model authentication language searchQuery =
                                     , useCases = Data (Loading (getData model.useCases))
                                 }
                         in
-                            newModel ! requestsCmds
+                            newModel ! requestsCmds newSelectedTags
 
             Load searchQuery ->
                 let
@@ -111,7 +133,7 @@ update msg model authentication language searchQuery =
                             , useCases = Data (Loading (getData model.useCases))
                         }
                 in
-                    model' ! requestsCmds
+                    model' ! requestsCmds model.selectedTags
 
             OrganizationsLoadError err ->
                 let
@@ -134,17 +156,49 @@ update msg model authentication language searchQuery =
                         Debug.log "Search.State PopularTagsLoadError" err
 
                     model' =
-                        { model | popularTags = Failure err }
+                        { model | popularTagsData = Failure err }
                 in
                     ( model', Cmd.none )
 
-            PopularTagsLoadSuccess popularTags ->
-                ( { model | popularTags = Data (Loaded popularTags) }
-                , Ports.mountd3bubbles
-                    { popularTags = popularTags
-                    , selectedTags = model.selectedTags |> Set.toList
-                    }
-                )
+            PopularTagsLoadSuccess popularTagsData ->
+                let
+                    newModel =
+                        { model | popularTagsData = Data (Loaded popularTagsData) }
+
+                    tagIdToTag { count, tagId } =
+                        let
+                            tag =
+                                getValue tagId popularTagsData.values
+                                    |> (\value ->
+                                            case value.value of
+                                                LocalizedStringValue valueByLanguage ->
+                                                    case I18n.getValueByPreferredLanguage language valueByLanguage of
+                                                        Nothing ->
+                                                            Debug.crash "Search.State.update PopularTagsLoadSuccess"
+
+                                                        Just tag ->
+                                                            tag
+
+                                                _ ->
+                                                    Debug.crash "Search.State.update PopularTagsLoadSuccess"
+                                       )
+                        in
+                            { count = count
+                            , tag = tag
+                            , tagId = tagId
+                            }
+
+                    -- TODO move this
+                    popularTags =
+                        List.map tagIdToTag popularTagsData.popularity
+
+                    cmd =
+                        Ports.mountd3bubbles
+                            { popularTags = popularTags
+                            , selectedTags = model.selectedTags
+                            }
+                in
+                    ( newModel, cmd )
 
             ToolsLoadError err ->
                 let

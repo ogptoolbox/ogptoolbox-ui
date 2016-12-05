@@ -68,14 +68,25 @@ main.ports.mountd3bubbles.subscribe(function(data) {
     // Use rAF in order to be sure that the port Cmd is called after view is rendered.
     rAF(function() {
         var bubbles = data.popularTags.map(function(popularTag) {
-            return { name: popularTag.tag, radius: popularTag.count };
+            return {
+                name: popularTag.tag,
+                radius: popularTag.count,
+                tag: popularTag.tag,
+                tagId: popularTag.tagId
+             };
         });
         if (data.selectedTags.length) {
             bubbles = bubbles.concat(data.selectedTags.map(function(selectedTag) {
                 var maxRadius = Math.max.apply(null, data.popularTags.map(function(popularTag) {
                     return popularTag.count;
                 }));
-                return { name: selectedTag, radius: maxRadius * 1.33, type: "selected" };
+                return {
+                    name: selectedTag.tag,
+                    radius: selectedTag.count || maxRadius * 1.33,
+                    tag: selectedTag.tag,
+                    tagId: selectedTag.tagId,
+                    type: "selected"
+                };
             }));
         } else {
             var centerBubble = { name: "Open government", radius: 150, type: "main" };
@@ -84,12 +95,8 @@ main.ports.mountd3bubbles.subscribe(function(data) {
         d3Bubbles.mount({
             selector: ".bubbles",
             data: bubbles,
-            onSelect: function (bubble) {
-                main.ports.bubbleSelections.send(bubble.name);
-            },
-            onDeselect: function (bubble) {
-                main.ports.bubbleDeselections.send(bubble.name);
-            },
+            onSelect: main.ports.bubbleSelections.send,
+            onDeselect: main.ports.bubbleDeselections.send,
         });
     })
 });

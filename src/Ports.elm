@@ -36,14 +36,21 @@ port storeAuthentication : Maybe User -> Cmd msg
 -- BUBBLES
 
 
+type alias D3BubblesPopularTag =
+    { count : Float
+    , tag : String
+    , tagId : String
+    }
+
+
 port mountd3bubbles :
-    { popularTags : List PopularTag
-    , selectedTags : List String
+    { popularTags : List D3BubblesPopularTag
+    , selectedTags : List D3BubblesPopularTag
     }
     -> Cmd msg
 
 
-port bubbleSelections : (String -> msg) -> Sub msg
+port bubbleSelections : (D3BubblesPopularTag -> msg) -> Sub msg
 
 
-port bubbleDeselections : (String -> msg) -> Sub msg
+port bubbleDeselections : (D3BubblesPopularTag -> msg) -> Sub msg
