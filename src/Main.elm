@@ -34,6 +34,7 @@ import String
 import Task
 import Types exposing (..)
 import Views exposing (viewBigMessage, viewNotFound)
+import WebData exposing (..)
 
 
 main : Program Flags
@@ -64,11 +65,11 @@ type alias Model =
     , authenticatorRouteMaybe : Maybe Authenticator.Model.Route
     , cardModel : Card.Types.Model
     , displayAddNewModal : Bool
-    , searchModel : Search.Types.Model
     , i18nRoute : I18nRoute
     , location : Hop.Types.Location
     , navigatorLanguage : Maybe I18n.Language
     , searchInputValue : String
+    , searchModel : Search.Types.Model
     }
 
 
@@ -107,13 +108,38 @@ urlUpdate ( i18nRoute, location ) model =
             case i18nRoute of
                 I18nRouteWithLanguage language route ->
                     let
-                        ( searchModel, searchCmd ) =
-                            Search.State.update
-                                (Search.Types.Load searchQuery)
-                                model.searchModel
-                                model.authentication
-                                language
-                                searchQuery
+                        indexRoute modelGetter translationId =
+                            let
+                                ( newModel, searchCmd ) =
+                                    case modelGetter model.searchModel of
+                                        NotAsked ->
+                                            let
+                                                ( newSearchModel, searchCmd ) =
+                                                    Search.State.update
+                                                        (Search.Types.Load searchQuery)
+                                                        model.searchModel
+                                                        model.authentication
+                                                        language
+                                                        searchQuery
+
+                                                newModel =
+                                                    { model
+                                                        | searchModel = newSearchModel
+                                                        , searchInputValue = searchQuery
+                                                    }
+                                            in
+                                                ( newModel, Cmd.map translateSearchMsg searchCmd )
+
+                                        _ ->
+                                            ( model, Cmd.none )
+                            in
+                                newModel
+                                    ! [ searchCmd
+                                      , Ports.setDocumentMetatags
+                                            { title = I18n.translate language (translationId I18n.Plural)
+                                            , imageUrl = Constants.logoUrl
+                                            }
+                                      ]
                     in
                         case route of
                             AboutRoute ->
@@ -134,9 +160,17 @@ urlUpdate ( i18nRoute, location ) model =
 
                             HomeRoute ->
                                 let
+                                    ( newSearchModel, searchCmd ) =
+                                        Search.State.update
+                                            (Search.Types.Load searchQuery)
+                                            model.searchModel
+                                            model.authentication
+                                            language
+                                            searchQuery
+
                                     newModel =
                                         { model
-                                            | searchModel = searchModel
+                                            | searchModel = newSearchModel
                                             , searchInputValue = searchQuery
                                         }
                                 in
@@ -173,20 +207,7 @@ urlUpdate ( i18nRoute, location ) model =
                                             ( model, Cmd.map translateCardMsg childCmd )
 
                                     OrganizationsIndexRoute ->
-                                        let
-                                            newModel =
-                                                { model
-                                                    | searchModel = searchModel
-                                                    , searchInputValue = searchQuery
-                                                }
-                                        in
-                                            newModel
-                                                ! [ Cmd.map translateSearchMsg searchCmd
-                                                  , Ports.setDocumentMetatags
-                                                        { title = I18n.translate language (I18n.Organization I18n.Plural)
-                                                        , imageUrl = Constants.logoUrl
-                                                        }
-                                                  ]
+                                        indexRoute .organizations I18n.Organization
 
                                     NewOrganizationRoute ->
                                         let
@@ -226,20 +247,7 @@ urlUpdate ( i18nRoute, location ) model =
                                             ( model, Cmd.map translateCardMsg childCmd )
 
                                     ToolsIndexRoute ->
-                                        let
-                                            newModel =
-                                                { model
-                                                    | searchModel = searchModel
-                                                    , searchInputValue = searchQuery
-                                                }
-                                        in
-                                            newModel
-                                                ! [ Cmd.map translateSearchMsg searchCmd
-                                                  , Ports.setDocumentMetatags
-                                                        { title = I18n.translate language (I18n.Tool I18n.Plural)
-                                                        , imageUrl = Constants.logoUrl
-                                                        }
-                                                  ]
+                                        indexRoute .tools I18n.Tool
 
                                     NewToolRoute ->
                                         let
@@ -279,20 +287,7 @@ urlUpdate ( i18nRoute, location ) model =
                                             ( model, Cmd.map translateCardMsg childCmd )
 
                                     UseCasesIndexRoute ->
-                                        let
-                                            newModel =
-                                                { model
-                                                    | searchModel = searchModel
-                                                    , searchInputValue = searchQuery
-                                                }
-                                        in
-                                            newModel
-                                                ! [ Cmd.map translateSearchMsg searchCmd
-                                                  , Ports.setDocumentMetatags
-                                                        { title = I18n.translate language (I18n.UseCase I18n.Plural)
-                                                        , imageUrl = Constants.logoUrl
-                                                        }
-                                                  ]
+                                        indexRoute .useCases I18n.UseCase
 
                                     NewUseCaseRoute ->
                                         let
@@ -460,11 +455,22 @@ update msg model =
                 , Cmd.none
                 )
 
-            Navigate path ->
+            Navigate urlPath ->
                 let
+                    currentUrlPath =
+                        makeUrlFromLocation model.location
+
+                    language =
+                        model.navigatorLanguage |> Maybe.withDefault I18n.English
+
+                    urlPathWithLanguage =
+                        makeUrlWithLanguage language urlPath
+
                     command =
-                        makeUrl path
-                            |> Navigation.newUrl
+                        if currentUrlPath /= urlPathWithLanguage then
+                            makeUrl urlPathWithLanguage |> Navigation.newUrl
+                        else
+                            Cmd.none
                 in
                     ( model, command )
 
@@ -487,12 +493,24 @@ update msg model =
 
             SearchMsg childMsg ->
                 let
-                    ( searchModel, childCmd ) =
+                    ( newSearchModel, childCmd ) =
                         Search.State.update childMsg model.searchModel model.authentication language searchQuery
+
+                    -- urlCommand =
+                    --     Hop.setQuery
+                    --         (Dict.fromList
+                    --             (List.map (\tag -> ( "tag", tag )) (Set.toList searchModel.selectedTags))
+                    --         )
+                    --         model.location
+                    --         |> makeUrlFromLocation
+                    --         |> Navigation.newUrl
+                    newModel =
+                        { model | searchModel = newSearchModel }
                 in
-                    ( { model | searchModel = searchModel }
-                    , Cmd.map translateSearchMsg childCmd
-                    )
+                    newModel
+                        ! [ Cmd.map translateSearchMsg childCmd
+                            --   , urlCommand
+                          ]
 
 
 

@@ -67,7 +67,13 @@ view { organizations, tools, useCases } activeCardType searchQuery language =
                                 , attribute "role" "presentation"
                                 ]
                                 [ aForPath navigate
-                                    ((Routes.urlBasePathForCardType cardType) ++ "?q=" ++ searchQuery)
+                                    ((Routes.urlBasePathForCardType cardType)
+                                        ++ (if String.isEmpty searchQuery then
+                                                ""
+                                            else
+                                                "?q=" ++ searchQuery
+                                           )
+                                    )
                                     []
                                     [ text (I18n.translate language (translationId I18n.Plural))
                                     , span [ class "badge" ]
