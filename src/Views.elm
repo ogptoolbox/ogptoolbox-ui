@@ -61,7 +61,9 @@ viewCardListItem navigate language values card =
                 ]
             , div [ class "caption" ]
                 [ h4 []
-                    [ aForPath navigate
+                    [ aForPath
+                        navigate
+                        language
                         urlPath
                         []
                         [ text name ]

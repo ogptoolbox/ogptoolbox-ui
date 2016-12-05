@@ -484,7 +484,7 @@ viewThumbnail thumbnailExtraClasses language values card =
                     ]
                 , div [ class "caption" ]
                     [ h4 []
-                        [ aForPath navigate urlPath [] [ text name ] ]
+                        [ aForPath navigate language urlPath [] [ text name ] ]
                     , case getOneString language descriptionKeys card values of
                         Just description ->
                             p [] [ text description ]
@@ -561,7 +561,9 @@ viewThumbnails thumbnailExtraClasses searchQuery language loadingStatus =
 
                                 Just firstCard ->
                                     [ div [ class "col-sm-12 text-center" ]
-                                        [ aForPath navigate
+                                        [ aForPath
+                                            navigate
+                                            language
                                             ((Routes.urlBasePathForCard firstCard)
                                                 ++ (if String.isEmpty searchQuery then
                                                         ""

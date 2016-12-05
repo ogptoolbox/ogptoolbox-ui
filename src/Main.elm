@@ -634,6 +634,7 @@ viewAddNewModal model language =
                             [ div [ class "col-xs-12" ]
                                 [ aForPath
                                     Navigate
+                                    language
                                     "/tools/new"
                                     [ class "media action"
                                       -- TODO trigger a login if not signed in
@@ -651,6 +652,7 @@ viewAddNewModal model language =
                                     ]
                                 , aForPath
                                     Navigate
+                                    language
                                     "/use-cases/new"
                                     [ class "media action"
                                       -- TODO trigger a login if not signed in
@@ -784,25 +786,34 @@ viewFooter model language =
                                         , span [ class "caret" ] []
                                         ]
                                     , ul [ attribute "aria-labelledby" "dropdownMenu1", class "dropdown-menu" ]
-                                        [ li []
-                                            [ aForPath Navigate
-                                                (replaceLanguageInLocation I18n.English model.location)
-                                                []
-                                                [ text (I18n.translate I18n.English (I18n.Language I18n.English)) ]
+                                        (let
+                                            aForPath urlPath children =
+                                                a
+                                                    [ href (makeUrl urlPath)
+                                                    , onWithOptions
+                                                        "click"
+                                                        { stopPropagation = True, preventDefault = True }
+                                                        (Json.Decode.succeed (Navigate urlPath))
+                                                    ]
+                                                    children
+                                         in
+                                            [ li []
+                                                [ aForPath
+                                                    (replaceLanguageInLocation I18n.English model.location)
+                                                    [ text (I18n.translate I18n.English (I18n.Language I18n.English)) ]
+                                                ]
+                                            , li []
+                                                [ aForPath
+                                                    (replaceLanguageInLocation I18n.French model.location)
+                                                    [ text (I18n.translate I18n.French (I18n.Language I18n.French)) ]
+                                                ]
+                                            , li []
+                                                [ aForPath
+                                                    (replaceLanguageInLocation I18n.Spanish model.location)
+                                                    [ text (I18n.translate I18n.Spanish (I18n.Language I18n.Spanish)) ]
+                                                ]
                                             ]
-                                        , li []
-                                            [ aForPath Navigate
-                                                (replaceLanguageInLocation I18n.French model.location)
-                                                []
-                                                [ text (I18n.translate I18n.French (I18n.Language I18n.French)) ]
-                                            ]
-                                        , li []
-                                            [ aForPath Navigate
-                                                (replaceLanguageInLocation I18n.Spanish model.location)
-                                                []
-                                                [ text (I18n.translate I18n.Spanish (I18n.Language I18n.Spanish)) ]
-                                            ]
-                                        ]
+                                        )
                                     ]
                                 ]
                             ]
@@ -876,6 +887,7 @@ viewHeader model language containerClass =
                     li []
                         [ aForPath
                             Navigate
+                            language
                             "/profile"
                             []
                             [ text authentication.name ]
@@ -950,6 +962,7 @@ viewHeader model language containerClass =
                             ]
                         , aForPath
                             Navigate
+                            language
                             "/"
                             [ class "navbar-brand" ]
                             [ text "OGPtoolbox" ]
@@ -994,6 +1007,7 @@ viewHeader model language containerClass =
                             [ li []
                                 [ aForPath
                                     Navigate
+                                    language
                                     "/tools"
                                     []
                                     [ text (I18n.translate language (I18n.Tool I18n.Plural)) ]
@@ -1001,20 +1015,23 @@ viewHeader model language containerClass =
                             , li []
                                 [ aForPath
                                     Navigate
+                                    language
                                     "/use-cases"
                                     []
                                     [ text (I18n.translate language (I18n.UseCase I18n.Plural)) ]
                                 ]
-                              -- , li []
-                              --     [ aForPath
-                              --         Navigate
-                              --         "/organizations"
-                              --         []
-                              --         [ text (I18n.translate language (I18n.Organization I18n.Plural)) ]
-                              --     ]
+                              --   , li []
+                              --       [ aForPath
+                              --           Navigate
+                              --           language
+                              --           "/organizations"
+                              --           []
+                              --           [ text (I18n.translate language (I18n.Organization I18n.Plural)) ]
+                              --       ]
                             , li []
                                 [ aForPath
                                     Navigate
+                                    language
                                     "/collections"
                                     []
                                     [ text (I18n.translate language (I18n.Collection I18n.Plural)) ]
@@ -1022,6 +1039,7 @@ viewHeader model language containerClass =
                             , li []
                                 [ aForPath
                                     Navigate
+                                    language
                                     "/about"
                                     []
                                     [ text (I18n.translate language I18n.About) ]

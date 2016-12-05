@@ -516,10 +516,7 @@ viewValueValue language cards values value =
                         urlPath =
                             Routes.urlPathForCard card
                     in
-                        aForPath navigate
-                            urlPath
-                            []
-                            [ text linkText ]
+                        aForPath navigate language urlPath [] [ text linkText ]
     in
         case value of
             StringValue str ->

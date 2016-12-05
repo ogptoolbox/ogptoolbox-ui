@@ -66,7 +66,9 @@ view { organizations, tools, useCases } activeCardType language location =
                                 [ classList [ ( "active", activeCardType == cardType ) ]
                                 , attribute "role" "presentation"
                                 ]
-                                [ aForPath navigate
+                                [ aForPath
+                                    navigate
+                                    language
                                     ((Routes.urlBasePathForCardType cardType)
                                         ++ (Routes.queryStringForParams [ "q", "tagIds" ] location)
                                     )
