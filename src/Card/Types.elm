@@ -1,7 +1,6 @@
 module Card.Types exposing (..)
 
 import Http
-import Task
 import Types exposing (..)
 import WebData exposing (..)
 
@@ -33,11 +32,6 @@ type alias MsgTranslation parentMsg =
 
 type alias MsgTranslator parentMsg =
     Msg -> parentMsg
-
-
-loadOne : String -> Cmd Msg
-loadOne id =
-    Task.perform (\_ -> Debug.crash "") (\_ -> ForSelf (Load id)) (Task.succeed "")
 
 
 navigate : String -> Msg

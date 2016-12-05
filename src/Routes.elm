@@ -143,13 +143,6 @@ urlParser =
 -- UPDATE LOCATION
 
 
-addSearchQueryToLocation : String -> Location -> Cmd msg
-addSearchQueryToLocation searchQuery location =
-    Hop.addQuery (Dict.singleton "q" searchQuery) location
-        |> makeUrlFromLocation
-        |> Navigation.newUrl
-
-
 getSearchQuery : Location -> String
 getSearchQuery location =
     Dict.get "q" location.query |> Maybe.withDefault ""
