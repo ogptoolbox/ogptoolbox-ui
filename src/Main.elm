@@ -4,6 +4,7 @@ import About
 import AddNew.State
 import AddNew.Types
 import AddNew.View
+import Authenticator.Activate
 import Authenticator.Model
 import Authenticator.Update
 import Authenticator.View
@@ -59,6 +60,7 @@ type alias Flags =
 
 type alias Model =
     { addNewModel : AddNew.Types.Model
+    , activationModel : Authenticator.Activate.Model
     , authentication : Maybe Authenticator.Model.Authentication
     , authenticatorModel : Authenticator.Model.Model
     , authenticatorRouteMaybe : Maybe Authenticator.Model.Route
@@ -75,8 +77,9 @@ type alias Model =
 init : Flags -> ( I18nRoute, Hop.Types.Location ) -> ( Model, Cmd Msg )
 init flags ( i18nRoute, location ) =
     { addNewModel = AddNew.State.init
+    , activationModel = Authenticator.Activate.init
     , authentication =
-        Json.Decode.decodeValue Decoders.userDecoder flags.authentication
+        Json.Decode.decodeValue Decoders.userForPortDecoder flags.authentication
             |> Result.toMaybe
     , authenticatorModel = Authenticator.Model.init
     , authenticatorRouteMaybe = Nothing
@@ -176,6 +179,22 @@ urlUpdate ( i18nRoute, location ) model =
                                     , imageUrl = Constants.logoUrl
                                     }
                                 )
+
+                            ActivationRoute userId ->
+                                let
+                                    ( activationModel, childCmd ) =
+                                        Authenticator.Activate.update
+                                            (Authenticator.Activate.Load
+                                                userId
+                                                (Dict.get "authorization" location.query |> Maybe.withDefault "")
+                                            )
+                                            model.activationModel
+                                            language
+
+                                    newModel =
+                                        { model | activationModel = activationModel }
+                                in
+                                    ( model, Cmd.map translateActivationMsg childCmd )
 
                             HomeRoute ->
                                 indexRoute I18n.Home
@@ -337,7 +356,9 @@ urlUpdate ( i18nRoute, location ) model =
 
 
 type Msg
-    = AddNewMsg AddNew.Types.InternalMsg
+    = Activate User
+    | ActivationMsg Authenticator.Activate.InternalMsg
+    | AddNewMsg AddNew.Types.InternalMsg
     | AuthenticatorMsg Authenticator.Update.Msg
     | AuthenticatorRouteMsg (Maybe Authenticator.Model.Route)
     | CardMsg Card.Types.InternalMsg
@@ -347,6 +368,14 @@ type Msg
     | Search
     | SearchInputChanged String
     | SearchMsg Search.Types.InternalMsg
+
+
+translateActivationMsg : Authenticator.Activate.MsgTranslator Msg
+translateActivationMsg =
+    Authenticator.Activate.translateMsg
+        { onInternalMsg = ActivationMsg
+        , onActivate = Activate
+        }
 
 
 translateAddNewMsg : AddNew.Types.MsgTranslator Msg
@@ -399,6 +428,20 @@ update msg model =
                     Cmd.none
     in
         case msg of
+            Activate authentication ->
+                ( { model | authentication = Just authentication }
+                , Cmd.none
+                )
+
+            ActivationMsg childMsg ->
+                let
+                    ( activationModel, childCmd ) =
+                        Authenticator.Activate.update childMsg model.activationModel language
+                in
+                    ( { model | activationModel = activationModel }
+                    , Cmd.map translateActivationMsg childCmd
+                    )
+
             AddNewMsg childMsg ->
                 let
                     ( addNewModel, childCmd ) =
@@ -553,6 +596,11 @@ view model =
                 case route of
                     AboutRoute ->
                         About.view language
+                            |> standardLayout language
+
+                    ActivationRoute userId ->
+                        Authenticator.Activate.view model.activationModel language userId
+                            |> Html.App.map translateActivationMsg
                             |> standardLayout language
 
                     HomeRoute ->

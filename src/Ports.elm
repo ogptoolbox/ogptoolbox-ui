@@ -1,6 +1,6 @@
 port module Ports exposing (..)
 
-import Types exposing (DocumentMetatags, PopularTag, User)
+import Types exposing (DocumentMetatags, PopularTag, UserForPort)
 
 
 -- DOCUMENT METATAGS
@@ -29,7 +29,7 @@ port fileContentRead : (ImagePortData -> msg) -> Sub msg
 -- AUTHENTICATION
 
 
-port storeAuthentication : Maybe User -> Cmd msg
+port storeAuthentication : Maybe UserForPort -> Cmd msg
 
 
 

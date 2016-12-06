@@ -91,9 +91,24 @@ dataIdsBodyDecoder =
 userDecoder : Decoder User
 userDecoder =
     succeed User
-        -- Workaround a bug in ports that removes false values.
+        |: ("activated" := bool)
+        |: ("apiKey" := string)
+        |: ("email" := string)
+        |: ("name" := string)
+        |: ("urlName" := string)
+
+
+userForPortDecoder : Decoder User
+userForPortDecoder =
+    succeed User
+        -- Workaround a bug in ports that removes boolean values.
         |:
-            oneOf [ ("activated" := bool), succeed False ]
+            (("activated" := string)
+                `andThen`
+                    (\activated ->
+                        succeed (not (String.isEmpty activated))
+                    )
+            )
         |: ("apiKey" := string)
         |: ("email" := string)
         |: ("name" := string)

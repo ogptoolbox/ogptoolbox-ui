@@ -50,6 +50,11 @@ type TranslationId
     | AboutWhy
     | AboutWhyContent1
     | AboutWhyContent2
+    | ActivationFailed
+    | ActivationInProgress
+    | ActivationNotRequested
+    | ActivationSucceeded
+    | ActivationTitle
     | Actor GrammaticalNumber
     | AddNew
     | AddNewCollectionCatchPhrase
@@ -340,6 +345,36 @@ getTranslationSet translationId =
         AboutWhyContent2 ->
             { english = s "The platform enables to find the most adapted tool to each project or initiative through search and comparison by categories, use cases, organization or technical criterion, to simplify its access and its technical handle."
             , french = s "La plateforme permet de trouver l'outil le mieux adapté à chaque projet ou initiative à travers des recherches et des comparaisons par catégorie, cas d'usage, organisation ou critère technique, ainsi que d'en simplifier l'accès et la prise en main."
+            , spanish = todo
+            }
+
+        ActivationFailed ->
+            { english = s "The verification of your email address has failed. Retry please!"
+            , french = s "La vérification de votre adresse courriel a échoué. Veuillez réessayer !"
+            , spanish = todo
+            }
+
+        ActivationInProgress ->
+            { english = s "Verifying your email address..."
+            , french = s "Vérification de votre adresse courriel..."
+            , spanish = todo
+            }
+
+        ActivationNotRequested ->
+            { english = s "Your email address will be verified soon..."
+            , french = s "Votre adresse courriel va bientôt être vérifiée..."
+            , spanish = todo
+            }
+
+        ActivationSucceeded ->
+            { english = s "The verification of your email address has succeeded. Your account is now activated!"
+            , french = s "La vérification de votre adresse courriel a réussi. Votre compte est maintenant activé !"
+            , spanish = todo
+            }
+
+        ActivationTitle ->
+            { english = s "User Account Activation"
+            , french = s "Activation du compte utilisateur"
             , spanish = todo
             }
 

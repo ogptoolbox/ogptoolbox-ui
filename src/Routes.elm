@@ -3,7 +3,7 @@ module Routes exposing (..)
 import Combine exposing (Parser)
 import Dict exposing (Dict)
 import Hop
-import Hop.Matchers exposing (match1, match2, nested1, regex)
+import Hop.Matchers exposing (match1, match2, match3, nested1, regex)
 import Hop.Types
 import I18n
 import Navigation
@@ -16,6 +16,7 @@ import Types exposing (..)
 
 type Route
     = AboutRoute
+    | ActivationRoute String
     | HomeRoute
     | NotFoundRoute String
     | OrganizationsRoute OrganizationsNestedRoute
@@ -87,6 +88,7 @@ matchers =
         , match1 NewUseCaseRoute "/new"
         , match2 UseCaseRoute "/" idParser
         ]
+    , match3 ActivationRoute "/users/" idParser "/activate"
     , match2 NotFoundRoute "" (regex ".*")
     ]
 

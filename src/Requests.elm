@@ -13,6 +13,18 @@ import Types exposing (..)
 import Task exposing (Task)
 
 
+activateUser : String -> String -> Task Http.Error UserBody
+activateUser userId authorization =
+    Http.fromJson userBodyDecoder
+        (Http.send Http.defaultSettings
+            { verb = "GET"
+            , url = apiUrl ++ "users/" ++ userId ++ "/activate?authorization=" ++ authorization
+            , headers = [ ( "Accept", "application/json" ) ]
+            , body = Http.empty
+            }
+        )
+
+
 getCard : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
 getCard authentication cardId =
     let
