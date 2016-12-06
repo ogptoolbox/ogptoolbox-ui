@@ -146,14 +146,25 @@ viewCardContent language card cards values =
                 ]
             , div [ class "row" ]
                 [ div [ class "col-xs-12" ]
-                    (case getSubTypes language card values of
+                    (case getUsages language card values of
                         [] ->
                             [ button [ class "call-add" ] [ text "+ add a category" ] ]
 
-                        xs ->
+                        usages ->
                             List.map
-                                (\str -> span [ class "label label-default label-tag label-maintag" ] [ text str ])
-                                xs
+                                (\{ tag, tagId } ->
+                                    let
+                                        urlPath =
+                                            Routes.urlBasePathForCard card ++ "?tagIds=" ++ tagId
+                                    in
+                                        aForPath
+                                            navigate
+                                            language
+                                            urlPath
+                                            [ class "label label-default label-tag label-maintag" ]
+                                            [ text tag ]
+                                )
+                                usages
                     )
                 ]
             , div [ class "row" ]
