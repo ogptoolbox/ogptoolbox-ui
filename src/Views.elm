@@ -46,9 +46,23 @@ viewCardListItem navigate language values card =
 
         urlPath =
             Routes.urlPathForCard card
+
+        cardType =
+            getCardType card
     in
         div
-            [ class "thumbnail example"
+            [ class
+                ("thumbnail "
+                    ++ case cardType of
+                        UseCaseCard ->
+                            "example"
+
+                        ToolCard ->
+                            "tool"
+
+                        OrganizationCard ->
+                            "orga"
+                )
             , onClick (navigate urlPath)
             ]
             [ div [ class "visual" ]
@@ -57,7 +71,19 @@ viewCardListItem navigate language values card =
                         img [ alt "Logo", src url ] []
 
                     Nothing ->
-                        h1 [ class "dynamic" ] [ text name ]
+                        h1 [ class "dynamic" ]
+                            [ text
+                                (case cardType of
+                                    OrganizationCard ->
+                                        String.left 1 name
+
+                                    ToolCard ->
+                                        String.left 2 name
+
+                                    UseCaseCard ->
+                                        name
+                                )
+                            ]
                 ]
             , div [ class "caption" ]
                 [ h4 []
