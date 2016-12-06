@@ -813,52 +813,68 @@ viewFooter model language =
                             ]
                         , p [ class "info-box" ]
                             [ text (I18n.translate language I18n.OpenGovParagraph) ]
+                        , a [ class "etalab-logo"]
+                              [ img [ alt "Etalab logo", src "/img/etalab-logo.png" ]
+                                    []
+                            ]
                         ]
                     , div [ class "col-xs-6 col-md-3" ]
                         [ h4 []
-                            [ text (I18n.translate language I18n.About) ]
+                            [ text (I18n.translate language I18n.FooterDiscover) ]
                         , ul [ class "footer-menu" ]
                             [ li []
-                                [ a [ href "#" ]
-                                    [ text "Eligibility Criteria" ]
+                                [ aForPath
+                                    Navigate
+                                    "/tools"
+                                    []
+                                    [ text (I18n.translate language (I18n.Tool I18n.Plural)) ]
                                 ]
                             , li []
-                                [ a [ href "#" ]
-                                    [ text "Develop a National Action Plan" ]
+                                [ aForPath
+                                    Navigate
+                                    "/use-cases"
+                                    []
+                                    [ text (I18n.translate language (I18n.UseCase I18n.Plural)) ]
                                 ]
+                               , li []
+                                   [ aForPath
+                                       Navigate
+                                       "/organizations"
+                                       []
+                                       [ text (I18n.translate language (I18n.Organization I18n.Plural)) ]
+                                   ]
                             , li []
-                                [ a [ href "#" ]
-                                    [ text "Self-Assessment Process" ]
-                                ]
-                            , li []
-                                [ a [ href "#" ]
-                                    [ text "Response Policy" ]
-                                ]
-                            , li []
-                                [ a [ href "#" ]
-                                    [ text "Civil Society Engagement" ]
-                                ]
-                            , li []
-                                [ a [ href "#" ]
-                                    [ text "Calendars and Deadlines" ]
+                                [ aForPath
+                                    Navigate
+                                    "/collections"
+                                    []
+                                    [ text (I18n.translate language (I18n.Collection I18n.Plural)) ]
                                 ]
                             ]
                         ]
                     , div [ class "col-xs-6 col-md-3" ]
                         [ h4 []
-                            [ text "How it works" ]
+                            [ text (I18n.translate language I18n.FooterAbout) ]
                         , ul [ class "footer-menu" ]
                             [ li []
-                                [ a [ href "#" ]
-                                    [ text "Home" ]
+                                [ aForPath
+                                    Navigate
+                                    "/about"
+                                    []
+                                    [ text (I18n.translate language I18n.About) ]
                                 ]
                             , li []
-                                [ a [ href "#" ]
-                                    [ text "Profile" ]
+                                [ a [ href (I18n.translate language I18n.OGPsummitLink) , target "_blank" ]
+                                    [ text "OpenGovernment Summit 2016" ]
                                 ]
                             , li []
-                                [ a [ href "#" ]
-                                    [ text "Messages" ]
+                                [ a [ href "http://www.opengovpartnership.org" , target "_blank" ]
+                                    [ text "Open Government Parntenrship" ]
+                                ]
+                            ,
+                             li []
+                                [ a [ href "https://www.etalab.gouv.fr" , target "_blank" ]
+                                    [ text "Etalab" ]
                                 ]
                             ]
                         ]
@@ -997,13 +1013,6 @@ viewHeader model language containerClass =
                     , div [ class "collapse navbar-collapse", id "bs-example-navbar-collapse-1" ]
                         [ ul [ class "nav navbar-nav" ]
                             [ li []
-                                [ aForPath
-                                    Navigate
-                                    "/about"
-                                    []
-                                    [ text (I18n.translate language I18n.About) ]
-                                ]
-                            , li []
                                 [ aForPath
                                     Navigate
                                     "/tools"
