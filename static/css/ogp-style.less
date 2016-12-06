@@ -222,6 +222,7 @@ ul.nav.nav-pills {
         line-height: 26px;
         box-shadow: none;
         text-shadow: none;
+        margin-bottom: 0;
 
         &.alert-success {
            background-image: none;
@@ -253,6 +254,7 @@ nav.navbar.navbar-default {
     padding: 0;
     box-shadow: none;
     max-height: 83px;
+    border-radius: 0;
 }
 .navbar-right {
     margin-right: 0;
@@ -740,7 +742,7 @@ p.info-box  {
         font-size: 80% !important;
     }
 
-    :hover {
+    &:hover {
         background-color: #a7a7a7;
         border: 1px solid #a7a7a7;
         color: white;
@@ -834,6 +836,7 @@ h4.zone-label {
         right: 12px;
         top: 8px;
         display: none;
+        overflow: hidden;
     }
 
     &:hover {
@@ -872,6 +875,9 @@ h4.zone-label {
         box-shadow: none;
         border-size: 0;
         border-radius: 0px;
+            &:hover {
+                background-color: darken(@light-grey, 5%);
+            }
 
         .visual     {
             border-bottom: 1px solid #e8e8e8;
@@ -939,6 +945,13 @@ h4.zone-label {
             right: 0;
             bottom: 0;
         }
+
+        &:hover {
+                background-color: darken(@light-grey, 3%);
+                .visual {
+                border-color: darken(@light-grey, 3%);
+                }
+            }
 
     }
 
@@ -1060,6 +1073,12 @@ h4.zone-label {
     h4 {
         font-size: 15px;
         margin: 3px 0 9px;
+        a {
+            color: #333;
+            &:hover {
+            color: @light-blue;
+            }
+        }
     }
 
     p   {
@@ -1399,7 +1418,6 @@ table {
     }
     .modal-body {
         padding: 0px;
-        overflow: scroll;
         max-height: 480px;
 
         .big .form-control {
@@ -1419,8 +1437,12 @@ table {
             margin-bottom: 14px;
         }
 
-        .list-unstyled li {
-            line-height: 1.8em;
+        .list-unstyled  {
+            min-height: 155px;
+
+            li {
+                line-height: 1.8em;
+            }
         }
 
         .well {
@@ -1577,7 +1599,19 @@ table {
         }
     }
 
+    a.forgot {
+        color: grey;
 
+    &:hover {
+        color: @light-blue;
+    }
+
+    }
+
+}
+
+#edit-overlay.modal-dialog .modal-body {
+     overflow: scroll;
 }
 
 .grey {
@@ -1604,8 +1638,7 @@ body, html, #main, .main-container {
     position: fixed;
     top: 0;
     width:100%;
-    background:yellow;
-    z-index: 10000;
+    z-index: 1000000;
 }
 
 .browse-tag {
@@ -1901,13 +1934,13 @@ header {
     color: white;
     background-color: @dark;
     .intro-text {
-            padding-top: 200px;
-            padding-bottom: 200px;
+            padding: 100px;
             .intro-lead-in {
-                font-style: italic;
+                font-style: normal;
                 font-size: 30px;
                 line-height: 40px;
                 margin-bottom: 25px;
+                font-weight: 300;
             }
             .intro-heading {
                 font-weight: 400;
@@ -1923,31 +1956,49 @@ header {
 // Global Section Styles
 
 section {
-    padding: 100px 0;
+    padding: 120px 0;
     h2.section-heading {
-        font-size: 40px;
+        font-size: 36px;
         margin-top: 0;
         margin-bottom: 10px;
-        font-weight: 600;
+        font-weight: 4300;
+        color: #333;
     }
     h3.section-subheading {
         font-size: 18px;
-        ;
         text-transform: none;
         font-style: italic;
-        font-weight: 400;
+        font-weight: 300;
         margin-bottom: 75px;
     }
     p {
         margin-top: 15px;
         font-size: 17px;
         line-height: 1.75;
+        font-weight: 300;
+    }
+    ul {
+        margin: 10px 0;
+        font-size: 17px;
+        line-height: 1.75;
+        font-weight: 300;
     }
 }
 
-@media(min-width:768px) {
-    section {
-        padding: 150px 0;
+section#mentions {
+    padding: 60px 0 0px;
+    h2.section-heading {
+        font-size: 22px;
+        margin-top: 0;
+        margin-bottom: 5px;
+        font-weight: 4300;
+        color: #333;
+    }
+    p {
+        margin-top: 15px;
+        font-size: 13px;
+        line-height: 1.75;
+        font-weight: 300;
     }
 }
 
@@ -1956,12 +2007,13 @@ section {
 .service-heading {
     margin: 15px 0;
     text-transform: none;
-    font-weight: 600;
-    font-size: 20px;
+    font-weight: 400;
+    font-size: 24px;
+    color: #333;
 }
 .service-text {
-    margin: 15px 30px 50px;
-    font-weight: 400;
+    margin: 15px 15px 50px;
+    font-weight: 300;
     font-size: 16px;
     line-height: 1.5em;
 }
@@ -2158,6 +2210,8 @@ section {
 // Clients Aside
 
 aside.clients {
+    margin-top: 60px;
+
     a {
     height: 140px;
     display: block;
