@@ -114,7 +114,7 @@ getTranslationSet translationId =
         About ->
             { english = s "Help"
             , french = s "Aide"
-            , spanish = todo
+            , spanish = s "Ayuda"
             }
         AboutAccess ->
             { english = s "How can I access OGP Toolbox Data?"
@@ -159,7 +159,7 @@ getTranslationSet translationId =
         AboutCredits ->
             { english = s "Credits"
             , french = s "Crédits"
-            , spanish = todo
+            , spanish = s "Créditos"
             }
         AboutCreditsContent ->
             { english = s "The bubble tags navigation system is based on "
@@ -214,7 +214,7 @@ getTranslationSet translationId =
         AboutLegal ->
             { english = s "Legal notices"
             , french = s "Mentions légales"
-            , spanish = todo
+            , spanish = s "Nota legal"
             }
         AboutLegalContent ->
             { english = s "OGPtoolobox.org is edited by the Etalab taskforce, a Prime Minister service, 39 quai André Citroën 75015 PARIS."
@@ -343,26 +343,26 @@ getTranslationSet translationId =
             }
 
         AddNewCollectionCatchPhrase ->
-            { english = todo
-            , french = s "Une sélection des meilleurs outils et cas d'usage dans un contexte précis."
+            { english = s "A series of solutions gathered by an actor to push them forward"
+            , french = s "Un ensemble de solutions réunies par un acteur pour les mettre en avant"            
             , spanish = todo
             }
 
         AddNewUseCase ->
             { english = s "Add a new use case"
-            , french = todo
+            , french = s "Ajouter un nouveau cas d'usage"
             , spanish = todo
             }
 
         AddNewUseCaseCatchPhrase ->
-            { english = todo
-            , french = s "Un exemple concret et efficace d'utilisation d'un outil."
+            { english = s "Example of a concrete use case of one or multiple tools having a participatory dimension."
+            , french = s "Exemple concret d'utilisation d'un ou plusieurs outils avec une dimension de participation citoyenne."
             , spanish = todo
             }
 
         AddNewOrganization ->
             { english = s "Add a new organization"
-            , french = todo
+            , french = s "Ajouter une nouvelle organisation"
             , spanish = todo
             }
 
@@ -374,13 +374,13 @@ getTranslationSet translationId =
 
         AddNewTool ->
             { english = s "Add a new tool"
-            , french = todo
+            , french = s "Ajouter un nouvel outil"
             , spanish = todo
             }
 
         AddNewToolCatchPhrase ->
-            { english = todo
-            , french = s "Un logiciel ou services utilisé pour renforcer la démocratie."
+            { english = s "Software or services, available online or through mobile applications."
+            , french = s "Programme informatique ou service, disponible sur le web ou via des applications mobiles."
             , spanish = todo
             }
 
@@ -410,13 +410,13 @@ getTranslationSet translationId =
             , french =
                 case cardType of
                     UseCaseCard ->
-                        todo
+                        s "Ajouter une description pour ce cas d'usage"
 
                     OrganizationCard ->
-                        todo
+                        s "Ajouter ne description pour cette organisation"
 
                     ToolCard ->
-                        todo
+                        s "Ajouter une description pour cet outil"
             , spanish =
                 case cardType of
                     UseCaseCard ->
@@ -450,7 +450,13 @@ getTranslationSet translationId =
 
                     Plural ->
                         s "Collections"
-            , spanish = todo
+            , spanish =
+                case number of
+                    Singular ->
+                        s "Colección"
+
+                    Plural ->
+                        s "Colecciones"
             }
 
         Copyright ->
@@ -476,22 +482,22 @@ getTranslationSet translationId =
             , spanish =
                 case number of
                     Singular ->
-                        todo
+                        s "Caso de uso"
 
                     Plural ->
-                        todo
+                        s "Casos de uso"
             }
 
         FooterAbout ->
             { english = s "About"
             , french = s "A propos"
-            , spanish = todo
+            , spanish = s "Acerca"
             }
 
         FooterDiscover ->
             { english = s "Discover"
             , french = s "Découvrir"
-            , spanish = todo
+            , spanish = s "Descubrir"
             }
 
         GenericError ->
@@ -510,13 +516,13 @@ getTranslationSet translationId =
         Help ->
             { english = s "Help"
             , french = s "Aide"
-            , spanish = todo
+            , spanish = s "Ayuda"
             }
 
         Home ->
             { english = s "Home"
             , french = s "Accueil"
-            , spanish = todo
+            , spanish = s "Inicio"
             }
 
         Language language ->
@@ -542,7 +548,7 @@ getTranslationSet translationId =
         LanguageWord ->
             { english = s "Language"
             , french = s "Langue"
-            , spanish = todo
+            , spanish = s "Idioma"
             }
 
         License ->
@@ -588,7 +594,13 @@ to strengthen governance.
 
                     Plural ->
                         s "Organisations"
-            , spanish = todo
+            , spanish = 
+                case number of
+                    Singular ->
+                        s "Organización"
+
+                    Plural ->
+                        s "Organizaciones"
             }
 
         PageLoading ->
@@ -611,25 +623,25 @@ to strengthen governance.
 
         PageNotFoundExplanation ->
             { english = s "Sorry, but the page you were trying to view does not exist."
-            , french = todo
+            , french = s "Désolé mais la page que vous avez demandé n'est pas disponible"
             , spanish = todo
             }
 
         PublishUseCase ->
             { english = s "Publish use case"
-            , french = todo
+            , french = s "Poublier ce cas d'usage"
             , spanish = todo
             }
 
         PublishOrganization ->
             { english = s "Publish organization"
-            , french = todo
+            , french = s "Publier cette organisation"
             , spanish = todo
             }
 
         PublishTool ->
             { english = s "Publish tool"
-            , french = todo
+            , french = s "Publier cet outil"
             , spanish = todo
             }
 
@@ -642,7 +654,7 @@ to strengthen governance.
         Score ->
             { english = s "Score"
             , french = s "Score"
-            , spanish = todo
+            , spanish = s "Score"
             }
 
         SearchInputPlaceholder ->
@@ -654,25 +666,25 @@ to strengthen governance.
         ShowAll count ->
             { english = s ("Show all " ++ (toString count))
             , french = s ("Voir tous (" ++ (toString count) ++ ")")
-            , spanish = todo
+            , spanish = s ("Ver todo (" ++ (toString count) ++ ")")
             }
 
         SignIn ->
             { english = s "Sign In"
             , french = s "Se connecter"
-            , spanish = todo
+            , spanish = s "Acceder"
             }
 
         SignOut ->
             { english = s "Sign Out"
             , french = s "Se déconnecter"
-            , spanish = todo
+            , spanish = s "Salir"
             }
 
         SignUp ->
             { english = s "Sign Up"
             , french = s "S'inscrire"
-            , spanish = todo
+            , spanish = s "Registrarse"
             }
 
         SimilarTools ->
@@ -684,18 +696,18 @@ to strengthen governance.
         Software ->
             { english = s "Software"
             , french = s "Logiciel"
-            , spanish = todo
+            , spanish = s "Software"
             }
 
         Tags ->
             { english = s "Tags"
             , french = s "Tags"
-            , spanish = todo
+            , spanish = s "Tags"
             }
 
         TimeoutExplanation ->
             { english = s "The server was too slow to respond (timeout)."
-            , french = todo
+            , french = s "Le servert a mis trop de temps à repondre (timeout)"
             , spanish = todo
             }
 
@@ -714,13 +726,19 @@ to strengthen governance.
 
                     Plural ->
                         s "Outils"
-            , spanish = todo
+            , spanish =
+                case number of
+                    Singular ->
+                        s "Herramienta"
+
+                    Plural ->
+                        s "Herramientas"
             }
 
         Type ->
             { english = s "Type"
             , french = s "Type"
-            , spanish = todo
+            , spanish = s "Tipo"
             }
 
         UseCase number ->
@@ -741,27 +759,27 @@ to strengthen governance.
             , spanish =
                 case number of
                     Singular ->
-                        todo
+                        s "Caso de uso"
 
                     Plural ->
-                        todo
+                        s "Casos de uso"
             }
 
         UsedBy ->
             { english = s "Used by"
-            , french = todo
+            , french = s "Utilisé par"
             , spanish = todo
             }
 
         UsedFor ->
             { english = s "Used for"
-            , french = todo
+            , french = s "Utilisé pour"
             , spanish = todo
             }
 
         UnexpectedPayloadExplanation ->
             { english = s "The server returned unexpected data."
-            , french = todo
+            , french = s "Le server a retourné des données imprévues"
             , spanish = todo
             }
 
