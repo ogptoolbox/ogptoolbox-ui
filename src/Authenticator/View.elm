@@ -1,6 +1,7 @@
 module Authenticator.View exposing (..)
 
 import Authenticator.Model exposing (Model, Route(..))
+import Authenticator.ResetPassword as ResetPassword
 import Authenticator.SignIn as SignIn
 import Authenticator.SignOut as SignOut
 import Authenticator.SignUp as SignUp
@@ -12,6 +13,9 @@ import Html.App
 modalTitle : Route -> String
 modalTitle route =
     case route of
+        ResetPasswordRoute ->
+            "Password lost?"
+
         SignInRoute ->
             "Sign in to contribute"
 
@@ -25,6 +29,9 @@ modalTitle route =
 viewModalBody : Route -> Model -> Html Msg
 viewModalBody route model =
     case route of
+        ResetPasswordRoute ->
+            Html.App.map ResetPasswordMsg (ResetPassword.viewModalBody model.resetPassword)
+
         SignInRoute ->
             Html.App.map SignInMsg (SignIn.viewModalBody model.signIn)
 

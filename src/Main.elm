@@ -951,7 +951,7 @@ viewFooter model language =
 viewHeader : Model -> I18n.Language -> String -> Html Msg
 viewHeader model language containerClass =
     let
-        profileNavItem =
+        profileOrResetPasswordNavItem =
             case model.authentication of
                 Just authentication ->
                     li []
@@ -964,7 +964,18 @@ viewHeader model language containerClass =
                         ]
 
                 Nothing ->
-                    text ""
+                    li []
+                        [ a
+                            [ href "#"
+                            , onWithOptions
+                                "click"
+                                { preventDefault = True, stopPropagation = False }
+                                (Json.Decode.succeed
+                                    (AuthenticatorRouteMsg (Just Authenticator.Model.ResetPasswordRoute))
+                                )
+                            ]
+                            [ text (I18n.translate language I18n.ResetPassword) ]
+                        ]
 
         signInOrOutNavItem =
             case model.authentication of
@@ -1040,7 +1051,7 @@ viewHeader model language containerClass =
                             [ text (I18n.translate language I18n.HeaderTitle) ]
                         ]
                     , ul [ class "nav navbar-nav navbar-right" ]
-                        [ profileNavItem
+                        [ profileOrResetPasswordNavItem
                         , signInOrOutNavItem
                         , signUpNavItem
                         , button

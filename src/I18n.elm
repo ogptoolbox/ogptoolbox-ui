@@ -90,6 +90,7 @@ type TranslationId
     | PublishTool
     | PublishUseCase
     | RegisterNow
+    | ResetPassword
     | SeeAllAndCompare
     | Score
     | SearchInputPlaceholder
@@ -673,6 +674,12 @@ including representatives of governments and civil society organizations.
         RegisterNow ->
             { english = s "Register now!"
             , french = s "Inscrivez vous maintenant !"
+            , spanish = todo
+            }
+
+        ResetPassword ->
+            { english = s "Reset Password"
+            , french = s "Changer de mot de passe"
             , spanish = todo
             }
 

@@ -88,6 +88,17 @@ dataIdsBodyDecoder =
         |: ("offset" := int)
 
 
+messageBodyDecoder : Decoder String
+messageBodyDecoder =
+    ("data" := string)
+
+
+userBodyDecoder : Decoder UserBody
+userBodyDecoder =
+    succeed UserBody
+        |: ("data" := userDecoder)
+
+
 userDecoder : Decoder User
 userDecoder =
     succeed User
@@ -113,12 +124,6 @@ userForPortDecoder =
         |: ("email" := string)
         |: ("name" := string)
         |: ("urlName" := string)
-
-
-userBodyDecoder : Decoder UserBody
-userBodyDecoder =
-    succeed UserBody
-        |: ("data" := userDecoder)
 
 
 valueDecoder : Decoder Types.Value
