@@ -10,7 +10,7 @@ import Routes
 import Search.Types exposing (..)
 import String
 import Types exposing (..)
-import Views exposing (viewWebData)
+import Views exposing (viewTagsWithCallToAction, viewWebData)
 import WebData exposing (..)
 
 
@@ -494,24 +494,7 @@ viewThumbnail thumbnailExtraClasses language values card =
                                 [ class "call" ]
                                 [ text (I18n.translate language (I18n.CallToActionForDescription cardType)) ]
                     ]
-                , div [ class "tags" ]
-                    (case getManyStrings language tagKeys card values of
-                        [] ->
-                            [ span
-                                [ class "label label-default label-tool" ]
-                                [ text (I18n.translate language I18n.CallToActionForCategory) ]
-                            ]
-
-                        xs ->
-                            xs
-                                |> List.take 3
-                                |> List.map
-                                    (\str ->
-                                        span
-                                            [ class "label label-default label-tool" ]
-                                            [ text str ]
-                                    )
-                    )
+                , viewTagsWithCallToAction navigate language values card
                 ]
             ]
 

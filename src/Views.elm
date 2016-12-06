@@ -110,20 +110,7 @@ viewCardListItem navigate language values card =
                             []
                     )
                 ]
-            , div [ class "tags" ]
-                (case getManyStrings language typeKeys card values of
-                    [] ->
-                        [ text "TODO call-to-action" ]
-
-                    xs ->
-                        List.map
-                            (\str ->
-                                span
-                                    [ class "label label-default label-tool" ]
-                                    [ text str ]
-                            )
-                            xs
-                )
+            , viewTagsWithCallToAction navigate language values card
             ]
 
 
@@ -161,6 +148,34 @@ viewNotFound language =
     viewBigMessage
         (I18n.translate language I18n.PageNotFound)
         (I18n.translate language I18n.PageNotFoundExplanation)
+
+
+viewTagsWithCallToAction : (String -> msg) -> I18n.Language -> Dict String Value -> Card -> Html msg
+viewTagsWithCallToAction navigate language values card =
+    div [ class "tags" ]
+        (case getManyStrings language tagKeys card values of
+            [] ->
+                [ span
+                    -- TODO call to action
+                    [ class "label label-default label-tool" ]
+                    [ text (I18n.translate language I18n.CallToActionForCategory) ]
+                ]
+
+            xs ->
+                xs
+                    |> List.take 3
+                    |> List.map
+                        (\str ->
+                            span
+                                -- TODO Create link to search results with tagId= in URL
+                                -- aForPath
+                                --     navigate
+                                --     language
+                                --     ((Routes.urlBasePathForCard card) ++ "tagId=" ++ TODO)
+                                [ class "label label-default label-tool" ]
+                                [ text str ]
+                        )
+        )
 
 
 viewWebData : I18n.Language -> (LoadingStatus a -> Html msg) -> WebData a -> Html msg
