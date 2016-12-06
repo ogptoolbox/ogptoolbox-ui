@@ -268,7 +268,7 @@ getTranslationSet translationId =
             }
         AboutTypesContentCollection ->
             { english = s "A series of solutions gathered by an actor to push them forward, for example “’Tools used by the French Government”, “Online consultations tools”…."
-            , french = s "Le code comporte trois composants, chacun étant stocké sur un dépôt Framagit :"            
+            , french = s "un ensemble de solutions réunies par un acteur pour les mettre en avant, par exemple \"Outils utilisés par le gouvernement Français\", \"Outils de consultations en ligne\" ..."            
             , spanish = todo
             }
         AboutSource ->
