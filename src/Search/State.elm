@@ -231,7 +231,7 @@ update msg model authentication language location =
                             (\{ count, tagId } ->
                                 { count = count
                                 , tag =
-                                    getValue tagId popularTagsData.values
+                                    getValue popularTagsData.values tagId
                                         |> getLocalizedString
                                 , tagId = tagId
                                 }

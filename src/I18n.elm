@@ -71,6 +71,7 @@ type TranslationId
     | Close
     | Collection GrammaticalNumber
     | Copyright
+    | CountVersionsAvailable Int
     | EmailSentForAccountActivation
     | GenericError
     | HeaderTitle
@@ -532,6 +533,30 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        CountVersionsAvailable count ->
+            { english =
+                case count of
+                    0 ->
+                        s "No version available"
+
+                    1 ->
+                        s "1 version available"
+
+                    _ ->
+                        s ((toString count) ++ " versions available")
+            , french =
+                case count of
+                    0 ->
+                        s "Aucune version disponible"
+
+                    1 ->
+                        s "1 version disponible"
+
+                    _ ->
+                        s ((toString count) ++ " versions disponibles")
+            , spanish = todo
+            }
+
         EmailSentForAccountActivation ->
             { english = s "An email has been sent. Click the link it contains, to activate your account."
             , french = s "Un courriel vous a été envoyé. Cliquez sur le lien qu'il contient pour activer votre compte."
@@ -897,6 +922,9 @@ getManyStrings language propertyKeys card values =
                 NumberValue _ ->
                     []
 
+                BooleanValue _ ->
+                    []
+
                 BijectiveCardReferenceValue _ ->
                     []
 
@@ -929,52 +957,57 @@ getManyStrings language propertyKeys card values =
 
 getOneString : Language -> List String -> Card -> Dict String Value -> Maybe String
 getOneString language propertyKeys card values =
-    let
-        getString : ValueType -> Maybe String
-        getString value =
-            case value of
-                StringValue value ->
-                    Just value
+    propertyKeys
+        |> List.map
+            (\propertyKey ->
+                Dict.get propertyKey card.properties
+                    `Maybe.andThen` (\valueId -> Dict.get valueId values)
+                    `Maybe.andThen` (\value -> getOneStringFromValueType language values value.value)
+            )
+        |> Maybe.oneOf
 
-                LocalizedStringValue valueByLanguage ->
-                    getValueByPreferredLanguage language valueByLanguage
 
-                CardIdArrayValue _ ->
-                    Nothing
+getOneStringFromValueType : Language -> Dict String Value -> ValueType -> Maybe String
+getOneStringFromValueType language values valueType =
+    case valueType of
+        StringValue value ->
+            Just value
 
-                ValueIdArrayValue [] ->
-                    Nothing
+        LocalizedStringValue valueByLanguage ->
+            getValueByPreferredLanguage language valueByLanguage
 
-                ValueIdArrayValue (childValue :: _) ->
-                    getString (ValueIdValue childValue)
+        CardIdArrayValue _ ->
+            Nothing
 
-                NumberValue _ ->
-                    Nothing
+        ValueIdArrayValue [] ->
+            Nothing
 
-                BijectiveCardReferenceValue _ ->
-                    Nothing
+        ValueIdArrayValue (childValue :: _) ->
+            getOneStringFromValueType language values (ValueIdValue childValue)
 
-                CardIdValue cardId ->
-                    Nothing
+        NumberValue _ ->
+            Nothing
 
-                ValueIdValue valueId ->
-                    Dict.get valueId values `Maybe.andThen` (\subValue -> getString subValue.value)
+        BooleanValue _ ->
+            Nothing
 
-                WrongValue _ _ ->
-                    Nothing
-    in
-        propertyKeys
-            |> List.map
-                (\propertyKey ->
-                    Dict.get propertyKey card.properties
-                        `Maybe.andThen` (\valueId -> Dict.get valueId values)
-                        `Maybe.andThen` (\value -> getString value.value)
-                )
-            |> Maybe.oneOf
+        BijectiveCardReferenceValue _ ->
+            Nothing
+
+        CardIdValue cardId ->
+            Nothing
+
+        ValueIdValue valueId ->
+            Dict.get valueId values
+                `Maybe.andThen` (\subValue -> getOneStringFromValueType language values subValue.value)
+
+        WrongValue _ _ ->
+            Nothing
 
 
 getName : Language -> Card -> Dict String Value -> String
 getName language card values =
+    -- TODO Name can be Nothing, if down-voted! So return a Maybe String and handle call-to-action
     case getOneString language nameKeys card values of
         Nothing ->
             Debug.crash "getName: unhandled case"

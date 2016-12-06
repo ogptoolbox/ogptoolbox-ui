@@ -4,13 +4,15 @@ import Card.Types exposing (..)
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 import Html.Helpers exposing (aExternal, aForPath, aIfIsUrl)
-import I18n exposing (getImageLogoUrl, getImageScreenshotUrl, getImageUrl, getManyStrings, getName, getOneString, getSubTypes)
+import I18n exposing (..)
+import Json.Decode as Decode
 import Routes
 import String
 import Types exposing (..)
 import Views exposing (viewCardListItem, viewLoading, viewWebData)
-import WebData exposing (LoadingStatus(..))
+import WebData exposing (..)
 
 
 view : Model -> I18n.Language -> Html Msg
@@ -24,9 +26,27 @@ view model language =
                         [ viewLoading language ]
 
                 Loaded body ->
-                    viewCard language body
+                    div []
+                        ([ viewCard language body ]
+                            ++ (case model.editedProperty of
+                                    Nothing ->
+                                        []
+
+                                    Just editedProperty ->
+                                        let
+                                            cards =
+                                                case getData model.webData of
+                                                    Nothing ->
+                                                        Dict.empty
+
+                                                    Just webData ->
+                                                        webData.data.cards
+                                        in
+                                            [ viewEditPropertyModal language editedProperty cards ]
+                               )
+                        )
         )
-        model
+        model.webData
 
 
 viewCard : I18n.Language -> DataIdBody -> Html Msg
@@ -155,7 +175,11 @@ viewCardContent language card cards values =
                                         , div [ class "panel-body" ]
                                             [ div [ class "call-container" ]
                                                 [ p [] [ text "No description for this tool yet." ]
-                                                , button [ class "button call-add" ] [ text "+ Add a description" ]
+                                                , button
+                                                    [ class "button call-add"
+                                                    , onClick (ForSelf (LoadProperties card.id "description"))
+                                                    ]
+                                                    [ text "+ Add a description" ]
                                                 ]
                                             ]
                                         ]
@@ -168,9 +192,10 @@ viewCardContent language card cards values =
                                                     [ a [ class "show-more" ]
                                                         [ bestOf descriptionKeys ]
                                                     , button
-                                                        [ class "btn btn-default btn-xs btn-action"
-                                                        , attribute "data-target" "#edit-content"
+                                                        [ attribute "data-target" "#edit-content"
                                                         , attribute "data-toggle" "modal"
+                                                        , class "btn btn-default btn-xs btn-action"
+                                                        , onClick (ForSelf (LoadProperties card.id "description"))
                                                         , type' "button"
                                                         ]
                                                         [ text "Edit" ]
@@ -239,14 +264,14 @@ viewCardContent language card cards values =
                                                                                         )
 
                                                                                 Just value ->
-                                                                                    viewValueValue
+                                                                                    viewValueType
                                                                                         language
                                                                                         cards
                                                                                         values
                                                                                         value.value
                                                                             ]
                                                                         , td []
-                                                                            [ viewValueValue
+                                                                            [ viewValueType
                                                                                 language
                                                                                 cards
                                                                                 values
@@ -329,6 +354,283 @@ viewCardContent language card cards values =
                            ]
                     )
                 ]
+            ]
+
+
+viewEditPropertyModal : I18n.Language -> EditedProperty -> Dict String Card -> Html Msg
+viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds, selectedField, values } cards =
+    let
+        viewField =
+            let
+                selectField tagger =
+                    \inputString -> ForSelf (SelectField (tagger inputString))
+
+                onInputSelectField tagger =
+                    onInput (selectField tagger)
+            in
+                case selectedField of
+                    InputTextField string ->
+                        input
+                            [ class "form-control"
+                            , onInputSelectField InputTextField
+                            , type' "text"
+                            , value string
+                            ]
+                            []
+
+                    TextareaField string ->
+                        textarea
+                            [ onInputSelectField TextareaField
+                            ]
+                            [ text string ]
+
+                    InputNumberField float ->
+                        input
+                            [ class "form-control"
+                            , onInput
+                                (selectField
+                                    (\inputString ->
+                                        (case String.toFloat inputString of
+                                            Ok float ->
+                                                InputNumberField float
+
+                                            Err _ ->
+                                                selectedField
+                                        )
+                                    )
+                                )
+                            , step "any"
+                            , type' "number"
+                            , value (toString float)
+                            ]
+                            []
+
+                    BooleanField bool ->
+                        input
+                            [ class "form-control"
+                            , onCheck (selectField BooleanField)
+                            , type' "checkbox"
+                            ]
+                            []
+
+                    InputEmailField string ->
+                        input
+                            [ class "form-control"
+                            , onInputSelectField InputEmailField
+                            , type' "email"
+                            , value string
+                            ]
+                            []
+
+                    InputUrlField string ->
+                        input
+                            [ class "form-control"
+                            , onInputSelectField InputUrlField
+                            , type' "url"
+                            , value string
+                            ]
+                            []
+
+                    ImageField string ->
+                        input
+                            [ class "form-control"
+                            , onInputSelectField ImageField
+                            , type' "url"
+                            , value string
+                            ]
+                            []
+
+                    CardIdField string ->
+                        -- TODO replace with autocomplete
+                        input
+                            [ class "form-control"
+                            , onInputSelectField CardIdField
+                            , type' "text"
+                            , value string
+                            ]
+                            []
+
+        viewProperty index property =
+            let
+                value =
+                    getValue values property.valueId
+
+                ballot =
+                    Dict.get property.ballotId ballots
+            in
+                li [ classList [ ( "media", True ), ( "best", index == 0 ) ] ]
+                    [ div [ class "media-body" ]
+                        [ -- h4 [ class "media-heading" ]
+                          -- [  text "TODO author"
+                          -- TODO Format date with elm-date or something
+                          -- , span []
+                          --     [ text value.createdAt ]
+                          --   ],
+                          viewValueType language cards values value.value
+                        ]
+                    , div [ class "media-right" ]
+                        [ a [ class "btn-vote" ]
+                            [ span
+                                [ attribute "aria-hidden" "true"
+                                , class "glyphicon glyphicon-arrow-up"
+                                , onClick (ForSelf (VotePropertyUp property.id))
+                                , style
+                                    (case ballot of
+                                        Nothing ->
+                                            []
+
+                                        Just ballot ->
+                                            if ballot.rating == 1 then
+                                                [ ( "color", "blue" ) ]
+                                            else
+                                                []
+                                    )
+                                  -- TODO replace with "active" class
+                                ]
+                                []
+                            ]
+                        , div [ class "count" ]
+                            [ text (toString property.ratingCount) ]
+                        , a [ class "btn-vote" ]
+                            [ span
+                                [ attribute "aria-hidden" "true"
+                                , class "glyphicon glyphicon-arrow-down"
+                                , onClick (ForSelf (VotePropertyDown property.id))
+                                , style
+                                    (case ballot of
+                                        Nothing ->
+                                            []
+
+                                        Just ballot ->
+                                            if ballot.rating == -1 then
+                                                [ ( "color", "blue" ) ]
+                                            else
+                                                []
+                                    )
+                                  -- TODO replace with "active" class
+                                ]
+                                []
+                            ]
+                        ]
+                    ]
+    in
+        div []
+            [ div
+                [ attribute "aria-labelledby" "myModalLabel"
+                , class "modal fade in"
+                , id "edit-content"
+                , attribute "role" "dialog"
+                , attribute "tabindex" "-1"
+                , style [ ( "display", "block" ) ]
+                ]
+                [ div [ class "modal-dialog", id "edit-overlay" ]
+                    [ div [ class "modal-content" ]
+                        [ div [ class "modal-header" ]
+                            [ button
+                                [ attribute "data-dismiss" "modal"
+                                , class "close"
+                                , onClick (ForSelf CloseEditPropertiesModal)
+                                , type' "button"
+                                ]
+                                [ span [ attribute "aria-hidden" "true" ]
+                                    [ text "×" ]
+                                , span [ class "sr-only" ]
+                                    [ text "Close" ]
+                                ]
+                            , h4 [ class "modal-title", id "myModalLabel" ]
+                                [ (let
+                                    key =
+                                        getValue values "description"
+                                   in
+                                    case getOneStringFromValueType language values key.value of
+                                        Nothing ->
+                                            Debug.crash "viewEditPropertyModal: property should have a string value"
+
+                                        Just str ->
+                                            text str
+                                  )
+                                , span []
+                                    [ text
+                                        (I18n.translate language (I18n.CountVersionsAvailable (List.length propertyIds)))
+                                    ]
+                                ]
+                            ]
+                        , div [ class "modal-body", style [ ( "min-height", "20em" ) ] ]
+                            [ div [ class "row" ]
+                                [ div [ class "col-xs-12" ]
+                                    [ ul [ class "media-list" ]
+                                        (propertyIds
+                                            |> List.map (getProperty properties)
+                                            |> List.indexedMap viewProperty
+                                        )
+                                    , nav [ class "navbar-fixed-bottom grey" ]
+                                        [ Html.form
+                                            [ class "navbar-form navbar-left big"
+                                            , onSubmit (ForSelf (SubmitValue selectedField))
+                                            ]
+                                            [ select
+                                                [ on "change"
+                                                    (Html.Events.targetValue
+                                                        `Decode.andThen`
+                                                            (\str ->
+                                                                case str of
+                                                                    "One line text" ->
+                                                                        Decode.succeed (InputTextField "")
+
+                                                                    "Multi line text" ->
+                                                                        Decode.succeed (TextareaField "")
+
+                                                                    "Number" ->
+                                                                        Decode.succeed (InputNumberField 0)
+
+                                                                    "Yes / No" ->
+                                                                        Decode.succeed (BooleanField False)
+
+                                                                    "Email" ->
+                                                                        Decode.succeed (InputEmailField "")
+
+                                                                    "URL" ->
+                                                                        Decode.succeed (InputUrlField "")
+
+                                                                    "Image" ->
+                                                                        Decode.succeed (ImageField "")
+
+                                                                    "Internal link" ->
+                                                                        Decode.succeed (CardIdField "")
+
+                                                                    _ ->
+                                                                        Decode.fail ("Invalid select value: " ++ str)
+                                                            )
+                                                        |> Decode.map (\x -> ForSelf (SelectField x))
+                                                    )
+                                                ]
+                                                ([ "One line text"
+                                                 , "Multi line text"
+                                                 , "Number"
+                                                 , "Yes / No"
+                                                 , "Email"
+                                                 , "URL"
+                                                 , "Image"
+                                                 , "Internal link"
+                                                 ]
+                                                    |> List.map (\s -> option [ value s ] [ text s ])
+                                                )
+                                            , div
+                                                [ class "form-group" ]
+                                                [ viewField ]
+                                            , div [ class "navbar-right" ]
+                                                [ button [ class "btn btn-default", type' "submit" ]
+                                                    [ text "TODO Publish" ]
+                                                ]
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            , div [ class "modal-backdrop in" ] []
             ]
 
 
@@ -495,8 +797,8 @@ viewSidebar language card values =
         ]
 
 
-viewValueValue : I18n.Language -> Dict String Card -> Dict String Value -> ValueType -> Html Msg
-viewValueValue language cards values value =
+viewValueType : I18n.Language -> Dict String Card -> Dict String Value -> ValueType -> Html Msg
+viewValueType language cards values value =
     let
         cardLink cardId =
             case Dict.get cardId cards of
@@ -541,20 +843,23 @@ viewValueValue language cards values value =
                             )
                     )
 
+            BooleanValue bool ->
+                text (toString bool)
+
             NumberValue float ->
                 text (toString float)
 
             CardIdArrayValue childValues ->
                 ul [ class "list-unstyled" ]
                     (List.map
-                        (\childValue -> li [] [ viewValueValue language cards values (CardIdValue childValue) ])
+                        (\childValue -> li [] [ viewValueType language cards values (CardIdValue childValue) ])
                         childValues
                     )
 
             ValueIdArrayValue childValues ->
                 ul [ class "list-unstyled" ]
                     (List.map
-                        (\childValue -> li [] [ viewValueValue language cards values (ValueIdValue childValue) ])
+                        (\childValue -> li [] [ viewValueType language cards values (ValueIdValue childValue) ])
                         childValues
                     )
 
@@ -570,4 +875,4 @@ viewValueValue language cards values value =
                         text ("Error: referenced value not found for valueId: " ++ valueId)
 
                     Just subValue ->
-                        viewValueValue language cards values subValue.value
+                        viewValueType language cards values subValue.value

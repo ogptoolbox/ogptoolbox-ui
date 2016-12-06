@@ -213,7 +213,7 @@ urlUpdate ( i18nRoute, location ) model =
                                         let
                                             ( cardModel, childCmd ) =
                                                 Card.State.update
-                                                    (Card.Types.Load cardId)
+                                                    (Card.Types.LoadCard cardId)
                                                     model.cardModel
                                                     model.authentication
                                                     language
@@ -253,7 +253,7 @@ urlUpdate ( i18nRoute, location ) model =
                                         let
                                             ( cardModel, childCmd ) =
                                                 Card.State.update
-                                                    (Card.Types.Load cardId)
+                                                    (Card.Types.LoadCard cardId)
                                                     model.cardModel
                                                     model.authentication
                                                     language
@@ -293,7 +293,7 @@ urlUpdate ( i18nRoute, location ) model =
                                         let
                                             ( cardModel, childCmd ) =
                                                 Card.State.update
-                                                    (Card.Types.Load cardId)
+                                                    (Card.Types.LoadCard cardId)
                                                     model.cardModel
                                                     model.authentication
                                                     language

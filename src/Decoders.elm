@@ -7,6 +7,17 @@ import String
 import Types exposing (..)
 
 
+ballotDecoder : Decoder Ballot
+ballotDecoder =
+    succeed Ballot
+        |: oneOf [ ("rating" := int) `andThen` (\_ -> succeed False), succeed True ]
+        |: ("id" := string)
+        |: oneOf [ ("rating" := int), succeed 0 ]
+        |: ("statementId" := string)
+        |: oneOf [ ("updatedAt" := string), succeed "" ]
+        |: ("voterId" := string)
+
+
 bijectiveCardReferenceDecoder : Decoder BijectiveCardReference
 bijectiveCardReferenceDecoder =
     succeed BijectiveCardReference
@@ -50,8 +61,10 @@ cardDecoder =
 dataIdDecoder : Decoder DataId
 dataIdDecoder =
     succeed DataId
-        |: ("cards" := dict cardDecoder)
+        |: oneOf [ ("ballots" := dict ballotDecoder), succeed Dict.empty ]
+        |: oneOf [ ("cards" := dict cardDecoder), succeed Dict.empty ]
         |: ("id" := string)
+        |: (oneOf [ ("properties" := dict propertyDecoder), succeed Dict.empty ])
         |: oneOf [ ("values" := dict valueDecoder), succeed Dict.empty ]
 
 
@@ -69,28 +82,59 @@ dataIdsDecoder =
         `andThen`
             (\( ids, users ) ->
                 (if List.isEmpty ids then
-                    succeed ( Dict.empty, Dict.empty )
+                    succeed ( Dict.empty, Dict.empty, Dict.empty, Dict.empty )
                  else
-                    object2 (,)
-                        ("cards" := dict cardDecoder)
+                    object4 (,,,)
+                        (oneOf [ ("ballots" := dict ballotDecoder), succeed Dict.empty ])
+                        (oneOf [ ("cards" := dict cardDecoder), succeed Dict.empty ])
+                        (oneOf [ ("properties" := dict propertyDecoder), succeed Dict.empty ])
                         ("values" := dict valueDecoder)
                 )
-                    |> map (\( cards, values ) -> DataIds cards ids users values)
+                    |> map
+                        (\( ballots, cards, properties, values ) ->
+                            DataIds
+                                ballots
+                                cards
+                                ids
+                                properties
+                                users
+                                values
+                        )
             )
 
 
 dataIdsBodyDecoder : Decoder DataIdsBody
 dataIdsBodyDecoder =
     succeed DataIdsBody
-        |: ("count" := string `customDecoder` String.toInt)
+        |: oneOf [ ("count" := string `customDecoder` String.toInt), succeed 0 ]
         |: ("data" := dataIdsDecoder)
-        |: ("limit" := int)
-        |: ("offset" := int)
+        |: oneOf [ ("limit" := int), succeed 0 ]
+        |: oneOf [ ("offset" := int), succeed 0 ]
 
 
 messageBodyDecoder : Decoder String
 messageBodyDecoder =
     ("data" := string)
+
+
+propertyDecoder : Decoder Property
+propertyDecoder =
+    succeed Property
+        |: ("ballotId" := string)
+        |: ("createdAt" := string)
+        |: oneOf [ ("deleted" := bool), succeed False ]
+        |: ("id" := string)
+        |: ("keyId" := string)
+        |: ("objectId" := string)
+        |: oneOf [ ("properties" := dict string), succeed Dict.empty ]
+        |: oneOf [ ("rating" := int), succeed 0 ]
+        |: oneOf [ ("ratingCount" := int), succeed 0 ]
+        |: oneOf [ ("ratingSum" := int), succeed 0 ]
+        |: oneOf [ ("references" := dict (list string)), succeed Dict.empty ]
+        |: oneOf [ ("subTypeIds" := list string), succeed [] ]
+        |: oneOf [ ("tags" := list (dict string)), succeed [] ]
+        |: ("type" := string)
+        |: ("valueId" := string)
 
 
 userBodyDecoder : Decoder UserBody
@@ -136,18 +180,21 @@ valueDecoder =
         (oneOf [ ("widgetId" := string), succeed "" ])
         `andThen`
             (\( createdAt, id, schemaId, type_, widgetId ) ->
-                ("value" := valueValueDecoder schemaId)
+                ("value" := valueTypeDecoder schemaId)
                     |> map (\value -> Types.Value createdAt id schemaId type_ value widgetId)
             )
 
 
-valueValueDecoder : String -> Decoder ValueType
-valueValueDecoder schemaId =
+valueTypeDecoder : String -> Decoder ValueType
+valueTypeDecoder schemaId =
     let
         decoder =
             case schemaId of
                 "schema:bijective-card-reference" ->
                     bijectiveCardReferenceDecoder |> map BijectiveCardReferenceValue
+
+                "schema:boolean" ->
+                    bool |> map BooleanValue
 
                 "schema:card-id" ->
                     string |> map CardIdValue

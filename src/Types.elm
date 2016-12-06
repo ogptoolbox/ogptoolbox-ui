@@ -5,6 +5,16 @@ import Dict exposing (Dict)
 import String
 
 
+type alias Ballot =
+    { deleted : Bool
+    , id : String
+    , rating : Int
+    , statementId : String
+    , updatedAt : String
+    , voterId : String
+    }
+
+
 type alias BijectiveCardReference =
     { targetId : String
     , reverseKeyId : String
@@ -33,8 +43,10 @@ type CardType
 
 
 type alias DataId =
-    { cards : Dict String Card
+    { ballots : Dict String Ballot
+    , cards : Dict String Card
     , id : String
+    , properties : Dict String Property
     , values : Dict String Value
     }
 
@@ -45,8 +57,10 @@ type alias DataIdBody =
 
 
 type alias DataIds =
-    { cards : Dict String Card
+    { ballots : Dict String Ballot
+    , cards : Dict String Card
     , ids : List String
+    , properties : Dict String Property
     , users : Dict String User
     , values : Dict String Value
     }
@@ -66,6 +80,17 @@ type alias DocumentMetatags =
     }
 
 
+type Field
+    = InputTextField String
+    | TextareaField String
+    | InputNumberField Float
+    | BooleanField Bool
+    | InputEmailField String
+    | InputUrlField String
+    | ImageField String
+    | CardIdField String
+
+
 type alias PopularTag =
     { count : Float
     , tagId : String
@@ -75,6 +100,25 @@ type alias PopularTag =
 type alias PopularTagsData =
     { popularity : List PopularTag
     , values : Dict String Value
+    }
+
+
+type alias Property =
+    { ballotId : String
+    , createdAt : String
+    , deleted : Bool
+    , id : String
+    , keyId : String
+    , objectId : String
+    , properties : Dict String String
+    , rating : Int
+    , ratingCount : Int
+    , ratingSum : Int
+    , references : Dict String (List String)
+    , subTypeIds : List String
+    , tags : List (Dict String String)
+    , type_ : String
+    , valueId : String
     }
 
 
@@ -116,6 +160,7 @@ type ValueType
     = StringValue String
     | LocalizedStringValue (Dict String String)
     | NumberValue Float
+    | BooleanValue Bool
     | BijectiveCardReferenceValue BijectiveCardReference
     | CardIdValue String
     | CardIdArrayValue (List String)
@@ -126,7 +171,6 @@ type ValueType
 
 getCard : Dict String Card -> String -> Card
 getCard cards id =
-    -- TODO flip args like getValue
     case Dict.get id cards of
         Nothing ->
             Debug.crash "getCard: Should never happen"
@@ -157,11 +201,26 @@ getOrderedCards { cards, ids } =
     List.map (getCard cards) ids
 
 
-getValue : String -> Dict String Value -> Value
-getValue id values =
+getOrderedProperties : DataIds -> List Property
+getOrderedProperties { properties, ids } =
+    List.map (getProperty properties) ids
+
+
+getProperty : Dict String Property -> String -> Property
+getProperty properties id =
+    case Dict.get id properties of
+        Nothing ->
+            Debug.crash ("getProperty: Should never happen id=" ++ id)
+
+        Just property ->
+            property
+
+
+getValue : Dict String Value -> String -> Value
+getValue values id =
     case Dict.get id values of
         Nothing ->
-            Debug.crash "getValue: Should never happen"
+            Debug.crash ("getValue: Should never happen id=" ++ id)
 
         Just value ->
             value
