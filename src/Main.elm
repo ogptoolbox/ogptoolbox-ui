@@ -813,7 +813,7 @@ viewFooter model language =
                             ]
                         , p [ class "info-box" ]
                             [ text (I18n.translate language I18n.OpenGovParagraph) ]
-                        , a [ class "etalab-logo"]
+                        , a [ href "https://www.etalab.gouv.fr" , target "_blank", class "etalab-logo" ]
                               [ img [ alt "Etalab logo", src "/img/etalab-logo.png" ]
                                     []
                             ]
