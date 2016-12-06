@@ -248,7 +248,7 @@ viewCardContent language card cards values =
                                             [ tbody []
                                                 (card.properties
                                                     |> Dict.map
-                                                        (\propertyKey valueId ->
+                                                        (\keyId valueId ->
                                                             case Dict.get valueId values of
                                                                 Nothing ->
                                                                     text ("Error: value not found for ID: " ++ valueId)
@@ -256,11 +256,11 @@ viewCardContent language card cards values =
                                                                 Just value ->
                                                                     tr []
                                                                         [ th [ scope "row" ]
-                                                                            [ case Dict.get propertyKey values of
+                                                                            [ case Dict.get keyId values of
                                                                                 Nothing ->
                                                                                     text
                                                                                         ("Error: value not found for ID: "
-                                                                                            ++ propertyKey
+                                                                                            ++ keyId
                                                                                         )
 
                                                                                 Just value ->
@@ -369,18 +369,30 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                     onInput (selectField tagger)
             in
                 case selectedField of
-                    InputTextField string ->
+                    LocalizedInputTextField _ string ->
                         input
                             [ class "form-control"
-                            , onInputSelectField InputTextField
+                            , onInput
+                                (\inputString ->
+                                    ForSelf
+                                        (SelectField
+                                            (LocalizedInputTextField (I18n.iso639_1FromLanguage language) inputString)
+                                        )
+                                )
                             , type' "text"
                             , value string
                             ]
                             []
 
-                    TextareaField string ->
+                    LocalizedTextareaField _ string ->
                         textarea
-                            [ onInputSelectField TextareaField
+                            [ onInput
+                                (\inputString ->
+                                    ForSelf
+                                        (SelectField
+                                            (LocalizedTextareaField (I18n.iso639_1FromLanguage language) inputString)
+                                        )
+                                )
                             ]
                             [ text string ]
 
@@ -490,7 +502,7 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                                 []
                             ]
                         , div [ class "count" ]
-                            [ text (toString property.ratingCount) ]
+                            [ text (toString property.ratingSum) ]
                         , a [ class "btn-vote" ]
                             [ span
                                 [ attribute "aria-hidden" "true"
@@ -540,7 +552,7 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                             , h4 [ class "modal-title", id "myModalLabel" ]
                                 [ (let
                                     key =
-                                        getValue values "description"
+                                        getValue values keyId
                                    in
                                     case getOneStringFromValueType language values key.value of
                                         Nothing ->
@@ -575,10 +587,18 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                                                             (\str ->
                                                                 case str of
                                                                     "One line text" ->
-                                                                        Decode.succeed (InputTextField "")
+                                                                        Decode.succeed
+                                                                            (LocalizedInputTextField
+                                                                                (I18n.iso639_1FromLanguage language)
+                                                                                ""
+                                                                            )
 
                                                                     "Multi line text" ->
-                                                                        Decode.succeed (TextareaField "")
+                                                                        Decode.succeed
+                                                                            (LocalizedTextareaField
+                                                                                (I18n.iso639_1FromLanguage language)
+                                                                                ""
+                                                                            )
 
                                                                     "Number" ->
                                                                         Decode.succeed (InputNumberField 0)
@@ -762,7 +782,7 @@ viewSidebar language card values =
                                     [ text (I18n.translate language I18n.Tags) ]
                                 ]
                      in
-                        case getManyStrings language tagKeys card values of
+                        case getTags language card values of
                             [] ->
                                 [ div [ class "panel-heading" ]
                                     [ div [ class "row" ] [ panelTitle ] ]
@@ -779,14 +799,29 @@ viewSidebar language card values =
                                     [ div [ class "row" ]
                                         [ panelTitle
                                         , div [ class "col-xs-5 text-right up7" ]
-                                            [ button [ class "btn btn-default btn-xs btn-action", type' "button" ]
+                                            [ button
+                                                [ class "btn btn-default btn-xs btn-action"
+                                                , onClick (ForSelf (LoadProperties card.id "tags"))
+                                                , type' "button"
+                                                ]
                                                 [ text "Edit" ]
                                             ]
                                         ]
                                     ]
                                 , div [ class "panel-body" ]
                                     (List.map
-                                        (\tag -> span [ class "label label-default label-tag" ] [ text tag ])
+                                        (\{ tag, tagId } ->
+                                            let
+                                                urlPath =
+                                                    Routes.urlBasePathForCard card ++ "?tagIds=" ++ tagId
+                                            in
+                                                aForPath
+                                                    navigate
+                                                    language
+                                                    urlPath
+                                                    [ class "label label-default label-tag" ]
+                                                    [ text tag ]
+                                        )
                                         tags
                                     )
                                 ]

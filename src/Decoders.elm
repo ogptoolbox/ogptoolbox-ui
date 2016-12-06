@@ -53,9 +53,10 @@ cardDecoder =
         |: oneOf [ ("ratingCount" := int), succeed 0 ]
         |: oneOf [ ("ratingSum" := int), succeed 0 ]
         |: oneOf [ ("references" := dict (list string)), succeed Dict.empty ]
-        |: ("subTypeIds" := list string)
-        |: oneOf [ ("tags" := list (dict string)), succeed [] ]
+        |: oneOf [ ("subTypeIds" := list string), succeed [] ]
+        |: oneOf [ ("tagIds" := list string), succeed [] ]
         |: ("type" := string)
+        |: oneOf [ ("usageIds" := list string), succeed [] ]
 
 
 dataIdDecoder : Decoder DataId
@@ -120,7 +121,7 @@ messageBodyDecoder =
 propertyDecoder : Decoder Property
 propertyDecoder =
     succeed Property
-        |: ("ballotId" := string)
+        |: oneOf [ ("ballotId" := string), succeed "" ]
         |: ("createdAt" := string)
         |: oneOf [ ("deleted" := bool), succeed False ]
         |: ("id" := string)

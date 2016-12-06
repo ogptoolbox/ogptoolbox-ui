@@ -897,7 +897,7 @@ todo =
 
 
 getManyStrings : Language -> List String -> Card -> Dict String Value -> List String
-getManyStrings language propertyKeys card values =
+getManyStrings language keyIds card values =
     let
         getStrings : ValueType -> List String
         getStrings value =
@@ -942,10 +942,10 @@ getManyStrings language propertyKeys card values =
                 WrongValue _ _ ->
                     []
     in
-        propertyKeys
+        keyIds
             |> List.map
-                (\propertyKey ->
-                    Dict.get propertyKey card.properties
+                (\keyId ->
+                    Dict.get keyId card.properties
                         `Maybe.andThen` (\valueId -> Dict.get valueId values)
                         |> Maybe.map (\value -> getStrings value.value)
                         |> Maybe.withDefault []
@@ -956,11 +956,11 @@ getManyStrings language propertyKeys card values =
 
 
 getOneString : Language -> List String -> Card -> Dict String Value -> Maybe String
-getOneString language propertyKeys card values =
-    propertyKeys
+getOneString language keyIds card values =
+    keyIds
         |> List.map
-            (\propertyKey ->
-                Dict.get propertyKey card.properties
+            (\keyId ->
+                Dict.get keyId card.properties
                     `Maybe.andThen` (\valueId -> Dict.get valueId values)
                     `Maybe.andThen` (\value -> getOneStringFromValueType language values value.value)
             )
@@ -1055,34 +1055,58 @@ getImageUrlOrOgpLogo language cardId cards values =
                     imageUrl urlPath
 
 
+getLocalizedStringFromValueId : Language -> Dict String Value -> String -> String
+getLocalizedStringFromValueId language values valueId =
+    case Dict.get valueId values of
+        Nothing ->
+            "Error: value not found for ID: " ++ valueId
+
+        Just { value } ->
+            case value of
+                LocalizedStringValue localizedValues ->
+                    case
+                        Maybe.oneOf
+                            [ Dict.get (iso639_1FromLanguage language) localizedValues
+                            , Dict.get "en" localizedValues
+                            ]
+                    of
+                        Nothing ->
+                            Debug.crash "getLocalizedStringFromValueId: no translation found, even with \"en\" fallback"
+
+                        Just str ->
+                            str
+
+                _ ->
+                    "This should not happen"
+
+
 getSubTypes : Language -> Card -> Dict String Value -> List String
 getSubTypes language card values =
-    card.subTypeIds
-        |> List.map
-            (\subTypeId ->
-                (case Dict.get subTypeId values of
-                    Nothing ->
-                        "Error: value not found for ID: " ++ subTypeId
+    List.map
+        (getLocalizedStringFromValueId language values)
+        card.subTypeIds
 
-                    Just { value } ->
-                        case value of
-                            LocalizedStringValue localizedValues ->
-                                case
-                                    Maybe.oneOf
-                                        [ Dict.get (iso639_1FromLanguage language) localizedValues
-                                        , Dict.get "en" localizedValues
-                                        ]
-                                of
-                                    Nothing ->
-                                        Debug.crash "getSubTypes: no translation found, even with \"en\" fallback"
 
-                                    Just str ->
-                                        str
+getTags : Language -> Card -> Dict String Value -> List { tag : String, tagId : String }
+getTags language card values =
+    List.map
+        (\tagId ->
+            { tag = getLocalizedStringFromValueId language values tagId
+            , tagId = tagId
+            }
+        )
+        card.tagIds
 
-                            _ ->
-                                "This should not happen"
-                )
-            )
+
+getUsages : Language -> Card -> Dict String Value -> List { tag : String, tagId : String }
+getUsages language card values =
+    List.map
+        (\tagId ->
+            { tag = getLocalizedStringFromValueId language values tagId
+            , tagId = tagId
+            }
+        )
+        card.usageIds
 
 
 getValueByPreferredLanguage : Language -> Dict String String -> Maybe String

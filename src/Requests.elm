@@ -194,7 +194,7 @@ postRating authentication propertyId rating =
     Http.fromJson dataIdBodyDecoder
         (Http.send Http.defaultSettings
             { verb = "POST"
-            , url = apiUrl ++ "statements/" ++ propertyId ++ "/rating"
+            , url = apiUrl ++ "statements/" ++ propertyId ++ "/rating?show=ballots&depth=1"
             , headers =
                 [ ( "Accept", "application/json" )
                 , ( "Content-Type", "application/json" )
@@ -222,11 +222,21 @@ postValue authentication field =
     let
         ( schemaId, widgetId, encodedValue ) =
             case field of
-                InputTextField string ->
-                    ( "schema:string", "widget:input-text", Encode.string string )
+                LocalizedInputTextField language string ->
+                    ( "schema:localized-string"
+                    , "widget:input-text"
+                    , Encode.object
+                        [ ( language, Encode.string string )
+                        ]
+                    )
 
-                TextareaField string ->
-                    ( "schema:string", "widget:textarea", Encode.string string )
+                LocalizedTextareaField language string ->
+                    ( "schema:localized-string"
+                    , "widget:textarea"
+                    , Encode.object
+                        [ ( language, Encode.string string )
+                        ]
+                    )
 
                 InputNumberField float ->
                     ( "schema:number", "widget:input-number", Encode.float float )

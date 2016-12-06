@@ -6,7 +6,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Html.Helpers exposing (aForPath)
 import Http exposing (Error(..))
-import I18n exposing (getImageUrl, getName, getManyStrings, getOneString, getSubTypes)
+import I18n exposing (..)
 import Routes
 import String
 import Types exposing (..)
@@ -153,7 +153,7 @@ viewNotFound language =
 viewTagsWithCallToAction : (String -> msg) -> I18n.Language -> Dict String Value -> Card -> Html msg
 viewTagsWithCallToAction navigate language values card =
     div [ class "tags" ]
-        (case getManyStrings language tagKeys card values of
+        (case getTags language card values of
             [] ->
                 [ span
                     -- TODO call to action
@@ -161,19 +161,21 @@ viewTagsWithCallToAction navigate language values card =
                     [ text (I18n.translate language I18n.CallToActionForCategory) ]
                 ]
 
-            xs ->
-                xs
+            tags ->
+                tags
                     |> List.take 3
                     |> List.map
-                        (\str ->
-                            span
-                                -- TODO Create link to search results with tagId= in URL
-                                -- aForPath
-                                --     navigate
-                                --     language
-                                --     ((Routes.urlBasePathForCard card) ++ "tagId=" ++ TODO)
-                                [ class "label label-default label-tool" ]
-                                [ text str ]
+                        (\{ tag, tagId } ->
+                            let
+                                urlPath =
+                                    Routes.urlBasePathForCard card ++ "?tagIds=" ++ tagId
+                            in
+                                aForPath
+                                    navigate
+                                    language
+                                    urlPath
+                                    [ class "label label-default label-tool" ]
+                                    [ text tag ]
                         )
         )
 

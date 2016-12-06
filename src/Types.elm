@@ -31,8 +31,9 @@ type alias Card =
     , ratingSum : Int
     , references : Dict String (List String)
     , subTypeIds : List String
-    , tags : List (Dict String String)
+    , tagIds : List String
     , type_ : String
+    , usageIds : List String
     }
 
 
@@ -81,8 +82,8 @@ type alias DocumentMetatags =
 
 
 type Field
-    = InputTextField String
-    | TextareaField String
+    = LocalizedInputTextField String String
+    | LocalizedTextareaField String String
     | InputNumberField Float
     | BooleanField Bool
     | InputEmailField String
@@ -104,7 +105,9 @@ type alias PopularTagsData =
 
 
 type alias Property =
-    { ballotId : String
+    { ballotId :
+        String
+        -- TODO Use Maybe
     , createdAt : String
     , deleted : Bool
     , id : String
@@ -268,11 +271,6 @@ licenseKeys =
 nameKeys : List String
 nameKeys =
     [ "name" ]
-
-
-tagKeys : List String
-tagKeys =
-    [ "tags" ]
 
 
 urlKeys : List String

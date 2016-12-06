@@ -90,7 +90,7 @@ update msg ({ editedProperty } as model) authentication language =
                         , keyId = keyId
                         , properties = Dict.empty
                         , propertyIds = []
-                        , selectedField = InputTextField ""
+                        , selectedField = LocalizedInputTextField (I18n.iso639_1FromLanguage language) ""
                         , values = webData.data.values
                         }
 
