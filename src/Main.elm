@@ -175,7 +175,7 @@ urlUpdate ( i18nRoute, location ) model =
                             AboutRoute ->
                                 ( model
                                 , Ports.setDocumentMetatags
-                                    { title = I18n.translate language I18n.About
+                                    { title = I18n.translate language I18n.Help
                                     , imageUrl = Constants.logoUrl
                                     }
                                 )
@@ -892,7 +892,7 @@ viewFooter model language =
                         ]
                     , div [ class "col-xs-6 col-md-3" ]
                         [ h4 []
-                            [ text (I18n.translate language I18n.About) ]
+                            [ text (I18n.translate language I18n.Help) ]
                         , ul [ class "footer-menu" ]
                             [ li []
                                 [ a [ href "#" ]
@@ -1123,7 +1123,7 @@ viewHeader model language containerClass =
                                     language
                                     "/help"
                                     []
-                                    [ text (I18n.translate language I18n.About) ]
+                                    [ text (I18n.translate language I18n.Help) ]
                                 ]
                             ]
                         , Html.form

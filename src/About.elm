@@ -12,7 +12,7 @@ view language =
             [ div [ class "container" ]
                 [ div [ class "intro-text" ]
                     [ div [ class "intro-heading" ]
-                        [ text (I18n.translate language (I18n.About)) ]
+                        [ text (I18n.translate language (I18n.Help)) ]
                     , div [ class "intro-lead-in" ]
                         [ text (I18n.translate language (I18n.AboutLead)) ]
                     ]

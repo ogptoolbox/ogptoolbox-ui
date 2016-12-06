@@ -116,8 +116,8 @@ getTranslationSet : TranslationId -> TranslationSet
 getTranslationSet translationId =
     case translationId of
         About ->
-            { english = s "Help"
-            , french = s "Aide"
+            { english = s "About"
+            , french = s "À propos"
             , spanish = todo
             }
 
