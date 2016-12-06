@@ -1027,12 +1027,17 @@ getSubTypes language card values =
                     Just { value } ->
                         case value of
                             LocalizedStringValue localizedValues ->
-                                case Dict.get (iso639_1FromLanguage language) localizedValues of
+                                case
+                                    Maybe.oneOf
+                                        [ Dict.get (iso639_1FromLanguage language) localizedValues
+                                        , Dict.get "en" localizedValues
+                                        ]
+                                of
                                     Nothing ->
-                                        "Error: localized value not found for ID: " ++ subTypeId
+                                        Debug.crash "getSubTypes: no translation found, even with \"en\" fallback"
 
-                                    Just localizedValue ->
-                                        localizedValue
+                                    Just str ->
+                                        str
 
                             _ ->
                                 "This should not happen"
