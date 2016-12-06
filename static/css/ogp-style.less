@@ -195,6 +195,9 @@ ul.nav.nav-pills {
             &:last-of-type {
                 border-right: none;
             }
+            &:first-of-type {
+                border-left: none;
+            }
 
 
             .badge {
@@ -541,6 +544,9 @@ ol.breadcrumb {
             font-size: 12px;
             a {
                 color: #858585;
+                &:hover {
+                    color: white;
+                }
             }
         }
     }
@@ -549,7 +555,7 @@ ol.breadcrumb {
         margin-bottom: 15px;
     }
     .copyright  {
-        margin-top: 80px;
+        margin-top: 60px;
         font-size: 10px;
         color: #858585;
     }
@@ -559,7 +565,16 @@ p.info-box  {
     color: #858585;
     padding-right: 60px;
     font-size: 12px;
-    margin-bottom: 60px;
+    margin-bottom: 45px;
+}
+a.etalab-logo img {
+    width: 130px;
+    margin-bottom: 0px;
+    opacity: 0.85;
+    cursor: pointer;
+    &:hover {
+        opacity: 1;
+    }
 }
 
 .dropdown-language .dropdown-toggle {
@@ -574,6 +589,7 @@ p.info-box  {
     box-shadow: none;
     font-weight: 300px;
     font-size: 12px;
+    margin: 0 !important;
     span.caret {
         float: right;
         position: relative;
@@ -859,6 +875,7 @@ h4.zone-label {
         img     {
             height: auto;
             width: auto;
+            min-width: auto;
             max-height: 55%;
             max-width: 55%;
             position: absolute;
@@ -1029,11 +1046,15 @@ h4.zone-label {
         text-align: center;
         vertical-align: middle;
         text-align: center;
-        background: black;
+        background: #d8d8d8;
         position: relative;
+        border-bottom: 1px solid #e8e8e8;
         img     {
-            width: 100%;
-            opacity: 0.9;
+            min-width: 100%;
+            max-height: 160%;
+            height: auto;
+            width: auto;
+            opacity: 0.85;
         }
     }
 
@@ -1226,11 +1247,18 @@ a.show-more {
             background: @light-grey;
         }
 
-        &.tool .caption p {
-            margin-top: 8px;
-            margin-bottom: 20px;
-            line-height: 1.4em;
+        &.tool {
 
+            .visual h1.dynamic {
+                font-size: 50px;
+                line-height: 52px;
+            }
+
+            .caption p {
+                margin-top: 8px;
+                margin-bottom: 20px;
+                line-height: 1.4em;
+            }
         }
 
         .visual {
@@ -1243,7 +1271,7 @@ a.show-more {
             img {
                 opacity: 1;
             }
-        }
+
         .caption {
             padding: 0px;
             padding-left: 15px;
@@ -1420,14 +1448,19 @@ table {
         padding: 0px;
         max-height: 480px;
 
-        .big .form-control {
-            width: 490px;
+        .big{
             border-radius: 0px;
-        }
-        .big .btn.btn-default {
-            padding: 6px 14px;
-            margin-left: 5px;
-            margin-top: 1px;
+            padding: 9px 18px 0;
+
+            textarea.form-control {
+                height: 34px;
+                margin-bottom: 3px;
+            }
+
+            .btn.btn-default {
+                padding: 7px;
+                margin-bottom: 8px;
+            }
         }
     }
     .modal-content {
@@ -1591,7 +1624,7 @@ table {
                 cursor: pointer;
                 text-align: center;
 
-                &:hover {
+                &:hover, &:active, &:visited {
                     color: @light-blue;
                     opacity: 1;
                 }
