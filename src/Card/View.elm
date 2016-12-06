@@ -126,7 +126,7 @@ viewCardContent language card cards values =
                 ]
             , div [ class "row" ]
                 [ div [ class "col-xs-12" ]
-                    (case getManyStrings language typeKeys card values of
+                    (case getSubTypes language card values of
                         [] ->
                             [ button [ class "call-add" ] [ text "+ add a category" ] ]
 

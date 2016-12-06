@@ -216,11 +216,6 @@ tagKeys =
     [ "tags" ]
 
 
-typeKeys : List String
-typeKeys =
-    [ "types" ]
-
-
 urlKeys : List String
 urlKeys =
     [ "website" ]
