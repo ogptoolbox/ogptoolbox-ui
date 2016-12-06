@@ -127,9 +127,6 @@ update msg ({ editedProperty } as model) authentication language =
                         )
                         editedProperty
 
-                _ =
-                    Debug.log "LoadPropertiesSuccess" newEditedProperty
-
                 newModel =
                     { model | editedProperty = newEditedProperty }
             in
