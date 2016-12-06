@@ -129,7 +129,7 @@ update msg model =
                 user =
                     Just body.data
             in
-                ( model, Ports.storeAuthentication user, user )
+                ( model, Ports.storeAuthentication (Ports.userToUserForPort user), user )
 
         UsernameInput text ->
             ( { model | username = text }, Cmd.none, Nothing )

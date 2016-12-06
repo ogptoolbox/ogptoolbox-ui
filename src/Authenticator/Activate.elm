@@ -92,24 +92,12 @@ update msg model language =
                 user =
                     body.data
 
-                userForPort =
-                    { activated =
-                        if user.activated then
-                            "true"
-                        else
-                            ""
-                    , apiKey = user.apiKey
-                    , email = user.email
-                    , name = user.name
-                    , urlName = user.urlName
-                    }
-
                 cmds =
                     [ Ports.setDocumentMetatags
                         { title = I18n.translate language I18n.ActivationTitle
                         , imageUrl = Constants.logoUrl
                         }
-                    , Ports.storeAuthentication (Just userForPort)
+                    , Ports.storeAuthentication (Ports.userToUserForPort (Just user))
                     , ForParent (Activate user)
                         |> (\msg -> Task.perform (\_ -> Debug.crash "") (\_ -> msg) (Task.succeed ()))
                     ]
