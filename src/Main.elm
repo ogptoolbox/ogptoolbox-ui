@@ -220,6 +220,7 @@ urlUpdate ( i18nRoute, location ) model =
                                                     (Collection.Types.LoadCollection collectionId)
                                                     model.collectionModel
                                                     language
+
                                             newModel =
                                                 { model | collectionModel = collectionModel }
                                         in
@@ -232,6 +233,7 @@ urlUpdate ( i18nRoute, location ) model =
                                                     Collections.Types.LoadCollections
                                                     model.collectionsModel
                                                     language
+
                                             newModel =
                                                 { model | collectionsModel = collectionsModel }
                                         in
@@ -578,7 +580,6 @@ update msg model =
 
             CollectionsMsg childMsg ->
                 let
-
                     ( collectionsModel, childCmd ) =
                         Collections.State.update childMsg model.collectionsModel language
                 in
@@ -881,8 +882,7 @@ viewAddNewModal model language =
                                         , text (I18n.translate language I18n.AddNewUseCaseCatchPhrase)
                                         ]
                                     ]
-                                ,
-                                aForPath
+                                , aForPath
                                     Navigate
                                     language
                                     "/collections/new"

@@ -33,7 +33,8 @@ remove x xs =
 
 init : Model
 init =
-    { organizations = NotAsked
+    { collections = NotAsked
+    , organizations = NotAsked
     , popularTagsData = NotAsked
     , selectedTags = []
     , tools = NotAsked
@@ -101,6 +102,21 @@ update msg model authentication language location =
                 in
                     ( newModel, navigateCmd newSelectedTags )
 
+            CollectionsLoadError err ->
+                let
+                    _ =
+                        Debug.log "Search.State CollectionsLoadError" err
+
+                    newModel =
+                        { model | collections = Failure err }
+                in
+                    ( newModel, Cmd.none )
+
+            CollectionsLoadSuccess body ->
+                ( { model | collections = Data (Loaded body) }
+                , Cmd.none
+                )
+
             Load ->
                 let
                     newModel =
@@ -123,6 +139,10 @@ update msg model authentication language location =
                         in
                             List.map (Cmd.map ForSelf)
                                 [ Task.perform
+                                    CollectionsLoadError
+                                    CollectionsLoadSuccess
+                                    (Requests.getCollections (Just 3))
+                                , Task.perform
                                     OrganizationsLoadError
                                     OrganizationsLoadSuccess
                                     (Requests.getCards

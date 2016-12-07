@@ -1,5 +1,6 @@
 module Home exposing (..)
 
+import Configuration
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -10,7 +11,7 @@ import Routes
 import Search.Types exposing (..)
 import String
 import Types exposing (..)
-import Views exposing (viewTagsWithCallToAction, viewWebData)
+import Views exposing (viewLoading, viewTagsWithCallToAction, viewWebData)
 import WebData exposing (..)
 
 
@@ -42,7 +43,7 @@ view model searchQuery language =
                                ]
                         )
                     ]
-               , viewCollections
+               , viewCollections model.collections language
                ]
         )
 
@@ -320,79 +321,97 @@ viewBanner =
         ]
 
 
-viewCollections : Html Msg
-viewCollections =
-    div [ class "row section" ]
-        [ div [ class "container" ]
-            [ h3 [ class "zone-label" ]
-                [ text "Collections" ]
-            , div [ class "row" ]
-                [ div [ class "col-xs-6 col-md-4 " ]
-                    [ a [ href "https://ui-html.ogptoolbox.org/collection.html" ]
-                        [ div [ class "thumbnail collection" ]
-                            [ div [ class "visual" ]
-                                [ img [ alt "screen", src "https://ui-html.ogptoolbox.org/img/collection-cover.png" ]
-                                    []
-                                ]
-                            , div [ class "caption" ]
-                                [ h4 []
-                                    [ text "Outils de consultation" ]
-                                , div [ class "example-author" ]
-                                    [ img [ alt "screen", src "https://ui-html.ogptoolbox.org/img/france.png" ]
-                                        []
-                                    , text "Etalab"
+viewCollections : WebData DataIdsBody -> I18n.Language -> Html Msg
+viewCollections collectionsWebData language =
+    viewWebData
+        language
+        (\loadingStatus ->
+            case loadingStatus of
+                Loading _ ->
+                    div [ class "text-center" ]
+                        [ viewLoading language ]
+
+                Loaded body ->
+                    let
+                        collections =
+                            List.map
+                                (\id ->
+                                    case Dict.get id body.data.collections of
+                                        Nothing ->
+                                            Debug.crash ("Collection not found id=" ++ id)
+
+                                        Just collection ->
+                                            collection
+                                )
+                                body.data.ids
+
+                        users =
+                            body.data.users
+                    in
+                        div []
+                            [ div [ class "row section" ]
+                                [ div [ class "container" ]
+                                    [ h3 [ class "zone-label" ]
+                                        [ text "Collections"
+                                          -- TODO i18n
+                                        ]
+                                    , div [ class "row" ]
+                                        ((List.map
+                                            (\collection ->
+                                                let
+                                                    user =
+                                                        case Dict.get collection.authorId users of
+                                                            Nothing ->
+                                                                Debug.crash ("User not found id=" ++ collection.authorId)
+
+                                                            Just user ->
+                                                                user
+                                                in
+                                                    viewCollectionThumbnail language user collection
+                                            )
+                                            collections
+                                         )
+                                            ++ [ div [ class "col-sm-12 text-center" ]
+                                                    [ aForPath
+                                                        navigate
+                                                        language
+                                                        "/collections"
+                                                        [ class "show-more" ]
+                                                        [ span [ class "glyphicon glyphicon-menu-down" ] []
+                                                        , text "Show more"
+                                                          -- TODO i18n
+                                                        ]
+                                                    ]
+                                               ]
+                                        )
                                     ]
-                                , p []
-                                    [ text "L'Etat Français s'étant engagé dans une démarche ouverte pour proposer des nouvelles solutions de consultation aux acteurs publics, Etalab a sélectionné en concertation avec les acteurs de la civic tech une palette d'outils à même de répondre aux différents besoins des administrations en vue de mener des consultations publiques auprès des citoyens. Catalogués ici dans la Boîte à outils du Gouvernement ouvert, ces outils sont par ailleurs mis à la disposition des administrations françaises sur le portail consultation.gouv.fr qui leur permet de lancer une consultation publique clé en main en quelques minutes." ]
                                 ]
                             ]
-                        ]
+        )
+        collectionsWebData
+
+
+viewCollectionThumbnail : I18n.Language -> User -> Collection -> Html Msg
+viewCollectionThumbnail language user collection =
+    div [ class "col-xs-6 col-md-4 " ]
+        [ aForPath
+            navigate
+            language
+            ("/collections/" ++ collection.id)
+            [ class "thumbnail collection" ]
+            [ div [ class "visual" ]
+                [ img [ alt "screen", src (Configuration.apiUrlWithPath collection.logo) ]
+                    []
+                ]
+            , div [ class "caption" ]
+                [ h4 []
+                    [ text "Outils de consultation" ]
+                , div [ class "example-author" ]
+                    [ -- img [ alt "screen", src "img/france.png" ] []
+                      text user.name
                     ]
-                , div [ class "col-xs-6 col-md-4 " ]
-                    [ div [ class "thumbnail collection" ]
-                        [ div [ class "visual" ]
-                            [ img [ alt "screen", src "https://ui-html.ogptoolbox.org/img/collection-cover2.png" ]
-                                []
-                            ]
-                        , div [ class "caption" ]
-                            [ h4 []
-                                [ text "Outils libres pour l'organisation de hackathon" ]
-                            , div [ class "example-author" ]
-                                [ img [ alt "screen", src "https://ui-html.ogptoolbox.org/img/paula.jpg" ]
-                                    []
-                                , text "Paula Forteza"
-                                ]
-                            , p []
-                                [ text "Lorsque on organise un hackathon il est très outils d emettre en place un esemble d'outils pour communiquer avec ses collaborateurs. Cette collection est une séléction des meilleurs outils" ]
-                            ]
-                        ]
-                    ]
-                , div [ class "col-xs-6 col-md-4 " ]
-                    [ div [ class "thumbnail collection" ]
-                        [ div [ class "visual" ]
-                            [ img [ alt "screen", src "https://ui-html.ogptoolbox.org/img/collection-cover3.png" ]
-                                []
-                            ]
-                        , div [ class "caption" ]
-                            [ h4 []
-                                [ text "The best open data tools for governments" ]
-                            , div [ class "example-author" ]
-                                [ img [ alt "screen", src "https://ui-html.ogptoolbox.org/img/henri.jpg" ]
-                                    []
-                                , text "Henri Verdier"
-                                ]
-                            , p []
-                                [ text "Open data is the idea that some data should be freely available to everyone to use and republish as they wish, without restrictions from copyright, patents or other mechanisms of control." ]
-                            ]
-                        ]
-                    ]
-                , div [ class "col-sm-12 text-center" ]
-                    [ a [ class "show-more" ]
-                        [ text "Show all 398"
-                        , span [ class "glyphicon glyphicon-menu-down" ]
-                            []
-                        ]
-                    ]
+                , p []
+                    [ text collection.description ]
                 ]
             ]
         ]

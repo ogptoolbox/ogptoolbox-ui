@@ -101,12 +101,21 @@ getCollection collectionId =
         )
 
 
-getCollections : Task Http.Error DataIdsBody
-getCollections =
+getCollections : Maybe Int -> Task Http.Error DataIdsBody
+getCollections limit =
     Http.fromJson dataIdsBodyDecoder
         (Http.send Http.defaultSettings
             { verb = "GET"
-            , url = apiUrl ++ "collections?show=values&depth=1"
+            , url =
+                apiUrl
+                    ++ "collections?show=values&depth=1"
+                    ++ (case limit of
+                            Nothing ->
+                                ""
+
+                            Just limit ->
+                                "&limit=" ++ (toString limit)
+                       )
             , headers = [ ( "Accept", "application/json" ) ]
             , body = Http.empty
             }

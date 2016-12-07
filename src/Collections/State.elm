@@ -1,6 +1,5 @@
 module Collections.State exposing (..)
 
-import Authenticator.Model
 import Constants
 import I18n exposing (getImageUrlOrOgpLogo, getName)
 import Ports
@@ -27,7 +26,7 @@ update msg model language =
                     Task.perform
                         LoadCollectionsError
                         LoadCollectionsSuccess
-                        Requests.getCollections
+                        (Requests.getCollections Nothing)
                         |> Cmd.map ForSelf
             in
                 ( newModel, cmd )

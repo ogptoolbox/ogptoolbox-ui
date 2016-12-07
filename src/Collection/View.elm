@@ -186,53 +186,53 @@ viewCollectionContent language user collection cards values =
         , div [ class "row section grey last" ]
             [ div [ class "container" ]
                 [ h4 [ class "zone-label" ]
-                    [ text "Utilisations" -- TODO i18n
-                     ]
+                    [ text "Utilisations"
+                      -- TODO i18n
+                    ]
                 , div [ class "row" ]
                     (let
-                                useCaseCards =
-                                    List.filterMap
-                                        (\cardId ->
-                                            let
-                                                card =
-                                                    getCard cards cardId
-                                            in
-                                                if
-                                                    List.any
-                                                        (\subTypeId -> List.member subTypeId card.subTypeIds)
-                                                        cardTypesForUseCase
-                                                then
-                                                    Just card
-                                                else
-                                                    Nothing
-                                        )
-                                        collection.cardIds
-                                in
-                                List.map
-                                    (viewCardThumbnail language values "example")
-                                    useCaseCards
-                            )
+                        useCaseCards =
+                            List.filterMap
+                                (\cardId ->
+                                    let
+                                        card =
+                                            getCard cards cardId
+                                    in
+                                        if
+                                            List.any
+                                                (\subTypeId -> List.member subTypeId card.subTypeIds)
+                                                cardTypesForUseCase
+                                        then
+                                            Just card
+                                        else
+                                            Nothing
+                                )
+                                collection.cardIds
+                     in
+                        List.map
+                            (viewCardThumbnail language values "example")
+                            useCaseCards
+                    )
                 ]
             ]
         ]
 
 
-
-
-viewCardThumbnail : I18n.Language -> Dict String Value ->String-> Card -> Html Msg
+viewCardThumbnail : I18n.Language -> Dict String Value -> String -> Card -> Html Msg
 viewCardThumbnail language values extraClass card =
     div [ class "col-xs-6 col-md-3" ]
-        [
-        aForPath
+        [ aForPath
             navigate
             language
             (Routes.urlPathForCard card)
-        [ class ("thumbnail " ++ extraClass) ]
+            [ class ("thumbnail " ++ extraClass) ]
             [ div [ class "visual" ]
                 (case I18n.getImageUrl language "500" card values of
-                    Nothing -> []
+                    Nothing ->
+                        []
+
                     Just url ->
-                    [ img [ alt "logo", src url ] [] ]
+                        [ img [ alt "logo", src url ] [] ]
                 )
             , div [ class "caption" ]
                 [ h4 []

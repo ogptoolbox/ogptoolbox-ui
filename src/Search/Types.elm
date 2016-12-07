@@ -7,7 +7,8 @@ import WebData exposing (..)
 
 
 type alias Model =
-    { organizations : WebData DataIdsBody
+    { collections : WebData DataIdsBody
+    , organizations : WebData DataIdsBody
     , popularTagsData : WebData PopularTagsData
     , selectedTags : List Ports.D3BubblesPopularTag
     , tools : WebData DataIdsBody
@@ -22,6 +23,8 @@ type ExternalMsg
 type InternalMsg
     = BubbleDeselect Ports.D3BubblesPopularTag
     | BubbleSelect Ports.D3BubblesPopularTag
+    | CollectionsLoadError Http.Error
+    | CollectionsLoadSuccess DataIdsBody
     | Load
     | OrganizationsLoadError Http.Error
     | OrganizationsLoadSuccess DataIdsBody
