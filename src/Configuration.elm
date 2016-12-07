@@ -1,5 +1,6 @@
 module Configuration exposing (..)
 
+import Dict exposing (Dict)
 import String
 
 
@@ -12,6 +13,15 @@ apiUrl =
 appUrl : String
 appUrl =
     "http://localhost:3011/"
+
+
+useItData =
+    Dict.fromList
+        [ ( "7873", { frenchGovDeployUrl = "https://consultation.etalab.gouv.fr/" } )
+        , ( "4848", { frenchGovDeployUrl = "https://consultation.etalab.gouv.fr/" } )
+        , ( "6228", { frenchGovDeployUrl = "https://consultation.etalab.gouv.fr/" } )
+        , ( "2333", { frenchGovDeployUrl = "https://consultation.etalab.gouv.fr/" } )
+        ]
 
 
 

@@ -1,6 +1,7 @@
 module Card.View exposing (..)
 
 import Card.Types exposing (..)
+import Configuration
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -27,30 +28,13 @@ view model language =
 
                 Loaded body ->
                     div []
-                        ([ viewCard language body ]
-                            ++ (case model.editedProperty of
-                                    Nothing ->
-                                        []
-
-                                    Just editedProperty ->
-                                        let
-                                            cards =
-                                                case getData model.webData of
-                                                    Nothing ->
-                                                        Dict.empty
-
-                                                    Just webData ->
-                                                        webData.data.cards
-                                        in
-                                            [ viewEditPropertyModal language editedProperty cards ]
-                               )
-                        )
+                        [ viewCard language body model.editedProperty model.displayUseItModal ]
         )
         model.webData
 
 
-viewCard : I18n.Language -> DataIdBody -> Html Msg
-viewCard language body =
+viewCard : I18n.Language -> DataIdBody -> Maybe EditedProperty -> Bool -> Html Msg
+viewCard language body editedProperty displayUseItModal =
     let
         cards =
             body.data.cards
@@ -66,9 +50,27 @@ viewCard language body =
                 div [ class "container" ]
                     [ div
                         [ class "row" ]
-                        [ viewSidebar language card values
-                        , viewCardContent language card cards values
-                        ]
+                        ([ viewSidebar language card values
+                         , viewCardContent language card cards values
+                         ]
+                            ++ (case editedProperty of
+                                    Nothing ->
+                                        []
+
+                                    Just editedProperty ->
+                                        [ viewEditPropertyModal language editedProperty cards ]
+                               )
+                            ++ (if displayUseItModal then
+                                    case Dict.get card.id Configuration.useItData of
+                                        Nothing ->
+                                            []
+
+                                        Just { frenchGovDeployUrl } ->
+                                            [ viewUseItModal language frenchGovDeployUrl ]
+                                else
+                                    []
+                               )
+                        )
                     ]
         in
             case getImageScreenshotUrl language "" card values of
@@ -686,6 +688,89 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
             ]
 
 
+viewUseItModal : I18n.Language -> String -> Html Msg
+viewUseItModal language frenchGovDeployUrl =
+    div []
+        [ div
+            [ attribute "aria-labelledby" "myModalLabel"
+            , class "modal fade in"
+            , id "useit"
+            , attribute "role" "dialog"
+            , attribute "style" "display: block; padding-right: 6px;"
+            , attribute "tabindex" "-1"
+            ]
+            [ div [ class "modal-dialog", id "login-overlay" ]
+                [ div [ class "modal-content" ]
+                    [ div [ class "modal-header" ]
+                        [ button
+                            [ class "close"
+                            , attribute "data-dismiss" "modal"
+                            , onClick (ForSelf (DisplayUseItModal False))
+                            , type' "button"
+                            ]
+                            [ span [ attribute "aria-hidden" "true" ]
+                                [ text "×" ]
+                            , span [ class "sr-only" ]
+                                [ text "Close" ]
+                            ]
+                        , h4 [ class "modal-title", id "myModalLabel" ]
+                            [ text "Use this tool" ]
+                        ]
+                    , div [ class "modal-body" ]
+                        [ div [ class "row" ]
+                            [ div [ class "col-xs-12" ]
+                                [ -- a [ class "media action", href "#" ]
+                                  --     [ div [ class "media-left icon" ]
+                                  --         [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-save" ]
+                                  --             []
+                                  --         ]
+                                  --     , div [ class "media-body" ]
+                                  --         [ h4 [ class "media-heading" ]
+                                  --             [ text "Download" ]
+                                  --         , text "Install this tool on your own machine."
+                                  --         ]
+                                  --     ]
+                                  span
+                                    [ class "media action" ]
+                                    [ div [ class "media-left icon" ]
+                                        [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-cloud-upload" ]
+                                            []
+                                        ]
+                                    , div [ class "media-body" ]
+                                        [ h4 [ class "media-heading" ]
+                                            [ text "Use it online" ]
+                                        , text "install and use this tool directly on a server provided by an institution"
+                                        , ul [ class "options" ]
+                                            [ li [ class "option" ]
+                                                [ a
+                                                    [ href frenchGovDeployUrl
+                                                    , rel "external"
+                                                    , target "_blank"
+                                                    ]
+                                                    [ span []
+                                                        [ text "Deployer avec le Gouvernment Français"
+                                                        , i []
+                                                            [ text "Valable si vous êtes une administration française" ]
+                                                        ]
+                                                    ]
+                                                ]
+                                              -- , li [ class "option" ]
+                                              --     [ text "Deployer avec Octo" ]
+                                              -- , li [ class "option" ]
+                                              --     [ text "Deployer avec Capgemini" ]
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        , div [ class "modal-backdrop in" ] []
+        ]
+
+
 
 -- viewShowMore : number -> List (Html msg)
 -- viewShowMore count =
@@ -763,14 +848,14 @@ viewSidebar language card values =
                     , div [ class "caption" ]
                         [ table [ class "table" ]
                             [ tbody []
-                                [ --      tr [ class "editable" ]
-                                  --     [ td [ class "table-label" ]
-                                  --         [ text (I18n.translate language I18n.Type) ]
-                                  --     , td []
-                                  --         [ text "TODO type" ]
-                                  --     ]
-                                  -- ,
-                                  tr
+                                ([ --      tr [ class "editable" ]
+                                   --     [ td [ class "table-label" ]
+                                   --         [ text (I18n.translate language I18n.Type) ]
+                                   --     , td []
+                                   --         [ text "TODO type" ]
+                                   --     ]
+                                   -- ,
+                                   tr
                                     [ class "editable"
                                     , onClick (ForSelf (LoadProperties card.id "license"))
                                     ]
@@ -779,11 +864,11 @@ viewSidebar language card values =
                                     , td []
                                         [ text (getOneString language licenseKeys card values |> Maybe.withDefault "") ]
                                     ]
-                                , let
+                                 , let
                                     firstTd =
                                         td [ class "table-label" ]
                                             [ text (I18n.translate language I18n.Website) ]
-                                  in
+                                   in
                                     case getOneString language urlKeys card values of
                                         Nothing ->
                                             tr []
@@ -805,13 +890,25 @@ viewSidebar language card values =
                                                 [ firstTd
                                                 , td [] [ aExternal [ href url ] [ text url ] ]
                                                 ]
-                                , tr []
-                                    [ td [ attribute "colspan" "2" ]
-                                        [ button [ class "btn btn-default btn-action btn-block", type' "button" ]
-                                            [ text (I18n.translate language I18n.UseIt) ]
-                                        ]
-                                    ]
-                                ]
+                                 ]
+                                    ++ (case Dict.get card.id Configuration.useItData of
+                                            Nothing ->
+                                                []
+
+                                            Just { frenchGovDeployUrl } ->
+                                                [ tr []
+                                                    [ td [ attribute "colspan" "2" ]
+                                                        [ button
+                                                            [ class "btn btn-default btn-action btn-block"
+                                                            , onClick (ForSelf (DisplayUseItModal True))
+                                                            , type' "button"
+                                                            ]
+                                                            [ text (I18n.translate language I18n.UseIt) ]
+                                                        ]
+                                                    ]
+                                                ]
+                                       )
+                                )
                             ]
                         ]
                     ]

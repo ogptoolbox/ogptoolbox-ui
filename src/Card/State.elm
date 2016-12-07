@@ -13,7 +13,8 @@ import WebData exposing (..)
 
 init : Model
 init =
-    { editedProperty = Nothing
+    { displayUseItModal = False
+    , editedProperty = Nothing
     , webData = NotAsked
     }
 
@@ -32,6 +33,11 @@ update msg ({ editedProperty } as model) authentication language =
                     { model | editedProperty = Nothing }
             in
                 ( newModel, Cmd.none )
+
+        DisplayUseItModal displayUseItModal ->
+            ( { model | displayUseItModal = displayUseItModal }
+            , Cmd.none
+            )
 
         LoadCard cardId ->
             let

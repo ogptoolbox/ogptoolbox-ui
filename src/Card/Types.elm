@@ -18,7 +18,8 @@ type alias EditedProperty =
 
 
 type alias Model =
-    { editedProperty : Maybe EditedProperty
+    { displayUseItModal : Bool
+    , editedProperty : Maybe EditedProperty
     , webData : WebData DataIdBody
     }
 
@@ -29,6 +30,7 @@ type ExternalMsg
 
 type InternalMsg
     = CloseEditPropertiesModal
+    | DisplayUseItModal Bool
     | LoadCard String
     | LoadCardError Http.Error
     | LoadCardSuccess DataIdBody
