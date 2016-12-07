@@ -11,6 +11,12 @@ import Authenticator.View
 import Card.State
 import Card.Types
 import Card.View
+import Collection.State
+import Collection.Types
+import Collection.View
+import Collections.State
+import Collections.Types
+import Collections.View
 import Constants
 import Decoders
 import Dict exposing (Dict)
@@ -34,7 +40,10 @@ import Search.View
 import String
 import Task
 import Types exposing (..)
-import Views exposing (viewBigMessage, viewNotFound)
+import UserProfile.State
+import UserProfile.Types
+import UserProfile.View
+import Views exposing (viewBigMessage, viewNotAuthentified, viewNotFound)
 
 
 main : Program Flags
@@ -65,12 +74,15 @@ type alias Model =
     , authenticatorModel : Authenticator.Model.Model
     , authenticatorRouteMaybe : Maybe Authenticator.Model.Route
     , cardModel : Card.Types.Model
+    , collectionModel : Collection.Types.Model
+    , collectionsModel : Collections.Types.Model
     , displayAddNewModal : Bool
     , i18nRoute : I18nRoute
     , location : Hop.Types.Location
     , navigatorLanguage : Maybe I18n.Language
     , searchInputValue : String
     , searchModel : Search.Types.Model
+    , userProfileModel : UserProfile.Types.Model
     }
 
 
@@ -84,6 +96,8 @@ init flags ( i18nRoute, location ) =
     , authenticatorModel = Authenticator.Model.init
     , authenticatorRouteMaybe = Nothing
     , cardModel = Card.State.init
+    , collectionModel = Collection.State.init
+    , collectionsModel = Collections.State.init
     , displayAddNewModal = False
     , i18nRoute = i18nRoute
     , location = location
@@ -94,6 +108,7 @@ init flags ( i18nRoute, location ) =
             |> I18n.languageFromIso639_1
     , searchInputValue = ""
     , searchModel = Search.State.init
+    , userProfileModel = UserProfile.State.init
     }
         |> urlUpdate ( i18nRoute, location )
 
@@ -195,6 +210,36 @@ urlUpdate ( i18nRoute, location ) model =
                                         { model | activationModel = activationModel }
                                 in
                                     ( model, Cmd.map translateActivationMsg childCmd )
+
+                            CollectionsRoute childRoute ->
+                                case childRoute of
+                                    CollectionRoute collectionId ->
+                                        let
+                                            ( collectionModel, childCmd ) =
+                                                Collection.State.update
+                                                    (Collection.Types.LoadCollection collectionId)
+                                                    model.collectionModel
+                                                    language
+                                            newModel =
+                                                { model | collectionModel = collectionModel }
+                                        in
+                                            ( newModel, Cmd.map translateCollectionMsg childCmd )
+
+                                    CollectionsIndexRoute ->
+                                        let
+                                            ( collectionsModel, childCmd ) =
+                                                Collections.State.update
+                                                    Collections.Types.LoadCollections
+                                                    model.collectionsModel
+                                                    language
+                                            newModel =
+                                                { model | collectionsModel = collectionsModel }
+                                        in
+                                            ( newModel, Cmd.map translateCollectionsMsg childCmd )
+
+                                    NewCollectionRoute ->
+                                        -- TODO
+                                        ( model, Cmd.none )
 
                             HomeRoute ->
                                 indexRoute I18n.Home
@@ -327,6 +372,9 @@ urlUpdate ( i18nRoute, location ) model =
                                         in
                                             ( newModel, cmd )
 
+                            UserProfileRoute ->
+                                ( model, Cmd.none )
+
                 I18nRouteWithoutLanguage urlPath ->
                     let
                         language =
@@ -362,12 +410,15 @@ type Msg
     | AuthenticatorMsg Authenticator.Update.Msg
     | AuthenticatorRouteMsg (Maybe Authenticator.Model.Route)
     | CardMsg Card.Types.InternalMsg
+    | CollectionMsg Collection.Types.InternalMsg
+    | CollectionsMsg Collections.Types.InternalMsg
     | DisplayAddNewModal Bool
     | Navigate String
     | NoOp
     | Search
     | SearchInputChanged String
     | SearchMsg Search.Types.InternalMsg
+    | UserProfileMsg UserProfile.Types.InternalMsg
 
 
 translateActivationMsg : Authenticator.Activate.MsgTranslator Msg
@@ -394,10 +445,34 @@ translateCardMsg =
         }
 
 
+translateCollectionMsg : Collection.Types.MsgTranslator Msg
+translateCollectionMsg =
+    Collection.Types.translateMsg
+        { onInternalMsg = CollectionMsg
+        , onNavigate = Navigate
+        }
+
+
+translateCollectionsMsg : Collections.Types.MsgTranslator Msg
+translateCollectionsMsg =
+    Collections.Types.translateMsg
+        { onInternalMsg = CollectionsMsg
+        , onNavigate = Navigate
+        }
+
+
 translateSearchMsg : Search.Types.MsgTranslator Msg
 translateSearchMsg =
     Search.Types.translateMsg
         { onInternalMsg = SearchMsg
+        , onNavigate = Navigate
+        }
+
+
+translateUserProfileMsg : UserProfile.Types.MsgTranslator Msg
+translateUserProfileMsg =
+    UserProfile.Types.translateMsg
+        { onInternalMsg = UserProfileMsg
         , onNavigate = Navigate
         }
 
@@ -492,6 +567,25 @@ update msg model =
                     , Cmd.map translateCardMsg childCmd
                     )
 
+            CollectionMsg childMsg ->
+                let
+                    ( collectionModel, childCmd ) =
+                        Collection.State.update childMsg model.collectionModel language
+                in
+                    ( { model | collectionModel = collectionModel }
+                    , Cmd.map translateCollectionMsg childCmd
+                    )
+
+            CollectionsMsg childMsg ->
+                let
+
+                    ( collectionsModel, childCmd ) =
+                        Collections.State.update childMsg model.collectionsModel language
+                in
+                    ( { model | collectionsModel = collectionsModel }
+                    , Cmd.map translateCollectionsMsg childCmd
+                    )
+
             DisplayAddNewModal displayAddNewModal ->
                 ( { model | displayAddNewModal = displayAddNewModal }
                 , Cmd.none
@@ -551,6 +645,26 @@ update msg model =
                     , Cmd.map translateSearchMsg childCmd
                     )
 
+            UserProfileMsg childMsg ->
+                let
+                    authentication =
+                        case model.authentication of
+                            Nothing ->
+                                Debug.crash "prevented by viewNotAuthorized"
+
+                            Just authentication ->
+                                authentication
+
+                    ( newUserProfileModel, childCmd ) =
+                        UserProfile.State.update childMsg model.userProfileModel authentication language
+
+                    newModel =
+                        { model | userProfileModel = newUserProfileModel }
+                in
+                    ( newModel
+                    , Cmd.map translateUserProfileMsg childCmd
+                    )
+
 
 
 -- VIEW
@@ -602,6 +716,24 @@ view model =
                         Authenticator.Activate.view model.activationModel language userId
                             |> Html.App.map translateActivationMsg
                             |> standardLayout language
+
+                    CollectionsRoute childRoute ->
+                        case childRoute of
+                            CollectionRoute _ ->
+                                Collection.View.view model.collectionModel language
+                                    |> Html.App.map translateCollectionMsg
+                                    |> standardLayout language
+
+                            CollectionsIndexRoute ->
+                                Collections.View.view model.collectionsModel language
+                                    |> Html.App.map translateCollectionsMsg
+                                    |> standardLayout language
+
+                            NewCollectionRoute ->
+                                -- Collection.View.viewAddNew model.collectionModel language
+                                --     |> Html.App.map translateCollectionMsg
+                                --     |> standardLayout language
+                                standardLayout language (div [] [ text "TODO" ])
 
                     HomeRoute ->
                         Home.view model.searchModel (getSearchQuery model.location) language
@@ -665,6 +797,17 @@ view model =
                                 AddNew.View.viewUseCase model.addNewModel language
                                     |> Html.App.map translateAddNewMsg
                                     |> standardLayout language
+
+                    UserProfileRoute ->
+                        (case model.authentication of
+                            Nothing ->
+                                viewNotAuthentified language
+
+                            Just user ->
+                                UserProfile.View.view model.userProfileModel language user
+                                    |> Html.App.map translateUserProfileMsg
+                        )
+                            |> standardLayout language
 
             I18nRouteWithoutLanguage _ ->
                 div [ style [ ( "min-height", "60em" ) ] ]
@@ -738,7 +881,15 @@ viewAddNewModal model language =
                                         , text (I18n.translate language I18n.AddNewUseCaseCatchPhrase)
                                         ]
                                     ]
-                                , a [ class "media action", href "TODO-new-collection.html" ]
+                                ,
+                                aForPath
+                                    Navigate
+                                    language
+                                    "/collections/new"
+                                    [ class "media action"
+                                      -- TODO trigger a login if not signed in
+                                    , onClick (DisplayAddNewModal False)
+                                    ]
                                     [ div [ class "media-left icon" ]
                                         [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-heart" ]
                                             []
@@ -813,7 +964,7 @@ viewAuthenticatorModal model language =
                             ]
                         , Html.App.map
                             AuthenticatorMsg
-                            (Authenticator.View.viewModalBody authenticatorRoute model.authenticatorModel)
+                            (Authenticator.View.viewModalBody language authenticatorRoute model.authenticatorModel)
                         ]
                     ]
                 ]

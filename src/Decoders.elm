@@ -59,13 +59,26 @@ cardDecoder =
         |: oneOf [ ("usageIds" := list string), succeed [] ]
 
 
+collectionDecoder : Decoder Collection
+collectionDecoder =
+    succeed Collection
+        |: ("authorId" := string)
+        |: ("cardIds" := list string)
+        |: ("description" := string)
+        |: ("id" := string)
+        |: ("logo" := string)
+        |: ("name" := string)
+
+
 dataIdDecoder : Decoder DataId
 dataIdDecoder =
     succeed DataId
         |: oneOf [ ("ballots" := dict ballotDecoder), succeed Dict.empty ]
         |: oneOf [ ("cards" := dict cardDecoder), succeed Dict.empty ]
+        |: oneOf [ ("collections" := dict collectionDecoder), succeed Dict.empty ]
         |: ("id" := string)
         |: (oneOf [ ("properties" := dict propertyDecoder), succeed Dict.empty ])
+        |: (oneOf [ ("users" := dict userDecoder), succeed Dict.empty ])
         |: oneOf [ ("values" := dict valueDecoder), succeed Dict.empty ]
 
 
@@ -83,23 +96,18 @@ dataIdsDecoder =
         `andThen`
             (\( ids, users ) ->
                 (if List.isEmpty ids then
-                    succeed ( Dict.empty, Dict.empty, Dict.empty, Dict.empty )
+                    succeed ( Dict.empty, Dict.empty, Dict.empty, Dict.empty, Dict.empty )
                  else
-                    object4 (,,,)
+                    object5 (,,,,)
                         (oneOf [ ("ballots" := dict ballotDecoder), succeed Dict.empty ])
                         (oneOf [ ("cards" := dict cardDecoder), succeed Dict.empty ])
+                        (oneOf [ ("collections" := dict collectionDecoder), succeed Dict.empty ])
                         (oneOf [ ("properties" := dict propertyDecoder), succeed Dict.empty ])
                         ("values" := dict valueDecoder)
                 )
                     |> map
-                        (\( ballots, cards, properties, values ) ->
-                            DataIds
-                                ballots
-                                cards
-                                ids
-                                properties
-                                users
-                                values
+                        (\( ballots, cards, collections, properties, values ) ->
+                            DataIds ballots cards collections ids properties users values
                         )
             )
 
@@ -148,8 +156,8 @@ userDecoder : Decoder User
 userDecoder =
     succeed User
         |: ("activated" := bool)
-        |: ("apiKey" := string)
-        |: ("email" := string)
+        |: oneOf [ ("apiKey" := string), succeed "" ]
+        |: oneOf [ ("email" := string), succeed "" ]
         |: ("name" := string)
         |: ("urlName" := string)
 

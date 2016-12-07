@@ -114,33 +114,37 @@ viewCardListItem navigate language values card =
             ]
 
 
-viewHttpError : I18n.Language -> Http.Error -> Html msg
-viewHttpError language err =
-    let
-        genericTitle =
-            I18n.translate language I18n.GenericError
-    in
-        case err of
-            Timeout ->
-                viewBigMessage genericTitle (I18n.translate language I18n.TimeoutExplanation)
+getHttpErrorAsString : I18n.Language -> Http.Error -> String
+getHttpErrorAsString language err =
+    case err of
+        Timeout ->
+            I18n.translate language I18n.TimeoutExplanation
 
-            NetworkError ->
-                viewBigMessage genericTitle (I18n.translate language I18n.NetworkErrorExplanation)
+        NetworkError ->
+            I18n.translate language I18n.NetworkErrorExplanation
 
-            UnexpectedPayload string ->
-                viewBigMessage genericTitle (I18n.translate language I18n.UnexpectedPayloadExplanation)
+        UnexpectedPayload string ->
+            I18n.translate language I18n.UnexpectedPayloadExplanation
 
-            BadResponse code string ->
-                if code == 404 then
-                    viewNotFound language
-                else
-                    viewBigMessage genericTitle string
+        BadResponse code string ->
+            if code == 404 then
+                I18n.translate language I18n.PageNotFoundExplanation
+            else
+                -- TODO Add I18n.BadResponseExplanation prefix
+                string
 
 
 viewLoading : I18n.Language -> Html msg
 viewLoading language =
     div [ style [ ( "height", "100em" ) ] ]
         [ img [ class "loader", src "/img/loader.gif" ] [] ]
+
+
+viewNotAuthentified : I18n.Language -> Html msg
+viewNotAuthentified language =
+    viewBigMessage
+        (I18n.translate language I18n.AuthenticationRequired)
+        (I18n.translate language I18n.AuthenticationRequiredExplanation)
 
 
 viewNotFound : I18n.Language -> Html msg
@@ -188,7 +192,29 @@ viewWebData language viewSuccess webData =
                 [ viewLoading language ]
 
         Failure err ->
-            viewHttpError language err
+            let
+                genericTitle =
+                    I18n.translate language I18n.GenericError
+
+                title =
+                    case err of
+                        Timeout ->
+                            genericTitle
+
+                        NetworkError ->
+                            genericTitle
+
+                        UnexpectedPayload _ ->
+                            genericTitle
+
+                        BadResponse code _ ->
+                            if code == 404 then
+                                I18n.translate language I18n.PageNotFound
+                            else
+                                -- TODO Add I18n.BadResponse prefix
+                                genericTitle
+            in
+                viewBigMessage title (getHttpErrorAsString language err)
 
         Data loadingStatus ->
             viewSuccess loadingStatus

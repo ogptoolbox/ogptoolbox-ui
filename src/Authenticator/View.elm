@@ -8,6 +8,7 @@ import Authenticator.SignUp as SignUp
 import Authenticator.Update exposing (Msg(..))
 import Html exposing (Html)
 import Html.App
+import I18n
 
 
 modalTitle : Route -> String
@@ -26,14 +27,14 @@ modalTitle route =
             "Create your account"
 
 
-viewModalBody : Route -> Model -> Html Msg
-viewModalBody route model =
+viewModalBody : I18n.Language -> Route -> Model -> Html Msg
+viewModalBody language route model =
     case route of
         ResetPasswordRoute ->
             Html.App.map ResetPasswordMsg (ResetPassword.viewModalBody model.resetPassword)
 
         SignInRoute ->
-            Html.App.map SignInMsg (SignIn.viewModalBody model.signIn)
+            Html.App.map SignInMsg (SignIn.viewModalBody language model.signIn)
 
         SignOutRoute ->
             Html.App.map SignOutMsg (SignOut.viewModalBody model.signOut)

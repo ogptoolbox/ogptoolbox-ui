@@ -1,8 +1,6 @@
 module Types exposing (..)
 
-import Configuration exposing (apiUrl)
 import Dict exposing (Dict)
-import String
 
 
 type alias Ballot =
@@ -43,11 +41,23 @@ type CardType
     | ToolCard
 
 
+type alias Collection =
+    { authorId : String
+    , cardIds : List String
+    , description : String
+    , id : String
+    , logo : String
+    , name : String
+    }
+
+
 type alias DataId =
     { ballots : Dict String Ballot
     , cards : Dict String Card
+    , collections : Dict String Collection
     , id : String
     , properties : Dict String Property
+    , users : Dict String User
     , values : Dict String Value
     }
 
@@ -60,6 +70,7 @@ type alias DataIdBody =
 type alias DataIds =
     { ballots : Dict String Ballot
     , cards : Dict String Card
+    , collections : Dict String Collection
     , ids : List String
     , properties : Dict String Property
     , users : Dict String User
@@ -127,8 +138,12 @@ type alias Property =
 
 type alias User =
     { activated : Bool
-    , apiKey : String
-    , email : String
+    , apiKey :
+        String
+        -- TODO Use Maybe
+    , email :
+        String
+        -- TODO Use Maybe
     , name : String
     , urlName : String
     }

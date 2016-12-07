@@ -17,11 +17,13 @@ import Types exposing (..)
 type Route
     = AboutRoute
     | ActivationRoute String
+    | CollectionsRoute CollectionsNestedRoute
     | HomeRoute
     | NotFoundRoute String
     | OrganizationsRoute OrganizationsNestedRoute
     | ToolsRoute ToolsNestedRoute
     | UseCasesRoute UseCasesNestedRoute
+    | UserProfileRoute
 
 
 type I18nRoute
@@ -31,6 +33,12 @@ type I18nRoute
 
 
 -- NESTED ROUTES
+
+
+type CollectionsNestedRoute
+    = CollectionRoute String
+    | CollectionsIndexRoute
+    | NewCollectionRoute
 
 
 type OrganizationsNestedRoute
@@ -69,6 +77,12 @@ makeUrlWithLanguage language urlPath =
 matchers : List (Hop.Types.PathMatcher Route)
 matchers =
     [ match1 HomeRoute ""
+    , nested1 CollectionsRoute
+        "/collections"
+        [ match1 CollectionsIndexRoute ""
+        , match1 NewCollectionRoute "/new"
+        , match2 CollectionRoute "/" idParser
+        ]
     , match1 AboutRoute "/help"
     , nested1 OrganizationsRoute
         "/organizations"
@@ -76,6 +90,7 @@ matchers =
         , match1 NewOrganizationRoute "/new"
         , match2 OrganizationRoute "/" idParser
         ]
+    , match1 UserProfileRoute "/profile"
     , nested1 ToolsRoute
         "/tools"
         [ match1 ToolsIndexRoute ""

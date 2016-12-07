@@ -66,6 +66,8 @@ type TranslationId
     | AddNewUseCase
     | AddNewUseCaseCatchPhrase
     | AdditionalInformations
+    | AuthenticationRequired
+    | AuthenticationRequiredExplanation
     | BestOf Int
     | CallToActionForCategory
     | CallToActionForDescription CardType
@@ -408,6 +410,18 @@ getTranslationSet translationId =
         AdditionalInformations ->
             { english = s "Additional informations"
             , french = s "Informations supplémentaires"
+            , spanish = todo
+            }
+
+        AuthenticationRequired ->
+            { english = s "Authentication required"
+            , french = todo
+            , spanish = todo
+            }
+
+        AuthenticationRequiredExplanation ->
+            { english = s "You must sign in to display this page."
+            , french = todo
             , spanish = todo
             }
 

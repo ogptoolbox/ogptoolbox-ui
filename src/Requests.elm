@@ -89,6 +89,45 @@ getCards authentication searchQuery limit tagIds cardTypes =
         )
 
 
+getCollection : String -> Task Http.Error DataIdBody
+getCollection collectionId =
+    Http.fromJson dataIdBodyDecoder
+        (Http.send Http.defaultSettings
+            { verb = "GET"
+            , url = apiUrl ++ "collections/" ++ collectionId ++ "?show=values&depth=1"
+            , headers = [ ( "Accept", "application/json" ) ]
+            , body = Http.empty
+            }
+        )
+
+
+getCollections : Task Http.Error DataIdsBody
+getCollections =
+    Http.fromJson dataIdsBodyDecoder
+        (Http.send Http.defaultSettings
+            { verb = "GET"
+            , url = apiUrl ++ "collections?show=values&depth=1"
+            , headers = [ ( "Accept", "application/json" ) ]
+            , body = Http.empty
+            }
+        )
+
+
+getCollectionsForAuthor : Authenticator.Model.Authentication -> Task Http.Error DataIdsBody
+getCollectionsForAuthor authentication =
+    Http.fromJson dataIdsBodyDecoder
+        (Http.send Http.defaultSettings
+            { verb = "GET"
+            , url = apiUrl ++ "users/" ++ authentication.urlName ++ "/collections?show=values&depth=1"
+            , headers =
+                [ ( "Accept", "application/json" )
+                , ( "Retruco-API-Key", authentication.apiKey )
+                ]
+            , body = Http.empty
+            }
+        )
+
+
 getObjectProperties : Maybe Authenticator.Model.Authentication -> String -> String -> Task Http.Error DataIdsBody
 getObjectProperties authentication objectId keyId =
     Http.fromJson dataIdsBodyDecoder
