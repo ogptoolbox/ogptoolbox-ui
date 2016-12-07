@@ -200,6 +200,7 @@ update msg ({ editedProperty } as model) authentication language =
                                     | ballots = newBallots
                                     , properties = newProperties
                                     , propertyIds = newPropertyIds
+                                    , selectedField = LocalizedInputTextField (I18n.iso639_1FromLanguage language) ""
                                     , values = newValues
                                 }
                         )
