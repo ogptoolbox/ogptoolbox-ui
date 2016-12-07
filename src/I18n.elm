@@ -1079,19 +1079,8 @@ getLocalizedStringFromValueId language values valueId =
         Just { value } ->
             case value of
                 LocalizedStringValue localizedValues ->
-                    case
-                        Maybe.oneOf
-                            [ Dict.get (iso639_1FromLanguage language) localizedValues
-                            , Dict.get "en" localizedValues
-                            ]
-                    of
-                        Nothing ->
-                            -- Debug.crash "getLocalizedStringFromValueId: no translation found, even with \"en\" fallback"
-                            -- TODO
-                            ""
-
-                        Just str ->
-                            str
+                    getValueByPreferredLanguage language localizedValues
+                        |> Maybe.withDefault ("No localization for string valueId=" ++ valueId)
 
                 _ ->
                     "This should not happen"
