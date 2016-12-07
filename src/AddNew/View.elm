@@ -15,6 +15,9 @@ publishedDisabled imageUploadStatus =
         NotUploaded ->
             False
 
+        Selected ->
+            False
+
         Read _ ->
             True
 
@@ -40,6 +43,12 @@ viewImageUploadStatus imageUploadStatus =
                 div []
                     [ cameraSpan
                     , text "Upload image"
+                    ]
+
+            Selected ->
+                div []
+                    [ cameraSpan
+                    , text "Reading selected image"
                     ]
 
             Read { contents, filename } ->
