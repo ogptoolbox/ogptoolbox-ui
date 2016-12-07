@@ -16,6 +16,7 @@ appUrl =
     "http://localhost:3011/"
 
 
+useItData : Dict String { frenchGovDeployUrl : String }
 useItData =
     Dict.fromList
         [ ( "7873", { frenchGovDeployUrl = "https://consultation.etalab.gouv.fr/tools/nova-ideo" } )
