@@ -964,19 +964,20 @@ viewHeader model language containerClass =
                         ]
 
                 Nothing ->
-                    li []
-                        [ a
-                            [ href "#"
-                            , onWithOptions
-                                "click"
-                                { preventDefault = True, stopPropagation = False }
-                                (Json.Decode.succeed
-                                    (AuthenticatorRouteMsg (Just Authenticator.Model.ResetPasswordRoute))
-                                )
-                            ]
-                            [ text (I18n.translate language I18n.ResetPassword) ]
-                        ]
+                    text ""
 
+        -- li []
+        --     [ a
+        --         [ href "#"
+        --         , onWithOptions
+        --             "click"
+        --             { preventDefault = True, stopPropagation = False }
+        --             (Json.Decode.succeed
+        --                 (AuthenticatorRouteMsg (Just Authenticator.Model.ResetPasswordRoute))
+        --             )
+        --         ]
+        --         [ text (I18n.translate language I18n.ResetPassword) ]
+        --     ]
         signInOrOutNavItem =
             case model.authentication of
                 Just authentication ->
