@@ -127,25 +127,38 @@ postCardsEasy :
     -> Task Http.Error DataIdBody
 postCardsEasy authentication fields language =
     let
+        languageCode =
+            I18n.iso639_1FromLanguage language
+
+        localizedStringEncoder x =
+            Encode.object [ ( languageCode, Encode.string x ) ]
+
         body =
             Encode.object
                 [ ( "language", Encode.string (I18n.iso639_1FromLanguage language) )
                 , ( "schemas"
                   , Encode.object
-                        [ ( "Description", Encode.string "schema:string" )
+                        [ ( "Description", Encode.string "schema:localized-string" )
                         , ( "Download", Encode.string "schema:uri" )
                         , ( "Logo", Encode.string "schema:uri" )
-                        , ( "Name", Encode.string "schema:string" )
-                        , ( "Types", Encode.string "schema:type-reference" )
+                        , ( "Name", Encode.string "schema:localized-string" )
+                        , ( "Types", Encode.string "schema:value-id" )
                         , ( "Website", Encode.string "schema:uri" )
                         ]
                   )
                 , ( "values"
-                  , Encode.object
-                        (fields
-                            |> Dict.toList
-                            |> List.map (\( name, value ) -> ( name, Encode.string value ))
-                        )
+                  , [ ( "Description", localizedStringEncoder )
+                    , ( "Download", Encode.string )
+                    , ( "Logo", Encode.string )
+                    , ( "Name", localizedStringEncoder )
+                    , ( "Types", Encode.string )
+                    , ( "Website", Encode.string )
+                    ]
+                        |> List.filterMap
+                            (\( k, encoder ) ->
+                                Maybe.map (\v -> ( k, encoder v )) (Dict.get k fields)
+                            )
+                        |> Encode.object
                   )
                 , ( "widgets", Encode.object [] )
                 ]
@@ -207,12 +220,19 @@ postRating authentication propertyId rating =
 
 postUploadImage : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error String
 postUploadImage authentication contents =
-    Http.fromJson Decode.string
+    Http.fromJson (Decode.at [ "data", "path" ] Decode.string)
         (Http.send Http.defaultSettings
             { verb = "POST"
-            , url = apiUrl ++ "uploads/images"
-            , headers = ( "Accept", "application/json" ) :: authenticationHeaders authentication
-            , body = Http.multipart [ Http.stringData "file" contents ]
+            , url = apiUrl ++ "uploads/images/json"
+            , headers =
+                [ ( "Accept", "application/json" )
+                , ( "Content-Type", "application/json" )
+                ]
+                    ++ authenticationHeaders authentication
+            , body =
+                Encode.object [ ( "file", Encode.string contents ) ]
+                    |> Encode.encode 2
+                    |> Http.string
             }
         )
 

@@ -1,5 +1,6 @@
 module I18n exposing (..)
 
+import Configuration
 import Constants
 import Dict exposing (Dict)
 import String
@@ -1030,14 +1031,14 @@ getImageLogoUrl : Language -> String -> Card -> Dict String Value -> Maybe Strin
 getImageLogoUrl language dim card values =
     getOneString language imageLogoUrlPathKeys card values
         |> Maybe.map
-            (\urlPath -> imageUrl urlPath ++ "?dim=" ++ dim)
+            (\urlPath -> Configuration.apiUrlWithPath urlPath ++ "?dim=" ++ dim)
 
 
 getImageScreenshotUrl : Language -> String -> Card -> Dict String Value -> Maybe String
 getImageScreenshotUrl language dim card values =
     getOneString language imageScreenshotUrlPathKeys card values
         |> Maybe.map
-            (\urlPath -> imageUrl urlPath ++ "?dim=" ++ dim)
+            (\urlPath -> Configuration.apiUrlWithPath urlPath ++ "?dim=" ++ dim)
 
 
 getImageUrlOrOgpLogo : Language -> String -> Dict String Card -> Dict String Value -> String
@@ -1052,7 +1053,7 @@ getImageUrlOrOgpLogo language cardId cards values =
                     Constants.logoUrl
 
                 Just urlPath ->
-                    imageUrl urlPath
+                    Configuration.apiUrlWithPath urlPath
 
 
 getLocalizedStringFromValueId : Language -> Dict String Value -> String -> String

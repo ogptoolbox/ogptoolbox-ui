@@ -48,25 +48,31 @@ update msg model authentication language =
         ImageRead data ->
             let
                 newModel =
-                    { model | imageUploadStatus = Uploaded data }
+                    { model | imageUploadStatus = Read data }
 
                 cmd =
                     Task.perform
                         ImageUploadError
-                        ImageUploaded
+                        ImageUploadSuccess
                         (Requests.postUploadImage authentication data.contents)
                         |> Cmd.map ForSelf
             in
                 ( newModel, cmd )
 
-        ImageUploaded str ->
-            -- TODO Add confirmation and unlock publish button
-            ( model, Cmd.none )
-
         ImageUploadError err ->
             let
                 newModel =
                     { model | imageUploadStatus = UploadError err }
+            in
+                ( newModel, Cmd.none )
+
+        ImageUploadSuccess urlPath ->
+            let
+                newModel =
+                    { model
+                        | fields = Dict.insert "Logo" urlPath model.fields
+                        , imageUploadStatus = Uploaded urlPath
+                    }
             in
                 ( newModel, Cmd.none )
 

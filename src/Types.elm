@@ -229,16 +229,6 @@ getValue values id =
             value
 
 
-imageUrl : String -> String
-imageUrl urlPath =
-    apiUrl
-        ++ (if String.startsWith "/" urlPath then
-                String.dropLeft 1 urlPath
-            else
-                urlPath
-           )
-
-
 
 -- KEYS
 

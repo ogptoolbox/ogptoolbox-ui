@@ -8,7 +8,8 @@ import Types exposing (..)
 
 type UploadStatus
     = NotUploaded
-    | Uploaded Ports.ImagePortData
+    | Read Ports.ImagePortData
+    | Uploaded String
     | UploadError Http.Error
 
 
@@ -30,8 +31,8 @@ type InternalMsg
     | SubmittedFields DataIdBody
     | ImageSelected
     | ImageRead Ports.ImagePortData
-    | ImageUploaded String
     | ImageUploadError Http.Error
+    | ImageUploadSuccess String
 
 
 type Msg
