@@ -1,5 +1,6 @@
 module Requests exposing (..)
 
+import AddNewCollection.Types exposing (..)
 import Authenticator.Model
 import Configuration exposing (apiUrl)
 import Decoders exposing (..)
@@ -8,6 +9,7 @@ import Http
 import I18n
 import Json.Decode as Decode
 import Json.Encode as Encode
+import Regex
 import String
 import Types exposing (..)
 import Task exposing (Task)
@@ -226,6 +228,53 @@ postCardsEasy authentication fields language =
                     ]
                         ++ authenticationHeaders authentication
                 , body = body
+                }
+            )
+
+
+postCollection : Maybe Authenticator.Model.Authentication -> AddNewCollectionFields -> String -> Task Http.Error DataIdBody
+postCollection authentication fields imageUrlPath =
+    let
+        regex =
+            Regex.regex "(^|/)(\\d+)(\\?|$)"
+
+        getId : String -> Maybe String
+        getId url =
+            (Regex.find Regex.All regex url
+                |> List.head
+            )
+                `Maybe.andThen`
+                    (\match ->
+                        case match.submatches |> List.drop 1 |> List.head of
+                            Nothing ->
+                                Nothing
+
+                            Just maybe ->
+                                maybe
+                    )
+
+        cardIds : List String
+        cardIds =
+            String.words fields.cardIds |> List.filterMap getId
+    in
+        Http.fromJson dataIdBodyDecoder
+            (Http.send Http.defaultSettings
+                { verb = "POST"
+                , url = apiUrl ++ "collections"
+                , headers =
+                    [ ( "Accept", "application/json" )
+                    , ( "Content-Type", "application/json" )
+                    ]
+                        ++ authenticationHeaders authentication
+                , body =
+                    Encode.object
+                        [ ( "cardIds", Encode.list (List.map Encode.string cardIds) )
+                        , ( "description", Encode.string fields.description )
+                        , ( "logo", Encode.string imageUrlPath )
+                        , ( "name", Encode.string fields.name )
+                        ]
+                        |> Encode.encode 2
+                        |> Http.string
                 }
             )
 

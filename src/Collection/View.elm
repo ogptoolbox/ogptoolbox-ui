@@ -5,6 +5,7 @@ import Configuration
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 import Html.Helpers exposing (..)
 import I18n
 import Routes
@@ -53,63 +54,72 @@ viewBanner : I18n.Language -> User -> Collection -> Html Msg
 viewBanner language user collection =
     div [ class "banner collection-header" ]
         [ div [ class "row full-bg" ]
-            [ img [ class "cover", src (Configuration.apiUrlWithPath collection.logo) ]
-                []
-            , div [ class "container" ]
-                [ div [ class "row" ]
-                    [ -- div [ class "col-xs-8" ]
-                      -- [ ol [ class "breadcrumb" ]
-                      --     [ li []
-                      --         [ a [ href "#" ]
-                      --             [ text "Home" ]
-                      --         ]
-                      --     , li []
-                      --         [ a [ href "#" ]
-                      --             [ text "Collection" ]
-                      --         ]
-                      --     , li [ class "active" ]
-                      --         [ text "Outils de consultation" ]
-                      --     ]
-                      -- ]
-                      div [ class "col-xs-4" ]
-                        [ div [ class "pull-right banner-button" ]
-                            [ button
-                                [ class "btn btn-default btn-xs btn-action-negative"
-                                , attribute "data-target" "#edit-content"
-                                , attribute "data-toggle" "modal"
-                                , type' "button"
-                                ]
-                                [ text "Edit collection"
-                                  -- TODO i18n
-                                ]
-                            ]
-                        ]
+            ((case collection.logo of
+                Nothing ->
+                    []
+
+                Just logo ->
+                    [ img [ class "cover", alt "screen", src (Configuration.apiUrlWithPath logo) ] []
                     ]
-                , div [ class "row " ]
-                    [ div [ class "col-md-12 text-center" ]
-                        [ div [ class "collection-info" ]
-                            [ -- TODO
-                              -- div [ class "collection-thumb" ]
-                              -- [ img [ alt "screen", src "img/france.png" ]
-                              --     []
+             )
+                ++ [ div [ class "container" ]
+                        [ div [ class "row" ]
+                            [ div [ class "col-xs-8" ]
+                                []
+                            , -- [ ol [ class "breadcrumb" ]
+                              --     [ li []
+                              --         [ a [ href "#" ]
+                              --             [ text "Home" ]
+                              --         ]
+                              --     , li []
+                              --         [ a [ href "#" ]
+                              --             [ text "Collection" ]
+                              --         ]
+                              --     , li [ class "active" ]
+                              --         [ text "Outils de consultation" ]
+                              --     ]
                               -- ]
-                              h4 []
-                                [ text "Collection"
-                                  -- TODO i18n
+                              div [ class "col-xs-4" ]
+                                [ div [ class "pull-right banner-button" ]
+                                    [ button
+                                        [ class "btn btn-default btn-xs btn-action-negative"
+                                        , attribute "data-target" "#edit-content"
+                                        , attribute "data-toggle" "modal"
+                                        , onClick (navigate ("/collections/" ++ collection.id ++ "/edit"))
+                                        , type' "button"
+                                        ]
+                                        [ text "Edit collection"
+                                          -- TODO i18n
+                                        ]
+                                    ]
                                 ]
-                            , h2 []
-                                [ text collection.name ]
-                            , h3 []
-                                [ text "Recommandé par "
-                                  -- TODO i18n
-                                , span []
-                                    [ text user.name ]
+                            ]
+                        , div [ class "row " ]
+                            [ div [ class "col-md-12 text-center" ]
+                                [ div [ class "collection-info" ]
+                                    [ -- TODO
+                                      -- div [ class "collection-thumb" ]
+                                      -- [ img [ alt "screen", src "img/france.png" ]
+                                      --     []
+                                      -- ]
+                                      h4 []
+                                        [ text "Collection"
+                                          -- TODO i18n
+                                        ]
+                                    , h2 []
+                                        [ text collection.name ]
+                                    , h3 []
+                                        [ text "Recommandé par "
+                                          -- TODO i18n
+                                        , span []
+                                            [ text user.name ]
+                                        ]
+                                    ]
                                 ]
                             ]
                         ]
-                    ]
-                ]
-            ]
+                   ]
+            )
         ]
 
 

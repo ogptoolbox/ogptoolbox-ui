@@ -46,7 +46,7 @@ type alias Collection =
     , cardIds : List String
     , description : String
     , id : String
-    , logo : String
+    , logo : Maybe String
     , name : String
     }
 

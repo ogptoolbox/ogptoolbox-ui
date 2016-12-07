@@ -4,6 +4,9 @@ import About
 import AddNew.State
 import AddNew.Types
 import AddNew.View
+import AddNewCollection.State
+import AddNewCollection.Types
+import AddNewCollection.View
 import Authenticator.Activate
 import Authenticator.Model
 import Authenticator.Update
@@ -69,6 +72,7 @@ type alias Flags =
 
 type alias Model =
     { addNewModel : AddNew.Types.Model
+    , addNewCollectionModel : AddNewCollection.Types.Model
     , activationModel : Authenticator.Activate.Model
     , authentication : Maybe Authenticator.Model.Authentication
     , authenticatorModel : Authenticator.Model.Model
@@ -89,6 +93,7 @@ type alias Model =
 init : Flags -> ( I18nRoute, Hop.Types.Location ) -> ( Model, Cmd Msg )
 init flags ( i18nRoute, location ) =
     { addNewModel = AddNew.State.init
+    , addNewCollectionModel = AddNewCollection.State.init
     , activationModel = Authenticator.Activate.init
     , authentication =
         Json.Decode.decodeValue Decoders.userForPortDecoder flags.authentication
@@ -239,8 +244,21 @@ urlUpdate ( i18nRoute, location ) model =
                                         in
                                             ( newModel, Cmd.map translateCollectionsMsg childCmd )
 
+                                    EditCollectionRoute collectionId ->
+                                        let
+                                            ( addNewCollectionModel, childCmd ) =
+                                                AddNewCollection.State.update
+                                                    (AddNewCollection.Types.LoadCollection collectionId)
+                                                    model.addNewCollectionModel
+                                                    model.authentication
+                                                    language
+
+                                            newModel =
+                                                { model | addNewCollectionModel = addNewCollectionModel }
+                                        in
+                                            ( newModel, Cmd.map translateAddNewCollectionMsg childCmd )
+
                                     NewCollectionRoute ->
-                                        -- TODO
                                         ( model, Cmd.none )
 
                             HomeRoute ->
@@ -375,7 +393,26 @@ urlUpdate ( i18nRoute, location ) model =
                                             ( newModel, cmd )
 
                             UserProfileRoute ->
-                                ( model, Cmd.none )
+                                let
+                                    authentication =
+                                        case model.authentication of
+                                            Nothing ->
+                                                Debug.crash "prevented by viewNotAuthorized"
+
+                                            Just authentication ->
+                                                authentication
+
+                                    ( userProfileModel, childCmd ) =
+                                        UserProfile.State.update
+                                            (UserProfile.Types.LoadCollections authentication.urlName)
+                                            model.userProfileModel
+                                            authentication
+                                            language
+
+                                    newModel =
+                                        { model | userProfileModel = userProfileModel }
+                                in
+                                    ( newModel, Cmd.map translateUserProfileMsg childCmd )
 
                 I18nRouteWithoutLanguage urlPath ->
                     let
@@ -409,6 +446,7 @@ type Msg
     = Activate User
     | ActivationMsg Authenticator.Activate.InternalMsg
     | AddNewMsg AddNew.Types.InternalMsg
+    | AddNewCollectionMsg AddNewCollection.Types.InternalMsg
     | AuthenticatorMsg Authenticator.Update.Msg
     | AuthenticatorRouteMsg (Maybe Authenticator.Model.Route)
     | CardMsg Card.Types.InternalMsg
@@ -435,6 +473,14 @@ translateAddNewMsg : AddNew.Types.MsgTranslator Msg
 translateAddNewMsg =
     AddNew.Types.translateMsg
         { onInternalMsg = AddNewMsg
+        , onNavigate = Navigate
+        }
+
+
+translateAddNewCollectionMsg : AddNewCollection.Types.MsgTranslator Msg
+translateAddNewCollectionMsg =
+    AddNewCollection.Types.translateMsg
+        { onInternalMsg = AddNewCollectionMsg
         , onNavigate = Navigate
         }
 
@@ -526,6 +572,19 @@ update msg model =
                 in
                     ( { model | addNewModel = addNewModel }
                     , Cmd.map translateAddNewMsg childCmd
+                    )
+
+            AddNewCollectionMsg childMsg ->
+                let
+                    ( addNewCollectionModel, childCmd ) =
+                        AddNewCollection.State.update
+                            childMsg
+                            model.addNewCollectionModel
+                            model.authentication
+                            language
+                in
+                    ( { model | addNewCollectionModel = addNewCollectionModel }
+                    , Cmd.map translateAddNewCollectionMsg childCmd
                     )
 
             AuthenticatorMsg childMsg ->
@@ -730,11 +789,15 @@ view model =
                                     |> Html.App.map translateCollectionsMsg
                                     |> standardLayout language
 
+                            EditCollectionRoute _ ->
+                                AddNewCollection.View.view model.addNewCollectionModel language
+                                    |> Html.App.map translateAddNewCollectionMsg
+                                    |> standardLayout language
+
                             NewCollectionRoute ->
-                                -- Collection.View.viewAddNew model.collectionModel language
-                                --     |> Html.App.map translateCollectionMsg
-                                --     |> standardLayout language
-                                standardLayout language (div [] [ text "TODO" ])
+                                AddNewCollection.View.view model.addNewCollectionModel language
+                                    |> Html.App.map translateAddNewCollectionMsg
+                                    |> standardLayout language
 
                     HomeRoute ->
                         Home.view model.searchModel (getSearchQuery model.location) language
@@ -1327,7 +1390,9 @@ viewHeader model language containerClass =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
+    -- TODO Fix duplicate messages with port "fileContentRead", that was worked around by a "Selected" constructor.
     Sub.batch
         [ Sub.map AddNewMsg (AddNew.State.subscriptions model.addNewModel)
+        , Sub.map AddNewCollectionMsg (AddNewCollection.State.subscriptions model.addNewCollectionModel)
         , Sub.map SearchMsg (Search.State.subscriptions model.searchModel)
         ]

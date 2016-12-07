@@ -93,9 +93,14 @@ viewCollectionThumbnail language user collection =
             ("/collections/" ++ collection.id)
             [ class "thumbnail collection" ]
             [ div [ class "visual" ]
-                [ img [ alt "screen", src (Configuration.apiUrlWithPath collection.logo) ]
-                    []
-                ]
+                (case collection.logo of
+                    Nothing ->
+                        []
+
+                    Just logo ->
+                        [ img [ alt "screen", src (Configuration.apiUrlWithPath logo) ] []
+                        ]
+                )
             , div [ class "caption" ]
                 [ h4 []
                     [ text "Outils de consultation" ]

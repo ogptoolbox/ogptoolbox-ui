@@ -39,6 +39,7 @@ type CollectionsNestedRoute
     = CollectionRoute String
     | CollectionsIndexRoute
     | NewCollectionRoute
+    | EditCollectionRoute String
 
 
 type OrganizationsNestedRoute
@@ -81,6 +82,7 @@ matchers =
         "/collections"
         [ match1 CollectionsIndexRoute ""
         , match1 NewCollectionRoute "/new"
+        , match3 EditCollectionRoute "/" idParser "/edit"
         , match2 CollectionRoute "/" idParser
         ]
     , match1 AboutRoute "/help"

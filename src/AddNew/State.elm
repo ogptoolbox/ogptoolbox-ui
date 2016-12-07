@@ -42,8 +42,11 @@ update msg model authentication language =
             let
                 cmd =
                     Ports.fileSelected "logoField"
+
+                newModel =
+                    { model | imageUploadStatus = Selected }
             in
-                ( model, cmd )
+                ( newModel, cmd )
 
         ImageRead data ->
             let
@@ -51,11 +54,25 @@ update msg model authentication language =
                     { model | imageUploadStatus = Read data }
 
                 cmd =
-                    Task.perform
-                        ImageUploadError
-                        ImageUploadSuccess
-                        (Requests.postUploadImage authentication data.contents)
-                        |> Cmd.map ForSelf
+                    case model.imageUploadStatus of
+                        NotUploaded ->
+                            Cmd.none
+
+                        Selected ->
+                            Task.perform
+                                ImageUploadError
+                                ImageUploadSuccess
+                                (Requests.postUploadImage authentication data.contents)
+                                |> Cmd.map ForSelf
+
+                        Read _ ->
+                            Cmd.none
+
+                        Uploaded _ ->
+                            Cmd.none
+
+                        UploadError _ ->
+                            Cmd.none
             in
                 ( newModel, cmd )
 

@@ -7,7 +7,8 @@ import String
 apiUrl : String
 apiUrl =
     -- "https://api.ogptoolbox.org/"
-    "http://localhost:3000/"
+    -- "http://localhost:3000/"
+    "http://192.168.3.51:3000/"
 
 
 appUrl : String

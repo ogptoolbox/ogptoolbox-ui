@@ -63,10 +63,22 @@ collectionDecoder : Decoder Collection
 collectionDecoder =
     succeed Collection
         |: ("authorId" := string)
-        |: ("cardIds" := list string)
-        |: ("description" := string)
+        |: oneOf [ ("cardIds" := list string), succeed [] ]
+        |: oneOf [ ("description" := string), succeed "" ]
         |: ("id" := string)
-        |: ("logo" := string)
+        |: (maybe ("logo" := string)
+                |> map
+                    (\v ->
+                        v
+                            `Maybe.andThen`
+                                (\s ->
+                                    if String.isEmpty s then
+                                        Nothing
+                                    else
+                                        Just s
+                                )
+                    )
+           )
         |: ("name" := string)
 
 
@@ -103,7 +115,7 @@ dataIdsDecoder =
                         (oneOf [ ("cards" := dict cardDecoder), succeed Dict.empty ])
                         (oneOf [ ("collections" := dict collectionDecoder), succeed Dict.empty ])
                         (oneOf [ ("properties" := dict propertyDecoder), succeed Dict.empty ])
-                        ("values" := dict valueDecoder)
+                        (oneOf [ ("values" := dict valueDecoder), succeed Dict.empty ])
                 )
                     |> map
                         (\( ballots, cards, collections, properties, values ) ->
