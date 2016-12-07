@@ -29,7 +29,10 @@ authenticationHeaders : Maybe Authenticator.Model.Authentication -> List ( Strin
 authenticationHeaders authentication =
     case authentication of
         Just authentication ->
-            [ ( "Retruco-API-Key", authentication.apiKey ) ]
+            [ ( "Retruco-API-Key", authentication.apiKey )
+            , ( "Cache-Control", "no-cache" )
+              -- Don't cache API requests when user is logged.
+            ]
 
         Nothing ->
             []
