@@ -178,9 +178,8 @@ viewCardContent language card cards values =
             , div [ class "row" ]
                 [ div [ class "col-xs-12" ]
                     (case getUsages language card values of
-                        [] ->
-                            [ button [ class "call-add" ] [ text "+ add a category" ] ]
-
+                        -- [] ->
+                        --     [ button [ class "call-add" ] [ text "+ add a category" ] ]
                         usages ->
                             List.map
                                 (\{ tag, tagId } ->
@@ -306,7 +305,8 @@ viewCardContent language card cards values =
                                         ]
                                     ]
                                 , div [ class "panel-body" ]
-                                    [ case Dict.get "software" card.references of
+                                    -- TODO Get different keys by card.type
+                                    [ case Dict.get "use-case" card.references of
                                         Nothing ->
                                             div [ class "call-container" ]
                                                 [ p [] [ text "No use case listed for this tool yet." ]
@@ -346,21 +346,31 @@ viewCardContent language card cards values =
                                             ]
                                         ]
                                     ]
-                                  -- , div [ class "panel-body" ]
-                                  --     [ div [ class "row" ]
-                                  --         ((case getManyStrings language usedByKeys card of
-                                  --             [] ->
-                                  --                 [ text "TODO call-to-action" ]
-                                  --             targetIds ->
-                                  --                 targetIds
-                                  --                     |> List.map
-                                  --                         (\targetId ->
-                                  --                             viewCardReferenceAsThumbnail navigate statements targetId
-                                  --                         )
-                                  --                     |> List.append (viewShowMore (List.length targetIds))
-                                  --          )
-                                  --         )
-                                  --     ]
+                                , div [ class "panel-body" ]
+                                    [ case Dict.get "organization" card.references of
+                                        Nothing ->
+                                            div [ class "call-container" ]
+                                                [ p [] [ text "No organization listed for this tool yet." ]
+                                                , button [ class "button call-add" ] [ text "+ Add an organization" ]
+                                                ]
+
+                                        Just cardIds ->
+                                            div [ class "row list" ]
+                                                [ div [ class "col-xs-12" ]
+                                                    (List.filterMap
+                                                        (\cardId ->
+                                                            Dict.get cardId cards
+                                                                |> Maybe.map
+                                                                    (viewCardListItem
+                                                                        navigate
+                                                                        language
+                                                                        values
+                                                                    )
+                                                        )
+                                                        cardIds
+                                                    )
+                                                ]
+                                    ]
                                 ]
                            ]
                     )
@@ -662,7 +672,7 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                                                 [ viewField ]
                                             , div [ class "navbar-right" ]
                                                 [ button [ class "btn btn-default", type' "submit" ]
-                                                    [ text "TODO Publish" ]
+                                                    [ text "Publish" ]
                                                 ]
                                             ]
                                         ]
@@ -760,7 +770,10 @@ viewSidebar language card values =
                                   --         [ text "TODO type" ]
                                   --     ]
                                   -- ,
-                                  tr [ class "editable" ]
+                                  tr
+                                    [ class "editable"
+                                    , onClick (ForSelf (LoadProperties card.id "license"))
+                                    ]
                                     [ td [ class "table-label" ]
                                         [ text (I18n.translate language I18n.License) ]
                                     , td []
@@ -776,13 +789,19 @@ viewSidebar language card values =
                                             tr []
                                                 [ firstTd
                                                 , td []
-                                                    [ button [ class "button call-add" ]
+                                                    [ button
+                                                        [ class "button call-add"
+                                                        , onClick (ForSelf (LoadProperties card.id "website"))
+                                                        ]
                                                         [ text "+ Add a link" ]
                                                     ]
                                                 ]
 
                                         Just url ->
-                                            tr [ class "editable" ]
+                                            tr
+                                                [ class "editable"
+                                                , onClick (ForSelf (LoadProperties card.id "website"))
+                                                ]
                                                 [ firstTd
                                                 , td [] [ aExternal [ href url ] [ text url ] ]
                                                 ]
