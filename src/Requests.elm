@@ -94,7 +94,7 @@ getCollection collectionId =
     Http.fromJson dataIdBodyDecoder
         (Http.send Http.defaultSettings
             { verb = "GET"
-            , url = apiUrl ++ "collections/" ++ collectionId ++ "?show=values&depth=1"
+            , url = apiUrl ++ "collections/" ++ collectionId ++ "?show=values&depth=2"
             , headers = [ ( "Accept", "application/json" ) ]
             , body = Http.empty
             }
