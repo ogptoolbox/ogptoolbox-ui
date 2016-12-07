@@ -476,21 +476,29 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
         viewProperty index property =
             let
                 value =
-                    getValue values property.valueId
+                    Dict.get property.valueId values
 
                 ballot =
                     Dict.get property.ballotId ballots
             in
                 li [ classList [ ( "media", True ), ( "best", index == 0 ) ] ]
                     [ div [ class "media-body" ]
-                        [ -- h4 [ class "media-heading" ]
-                          -- [  text "TODO author"
-                          -- TODO Format date with elm-date or something
-                          -- , span []
-                          --     [ text value.createdAt ]
-                          --   ],
-                          viewValueType language cards values value.value
-                        ]
+                        (-- [
+                         -- h4 [ class "media-heading" ]
+                         -- [  text "TODO author"
+                         -- TODO Format date with elm-date or something
+                         -- , span []
+                         --     [ text value.createdAt ]
+                         --   ],
+                         -- ]
+                         (case value of
+                            Nothing ->
+                                []
+
+                            Just value ->
+                                [ viewValueType language cards values value.value ]
+                         )
+                        )
                     , div [ class "media-right" ]
                         [ a [ class "btn-vote" ]
                             [ span
@@ -561,22 +569,25 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                                     [ text "Close" ]
                                 ]
                             , h4 [ class "modal-title", id "myModalLabel" ]
-                                [ (let
-                                    key =
-                                        getValue values keyId
-                                   in
-                                    case getOneStringFromValueType language values key.value of
-                                        Nothing ->
-                                            Debug.crash "viewEditPropertyModal: property should have a string value"
+                                ((case Dict.get keyId values of
+                                    Nothing ->
+                                        []
 
-                                        Just str ->
-                                            text str
-                                  )
-                                , span []
-                                    [ text
-                                        (I18n.translate language (I18n.CountVersionsAvailable (List.length propertyIds)))
-                                    ]
-                                ]
+                                    Just key ->
+                                        [ case getOneStringFromValueType language values key.value of
+                                            Nothing ->
+                                                Debug.crash "viewEditPropertyModal: property should have a string value"
+
+                                            Just str ->
+                                                text str
+                                        ]
+                                 )
+                                    ++ [ span []
+                                            [ text
+                                                (I18n.translate language (I18n.CountVersionsAvailable (List.length propertyIds)))
+                                            ]
+                                       ]
+                                )
                             ]
                         , div [ class "modal-body", style [ ( "min-height", "20em" ) ] ]
                             [ div [ class "row" ]

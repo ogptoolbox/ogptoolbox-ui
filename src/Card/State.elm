@@ -91,7 +91,7 @@ update msg ({ editedProperty } as model) authentication language =
                         , properties = Dict.empty
                         , propertyIds = []
                         , selectedField = LocalizedInputTextField (I18n.iso639_1FromLanguage language) ""
-                        , values = webData.data.values
+                        , values = Dict.empty
                         }
 
                 newModel =
