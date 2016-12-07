@@ -121,6 +121,37 @@ viewCardContent language card cards values =
                     text ""
                 else
                     text (I18n.translate language (I18n.BestOf count))
+
+        viewAdditionalInformation keyId valueId =
+            case Dict.get valueId values of
+                Nothing ->
+                    text ("Error: value not found for ID: " ++ valueId)
+
+                Just valueValue ->
+                    tr []
+                        [ th [ scope "row" ]
+                            [ case Dict.get keyId values of
+                                Nothing ->
+                                    text
+                                        ("Error: value not found for ID: "
+                                            ++ keyId
+                                        )
+
+                                Just keyValue ->
+                                    viewValueType language cards values keyValue.value
+                            ]
+                        , td []
+                            [ viewValueType language cards values valueValue.value
+                            ]
+                        , td []
+                            [ button
+                                [ class "btn btn-default btn-xs btn-action"
+                                , onClick (ForSelf (LoadProperties card.id keyId))
+                                , type' "button"
+                                ]
+                                [ text "Edit" ]
+                            ]
+                        ]
     in
         div
             [ classList
@@ -258,38 +289,7 @@ viewCardContent language card cards values =
                                         [ table [ class "table table-striped" ]
                                             [ tbody []
                                                 (card.properties
-                                                    |> Dict.map
-                                                        (\keyId valueId ->
-                                                            case Dict.get valueId values of
-                                                                Nothing ->
-                                                                    text ("Error: value not found for ID: " ++ valueId)
-
-                                                                Just value ->
-                                                                    tr []
-                                                                        [ th [ scope "row" ]
-                                                                            [ case Dict.get keyId values of
-                                                                                Nothing ->
-                                                                                    text
-                                                                                        ("Error: value not found for ID: "
-                                                                                            ++ keyId
-                                                                                        )
-
-                                                                                Just value ->
-                                                                                    viewValueType
-                                                                                        language
-                                                                                        cards
-                                                                                        values
-                                                                                        value.value
-                                                                            ]
-                                                                        , td []
-                                                                            [ viewValueType
-                                                                                language
-                                                                                cards
-                                                                                values
-                                                                                value.value
-                                                                            ]
-                                                                        ]
-                                                        )
+                                                    |> Dict.map viewAdditionalInformation
                                                     |> Dict.values
                                                 )
                                             ]
@@ -743,20 +743,24 @@ viewSidebar language card values =
 
                             Nothing ->
                                 div [ class "call-container" ]
-                                    [ button [ class "button call-add" ]
+                                    [ button
+                                        [ class "button call-add"
+                                        , onClick (ForSelf (LoadProperties card.id "logo"))
+                                        ]
                                         [ text "+ Add a logo" ]
                                     ]
                         ]
                     , div [ class "caption" ]
                         [ table [ class "table" ]
                             [ tbody []
-                                [ tr [ class "editable" ]
-                                    [ td [ class "table-label" ]
-                                        [ text (I18n.translate language I18n.Type) ]
-                                    , td []
-                                        [ text "TODO type" ]
-                                    ]
-                                , tr [ class "editable" ]
+                                [ --      tr [ class "editable" ]
+                                  --     [ td [ class "table-label" ]
+                                  --         [ text (I18n.translate language I18n.Type) ]
+                                  --     , td []
+                                  --         [ text "TODO type" ]
+                                  --     ]
+                                  -- ,
+                                  tr [ class "editable" ]
                                     [ td [ class "table-label" ]
                                         [ text (I18n.translate language I18n.License) ]
                                     , td []
