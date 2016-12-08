@@ -48,7 +48,7 @@ view model searchQuery language =
 
 
 viewBanner : Html Msg
-viewBanner =
+viewBanner = 
     -- let
     --     viewSlide1 =
     --         div [ class "col-md-12 text-center" ]
@@ -122,9 +122,13 @@ viewBanner =
                                 [ div [ class "col-md-12 text-center" ]
                                     [ div [ class "bubbles" ] [] ]
                                 ]
-                              -- , div [ class "row filters" ]
-                              --     [ viewSlide1
-                              --     ]
+                               , div [ class "row show" ]
+                                   [ a [ href "#metrics", class "col-md-12 text-center banner-link" ]
+                                     [ text "See results "
+                                    , span [ class "glyphicon glyphicon-menu-down" ]
+                                        []
+                                    ]
+                               ]
                             ]
                         ]
                     , div [ class "item text-center" ]
@@ -418,26 +422,26 @@ viewMetric webData =
 
 viewMetrics : I18n.Language -> Model -> Html msg
 viewMetrics language model =
-    div [ class "row metrics" ]
+    div [ class "row metrics", id "metrics" ]
         [ div [ class "container" ]
             [ div [ class "col-xs-4 text-center" ]
                 [ span [ class "metric-label" ]
                     [ text (I18n.translate language (I18n.UseCase I18n.Plural)) ]
-                , h3 []
+                , a []
                     [ viewMetric model.useCases
                     ]
                 ]
             , div [ class "col-xs-4 text-center" ]
                 [ span [ class "metric-label" ]
                     [ text (I18n.translate language (I18n.Tool I18n.Plural)) ]
-                , h3 []
+                , a []
                     [ viewMetric model.tools
                     ]
                 ]
             , div [ class "col-xs-4 text-center" ]
                 [ span [ class "metric-label" ]
                     [ text (I18n.translate language (I18n.Organization I18n.Plural)) ]
-                , h3 []
+                , a []
                     [ viewMetric model.organizations
                     ]
                 ]
