@@ -397,7 +397,7 @@ viewCollections collectionsWebData language =
 
 viewCollectionThumbnail : I18n.Language -> User -> Collection -> Html Msg
 viewCollectionThumbnail language user collection =
-    div [ class "col-xs-6 col-md-4 " ]
+    div [ class "col-xs-12 col-md-4 " ]
         [ aForPath
             navigate
             language
@@ -485,7 +485,7 @@ viewThumbnail thumbnailExtraClasses language values card =
         cardType =
             getCardType card
     in
-        div [ class "col-xs-6 col-md-3" ]
+        div [ class "col-xs-12 col-sm-6 col-md-4 col-lg-3" ]
             [ div
                 [ class ("thumbnail " ++ thumbnailExtraClasses)
                 , onClick (navigate urlPath)
@@ -529,7 +529,7 @@ viewThumbnail thumbnailExtraClasses language values card =
 
 viewThumbnailLoading : String -> Html Msg
 viewThumbnailLoading thumbnailExtraClasses =
-    div [ class "col-xs-6 col-md-3" ]
+    div [ class "col-xs-12 col-sm-6 col-md-4 col-lg-3" ]
         [ div [ class ("thumbnail " ++ thumbnailExtraClasses) ]
             ([ div [ class "visual" ]
                 [ h1 [ class "dynamic" ] [ text "..." ] ]
