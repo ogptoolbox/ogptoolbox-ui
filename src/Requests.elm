@@ -232,8 +232,8 @@ postCardsEasy authentication fields language =
             )
 
 
-postCollection : Maybe Authenticator.Model.Authentication -> AddNewCollectionFields -> String -> Task Http.Error DataIdBody
-postCollection authentication fields imageUrlPath =
+postCollection : Maybe Authenticator.Model.Authentication -> Maybe String -> AddNewCollectionFields -> String -> Task Http.Error DataIdBody
+postCollection authentication editedCollectionId fields imageUrlPath =
     let
         regex =
             Regex.regex "(^|/)(\\d+)(\\?|$)"
@@ -256,11 +256,20 @@ postCollection authentication fields imageUrlPath =
         cardIds : List String
         cardIds =
             String.words fields.cardIds |> List.filterMap getId
+
+        url =
+            (case editedCollectionId of
+                Just collectionId ->
+                    apiUrl ++ "collections/" ++ collectionId
+
+                Nothing ->
+                    apiUrl ++ "collections"
+            )
     in
         Http.fromJson dataIdBodyDecoder
             (Http.send Http.defaultSettings
                 { verb = "POST"
-                , url = apiUrl ++ "collections"
+                , url = url
                 , headers =
                     [ ( "Accept", "application/json" )
                     , ( "Content-Type", "application/json" )

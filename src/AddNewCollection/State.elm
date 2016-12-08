@@ -180,7 +180,7 @@ update msg ({ fields } as model) authentication language =
                     Task.perform
                         PostNewCollectionError
                         PostNewCollectionSuccess
-                        (Requests.postCollection authentication model.fields imageUrlPath)
+                        (Requests.postCollection authentication model.editedCollectionId model.fields imageUrlPath)
                         |> Cmd.map ForSelf
             in
                 ( newModel, cmd )
