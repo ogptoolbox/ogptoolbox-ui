@@ -140,10 +140,10 @@ viewCardContent language card cards values =
                                         )
 
                                 Just keyValue ->
-                                    viewValueType language cards values keyValue.value
+                                    viewValueType language cards values False keyValue.value
                             ]
                         , td []
-                            [ viewValueType language cards values valueValue.value
+                            [ viewValueType language cards values True valueValue.value
                             ]
                         , td []
                             [ button
@@ -508,7 +508,7 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                                 []
 
                             Just value ->
-                                [ viewValueType language cards values value.value ]
+                                [ viewValueType language cards values True value.value ]
                          )
                         )
                     , div [ class "media-right" ]
@@ -974,8 +974,8 @@ viewSidebar language card values =
         ]
 
 
-viewValueType : I18n.Language -> Dict String Card -> Dict String Value -> ValueType -> Html Msg
-viewValueType language cards values value =
+viewValueType : I18n.Language -> Dict String Card -> Dict String Value -> Bool -> ValueType -> Html Msg
+viewValueType language cards values showLanguage value =
     let
         cardLink cardId =
             case Dict.get cardId cards of
@@ -1009,16 +1009,20 @@ viewValueType language cards values value =
                     ]
 
             LocalizedStringValue values ->
-                dl []
-                    (values
-                        |> Dict.toList
-                        |> List.concatMap
-                            (\( languageCode, childValue ) ->
-                                [ dt [] [ text languageCode ]
-                                , dd [] [ aIfIsUrl [] childValue ]
-                                ]
-                            )
-                    )
+                let
+                    viewString languageCode string =
+                        if showLanguage || Dict.size values > 1 then
+                            [ dt [] [ text languageCode ]
+                            , dd [] [ aIfIsUrl [] string ]
+                            ]
+                        else
+                            [ aIfIsUrl [] string ]
+                in
+                    dl []
+                        (values
+                            |> Dict.toList
+                            |> List.concatMap (\( languageCode, childValue ) -> viewString languageCode childValue)
+                        )
 
             BooleanValue bool ->
                 text (toString bool)
@@ -1029,14 +1033,14 @@ viewValueType language cards values value =
             CardIdArrayValue childValues ->
                 ul [ class "list-unstyled" ]
                     (List.map
-                        (\childValue -> li [] [ viewValueType language cards values (CardIdValue childValue) ])
+                        (\childValue -> li [] [ viewValueType language cards values showLanguage (CardIdValue childValue) ])
                         childValues
                     )
 
             ValueIdArrayValue childValues ->
                 ul [ class "list-unstyled" ]
                     (List.map
-                        (\childValue -> li [] [ viewValueType language cards values (ValueIdValue childValue) ])
+                        (\childValue -> li [] [ viewValueType language cards values showLanguage (ValueIdValue childValue) ])
                         childValues
                     )
 
@@ -1052,4 +1056,4 @@ viewValueType language cards values value =
                         text ("Error: referenced value not found for valueId: " ++ valueId)
 
                     Just subValue ->
-                        viewValueType language cards values subValue.value
+                        viewValueType language cards values showLanguage subValue.value
