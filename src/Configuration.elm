@@ -31,9 +31,15 @@ useItData =
 
 apiUrlWithPath : String -> String
 apiUrlWithPath urlPath =
-    apiUrl
-        ++ (if String.startsWith "/" urlPath then
-                String.dropLeft 1 urlPath
-            else
-                urlPath
-           )
+    let
+        cleanUrlPath =
+            String.trim urlPath
+    in
+        if String.startsWith "/" cleanUrlPath then
+            apiUrl ++ (String.dropLeft 1 cleanUrlPath)
+        else if String.startsWith "http://" cleanUrlPath then
+            cleanUrlPath
+        else if String.startsWith "https://" cleanUrlPath then
+            cleanUrlPath
+        else
+            apiUrl ++ cleanUrlPath
