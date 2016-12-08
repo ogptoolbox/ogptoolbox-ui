@@ -94,12 +94,10 @@ viewOrganization model language =
                         , div [ class "form-group" ]
                             [ label [ for "aboutField" ]
                                 [ text "About" ]
-                            , input
+                            , textarea
                                 [ class "form-control"
                                 , id "aboutField"
                                 , onInput (\x -> ForSelf (SetField "Description" x))
-                                , placeholder "Add a complete description"
-                                , type' "text"
                                 ]
                                 []
                             ]
@@ -202,12 +200,10 @@ viewTool model language =
                         , div [ class "form-group" ]
                             [ label [ for "aboutField" ]
                                 [ text "About" ]
-                            , input
+                            , textarea
                                 [ class "form-control"
                                 , id "aboutField"
                                 , onInput (\x -> ForSelf (SetField "Description" x))
-                                , placeholder "Add a complete description"
-                                , type' "text"
                                 ]
                                 []
                             ]
@@ -438,12 +434,10 @@ viewUseCase model language =
                         , div [ class "form-group" ]
                             [ label [ for "aboutField" ]
                                 [ text "About" ]
-                            , input
+                            , textarea
                                 [ class "form-control"
                                 , id "aboutField"
                                 , onInput (\x -> ForSelf (SetField "Description" x))
-                                , placeholder "Add a complete description"
-                                , type' "text"
                                 ]
                                 []
                             ]
