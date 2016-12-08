@@ -195,6 +195,9 @@ ul.nav.nav-pills {
             &:last-of-type {
                 border-right: none;
             }
+            &:first-of-type {
+                border-left: none;
+            }
 
 
             .badge {
@@ -222,6 +225,7 @@ ul.nav.nav-pills {
         line-height: 26px;
         box-shadow: none;
         text-shadow: none;
+        margin-bottom: 0;
 
         &.alert-success {
            background-image: none;
@@ -253,6 +257,7 @@ nav.navbar.navbar-default {
     padding: 0;
     box-shadow: none;
     max-height: 83px;
+    border-radius: 0;
 }
 .navbar-right {
     margin-right: 0;
@@ -442,8 +447,6 @@ input[type=radio]:checked ~ div, input[type=checkbox]:checked ~ div {
 .row.filters    {
     color: #a3a3a3;
     margin: 30px 0;
-    //TEMPORARY HIDE THIS BLOCK
-    display: none;
 }
 ol.breadcrumb {
     padding: 16px 0;
@@ -541,6 +544,9 @@ ol.breadcrumb {
             font-size: 12px;
             a {
                 color: #858585;
+                &:hover {
+                    color: white;
+                }
             }
         }
     }
@@ -583,6 +589,7 @@ a.etalab-logo img {
     box-shadow: none;
     font-weight: 300px;
     font-size: 12px;
+    margin: 0 !important;
     span.caret {
         float: right;
         position: relative;
@@ -727,7 +734,7 @@ a.etalab-logo img {
     background-color: transparent;
     border: 1px solid #ddd;
     color: grey;
-    margin-right: 3px;
+    margin-right: 1px;
     margin-bottom: 4px;
     font-weight: normal;
     border-radius: 30px;
@@ -839,13 +846,13 @@ h4.zone-label {
     margin-bottom: 24px;
     cursor: pointer;
     position: relative;
-    overflow: hidden;
 
     button.close {
         position: absolute;
         right: 12px;
         top: 8px;
         display: none;
+        overflow: hidden;
     }
 
     &:hover {
@@ -868,6 +875,7 @@ h4.zone-label {
         img     {
             height: auto;
             width: auto;
+            min-width: auto;
             max-height: 55%;
             max-width: 55%;
             position: absolute;
@@ -1038,11 +1046,15 @@ h4.zone-label {
         text-align: center;
         vertical-align: middle;
         text-align: center;
-        background: black;
+        background: #d8d8d8;
         position: relative;
+        border-bottom: 1px solid #e8e8e8;
         img     {
-            width: 100%;
-            opacity: 0.9;
+            min-width: 100%;
+            max-height: 160%;
+            height: auto;
+            width: auto;
+            opacity: 0.85;
         }
     }
 
@@ -1085,7 +1097,7 @@ h4.zone-label {
         a {
             color: #333;
             &:hover {
-                color: @light-blue;
+            color: @light-blue;
             }
         }
     }
@@ -1235,11 +1247,18 @@ a.show-more {
             background: @light-grey;
         }
 
-        &.tool .caption p {
-            margin-top: 8px;
-            margin-bottom: 20px;
-            line-height: 1.4em;
+        &.tool {
 
+            .visual h1.dynamic {
+                font-size: 50px;
+                line-height: 52px;
+            }
+
+            .caption p {
+                margin-top: 8px;
+                margin-bottom: 20px;
+                line-height: 1.4em;
+            }
         }
 
         .visual {
@@ -1330,13 +1349,6 @@ a.show-more {
     }
 }
 
-.table tr>td>a {
-    max-width: 130px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: block;
-}
 
 // SIDEBARS
 .panel-default.panel-side>.panel-heading {
@@ -1434,17 +1446,21 @@ table {
     }
     .modal-body {
         padding: 0px;
-        overflow: scroll;
         max-height: 480px;
 
-        .big .form-control {
-            width: 490px;
+        .big{
             border-radius: 0px;
-        }
-        .big .btn.btn-default {
-            padding: 6px 14px;
-            margin-left: 5px;
-            margin-top: 1px;
+            padding: 9px 18px 0;
+
+            textarea.form-control {
+                height: 34px;
+                margin-bottom: 3px;
+            }
+
+            .btn.btn-default {
+                padding: 7px;
+                margin-bottom: 8px;
+            }
         }
     }
     .modal-content {
@@ -1454,8 +1470,12 @@ table {
             margin-bottom: 14px;
         }
 
-        .list-unstyled li {
-            line-height: 1.8em;
+        .list-unstyled  {
+            min-height: 155px;
+
+            li {
+                line-height: 1.8em;
+            }
         }
 
         .well {
@@ -1604,7 +1624,7 @@ table {
                 cursor: pointer;
                 text-align: center;
 
-                &:hover {
+                &:hover, &:active, &:visited {
                     color: @light-blue;
                     opacity: 1;
                 }
@@ -1612,11 +1632,30 @@ table {
         }
     }
 
+    a.forgot {
+        color: grey;
 
+    &:hover {
+        color: @light-blue;
+    }
+
+    }
+
+}
+
+#edit-overlay.modal-dialog .modal-body {
+     overflow: scroll;
 }
 
 .grey {
     background-color: @light-grey;
+}
+
+.modal {
+    z-index: 1000050;
+}
+.modal-backdrop{
+    z-index: 1000040;
 }
 
 //FULL SCREEN BROWSE PAGE
@@ -1639,8 +1678,7 @@ body, html, #main, .main-container {
     position: fixed;
     top: 0;
     width:100%;
-    background:yellow;
-    z-index: 10000;
+    z-index: 1000000;
 }
 
 .browse-tag {
@@ -1651,7 +1689,7 @@ body, html, #main, .main-container {
     left: 0;
     right: 50%;
 
-    #tag {
+    .tag {
         margin: auto;
         margin-top: 150px;
         max-width: 104%;
@@ -1936,13 +1974,13 @@ header {
     color: white;
     background-color: @dark;
     .intro-text {
-            padding-top: 200px;
-            padding-bottom: 200px;
+            padding: 100px;
             .intro-lead-in {
-                font-style: italic;
+                font-style: normal;
                 font-size: 30px;
                 line-height: 40px;
                 margin-bottom: 25px;
+                font-weight: 300;
             }
             .intro-heading {
                 font-weight: 400;
@@ -1958,31 +1996,49 @@ header {
 // Global Section Styles
 
 section {
-    padding: 100px 0;
+    padding: 120px 0;
     h2.section-heading {
-        font-size: 40px;
+        font-size: 36px;
         margin-top: 0;
         margin-bottom: 10px;
-        font-weight: 600;
+        font-weight: 4300;
+        color: #333;
     }
     h3.section-subheading {
         font-size: 18px;
-        ;
         text-transform: none;
         font-style: italic;
-        font-weight: 400;
+        font-weight: 300;
         margin-bottom: 75px;
     }
     p {
         margin-top: 15px;
         font-size: 17px;
         line-height: 1.75;
+        font-weight: 300;
+    }
+    ul {
+        margin: 10px 0;
+        font-size: 17px;
+        line-height: 1.75;
+        font-weight: 300;
     }
 }
 
-@media(min-width:768px) {
-    section {
-        padding: 150px 0;
+section#mentions {
+    padding: 60px 0 0px;
+    h2.section-heading {
+        font-size: 22px;
+        margin-top: 0;
+        margin-bottom: 5px;
+        font-weight: 4300;
+        color: #333;
+    }
+    p {
+        margin-top: 15px;
+        font-size: 13px;
+        line-height: 1.75;
+        font-weight: 300;
     }
 }
 
@@ -1991,12 +2047,13 @@ section {
 .service-heading {
     margin: 15px 0;
     text-transform: none;
-    font-weight: 600;
-    font-size: 20px;
+    font-weight: 400;
+    font-size: 24px;
+    color: #333;
 }
 .service-text {
-    margin: 15px 30px 50px;
-    font-weight: 400;
+    margin: 15px 15px 50px;
+    font-weight: 300;
     font-size: 16px;
     line-height: 1.5em;
 }
@@ -2193,6 +2250,8 @@ section {
 // Clients Aside
 
 aside.clients {
+    margin-top: 60px;
+
     a {
     height: 140px;
     display: block;

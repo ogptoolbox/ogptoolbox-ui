@@ -4,16 +4,26 @@ import About
 import AddNew.State
 import AddNew.Types
 import AddNew.View
+import AddNewCollection.State
+import AddNewCollection.Types
+import AddNewCollection.View
+import Authenticator.Activate
 import Authenticator.Model
 import Authenticator.Update
 import Authenticator.View
 import Card.State
 import Card.Types
 import Card.View
+import Collection.State
+import Collection.Types
+import Collection.View
+import Collections.State
+import Collections.Types
+import Collections.View
 import Constants
+import Decoders
 import Dict exposing (Dict)
 import Dom.Scroll
-import Help
 import Home
 import Hop.Types exposing (Location)
 import Html exposing (..)
@@ -33,8 +43,10 @@ import Search.View
 import String
 import Task
 import Types exposing (..)
-import Views exposing (viewBigMessage, viewNotFound)
-import WebData exposing (..)
+import UserProfile.State
+import UserProfile.Types
+import UserProfile.View
+import Views exposing (viewBigMessage, viewNotAuthentified, viewNotFound)
 
 
 main : Program Flags
@@ -50,7 +62,7 @@ main =
 
 type alias Flags =
     { language : String
-    , authentication : Maybe Authenticator.Model.Authentication
+    , authentication : Json.Decode.Value
     }
 
 
@@ -60,26 +72,37 @@ type alias Flags =
 
 type alias Model =
     { addNewModel : AddNew.Types.Model
+    , addNewCollectionModel : AddNewCollection.Types.Model
+    , activationModel : Authenticator.Activate.Model
     , authentication : Maybe Authenticator.Model.Authentication
     , authenticatorModel : Authenticator.Model.Model
     , authenticatorRouteMaybe : Maybe Authenticator.Model.Route
     , cardModel : Card.Types.Model
+    , collectionModel : Collection.Types.Model
+    , collectionsModel : Collections.Types.Model
     , displayAddNewModal : Bool
     , i18nRoute : I18nRoute
     , location : Hop.Types.Location
     , navigatorLanguage : Maybe I18n.Language
     , searchInputValue : String
     , searchModel : Search.Types.Model
+    , userProfileModel : UserProfile.Types.Model
     }
 
 
 init : Flags -> ( I18nRoute, Hop.Types.Location ) -> ( Model, Cmd Msg )
 init flags ( i18nRoute, location ) =
     { addNewModel = AddNew.State.init
-    , authentication = flags.authentication
+    , addNewCollectionModel = AddNewCollection.State.init
+    , activationModel = Authenticator.Activate.init
+    , authentication =
+        Json.Decode.decodeValue Decoders.userForPortDecoder flags.authentication
+            |> Result.toMaybe
     , authenticatorModel = Authenticator.Model.init
     , authenticatorRouteMaybe = Nothing
     , cardModel = Card.State.init
+    , collectionModel = Collection.State.init
+    , collectionsModel = Collections.State.init
     , displayAddNewModal = False
     , i18nRoute = i18nRoute
     , location = location
@@ -90,6 +113,7 @@ init flags ( i18nRoute, location ) =
             |> I18n.languageFromIso639_1
     , searchInputValue = ""
     , searchModel = Search.State.init
+    , userProfileModel = UserProfile.State.init
     }
         |> urlUpdate ( i18nRoute, location )
 
@@ -108,35 +132,61 @@ urlUpdate ( i18nRoute, location ) model =
             case i18nRoute of
                 I18nRouteWithLanguage language route ->
                     let
-                        indexRoute modelGetter translationId =
+                        indexRoute translationId =
                             let
-                                ( newModel, searchCmd ) =
-                                    case modelGetter model.searchModel of
-                                        NotAsked ->
-                                            let
-                                                ( newSearchModel, searchCmd ) =
-                                                    Search.State.update
-                                                        (Search.Types.Load searchQuery)
-                                                        model.searchModel
-                                                        model.authentication
-                                                        language
-                                                        searchQuery
+                                getLocalizedString value =
+                                    case value.value of
+                                        LocalizedStringValue valueByLanguage ->
+                                            case I18n.getValueByPreferredLanguage language valueByLanguage of
+                                                Nothing ->
+                                                    Debug.crash "indexRoute"
 
-                                                newModel =
-                                                    { model
-                                                        | searchModel = newSearchModel
-                                                        , searchInputValue = searchQuery
-                                                    }
-                                            in
-                                                ( newModel, Cmd.map translateSearchMsg searchCmd )
+                                                Just tag ->
+                                                    tag
 
                                         _ ->
-                                            ( model, Cmd.none )
+                                            Debug.crash "indexRoute"
+
+                                selectedTags =
+                                    case Dict.get "tagIds" location.query of
+                                        Nothing ->
+                                            []
+
+                                        Just tagIds ->
+                                            tagIds
+                                                |> String.split ","
+                                                |> List.map
+                                                    (\tagId ->
+                                                        { count = 50
+                                                        , tag = ""
+                                                        , tagId = tagId
+                                                        }
+                                                    )
+
+                                searchModel =
+                                    model.searchModel
+
+                                newSearchModel =
+                                    { searchModel | selectedTags = selectedTags }
+
+                                ( newSearchModel2, searchCmd ) =
+                                    Search.State.update
+                                        Search.Types.Load
+                                        newSearchModel
+                                        model.authentication
+                                        language
+                                        location
+
+                                newModel =
+                                    { model
+                                        | searchModel = newSearchModel2
+                                        , searchInputValue = searchQuery
+                                    }
                             in
                                 newModel
-                                    ! [ searchCmd
+                                    ! [ Cmd.map translateSearchMsg searchCmd
                                       , Ports.setDocumentMetatags
-                                            { title = I18n.translate language (translationId I18n.Plural)
+                                            { title = I18n.translate language translationId
                                             , imageUrl = Constants.logoUrl
                                             }
                                       ]
@@ -145,42 +195,74 @@ urlUpdate ( i18nRoute, location ) model =
                             AboutRoute ->
                                 ( model
                                 , Ports.setDocumentMetatags
-                                    { title = I18n.translate language I18n.About
-                                    , imageUrl = Constants.logoUrl
-                                    }
-                                )
-
-                            HelpRoute ->
-                                ( model
-                                , Ports.setDocumentMetatags
                                     { title = I18n.translate language I18n.Help
                                     , imageUrl = Constants.logoUrl
                                     }
                                 )
 
-                            HomeRoute ->
+                            ActivationRoute userId ->
                                 let
-                                    ( newSearchModel, searchCmd ) =
-                                        Search.State.update
-                                            (Search.Types.Load searchQuery)
-                                            model.searchModel
-                                            model.authentication
+                                    ( activationModel, childCmd ) =
+                                        Authenticator.Activate.update
+                                            (Authenticator.Activate.Load
+                                                userId
+                                                (Dict.get "authorization" location.query |> Maybe.withDefault "")
+                                            )
+                                            model.activationModel
                                             language
-                                            searchQuery
 
                                     newModel =
-                                        { model
-                                            | searchModel = newSearchModel
-                                            , searchInputValue = searchQuery
-                                        }
+                                        { model | activationModel = activationModel }
                                 in
-                                    newModel
-                                        ! [ Cmd.map translateSearchMsg searchCmd
-                                          , Ports.setDocumentMetatags
-                                                { title = I18n.translate language I18n.Home
-                                                , imageUrl = Constants.logoUrl
-                                                }
-                                          ]
+                                    ( model, Cmd.map translateActivationMsg childCmd )
+
+                            CollectionsRoute childRoute ->
+                                case childRoute of
+                                    CollectionRoute collectionId ->
+                                        let
+                                            ( collectionModel, childCmd ) =
+                                                Collection.State.update
+                                                    (Collection.Types.LoadCollection collectionId)
+                                                    model.collectionModel
+                                                    language
+
+                                            newModel =
+                                                { model | collectionModel = collectionModel }
+                                        in
+                                            ( newModel, Cmd.map translateCollectionMsg childCmd )
+
+                                    CollectionsIndexRoute ->
+                                        let
+                                            ( collectionsModel, childCmd ) =
+                                                Collections.State.update
+                                                    Collections.Types.LoadCollections
+                                                    model.collectionsModel
+                                                    language
+
+                                            newModel =
+                                                { model | collectionsModel = collectionsModel }
+                                        in
+                                            ( newModel, Cmd.map translateCollectionsMsg childCmd )
+
+                                    EditCollectionRoute collectionId ->
+                                        let
+                                            ( addNewCollectionModel, childCmd ) =
+                                                AddNewCollection.State.update
+                                                    (AddNewCollection.Types.LoadCollection collectionId)
+                                                    model.addNewCollectionModel
+                                                    model.authentication
+                                                    language
+
+                                            newModel =
+                                                { model | addNewCollectionModel = addNewCollectionModel }
+                                        in
+                                            ( newModel, Cmd.map translateAddNewCollectionMsg childCmd )
+
+                                    NewCollectionRoute ->
+                                        ( model, Cmd.none )
+
+                            HomeRoute ->
+                                indexRoute I18n.Home
 
                             NotFoundRoute _ ->
                                 ( model
@@ -196,7 +278,7 @@ urlUpdate ( i18nRoute, location ) model =
                                         let
                                             ( cardModel, childCmd ) =
                                                 Card.State.update
-                                                    (Card.Types.Load cardId)
+                                                    (Card.Types.LoadCard cardId)
                                                     model.cardModel
                                                     model.authentication
                                                     language
@@ -207,7 +289,7 @@ urlUpdate ( i18nRoute, location ) model =
                                             ( model, Cmd.map translateCardMsg childCmd )
 
                                     OrganizationsIndexRoute ->
-                                        indexRoute .organizations I18n.Organization
+                                        indexRoute (I18n.Organization I18n.Plural)
 
                                     NewOrganizationRoute ->
                                         let
@@ -236,7 +318,7 @@ urlUpdate ( i18nRoute, location ) model =
                                         let
                                             ( cardModel, childCmd ) =
                                                 Card.State.update
-                                                    (Card.Types.Load cardId)
+                                                    (Card.Types.LoadCard cardId)
                                                     model.cardModel
                                                     model.authentication
                                                     language
@@ -247,7 +329,7 @@ urlUpdate ( i18nRoute, location ) model =
                                             ( model, Cmd.map translateCardMsg childCmd )
 
                                     ToolsIndexRoute ->
-                                        indexRoute .tools I18n.Tool
+                                        indexRoute (I18n.Tool I18n.Plural)
 
                                     NewToolRoute ->
                                         let
@@ -276,7 +358,7 @@ urlUpdate ( i18nRoute, location ) model =
                                         let
                                             ( cardModel, childCmd ) =
                                                 Card.State.update
-                                                    (Card.Types.Load cardId)
+                                                    (Card.Types.LoadCard cardId)
                                                     model.cardModel
                                                     model.authentication
                                                     language
@@ -287,7 +369,7 @@ urlUpdate ( i18nRoute, location ) model =
                                             ( model, Cmd.map translateCardMsg childCmd )
 
                                     UseCasesIndexRoute ->
-                                        indexRoute .useCases I18n.UseCase
+                                        indexRoute (I18n.UseCase I18n.Plural)
 
                                     NewUseCaseRoute ->
                                         let
@@ -310,6 +392,28 @@ urlUpdate ( i18nRoute, location ) model =
                                         in
                                             ( newModel, cmd )
 
+                            UserProfileRoute ->
+                                let
+                                    authentication =
+                                        case model.authentication of
+                                            Nothing ->
+                                                Debug.crash "prevented by viewNotAuthorized"
+
+                                            Just authentication ->
+                                                authentication
+
+                                    ( userProfileModel, childCmd ) =
+                                        UserProfile.State.update
+                                            (UserProfile.Types.LoadCollections authentication.urlName)
+                                            model.userProfileModel
+                                            authentication
+                                            language
+
+                                    newModel =
+                                        { model | userProfileModel = userProfileModel }
+                                in
+                                    ( newModel, Cmd.map translateUserProfileMsg childCmd )
+
                 I18nRouteWithoutLanguage urlPath ->
                     let
                         language =
@@ -317,17 +421,7 @@ urlUpdate ( i18nRoute, location ) model =
 
                         command =
                             makeUrlWithLanguage language
-                                (urlPath
-                                    ++ (let
-                                            searchQuery =
-                                                getSearchQuery location
-                                        in
-                                            if String.isEmpty searchQuery then
-                                                ""
-                                            else
-                                                "?q=" ++ searchQuery
-                                       )
-                                )
+                                (urlPath ++ (queryStringForParams [ "q", "tagIds" ] location))
                                 |> Navigation.modifyUrl
                     in
                         ( model, command )
@@ -349,22 +443,44 @@ urlUpdate ( i18nRoute, location ) model =
 
 
 type Msg
-    = AddNewMsg AddNew.Types.InternalMsg
+    = Activate User
+    | ActivationMsg Authenticator.Activate.InternalMsg
+    | AddNewMsg AddNew.Types.InternalMsg
+    | AddNewCollectionMsg AddNewCollection.Types.InternalMsg
     | AuthenticatorMsg Authenticator.Update.Msg
     | AuthenticatorRouteMsg (Maybe Authenticator.Model.Route)
     | CardMsg Card.Types.InternalMsg
+    | CollectionMsg Collection.Types.InternalMsg
+    | CollectionsMsg Collections.Types.InternalMsg
     | DisplayAddNewModal Bool
     | Navigate String
     | NoOp
     | Search
     | SearchInputChanged String
     | SearchMsg Search.Types.InternalMsg
+    | UserProfileMsg UserProfile.Types.InternalMsg
+
+
+translateActivationMsg : Authenticator.Activate.MsgTranslator Msg
+translateActivationMsg =
+    Authenticator.Activate.translateMsg
+        { onInternalMsg = ActivationMsg
+        , onActivate = Activate
+        }
 
 
 translateAddNewMsg : AddNew.Types.MsgTranslator Msg
 translateAddNewMsg =
     AddNew.Types.translateMsg
         { onInternalMsg = AddNewMsg
+        , onNavigate = Navigate
+        }
+
+
+translateAddNewCollectionMsg : AddNewCollection.Types.MsgTranslator Msg
+translateAddNewCollectionMsg =
+    AddNewCollection.Types.translateMsg
+        { onInternalMsg = AddNewCollectionMsg
         , onNavigate = Navigate
         }
 
@@ -377,10 +493,34 @@ translateCardMsg =
         }
 
 
+translateCollectionMsg : Collection.Types.MsgTranslator Msg
+translateCollectionMsg =
+    Collection.Types.translateMsg
+        { onInternalMsg = CollectionMsg
+        , onNavigate = Navigate
+        }
+
+
+translateCollectionsMsg : Collections.Types.MsgTranslator Msg
+translateCollectionsMsg =
+    Collections.Types.translateMsg
+        { onInternalMsg = CollectionsMsg
+        , onNavigate = Navigate
+        }
+
+
 translateSearchMsg : Search.Types.MsgTranslator Msg
 translateSearchMsg =
     Search.Types.translateMsg
         { onInternalMsg = SearchMsg
+        , onNavigate = Navigate
+        }
+
+
+translateUserProfileMsg : UserProfile.Types.MsgTranslator Msg
+translateUserProfileMsg =
+    UserProfile.Types.translateMsg
+        { onInternalMsg = UserProfileMsg
         , onNavigate = Navigate
         }
 
@@ -398,8 +538,33 @@ update msg model =
 
                 _ ->
                     I18n.English
+
+        navigate urlPath =
+            let
+                currentUrlPath =
+                    makeUrlFromLocation model.location
+            in
+                if currentUrlPath /= urlPath then
+                    makeUrl urlPath
+                        |> Navigation.newUrl
+                else
+                    Cmd.none
     in
         case msg of
+            Activate authentication ->
+                ( { model | authentication = Just authentication }
+                , Cmd.none
+                )
+
+            ActivationMsg childMsg ->
+                let
+                    ( activationModel, childCmd ) =
+                        Authenticator.Activate.update childMsg model.activationModel language
+                in
+                    ( { model | activationModel = activationModel }
+                    , Cmd.map translateActivationMsg childCmd
+                    )
+
             AddNewMsg childMsg ->
                 let
                     ( addNewModel, childCmd ) =
@@ -407,6 +572,19 @@ update msg model =
                 in
                     ( { model | addNewModel = addNewModel }
                     , Cmd.map translateAddNewMsg childCmd
+                    )
+
+            AddNewCollectionMsg childMsg ->
+                let
+                    ( addNewCollectionModel, childCmd ) =
+                        AddNewCollection.State.update
+                            childMsg
+                            model.addNewCollectionModel
+                            model.authentication
+                            language
+                in
+                    ( { model | addNewCollectionModel = addNewCollectionModel }
+                    , Cmd.map translateAddNewCollectionMsg childCmd
                     )
 
             AuthenticatorMsg childMsg ->
@@ -450,6 +628,24 @@ update msg model =
                     , Cmd.map translateCardMsg childCmd
                     )
 
+            CollectionMsg childMsg ->
+                let
+                    ( collectionModel, childCmd ) =
+                        Collection.State.update childMsg model.collectionModel language
+                in
+                    ( { model | collectionModel = collectionModel }
+                    , Cmd.map translateCollectionMsg childCmd
+                    )
+
+            CollectionsMsg childMsg ->
+                let
+                    ( collectionsModel, childCmd ) =
+                        Collections.State.update childMsg model.collectionsModel language
+                in
+                    ( { model | collectionsModel = collectionsModel }
+                    , Cmd.map translateCollectionsMsg childCmd
+                    )
+
             DisplayAddNewModal displayAddNewModal ->
                 ( { model | displayAddNewModal = displayAddNewModal }
                 , Cmd.none
@@ -457,36 +653,37 @@ update msg model =
 
             Navigate urlPath ->
                 let
-                    currentUrlPath =
-                        makeUrlFromLocation model.location
-
-                    language =
-                        model.navigatorLanguage |> Maybe.withDefault I18n.English
-
-                    urlPathWithLanguage =
-                        makeUrlWithLanguage language urlPath
-
-                    command =
-                        if currentUrlPath /= urlPathWithLanguage then
-                            makeUrl urlPathWithLanguage |> Navigation.newUrl
-                        else
-                            Cmd.none
+                    cmd =
+                        navigate urlPath
                 in
-                    ( model, command )
+                    ( model, cmd )
 
             NoOp ->
                 ( model, Cmd.none )
 
             Search ->
                 let
-                    urlPath =
-                        "/tools?q=" ++ model.searchInputValue
+                    keptParams =
+                        ( "q", model.searchInputValue )
+                            :: (case Dict.get "tagIds" model.location.query of
+                                    Nothing ->
+                                        []
 
-                    command =
-                        makeUrl urlPath
-                            |> Navigation.newUrl
+                                    Just tagIds ->
+                                        [ ( "tagIds", tagIds ) ]
+                               )
+
+                    urlPath =
+                        "/tools?"
+                            ++ (keptParams
+                                    |> List.map (\( k, v ) -> k ++ "=" ++ v)
+                                    |> String.join "&"
+                               )
+
+                    cmd =
+                        navigate urlPath
                 in
-                    ( model, command )
+                    ( model, cmd )
 
             SearchInputChanged searchInputValue ->
                 ( { model | searchInputValue = searchInputValue }, Cmd.none )
@@ -494,23 +691,39 @@ update msg model =
             SearchMsg childMsg ->
                 let
                     ( newSearchModel, childCmd ) =
-                        Search.State.update childMsg model.searchModel model.authentication language searchQuery
+                        Search.State.update
+                            childMsg
+                            model.searchModel
+                            model.authentication
+                            language
+                            model.location
 
-                    -- urlCommand =
-                    --     Hop.setQuery
-                    --         (Dict.fromList
-                    --             (List.map (\tag -> ( "tag", tag )) (Set.toList searchModel.selectedTags))
-                    --         )
-                    --         model.location
-                    --         |> makeUrlFromLocation
-                    --         |> Navigation.newUrl
                     newModel =
                         { model | searchModel = newSearchModel }
                 in
-                    newModel
-                        ! [ Cmd.map translateSearchMsg childCmd
-                            --   , urlCommand
-                          ]
+                    ( newModel
+                    , Cmd.map translateSearchMsg childCmd
+                    )
+
+            UserProfileMsg childMsg ->
+                let
+                    authentication =
+                        case model.authentication of
+                            Nothing ->
+                                Debug.crash "prevented by viewNotAuthorized"
+
+                            Just authentication ->
+                                authentication
+
+                    ( newUserProfileModel, childCmd ) =
+                        UserProfile.State.update childMsg model.userProfileModel authentication language
+
+                    newModel =
+                        { model | userProfileModel = newUserProfileModel }
+                in
+                    ( newModel
+                    , Cmd.map translateUserProfileMsg childCmd
+                    )
 
 
 
@@ -522,7 +735,9 @@ view model =
     let
         standardLayout language content =
             div []
-                ([ viewHeader model language "container" ]
+                ([ viewHeader model language "container"
+                 , viewAlert model language
+                 ]
                     ++ [ content
                        , viewFooter model language
                        , viewAuthenticatorModal model language
@@ -534,7 +749,9 @@ view model =
         fullscreenLayout language content =
             div [ class "main-container" ]
                 ([ div [ class "fixed-header" ]
-                    [ viewHeader model language "container-fluid" ]
+                    [ viewHeader model language "container-fluid"
+                    , viewAlert model language
+                    ]
                  ]
                     ++ [ content
                        , div [ class "fixed-footer" ]
@@ -555,9 +772,32 @@ view model =
                         About.view language
                             |> standardLayout language
 
-                    HelpRoute ->
-                        Help.view language
+                    ActivationRoute userId ->
+                        Authenticator.Activate.view model.activationModel language userId
+                            |> Html.App.map translateActivationMsg
                             |> standardLayout language
+
+                    CollectionsRoute childRoute ->
+                        case childRoute of
+                            CollectionRoute _ ->
+                                Collection.View.view model.collectionModel language
+                                    |> Html.App.map translateCollectionMsg
+                                    |> standardLayout language
+
+                            CollectionsIndexRoute ->
+                                Collections.View.view model.collectionsModel language
+                                    |> Html.App.map translateCollectionsMsg
+                                    |> standardLayout language
+
+                            EditCollectionRoute _ ->
+                                AddNewCollection.View.view model.addNewCollectionModel language
+                                    |> Html.App.map translateAddNewCollectionMsg
+                                    |> standardLayout language
+
+                            NewCollectionRoute ->
+                                AddNewCollection.View.view model.addNewCollectionModel language
+                                    |> Html.App.map translateAddNewCollectionMsg
+                                    |> standardLayout language
 
                     HomeRoute ->
                         Home.view model.searchModel (getSearchQuery model.location) language
@@ -579,7 +819,7 @@ view model =
                                     |> standardLayout language
 
                             OrganizationsIndexRoute ->
-                                Search.View.view model.searchModel OrganizationCard (getSearchQuery model.location) language
+                                Search.View.view model.searchModel OrganizationCard language model.location
                                     |> Html.App.map translateSearchMsg
                                     |> fullscreenLayout language
 
@@ -596,7 +836,7 @@ view model =
                                     |> standardLayout language
 
                             ToolsIndexRoute ->
-                                Search.View.view model.searchModel ToolCard (getSearchQuery model.location) language
+                                Search.View.view model.searchModel ToolCard language model.location
                                     |> Html.App.map translateSearchMsg
                                     |> fullscreenLayout language
 
@@ -613,7 +853,7 @@ view model =
                                     |> standardLayout language
 
                             UseCasesIndexRoute ->
-                                Search.View.view model.searchModel UseCaseCard (getSearchQuery model.location) language
+                                Search.View.view model.searchModel UseCaseCard language model.location
                                     |> Html.App.map translateSearchMsg
                                     |> fullscreenLayout language
 
@@ -621,6 +861,17 @@ view model =
                                 AddNew.View.viewUseCase model.addNewModel language
                                     |> Html.App.map translateAddNewMsg
                                     |> standardLayout language
+
+                    UserProfileRoute ->
+                        (case model.authentication of
+                            Nothing ->
+                                viewNotAuthentified language
+
+                            Just user ->
+                                UserProfile.View.view model.userProfileModel language user
+                                    |> Html.App.map translateUserProfileMsg
+                        )
+                            |> standardLayout language
 
             I18nRouteWithoutLanguage _ ->
                 div [ style [ ( "min-height", "60em" ) ] ]
@@ -660,6 +911,7 @@ viewAddNewModal model language =
                             [ div [ class "col-xs-12" ]
                                 [ aForPath
                                     Navigate
+                                    language
                                     "/tools/new"
                                     [ class "media action"
                                       -- TODO trigger a login if not signed in
@@ -677,6 +929,7 @@ viewAddNewModal model language =
                                     ]
                                 , aForPath
                                     Navigate
+                                    language
                                     "/use-cases/new"
                                     [ class "media action"
                                       -- TODO trigger a login if not signed in
@@ -692,7 +945,14 @@ viewAddNewModal model language =
                                         , text (I18n.translate language I18n.AddNewUseCaseCatchPhrase)
                                         ]
                                     ]
-                                , a [ class "media action", href "TODO-new-collection.html" ]
+                                , aForPath
+                                    Navigate
+                                    language
+                                    "/collections/new"
+                                    [ class "media action"
+                                      -- TODO trigger a login if not signed in
+                                    , onClick (DisplayAddNewModal False)
+                                    ]
                                     [ div [ class "media-left icon" ]
                                         [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-heart" ]
                                             []
@@ -711,6 +971,27 @@ viewAddNewModal model language =
             ]
     else
         text ""
+
+
+viewAlert : Model -> I18n.Language -> Html Msg
+viewAlert model language =
+    case model.authentication of
+        Nothing ->
+            text ""
+
+        Just authentication ->
+            if authentication.activated then
+                text ""
+            else
+                div [ class "alert alert-success alert-dismissible", attribute "role" "alert" ]
+                    [ div [ class "container" ]
+                        [ button [ attribute "aria-label" "Close", class "close", attribute "data-dismiss" "alert", type' "button" ]
+                            [ span [ attribute "aria-hidden" "true" ]
+                                [ text "×" ]
+                            ]
+                        , text (I18n.translate language I18n.EmailSentForAccountActivation)
+                        ]
+                    ]
 
 
 viewAuthenticatorModal : Model -> I18n.Language -> Html Msg
@@ -746,7 +1027,7 @@ viewAuthenticatorModal model language =
                             ]
                         , Html.App.map
                             AuthenticatorMsg
-                            (Authenticator.View.viewModalBody authenticatorRoute model.authenticatorModel)
+                            (Authenticator.View.viewModalBody language authenticatorRoute model.authenticatorModel)
                         ]
                     ]
                 ]
@@ -789,33 +1070,42 @@ viewFooter model language =
                                         , span [ class "caret" ] []
                                         ]
                                     , ul [ attribute "aria-labelledby" "dropdownMenu1", class "dropdown-menu" ]
-                                        [ li []
-                                            [ aForPath Navigate
-                                                (replaceLanguageInLocation I18n.English model.location)
-                                                []
-                                                [ text (I18n.translate I18n.English (I18n.Language I18n.English)) ]
+                                        (let
+                                            aForPath urlPath children =
+                                                a
+                                                    [ href (makeUrl urlPath)
+                                                    , onWithOptions
+                                                        "click"
+                                                        { stopPropagation = True, preventDefault = True }
+                                                        (Json.Decode.succeed (Navigate urlPath))
+                                                    ]
+                                                    children
+                                         in
+                                            [ li []
+                                                [ aForPath
+                                                    (replaceLanguageInLocation I18n.English model.location)
+                                                    [ text (I18n.translate I18n.English (I18n.Language I18n.English)) ]
+                                                ]
+                                            , li []
+                                                [ aForPath
+                                                    (replaceLanguageInLocation I18n.French model.location)
+                                                    [ text (I18n.translate I18n.French (I18n.Language I18n.French)) ]
+                                                ]
+                                            , li []
+                                                [ aForPath
+                                                    (replaceLanguageInLocation I18n.Spanish model.location)
+                                                    [ text (I18n.translate I18n.Spanish (I18n.Language I18n.Spanish)) ]
+                                                ]
                                             ]
-                                        , li []
-                                            [ aForPath Navigate
-                                                (replaceLanguageInLocation I18n.French model.location)
-                                                []
-                                                [ text (I18n.translate I18n.French (I18n.Language I18n.French)) ]
-                                            ]
-                                        , li []
-                                            [ aForPath Navigate
-                                                (replaceLanguageInLocation I18n.Spanish model.location)
-                                                []
-                                                [ text (I18n.translate I18n.Spanish (I18n.Language I18n.Spanish)) ]
-                                            ]
-                                        ]
+                                        )
                                     ]
                                 ]
                             ]
                         , p [ class "info-box" ]
                             [ text (I18n.translate language I18n.OpenGovParagraph) ]
-                        , a [ href "https://www.etalab.gouv.fr" , target "_blank", class "etalab-logo" ]
-                              [ img [ alt "Etalab logo", src "/img/etalab-logo.png" ]
-                                    []
+                        , a [ href "https://www.etalab.gouv.fr", target "_blank", class "etalab-logo" ]
+                            [ img [ alt "Etalab logo", src "/img/etalab-logo.png" ]
+                                []
                             ]
                         ]
                     , div [ class "col-xs-6 col-md-3" ]
@@ -825,6 +1115,7 @@ viewFooter model language =
                             [ li []
                                 [ aForPath
                                     Navigate
+                                    language
                                     "/tools"
                                     []
                                     [ text (I18n.translate language (I18n.Tool I18n.Plural)) ]
@@ -832,20 +1123,23 @@ viewFooter model language =
                             , li []
                                 [ aForPath
                                     Navigate
+                                    language
                                     "/use-cases"
                                     []
                                     [ text (I18n.translate language (I18n.UseCase I18n.Plural)) ]
                                 ]
-                               , li []
-                                   [ aForPath
-                                       Navigate
-                                       "/organizations"
-                                       []
-                                       [ text (I18n.translate language (I18n.Organization I18n.Plural)) ]
-                                   ]
                             , li []
                                 [ aForPath
                                     Navigate
+                                    language
+                                    "/organizations"
+                                    []
+                                    [ text (I18n.translate language (I18n.Organization I18n.Plural)) ]
+                                ]
+                            , li []
+                                [ aForPath
+                                    Navigate
+                                    language
                                     "/collections"
                                     []
                                     [ text (I18n.translate language (I18n.Collection I18n.Plural)) ]
@@ -859,21 +1153,21 @@ viewFooter model language =
                             [ li []
                                 [ aForPath
                                     Navigate
+                                    language
                                     "/about"
                                     []
                                     [ text (I18n.translate language I18n.About) ]
                                 ]
                             , li []
-                                [ a [ href (I18n.translate language I18n.OGPsummitLink) , target "_blank" ]
+                                [ a [ href (I18n.translate language I18n.OGPsummitLink), target "_blank" ]
                                     [ text "OpenGovernment Summit 2016" ]
                                 ]
                             , li []
-                                [ a [ href "http://www.opengovpartnership.org" , target "_blank" ]
+                                [ a [ href "http://www.opengovpartnership.org", target "_blank" ]
                                     [ text "Open Government Parntenrship" ]
                                 ]
-                            ,
-                             li []
-                                [ a [ href "https://www.etalab.gouv.fr" , target "_blank" ]
+                            , li []
+                                [ a [ href "https://www.etalab.gouv.fr", target "_blank" ]
                                     [ text "Etalab" ]
                                 ]
                             ]
@@ -891,12 +1185,13 @@ viewFooter model language =
 viewHeader : Model -> I18n.Language -> String -> Html Msg
 viewHeader model language containerClass =
     let
-        profileNavItem =
+        profileOrResetPasswordNavItem =
             case model.authentication of
                 Just authentication ->
                     li []
                         [ aForPath
                             Navigate
+                            language
                             "/profile"
                             []
                             [ text authentication.name ]
@@ -905,6 +1200,18 @@ viewHeader model language containerClass =
                 Nothing ->
                     text ""
 
+        -- li []
+        --     [ a
+        --         [ href "#"
+        --         , onWithOptions
+        --             "click"
+        --             { preventDefault = True, stopPropagation = False }
+        --             (Json.Decode.succeed
+        --                 (AuthenticatorRouteMsg (Just Authenticator.Model.ResetPasswordRoute))
+        --             )
+        --         ]
+        --         [ text (I18n.translate language I18n.ResetPassword) ]
+        --     ]
         signInOrOutNavItem =
             case model.authentication of
                 Just authentication ->
@@ -971,6 +1278,7 @@ viewHeader model language containerClass =
                             ]
                         , aForPath
                             Navigate
+                            language
                             "/"
                             [ class "navbar-brand" ]
                             [ text "OGPtoolbox" ]
@@ -978,7 +1286,7 @@ viewHeader model language containerClass =
                             [ text (I18n.translate language I18n.HeaderTitle) ]
                         ]
                     , ul [ class "nav navbar-nav navbar-right" ]
-                        [ profileNavItem
+                        [ profileOrResetPasswordNavItem
                         , signInOrOutNavItem
                         , signUpNavItem
                         , button
@@ -1015,6 +1323,7 @@ viewHeader model language containerClass =
                             [ li []
                                 [ aForPath
                                     Navigate
+                                    language
                                     "/tools"
                                     []
                                     [ text (I18n.translate language (I18n.Tool I18n.Plural)) ]
@@ -1022,20 +1331,23 @@ viewHeader model language containerClass =
                             , li []
                                 [ aForPath
                                     Navigate
+                                    language
                                     "/use-cases"
                                     []
                                     [ text (I18n.translate language (I18n.UseCase I18n.Plural)) ]
                                 ]
-                              -- , li []
-                              --     [ aForPath
-                              --         Navigate
-                              --         "/organizations"
-                              --         []
-                              --         [ text (I18n.translate language (I18n.Organization I18n.Plural)) ]
-                              --     ]
+                              --   , li []
+                              --       [ aForPath
+                              --           Navigate
+                              --           language
+                              --           "/organizations"
+                              --           []
+                              --           [ text (I18n.translate language (I18n.Organization I18n.Plural)) ]
+                              --       ]
                             , li []
                                 [ aForPath
                                     Navigate
+                                    language
                                     "/collections"
                                     []
                                     [ text (I18n.translate language (I18n.Collection I18n.Plural)) ]
@@ -1043,9 +1355,10 @@ viewHeader model language containerClass =
                             , li []
                                 [ aForPath
                                     Navigate
-                                    "/about"
+                                    language
+                                    "/help"
                                     []
-                                    [ text (I18n.translate language I18n.About) ]
+                                    [ text (I18n.translate language I18n.Help) ]
                                 ]
                             ]
                         , Html.form
@@ -1077,7 +1390,9 @@ viewHeader model language containerClass =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
+    -- TODO Fix duplicate messages with port "fileContentRead", that was worked around by a "Selected" constructor.
     Sub.batch
         [ Sub.map AddNewMsg (AddNew.State.subscriptions model.addNewModel)
+        , Sub.map AddNewCollectionMsg (AddNewCollection.State.subscriptions model.addNewCollectionModel)
         , Sub.map SearchMsg (Search.State.subscriptions model.searchModel)
         ]

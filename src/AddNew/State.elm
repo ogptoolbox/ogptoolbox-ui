@@ -42,31 +42,54 @@ update msg model authentication language =
             let
                 cmd =
                     Ports.fileSelected "logoField"
+
+                newModel =
+                    { model | imageUploadStatus = Selected }
             in
-                ( model, cmd )
+                ( newModel, cmd )
 
         ImageRead data ->
             let
                 newModel =
-                    { model | imageUploadStatus = Uploaded data }
+                    { model | imageUploadStatus = Read data }
 
                 cmd =
-                    Task.perform
-                        ImageUploadError
-                        ImageUploaded
-                        (Requests.postUploadImage authentication data.contents)
-                        |> Cmd.map ForSelf
+                    case model.imageUploadStatus of
+                        NotUploaded ->
+                            Cmd.none
+
+                        Selected ->
+                            Task.perform
+                                ImageUploadError
+                                ImageUploadSuccess
+                                (Requests.postUploadImage authentication data.contents)
+                                |> Cmd.map ForSelf
+
+                        Read _ ->
+                            Cmd.none
+
+                        Uploaded _ ->
+                            Cmd.none
+
+                        UploadError _ ->
+                            Cmd.none
             in
                 ( newModel, cmd )
-
-        ImageUploaded str ->
-            -- TODO Add confirmation and unlock publish button
-            ( model, Cmd.none )
 
         ImageUploadError err ->
             let
                 newModel =
                     { model | imageUploadStatus = UploadError err }
+            in
+                ( newModel, Cmd.none )
+
+        ImageUploadSuccess urlPath ->
+            let
+                newModel =
+                    { model
+                        | fields = Dict.insert "Logo" urlPath model.fields
+                        , imageUploadStatus = Uploaded urlPath
+                    }
             in
                 ( newModel, Cmd.none )
 

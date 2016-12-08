@@ -144,7 +144,7 @@ update msg model =
                 user =
                     Just body.data
             in
-                ( model, Ports.storeAuthentication user, user )
+                ( model, Ports.storeAuthentication (Ports.userToUserForPort user), user )
 
         UsernameInput text ->
             ( { model | username = text }, Cmd.none, Nothing )
@@ -158,7 +158,7 @@ viewModalBody : Model -> Html Msg
 viewModalBody model =
     div [ class "modal-body" ]
         [ div [ class "row" ]
-            [ div [ class "col-xs-6" ]
+            [ div [ class "col-xs-7" ]
                 [ div [ class "well" ]
                     [ Html.form [ onSubmit Submit ]
                         [ let
@@ -290,6 +290,40 @@ viewModalBody model =
                         , button
                             [ class "btn btn-primary", type' "submit" ]
                             [ text "Sign Up" ]
+                        ]
+                    ]
+                ]
+            , div [ class "col-xs-5" ]
+                [ div [ class "well well-right" ]
+                    [ p [ class "lead" ]
+                        [ text "Create your account now" ]
+                    , ul [ class "list-unstyled" ]
+                        [ li []
+                            [ span [ class "fa fa-check text-success" ]
+                                []
+                            , text "Improve existing content"
+                            ]
+                        , li []
+                            [ span [ class "fa fa-check text-success" ]
+                                []
+                            , text "Vote the best contributions"
+                            ]
+                        , li []
+                            [ span [ class "fa fa-check text-success" ]
+                                []
+                            , text "Add a new tool or usage"
+                            ]
+                        , li []
+                            [ span [ class "fa fa-check text-success" ]
+                                []
+                            , text "Create a page for your organization "
+                            ]
+                          -- , li []
+                          --     [ a [ href "/read-more/" ]
+                          --         [ u []
+                          --             [ text "Read more" ]
+                          --         ]
+                          --     ]
                         ]
                     ]
                 ]

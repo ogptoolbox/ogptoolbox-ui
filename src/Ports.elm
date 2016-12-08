@@ -1,6 +1,6 @@
 port module Ports exposing (..)
 
-import Types exposing (DocumentMetatags, PopularTag, User)
+import Types exposing (DocumentMetatags, PopularTag, User, UserForPort)
 
 
 -- DOCUMENT METATAGS
@@ -29,7 +29,27 @@ port fileContentRead : (ImagePortData -> msg) -> Sub msg
 -- AUTHENTICATION
 
 
-port storeAuthentication : Maybe User -> Cmd msg
+port storeAuthentication : Maybe UserForPort -> Cmd msg
+
+
+userToUserForPort : Maybe User -> Maybe UserForPort
+userToUserForPort user =
+    case user of
+        Just user ->
+            Just
+                { activated =
+                    if user.activated then
+                        "true"
+                    else
+                        ""
+                , apiKey = user.apiKey
+                , email = user.email
+                , name = user.name
+                , urlName = user.urlName
+                }
+
+        Nothing ->
+            Nothing
 
 
 

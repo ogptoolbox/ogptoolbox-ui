@@ -1,9 +1,9 @@
-module AddNew.Types exposing (..)
+module AddNewCollection.Types exposing (..)
 
-import Dict exposing (Dict)
 import Http
 import Ports
 import Types exposing (..)
+import WebData exposing (..)
 
 
 type UploadStatus
@@ -14,10 +14,18 @@ type UploadStatus
     | UploadError Http.Error
 
 
+type alias AddNewCollectionFields =
+    { cardIds : String
+    , description : String
+    , name : String
+    }
+
+
 type alias Model =
-    { error : Maybe Http.Error
-    , fields : Dict String String
+    { editedCollectionId : Maybe String
+    , fields : AddNewCollectionFields
     , imageUploadStatus : UploadStatus
+    , webData : WebData DataIdBody
     }
 
 
@@ -26,14 +34,19 @@ type ExternalMsg
 
 
 type InternalMsg
-    = Error Http.Error
-    | SetField String String
-    | SubmitFields
-    | SubmittedFields DataIdBody
-    | ImageSelected
+    = ImageSelected
     | ImageRead Ports.ImagePortData
     | ImageUploadError Http.Error
     | ImageUploadSuccess String
+    | LoadCollection String
+    | LoadCollectionError Http.Error
+    | LoadCollectionSuccess DataIdBody
+    | PostNewCollection
+    | PostNewCollectionError Http.Error
+    | PostNewCollectionSuccess DataIdBody
+    | SetCardIds String
+    | SetDescription String
+    | SetName String
 
 
 type Msg

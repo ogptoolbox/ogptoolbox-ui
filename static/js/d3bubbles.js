@@ -550,8 +550,12 @@ function installPolyfill () {
 function mount(options) {
     var tagcloud = new D3Bubbles({
         width: 'auto',
+<<<<<<< HEAD
         //TEMPORARY: It will be 490px when filter row will be displayed 
         height: 510,
+=======
+        height: 490,
+>>>>>>> ogptoolbox/master
         wrapper: '#tag',
         container: options.selector,
         data: options.data,

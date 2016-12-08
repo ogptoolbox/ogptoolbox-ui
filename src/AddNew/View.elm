@@ -1,11 +1,74 @@
 module AddNew.View exposing (..)
 
 import AddNew.Types exposing (..)
+import Configuration
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (on, onClick, onInput, onSubmit, targetValue)
 import I18n exposing (getImageUrlOrOgpLogo, getName)
 import Json.Decode as Decode
+
+
+publishedDisabled : UploadStatus -> Bool
+publishedDisabled imageUploadStatus =
+    case imageUploadStatus of
+        NotUploaded ->
+            False
+
+        Selected ->
+            False
+
+        Read _ ->
+            True
+
+        Uploaded _ ->
+            False
+
+        UploadError _ ->
+            False
+
+
+viewImageUploadStatus : UploadStatus -> Html msg
+viewImageUploadStatus imageUploadStatus =
+    let
+        cameraSpan =
+            span
+                [ attribute "aria-hidden" "true"
+                , class "glyphicon glyphicon-camera"
+                ]
+                []
+    in
+        case imageUploadStatus of
+            NotUploaded ->
+                div []
+                    [ cameraSpan
+                    , text "Upload image"
+                    ]
+
+            Selected ->
+                div []
+                    [ cameraSpan
+                    , text "Reading selected image"
+                    ]
+
+            Read { contents, filename } ->
+                div []
+                    [ cameraSpan
+                    , p [] [ text ("Upload in progress for \"" ++ filename ++ "\"") ]
+                    ]
+
+            Uploaded urlPath ->
+                img
+                    [ src (Configuration.apiUrlWithPath urlPath)
+                    , style [ ( "max-width", "100%" ) ]
+                    ]
+                    []
+
+            UploadError err ->
+                div []
+                    [ cameraSpan
+                    , text ("Error: " ++ (toString err))
+                    ]
 
 
 viewOrganization : Model -> I18n.Language -> Html Msg
@@ -31,12 +94,10 @@ viewOrganization model language =
                         , div [ class "form-group" ]
                             [ label [ for "aboutField" ]
                                 [ text "About" ]
-                            , input
+                            , textarea
                                 [ class "form-control"
                                 , id "aboutField"
                                 , onInput (\x -> ForSelf (SetField "Description" x))
-                                , placeholder "Add a complete description"
-                                , type' "text"
                                 ]
                                 []
                             ]
@@ -106,17 +167,7 @@ viewOrganization model language =
                     [ div [ class "col-md-9 content content-left" ]
                         [ button
                             [ class "btn btn-default pull-right"
-                            , disabled
-                                (case model.imageUploadStatus of
-                                    NotUploaded ->
-                                        False
-
-                                    Uploaded _ ->
-                                        False
-
-                                    UploadError _ ->
-                                        True
-                                )
+                            , disabled (publishedDisabled model.imageUploadStatus)
                             , type' "submit"
                             ]
                             [ text (I18n.translate language I18n.PublishOrganization) ]
@@ -149,12 +200,10 @@ viewTool model language =
                         , div [ class "form-group" ]
                             [ label [ for "aboutField" ]
                                 [ text "About" ]
-                            , input
+                            , textarea
                                 [ class "form-control"
                                 , id "aboutField"
                                 , onInput (\x -> ForSelf (SetField "Description" x))
-                                , placeholder "Add a complete description"
-                                , type' "text"
                                 ]
                                 []
                             ]
@@ -326,31 +375,7 @@ viewTool model language =
                                             [ label [ for "logoField" ]
                                                 [ text "Logo" ]
                                             , div [ class "upload-zone" ]
-                                                (case model.imageUploadStatus of
-                                                    NotUploaded ->
-                                                        [ span
-                                                            [ attribute "aria-hidden" "true"
-                                                            , class "glyphicon glyphicon-camera"
-                                                            ]
-                                                            []
-                                                        , text "Upload image"
-                                                        ]
-
-                                                    Uploaded { contents, filename } ->
-                                                        [ -- img [ src ("data:" ++ contents) ] []
-                                                          p [] [ text filename ]
-                                                        ]
-
-                                                    UploadError err ->
-                                                        [ span
-                                                            [ attribute "aria-hidden" "true"
-                                                            , class "glyphicon glyphicon-camera"
-                                                            ]
-                                                            []
-                                                        , text ("Error: " ++ (toString err))
-                                                          -- TODO Add a button to start upload again
-                                                        ]
-                                                )
+                                                [ viewImageUploadStatus model.imageUploadStatus ]
                                             , input
                                                 [ id "logoField"
                                                 , on "change" (Decode.succeed (ForSelf ImageSelected))
@@ -376,17 +401,7 @@ viewTool model language =
                     [ div [ class "col-md-9 content content-left" ]
                         [ button
                             [ class "btn btn-default pull-right"
-                            , disabled
-                                (case model.imageUploadStatus of
-                                    NotUploaded ->
-                                        False
-
-                                    Uploaded _ ->
-                                        False
-
-                                    UploadError _ ->
-                                        True
-                                )
+                            , disabled (publishedDisabled model.imageUploadStatus)
                             , type' "submit"
                             ]
                             [ text (I18n.translate language I18n.PublishTool) ]
@@ -419,12 +434,10 @@ viewUseCase model language =
                         , div [ class "form-group" ]
                             [ label [ for "aboutField" ]
                                 [ text "About" ]
-                            , input
+                            , textarea
                                 [ class "form-control"
                                 , id "aboutField"
                                 , onInput (\x -> ForSelf (SetField "Description" x))
-                                , placeholder "Add a complete description"
-                                , type' "text"
                                 ]
                                 []
                             ]
@@ -494,31 +507,7 @@ viewUseCase model language =
                                             [ label [ for "logoField" ]
                                                 [ text "Logo" ]
                                             , div [ class "upload-zone" ]
-                                                (case model.imageUploadStatus of
-                                                    NotUploaded ->
-                                                        [ span
-                                                            [ attribute "aria-hidden" "true"
-                                                            , class "glyphicon glyphicon-camera"
-                                                            ]
-                                                            []
-                                                        , text "Upload image"
-                                                        ]
-
-                                                    Uploaded { contents, filename } ->
-                                                        [ -- img [ src ("data:" ++ contents) ] []
-                                                          p [] [ text filename ]
-                                                        ]
-
-                                                    UploadError err ->
-                                                        [ span
-                                                            [ attribute "aria-hidden" "true"
-                                                            , class "glyphicon glyphicon-camera"
-                                                            ]
-                                                            []
-                                                        , text ("Error: " ++ (toString err))
-                                                          -- TODO Add a button to start upload again
-                                                        ]
-                                                )
+                                                [ viewImageUploadStatus model.imageUploadStatus ]
                                             , input
                                                 [ id "logoField"
                                                 , on "change" (Decode.succeed (ForSelf ImageSelected))
@@ -544,17 +533,7 @@ viewUseCase model language =
                     [ div [ class "col-md-9 content content-left" ]
                         [ button
                             [ class "btn btn-default pull-right"
-                            , disabled
-                                (case model.imageUploadStatus of
-                                    NotUploaded ->
-                                        False
-
-                                    Uploaded _ ->
-                                        False
-
-                                    UploadError _ ->
-                                        True
-                                )
+                            , disabled (publishedDisabled model.imageUploadStatus)
                             , type' "submit"
                             ]
                             [ text (I18n.translate language I18n.PublishUseCase) ]

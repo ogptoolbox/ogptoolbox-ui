@@ -8,11 +8,13 @@ import Html.Attributes exposing (..)
 import Html.Attributes.Aria exposing (..)
 import Html.Events exposing (..)
 import Http
+import I18n
 import Json.Encode
 import Ports
 import String
 import Task
 import Types exposing (User, UserBody)
+import Views exposing (getHttpErrorAsString)
 
 
 -- MODEL
@@ -29,7 +31,8 @@ type alias Fields =
 
 
 type alias Model =
-    { errors : Errors
+    { httpError : Maybe Http.Error
+    , errors : Errors
     , password : String
     , username : String
     }
@@ -37,7 +40,8 @@ type alias Model =
 
 init : Model
 init =
-    { errors = Dict.empty
+    { httpError = Nothing
+    , errors = Dict.empty
     , password = ""
     , username = ""
     }
@@ -63,7 +67,7 @@ update msg model =
                 _ =
                     Debug.log "Authenticator.SignIn Error" err
             in
-                ( model, Cmd.none, Nothing )
+                ( { model | httpError = Just err }, Cmd.none, Nothing )
 
         PasswordInput text ->
             ( { model | password = text }, Cmd.none, Nothing )
@@ -129,7 +133,7 @@ update msg model =
                 user =
                     Just body.data
             in
-                ( model, Ports.storeAuthentication user, user )
+                ( { model | httpError = Nothing }, Ports.storeAuthentication (Ports.userToUserForPort user), user )
 
         UsernameInput text ->
             ( { model | username = text }, Cmd.none, Nothing )
@@ -139,17 +143,17 @@ update msg model =
 -- VIEW
 
 
-viewModalBody : Model -> Html Msg
-viewModalBody model =
+viewModalBody : I18n.Language -> Model -> Html Msg
+viewModalBody language model =
     div [ class "modal-body" ]
         [ div [ class "row" ]
             [ div [ class "col-xs-6" ]
                 [ div [ class "well" ]
                     [ Html.form [ onSubmit Submit ]
-                        [ let
+                        ([ let
                             errorMaybe =
                                 Dict.get "username" model.errors
-                          in
+                           in
                             case errorMaybe of
                                 Just error ->
                                     div [ class "form-group has-error" ]
@@ -188,10 +192,10 @@ viewModalBody model =
                                             ]
                                             []
                                         ]
-                        , let
+                         , let
                             errorMaybe =
                                 Dict.get "password" model.errors
-                          in
+                           in
                             case errorMaybe of
                                 Just error ->
                                     div [ class "form-group has-error" ]
@@ -230,25 +234,33 @@ viewModalBody model =
                                             ]
                                             []
                                         ]
-                          -- , div [ class "alert alert-error hide", id "loginErrorMsg" ]
-                          --     [ text "Wrong username og password" ]
-                          -- , div [ class "checkbox" ]
-                          --     [ label []
-                          --         [ input [ id "remember", name "remember", type' "checkbox" ]
-                          --             []
-                          --         , text "Remember login                                  "
-                          --         ]
-                          --     ]
-                        , button
+                           -- , div [ class "alert alert-error hide", id "loginErrorMsg" ]
+                           --     [ text "Wrong username og password" ]
+                           -- , div [ class "checkbox" ]
+                           --     [ label []
+                           --         [ input [ id "remember", name "remember", type' "checkbox" ]
+                           --             []
+                           --         , text "Remember login                                  "
+                           --         ]
+                           --     ]
+                         , button
                             [ class "btn btn-block btn-default grey", type' "submit" ]
                             [ text "Sign In" ]
-                        ]
+                         ]
+                            ++ (case model.httpError of
+                                    Nothing ->
+                                        []
+
+                                    Just err ->
+                                        [ text (getHttpErrorAsString language err) ]
+                               )
+                        )
                     ]
                 ]
             , div [ class "col-xs-6" ]
                 [ div [ class "well well-right" ]
                     [ p [ class "lead" ]
-                        [ text "Create your account now" ]
+                        [ text "Sign in your account now" ]
                     , ul [ class "list-unstyled", attribute "style" "line-height: 2" ]
                         [ li []
                             [ span [ class "fa fa-check text-success" ]
@@ -270,17 +282,24 @@ viewModalBody model =
                                 []
                             , text "Create a page for your organization "
                             ]
-                        , li []
-                            [ a [ href "/read-more/" ]
-                                [ u []
-                                    [ text "TODO Read more" ]
-                                ]
-                            ]
+                          -- , li []
+                          --     [ a [ href "/read-more/" ]
+                          --         [ u []
+                          --             [ text "TODO Read more" ]
+                          --         ]
+                          --     ]
                         ]
-                    , p []
-                        [ a [ class "btn btn-block btn-default ", href "/new-customer/" ]
-                            [ text "TODO Register now!" ]
-                        ]
+                      -- , p []
+                      --     [ a
+                      --         [ class "btn btn-block btn-default "
+                      --         , href "#"
+                      --         , onWithOptions
+                      --             "click"
+                      --             { preventDefault = True, stopPropagation = False }
+                      --             (Json.Decode.succeed (AuthenticatorRouteMsg (Just Authenticator.Model.SignUpRoute)))
+                      --         ]
+                      --         [ text (I18n.translate language I18n.RegisterNow) ]
+                      --     ]
                     ]
                 ]
             ]

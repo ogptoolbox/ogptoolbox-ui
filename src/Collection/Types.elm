@@ -1,24 +1,12 @@
-module AddNew.Types exposing (..)
+module Collection.Types exposing (..)
 
-import Dict exposing (Dict)
 import Http
-import Ports
 import Types exposing (..)
-
-
-type UploadStatus
-    = NotUploaded
-    | Selected
-    | Read Ports.ImagePortData
-    | Uploaded String
-    | UploadError Http.Error
+import WebData exposing (..)
 
 
 type alias Model =
-    { error : Maybe Http.Error
-    , fields : Dict String String
-    , imageUploadStatus : UploadStatus
-    }
+    { collection : WebData DataIdBody }
 
 
 type ExternalMsg
@@ -26,14 +14,9 @@ type ExternalMsg
 
 
 type InternalMsg
-    = Error Http.Error
-    | SetField String String
-    | SubmitFields
-    | SubmittedFields DataIdBody
-    | ImageSelected
-    | ImageRead Ports.ImagePortData
-    | ImageUploadError Http.Error
-    | ImageUploadSuccess String
+    = LoadCollection String
+    | LoadCollectionError Http.Error
+    | LoadCollectionSuccess DataIdBody
 
 
 type Msg

@@ -1,12 +1,10 @@
 module Routes exposing (..)
 
--- import Authenticator.Model
-
 import Combine exposing (Parser)
 import Dict exposing (Dict)
 import Hop
-import Hop.Matchers exposing (match1, match2, nested1, regex)
-import Hop.Types exposing (Location)
+import Hop.Matchers exposing (match1, match2, match3, nested1, regex)
+import Hop.Types
 import I18n
 import Navigation
 import String
@@ -18,12 +16,14 @@ import Types exposing (..)
 
 type Route
     = AboutRoute
-    | HelpRoute
+    | ActivationRoute String
+    | CollectionsRoute CollectionsNestedRoute
     | HomeRoute
     | NotFoundRoute String
     | OrganizationsRoute OrganizationsNestedRoute
     | ToolsRoute ToolsNestedRoute
     | UseCasesRoute UseCasesNestedRoute
+    | UserProfileRoute
 
 
 type I18nRoute
@@ -33,6 +33,13 @@ type I18nRoute
 
 
 -- NESTED ROUTES
+
+
+type CollectionsNestedRoute
+    = CollectionRoute String
+    | CollectionsIndexRoute
+    | NewCollectionRoute
+    | EditCollectionRoute String
 
 
 type OrganizationsNestedRoute
@@ -58,7 +65,7 @@ makeUrl path =
     Hop.makeUrl routerConfig path
 
 
-makeUrlFromLocation : Location -> String
+makeUrlFromLocation : Hop.Types.Location -> String
 makeUrlFromLocation location =
     Hop.makeUrlFromLocation routerConfig location
 
@@ -71,14 +78,21 @@ makeUrlWithLanguage language urlPath =
 matchers : List (Hop.Types.PathMatcher Route)
 matchers =
     [ match1 HomeRoute ""
-    , match1 AboutRoute "/about"
-    , match1 HelpRoute "/help"
+    , nested1 CollectionsRoute
+        "/collections"
+        [ match1 CollectionsIndexRoute ""
+        , match1 NewCollectionRoute "/new"
+        , match3 EditCollectionRoute "/" idParser "/edit"
+        , match2 CollectionRoute "/" idParser
+        ]
+    , match1 AboutRoute "/help"
     , nested1 OrganizationsRoute
         "/organizations"
         [ match1 OrganizationsIndexRoute ""
         , match1 NewOrganizationRoute "/new"
         , match2 OrganizationRoute "/" idParser
         ]
+    , match1 UserProfileRoute "/profile"
     , nested1 ToolsRoute
         "/tools"
         [ match1 ToolsIndexRoute ""
@@ -91,6 +105,7 @@ matchers =
         , match1 NewUseCaseRoute "/new"
         , match2 UseCaseRoute "/" idParser
         ]
+    , match3 ActivationRoute "/users/" idParser "/activate"
     , match2 NotFoundRoute "" (regex ".*")
     ]
 
@@ -143,12 +158,33 @@ urlParser =
 -- UPDATE LOCATION
 
 
-getSearchQuery : Location -> String
+getSearchQuery : Hop.Types.Location -> String
 getSearchQuery location =
     Dict.get "q" location.query |> Maybe.withDefault ""
 
 
-replaceLanguageInLocation : I18n.Language -> Location -> String
+queryStringForParams : List String -> Hop.Types.Location -> String
+queryStringForParams params location =
+    let
+        keptParams =
+            params
+                |> List.filterMap
+                    (\k ->
+                        Dict.get k location.query
+                            |> Maybe.map (\v -> ( k, v ))
+                    )
+    in
+        if List.isEmpty keptParams then
+            ""
+        else
+            "?"
+                ++ (keptParams
+                        |> List.map (\( k, v ) -> k ++ "=" ++ v)
+                        |> String.join "&"
+                   )
+
+
+replaceLanguageInLocation : I18n.Language -> Hop.Types.Location -> String
 replaceLanguageInLocation language location =
     let
         urlWithoutLanguage =
