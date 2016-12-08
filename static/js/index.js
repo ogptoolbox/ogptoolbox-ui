@@ -75,26 +75,32 @@ main.ports.mountd3bubbles.subscribe(function(data) {
                 tagId: popularTag.tagId
              };
         });
+
+        var maxRadius = Math.max.apply(null, bubbles.map(function(bubble) {
+            return bubble.radius;
+        }));
+
+        var bigBubbleRadius = maxRadius * 4;
+
         if (data.selectedTags.length) {
             bubbles = bubbles.concat(data.selectedTags.map(function(selectedTag) {
-                var maxRadius = Math.max.apply(null, data.popularTags.map(function(popularTag) {
-                    return popularTag.count;
-                }));
                 return {
                     name: selectedTag.tag,
-                    radius: selectedTag.count || maxRadius * 1.33,
+                    radius: bigBubbleRadius,
                     tag: selectedTag.tag,
                     tagId: selectedTag.tagId,
                     type: "selected"
                 };
             }));
         } else {
-            var centerBubble = { name: "Open government", radius: 150, type: "main" };
+            var centerBubble = { name: "Open government", radius: bigBubbleRadius, type: "main" };
             bubbles = bubbles.concat(centerBubble);
         }
         d3Bubbles.mount({
             selector: ".bubbles",
             data: bubbles,
+            maxRadius: maxRadius,
+            selectedCount: data.selectedTags.length || 1,
             onSelect: main.ports.bubbleSelections.send,
             onDeselect: main.ports.bubbleDeselections.send,
         });
