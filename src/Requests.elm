@@ -188,7 +188,9 @@ postCardsEasy authentication fields language =
 
         body =
             Encode.object
-                [ ( "language", Encode.string (I18n.iso639_1FromLanguage language) )
+                -- Always use en(glish) language because this is the language of the labels below.
+                -- [ ( "language", Encode.string (I18n.iso639_1FromLanguage language) )
+                [ ( "language", Encode.string "en" )
                 , ( "schemas"
                   , Encode.object
                         [ ( "Description", Encode.string "schema:localized-string" )
