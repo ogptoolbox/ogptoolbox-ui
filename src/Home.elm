@@ -410,7 +410,7 @@ viewCollectionThumbnail language user collection =
                 )
             , div [ class "caption" ]
                 [ h4 []
-                    [ text "Outils de consultation" ]
+                    [ text collection.name ]
                 , div [ class "example-author" ]
                     [ -- img [ alt "screen", src "img/france.png" ] []
                       text user.name
