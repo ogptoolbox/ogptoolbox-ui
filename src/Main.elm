@@ -1317,7 +1317,7 @@ viewHeader model language containerClass =
                                     []
                                 ]
                             ]
-                    , div [ class "collapse navbar-collapse navbar-fixed-top"]
+                    , div [ class "collapse navbar-collapse"]
                         [ ul [ class "nav navbar-nav" ]
                             [ li []
                                 [ aForPath
@@ -1379,7 +1379,7 @@ viewHeader model language containerClass =
                             ]
                         ]
                     , div [ class "collapse", id "menu-collapse" ]
-                        [ ul [ class "nav navbar-nav" ]
+                        [ ul [ class "nav navbar-nav navbar-inverse" ]
                             [ button
                             [ class "btn btn-default btn-action"
                             , onClick (DisplayAddNewModal True)
