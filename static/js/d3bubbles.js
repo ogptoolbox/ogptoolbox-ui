@@ -546,12 +546,28 @@ function installPolyfill () {
 
 }
 
+var max_r = null;
+if ($(window).width() < 768) {
+   min_r = 20;
+   max_r = 100;
+}
+else {
+   min_r = 30;
+   max_r = 180;
+}
+var h = null;
+if ($(window).width() < 768) {
+   h = 358;
+}
+else {
+   h = 510;
+}
 
 function mount(options) {
     var tagcloud = new D3Bubbles({
         width: 'auto',
         //TEMPORARY: It will be 490px when filter row will be displayed 
-        height: 510,
+        height: h,
         wrapper: '#tag',
         container: options.selector,
         data: options.data,
@@ -560,8 +576,8 @@ function mount(options) {
             bubbles_max: false,
         },
         radius: {
-            min:30,
-            max:180
+            min:min_r,
+            max:max_r
         },
         colors: {
             bubbles:['#656a6e', '#4cc7c8'],
@@ -581,6 +597,13 @@ function mount(options) {
 
     $(window).off('resize');
     $(window).on('resize', function() {
+        var max_r = null;
+if ($(window).width() < 768) {
+   max_r = 100;
+}
+else {
+   max_r = 180;
+}
         tagcloud.redraw();
     });
 }

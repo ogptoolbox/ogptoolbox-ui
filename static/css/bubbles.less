@@ -45,14 +45,24 @@ svg.D3Bubbles g.bubble-wrapper:hover circle {
     fill: rgba(255,255,255,0.9);
     font-size: 24px;
     cursor: pointer;
+    @media(max-width:760px) {
+        font-size: 18px;
+    }
 }
 #bubble-wrapper-selected text {
     font-size: 16px;
+
+    @media(max-width:760px) {
+        font-size: 14px;
+    }
 }
 #bubble-wrapper-main text.label {
     fill: rgba(255, 255, 255, 0.3);
     font-size: 11px;
     cursor: pointer;
+    @media(max-width:760px) {
+        font-size: 9px;
+    }
 }
 
 #bubble-wrapper-selected text.label {
