@@ -131,7 +131,9 @@ function D3Bubbles(params) {
         if( that.colors_max_bubbles != null ){
             bubbles_colors = d3.scale.ordinal()
                 .domain([that.radius_min, that.radius_max])
-                .range(["#656a6e", "#6dc795" , "#c55760", "#4cc7c8", "#3f6971" ]);
+                .range(["#9aa4a7", 
+                    // , "#7a8082", "#5f6566"
+                    ]);
         }
         var texts_colors = function(radius){
             return that.colors_min_texts;
@@ -549,7 +551,7 @@ function mount(options) {
     var tagcloud = new D3Bubbles({
         width: 'auto',
         //TEMPORARY: It will be 490px when filter row will be displayed 
-        height: 550,
+        height: 510,
         wrapper: '#tag',
         container: options.selector,
         data: options.data,
@@ -559,7 +561,7 @@ function mount(options) {
         },
         radius: {
             min:30,
-            max:100
+            max:180
         },
         colors: {
             bubbles:['#656a6e', '#4cc7c8'],

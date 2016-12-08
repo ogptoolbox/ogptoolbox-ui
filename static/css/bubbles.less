@@ -21,7 +21,7 @@ svg.D3Bubbles g.bubble-wrapper text{
 }
 svg.D3Bubbles g.bubble-wrapper circle {
     cursor: pointer;
-    opacity: 0.85;
+    opacity: 0.6;
 }
 svg.D3Bubbles g.bubble-wrapper:hover circle {
     opacity: 1;
@@ -31,28 +31,32 @@ svg.D3Bubbles g.bubble-wrapper:hover circle {
 }
 
 #bubble-wrapper-main circle, #bubble-wrapper-selected circle {
-    fill: transparent;
-    stroke-width: 3;
-    stroke: rgba(255,255,255,0.3);
-}
-#bubble-wrapper-main circle {
+    fill: #25b5ff;
     transform: scale(0.8);
-}
-#bubble-wrapper-selected circle {
-    transform: scale(0.8);
+    cursor: pointer;
+    opacity: 0.9;
 }
 #bubble-wrapper-selected:hover circle {
-    fill: rgba(255,255,255,0.05);
+        fill: transparent;
+    stroke-width: 3;
+    stroke: rgba(255,255,255,0.3);
 }
 #bubble-wrapper-main text {
     fill: rgba(255,255,255,0.9);
     font-size: 24px;
+    cursor: pointer;
 }
 #bubble-wrapper-selected text {
-    fill: rgba(255,255,255,0.9);
     font-size: 16px;
 }
-#bubble-wrapper-main text.label, #bubble-wrapper-selected text.label {
-    fill: rgba(255,255,255,0.2);
+#bubble-wrapper-main text.label {
+    fill: rgba(255, 255, 255, 0.3);
     font-size: 11px;
+    cursor: pointer;
+}
+
+#bubble-wrapper-selected text.label {
+    fill: rgba(255, 255, 255, 0.4);
+    font-size: 11px;
+    cursor: pointer;
 }
