@@ -99,14 +99,6 @@ update msg ({ editedProperty } as model) authentication language =
 
         LoadProperties cardId keyId ->
             let
-                webData =
-                    case getData model.webData of
-                        Nothing ->
-                            Debug.crash "LoadProperties: cannot happen"
-
-                        Just webData ->
-                            webData
-
                 newEditedProperty =
                     Just
                         { ballots = Dict.empty
