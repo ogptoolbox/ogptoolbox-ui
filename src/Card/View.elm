@@ -1134,7 +1134,8 @@ viewSidebar language card values =
                                                 "Untitled Card"
 
                                     url =
-                                        Configuration.appUrl ++ (Routes.makeUrlWithLanguage language (Routes.urlPathForCard card))
+                                        (String.dropRight 1 Configuration.appUrl)
+                                            ++ (Routes.makeUrlWithLanguage language (Routes.urlPathForCard card))
 
                                     -- TODO: i18n
                                  in
