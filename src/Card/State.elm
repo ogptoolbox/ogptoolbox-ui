@@ -35,19 +35,16 @@ update msg ({ editedProperty } as model) authentication language =
                 webData =
                     case getData model.webData of
                         Nothing ->
-                            Debug.crash "LoadProperties: cannot happen"
+                            Debug.crash "CloseEditPropertiesModal: cannot happen"
 
                         Just webData ->
                             webData
-
-                card =
-                    webData.data
 
                 cmd =
                     Task.perform
                         LoadCardError
                         LoadCardSuccess
-                        (Requests.getCard authentication card.id)
+                        (Requests.getCard authentication webData.data.id)
                         |> Cmd.map ForSelf
             in
                 ( newModel, cmd )
