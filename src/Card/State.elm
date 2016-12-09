@@ -31,8 +31,26 @@ update msg ({ editedProperty } as model) authentication language =
             let
                 newModel =
                     { model | editedProperty = Nothing }
+
+                webData =
+                    case getData model.webData of
+                        Nothing ->
+                            Debug.crash "LoadProperties: cannot happen"
+
+                        Just webData ->
+                            webData
+
+                card =
+                    webData.data
+
+                cmd =
+                    Task.perform
+                        LoadCardError
+                        LoadCardSuccess
+                        (Requests.getCard authentication card.id)
+                        |> Cmd.map ForSelf
             in
-                ( newModel, Cmd.none )
+                ( newModel, cmd )
 
         DisplayUseItModal displayUseItModal ->
             ( { model | displayUseItModal = displayUseItModal }
