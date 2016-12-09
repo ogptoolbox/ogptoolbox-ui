@@ -175,6 +175,15 @@ viewCardContent language card cards values =
                         [ text (getName language card values)
                         , small []
                             [ text (getSubTypes language card values |> String.join ", ") ]
+                        , button
+                            [ attribute "data-target" "#edit-content"
+                            , attribute "data-toggle" "modal"
+                            , class "btn btn-default btn-xs btn-action4"
+                            , onClick (ForSelf (LoadProperties card.id "name"))
+                            , style [ ( "margin-left", "15px" ) ]
+                            , type' "button"
+                            ]
+                            [ text "Edit" ]
                         ]
                     ]
                 ]
