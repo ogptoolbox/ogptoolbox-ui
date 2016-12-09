@@ -101,6 +101,7 @@ type TranslationId
     | SeeAllAndCompare
     | Score
     | SearchInputPlaceholder
+    | Share
     | ShowAll Int
     | SignIn
     | SignOut
@@ -110,6 +111,7 @@ type TranslationId
     | Tags
     | TimeoutExplanation
     | Tool GrammaticalNumber
+    | TweetMessage String String
     | Type
     | UseCase GrammaticalNumber
     | UseCases
@@ -775,6 +777,12 @@ to strengthen governance.
             , spanish = todo
             }
 
+        Share ->
+            { english = s "Share"
+            , french = s "Partager"
+            , spanish = todo
+            }
+
         ShowAll count ->
             { english = s ("Show all " ++ (toString count))
             , french = s ("Voir tous (" ++ (toString count) ++ ")")
@@ -845,6 +853,12 @@ to strengthen governance.
 
                     Plural ->
                         s "Herramientas"
+            }
+
+        TweetMessage name url ->
+            { english = s ("Discover " ++ name ++ " on OGPToolbox.org: " ++ url)
+            , french = s ("Découvrez " ++ name ++ " dans OGPToolbox.org : " ++ url)
+            , spanish = todo
             }
 
         Type ->

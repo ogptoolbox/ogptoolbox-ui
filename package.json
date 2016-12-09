@@ -39,5 +39,11 @@
   },
   "private": true,
   "license": "AGPL-3.0+",
-  "dependencies": {}
+  "dependencies": {
+    "font-awesome": "^4.7.0",
+    "font-awesome-loader": "^1.0.1",
+    "font-awesome-webpack": "0.0.4",
+    "node-sass": "^3.13.0",
+    "sass-loader": "^4.0.2"
+  }
 }

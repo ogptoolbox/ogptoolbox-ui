@@ -7,6 +7,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Html.Helpers exposing (aExternal, aForPath, aIfIsUrl)
+import Http
 import I18n exposing (..)
 import Json.Decode as Decode
 import Routes
@@ -1109,6 +1110,58 @@ viewSidebar language card values =
                 ]
             ]
           -- , viewSimilarTools -- TODO
+        , div
+            [ class "row" ]
+            [ div [ class "col-xs-12" ]
+                [ div [ class "panel panel-default panel-side" ]
+                    [ h6 [ class "panel-title" ]
+                        [ text (I18n.translate language I18n.Share) ]
+                    , div [ class "panel-body chart" ]
+                        -- [ button [ class "btn btn-default btn-action btn-round", type' "button" ]
+                        --     [ i [ attribute "aria-hidden" "true", class "fa fa-facebook" ]
+                        --         []
+                        --     ]
+                        [ a
+                            [ class "btn btn-default btn-action btn-round twitter-share-button"
+                            , href
+                                (let
+                                    cardName =
+                                        case getOneString language nameKeys card values of
+                                            Just name ->
+                                                name
+
+                                            Nothing ->
+                                                "Untitled Card"
+
+                                    url =
+                                        Configuration.appUrl ++ (Routes.makeUrlWithLanguage language (Routes.urlPathForCard card))
+
+                                    -- TODO: i18n
+                                 in
+                                    ("https://twitter.com/intent/tweet?text="
+                                        ++ Http.uriEncode
+                                            (I18n.translate
+                                                language
+                                                (I18n.TweetMessage cardName url)
+                                            )
+                                    )
+                                )
+                            ]
+                            [ i [ attribute "aria-hidden" "true", class "fa fa-twitter" ]
+                                []
+                            ]
+                          -- , button [ class "btn btn-default btn-action btn-round", type' "button" ]
+                          --     [ i [ attribute "aria-hidden" "true", class "fa fa-google-plus" ]
+                          --         []
+                          --     ]
+                          -- , button [ class "btn btn-default btn-action btn-round", type' "button" ]
+                          --     [ i [ attribute "aria-hidden" "true", class "fa fa-linkedin" ]
+                          --         []
+                          --     ]
+                        ]
+                    ]
+                ]
+            ]
         ]
 
 
