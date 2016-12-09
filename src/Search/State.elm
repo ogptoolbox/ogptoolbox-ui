@@ -141,7 +141,7 @@ update msg model authentication language location =
                                 [ Task.perform
                                     CollectionsLoadError
                                     CollectionsLoadSuccess
-                                    (Requests.getCollections (Just 3))
+                                    (Requests.getCollections authentication (Just 3))
                                 , Task.perform
                                     OrganizationsLoadError
                                     OrganizationsLoadSuccess

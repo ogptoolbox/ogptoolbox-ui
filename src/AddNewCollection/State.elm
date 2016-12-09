@@ -99,7 +99,7 @@ update msg ({ fields } as model) authentication language =
                     Task.perform
                         LoadCollectionError
                         LoadCollectionSuccess
-                        (Requests.getCollection collectionId)
+                        (Requests.getCollection authentication collectionId)
                         |> Cmd.map ForSelf
             in
                 ( newModel, cmd )

@@ -112,20 +112,20 @@ getCards authentication searchQuery limit tagIds cardTypes =
         )
 
 
-getCollection : String -> Task Http.Error DataIdBody
-getCollection collectionId =
+getCollection : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
+getCollection authentication collectionId =
     Http.fromJson dataIdBodyDecoder
         (Http.send Http.defaultSettings
             { verb = "GET"
             , url = apiUrl ++ "collections/" ++ collectionId ++ "?show=values&depth=2"
-            , headers = [ ( "Accept", "application/json" ) ]
+            , headers = ( "Accept", "application/json" ) :: authenticationHeaders authentication
             , body = Http.empty
             }
         )
 
 
-getCollections : Maybe Int -> Task Http.Error DataIdsBody
-getCollections limit =
+getCollections : Maybe Authenticator.Model.Authentication -> Maybe Int -> Task Http.Error DataIdsBody
+getCollections authentication limit =
     Http.fromJson dataIdsBodyDecoder
         (Http.send Http.defaultSettings
             { verb = "GET"
@@ -139,7 +139,7 @@ getCollections limit =
                             Just limit ->
                                 "&limit=" ++ (toString limit)
                        )
-            , headers = [ ( "Accept", "application/json" ) ]
+            , headers = ( "Accept", "application/json" ) :: authenticationHeaders authentication
             , body = Http.empty
             }
         )
