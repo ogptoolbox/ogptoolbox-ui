@@ -172,7 +172,7 @@ getTranslationSet translationId =
 
         AboutContributionContent ->
             { english = s "It's easy. Creat your account on the platform and click on “Add” at the top right of the screen. You will be guided!"
-            , french = s "C'est très simple. Il suffit tout d'abord de créer un compte sur la plateforme. Ensuite, cliquer sur "Ajouter" en haut à droite et vous serez guidé."
+            , french = s "C'est très simple. Il suffit tout d'abord de créer un compte sur la plateforme. Ensuite, cliquer sur \"Ajouter\" en haut à droite et vous serez guidé."
             , spanish = todo
             }
 
@@ -322,7 +322,7 @@ getTranslationSet translationId =
 
         AboutSourceContent ->
             { english = s "The code includes three components, each of which is available on framagit:"
-            , french = s "La plateforme référence 4 types d'objets :"
+            , french = s "Le code comporte trois composants, chacun étant stocké sur un dépôt Framagit :"
             , spanish = todo
             }
 
