@@ -112,8 +112,10 @@ type TranslationId
     | Tool GrammaticalNumber
     | Type
     | UseCase GrammaticalNumber
+    | UseCases
     | UsedBy
     | UsedFor
+    | Uses
     | UnexpectedPayloadExplanation
     | UseIt
     | Website
@@ -875,6 +877,12 @@ to strengthen governance.
                         s "Casos de uso"
             }
 
+        UseCases ->
+            { english = s "Use cases"
+            , french = s "Cas d'usage"
+            , spanish = s "Casos de uso"
+            }
+
         UsedBy ->
             { english = s "Used by"
             , french = s "Utilisé par"
@@ -884,6 +892,12 @@ to strengthen governance.
         UsedFor ->
             { english = s "Used for"
             , french = s "Utilisé pour"
+            , spanish = todo
+            }
+
+        Uses ->
+            { english = s "Uses"
+            , french = s "Utilise"
             , spanish = todo
             }
 

@@ -171,11 +171,7 @@ viewCollectionContent language user collection cards values =
                                                             card =
                                                                 getCard cards cardId
                                                         in
-                                                            if
-                                                                List.any
-                                                                    (\subTypeId -> List.member subTypeId card.subTypeIds)
-                                                                    cardTypesForTool
-                                                            then
+                                                            if cardSubTypeIdsIntersect card.subTypeIds cardTypesForTool then
                                                                 Just card
                                                             else
                                                                 Nothing
