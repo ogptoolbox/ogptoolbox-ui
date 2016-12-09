@@ -982,7 +982,14 @@ viewSidebar language card values =
                     [ div [ class "visual" ]
                         [ case getImageLogoUrl language "1000" card values of
                             Just url ->
-                                img [ alt "Logo", src url ] []
+                                div []
+                                    [ button
+                                        [ class "button call-add"
+                                        , onClick (ForSelf (LoadProperties card.id "logo"))
+                                        ]
+                                        [ text "Edit" ]
+                                    , img [ alt "Logo", src url ] []
+                                    ]
 
                             Nothing ->
                                 div [ class "call-container" ]
