@@ -323,7 +323,11 @@ viewCardContent language card cards values =
                                             Nothing ->
                                                 div [ class "call-container" ]
                                                     [ p [] [ text "No use case listed for this tool yet." ]
-                                                    , button [ class "button call-add" ] [ text "+ Add a use case" ]
+                                                    , button
+                                                        [ class "button call-add"
+                                                        , onClick (ForSelf (LoadProperties card.id "use-cases"))
+                                                        ]
+                                                        [ text "+ Add a use case" ]
                                                     ]
 
                                             Just cardIds ->
@@ -373,7 +377,11 @@ viewCardContent language card cards values =
                                             Nothing ->
                                                 div [ class "call-container" ]
                                                     [ p [] [ text "No use case listed for this tool yet." ]
-                                                    , button [ class "button call-add" ] [ text "+ Add a use case" ]
+                                                    , button
+                                                        [ class "button call-add"
+                                                        , onClick (ForSelf (LoadProperties card.id "used-for"))
+                                                        ]
+                                                        [ text "+ Add a use case" ]
                                                     ]
 
                                             Just cardIds ->
@@ -423,7 +431,11 @@ viewCardContent language card cards values =
                                             Nothing ->
                                                 div [ class "call-container" ]
                                                     [ p [] [ text "No tool listed for this use case yet." ]
-                                                    , button [ class "button call-add" ] [ text "+ Add a tool" ]
+                                                    , button
+                                                        [ class "button call-add"
+                                                        , onClick (ForSelf (LoadProperties card.id "uses"))
+                                                        ]
+                                                        [ text "+ Add a tool" ]
                                                     ]
 
                                             Just cardIds ->
@@ -472,7 +484,11 @@ viewCardContent language card cards values =
                                             Nothing ->
                                                 div [ class "call-container" ]
                                                     [ p [] [ text "No organization listed for this tool yet." ]
-                                                    , button [ class "button call-add" ] [ text "+ Add an organization" ]
+                                                    , button
+                                                        [ class "button call-add"
+                                                        , onClick (ForSelf (LoadProperties card.id "used-by"))
+                                                        ]
+                                                        [ text "+ Add an organization" ]
                                                     ]
 
                                             Just cardIds ->
