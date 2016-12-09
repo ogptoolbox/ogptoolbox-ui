@@ -298,7 +298,7 @@ postProperty authentication objectId keyId valueId =
     Http.fromJson dataIdBodyDecoder
         (Http.send Http.defaultSettings
             { verb = "POST"
-            , url = apiUrl ++ "properties?show=ballots&show=values&depth=1"
+            , url = apiUrl ++ "properties?show=ballots&show=values&depth=3"
             , headers =
                 [ ( "Accept", "application/json" )
                 , ( "Content-Type", "application/json" )

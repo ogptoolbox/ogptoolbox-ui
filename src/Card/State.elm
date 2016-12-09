@@ -100,6 +100,7 @@ update msg ({ editedProperty } as model) authentication language =
                     Just
                         { ballots = Dict.empty
                         , cardId = cardId
+                        , cards = Dict.empty
                         , keyId = keyId
                         , properties = Dict.empty
                         , propertyIds = []
@@ -133,6 +134,7 @@ update msg ({ editedProperty } as model) authentication language =
                         (\editedProperty ->
                             { editedProperty
                                 | ballots = data.ballots
+                                , cards = Dict.union data.cards editedProperty.cards
                                 , properties = data.properties
                                 , propertyIds = data.ids
                                 , values = Dict.union data.values editedProperty.values
@@ -200,6 +202,9 @@ update msg ({ editedProperty } as model) authentication language =
                                 newBallots =
                                     Dict.union data.ballots editedProperty.ballots
 
+                                newCards =
+                                    Dict.union data.cards editedProperty.cards
+
                                 newPropertyIds =
                                     data.id :: editedProperty.propertyIds
 
@@ -211,6 +216,7 @@ update msg ({ editedProperty } as model) authentication language =
                             in
                                 { editedProperty
                                     | ballots = newBallots
+                                    , cards = newCards
                                     , properties = newProperties
                                     , propertyIds = newPropertyIds
                                     , selectedField = LocalizedInputTextField (I18n.iso639_1FromLanguage language) ""
@@ -219,8 +225,48 @@ update msg ({ editedProperty } as model) authentication language =
                         )
                         editedProperty
 
+                webData =
+                    case getData model.webData of
+                        Nothing ->
+                            Debug.crash "SubmitValueSuccess: cannot happen: no webData"
+
+                        Just webData ->
+                            webData
+
+                existingData =
+                    webData.data
+
+                newData =
+                    case editedProperty of
+                        Just editedProperty ->
+                            let
+                                newBallots =
+                                    Dict.union data.ballots existingData.ballots
+
+                                newCards =
+                                    Dict.union data.cards existingData.cards
+
+                                newProperties =
+                                    Dict.union data.properties existingData.properties
+
+                                newValues =
+                                    Dict.union data.values existingData.values
+                            in
+                                { existingData
+                                    | ballots = newBallots
+                                    , cards = newCards
+                                    , properties = newProperties
+                                    , values = newValues
+                                }
+
+                        Nothing ->
+                            Debug.crash "SubmitValueSuccess: cannot happen: no editedProperty"
+
                 newModel =
-                    { model | editedProperty = newEditedProperty }
+                    { model
+                        | editedProperty = newEditedProperty
+                        , webData = Data (Loaded { webData | data = newData })
+                    }
             in
                 ( newModel, Cmd.none )
 
@@ -251,6 +297,9 @@ update msg ({ editedProperty } as model) authentication language =
                                 newBallots =
                                     Dict.union data.ballots editedProperty.ballots
 
+                                newCards =
+                                    Dict.union data.cards editedProperty.cards
+
                                 newProperties =
                                     Dict.union data.properties editedProperty.properties
 
@@ -259,6 +308,7 @@ update msg ({ editedProperty } as model) authentication language =
                             in
                                 { editedProperty
                                     | ballots = newBallots
+                                    , cards = newCards
                                     , properties = newProperties
                                     , values = newValues
                                 }

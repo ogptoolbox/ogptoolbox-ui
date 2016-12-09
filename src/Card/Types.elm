@@ -9,6 +9,7 @@ import WebData exposing (..)
 type alias EditedProperty =
     { ballots : Dict String Ballot
     , cardId : String
+    , cards : Dict String Card
     , keyId : String
     , properties : Dict String Property
     , propertyIds : List String
