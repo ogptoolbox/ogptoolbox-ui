@@ -1289,12 +1289,14 @@ viewHeader model language containerClass =
                         [ profileOrResetPasswordNavItem
                         , signInOrOutNavItem
                         , signUpNavItem
-                        , button
-                            [ class "btn btn-default btn-action"
-                            , onClick (DisplayAddNewModal True)
-                            , type' "button"
+                        , li []
+                            [ button
+                                [ class "btn btn-default btn-action"
+                                , onClick (DisplayAddNewModal True)
+                                , type' "button"
+                                ]
+                                [ text (I18n.translate language I18n.AddNew) ]
                             ]
-                            [ text (I18n.translate language I18n.AddNew) ]
                         ]
                     ]
                 ]

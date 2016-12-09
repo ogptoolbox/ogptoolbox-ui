@@ -548,8 +548,12 @@ function installPolyfill () {
 
 var max_r = null;
 if ($(window).width() < 768) {
-   min_r = 20;
-   max_r = 100;
+   min_r = 10;
+   max_r = 70;
+}
+if ($(window).width() < 1030) {
+   min_r = 30;
+   max_r = 130;
 }
 else {
    min_r = 30;
@@ -557,7 +561,10 @@ else {
 }
 var h = null;
 if ($(window).width() < 768) {
-   h = 358;
+   h = 365;
+} 
+if ($(window).width() < 1100) {
+   h = 400;
 }
 else {
    h = 510;
@@ -597,13 +604,6 @@ function mount(options) {
 
     $(window).off('resize');
     $(window).on('resize', function() {
-        var max_r = null;
-if ($(window).width() < 768) {
-   max_r = 100;
-}
-else {
-   max_r = 180;
-}
         tagcloud.redraw();
     });
 }
