@@ -15,6 +15,11 @@ import Types exposing (..)
 import Task exposing (Task)
 
 
+idRegex : Regex.Regex
+idRegex =
+    Regex.regex "(^|/)(\\d+)(\\?|$)"
+
+
 activateUser : String -> String -> Task Http.Error UserBody
 activateUser userId authorization =
     Http.fromJson userBodyDecoder
@@ -38,6 +43,22 @@ authenticationHeaders authentication =
 
         Nothing ->
             []
+
+
+extractId : String -> Maybe String
+extractId url =
+    (Regex.find Regex.All idRegex url
+        |> List.head
+    )
+        `Maybe.andThen`
+            (\match ->
+                case match.submatches |> List.drop 1 |> List.head of
+                    Nothing ->
+                        Nothing
+
+                    Just maybe ->
+                        maybe
+            )
 
 
 getCard : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
@@ -237,27 +258,9 @@ postCardsEasy authentication fields language =
 postCollection : Maybe Authenticator.Model.Authentication -> Maybe String -> AddNewCollectionFields -> String -> Task Http.Error DataIdBody
 postCollection authentication editedCollectionId fields imageUrlPath =
     let
-        regex =
-            Regex.regex "(^|/)(\\d+)(\\?|$)"
-
-        getId : String -> Maybe String
-        getId url =
-            (Regex.find Regex.All regex url
-                |> List.head
-            )
-                `Maybe.andThen`
-                    (\match ->
-                        case match.submatches |> List.drop 1 |> List.head of
-                            Nothing ->
-                                Nothing
-
-                            Just maybe ->
-                                maybe
-                    )
-
         cardIds : List String
         cardIds =
-            String.words fields.cardIds |> List.filterMap getId
+            String.words fields.cardIds |> List.filterMap extractId
 
         url =
             (case editedCollectionId of
@@ -385,7 +388,13 @@ postValue authentication field =
                     ( "schema:uri", "widget:image", Encode.string string )
 
                 CardIdField string ->
-                    ( "schema:card-id", "widget:autocomplete", Encode.string string )
+                    case extractId string of
+                        Just cardId ->
+                            ( "schema:card-id", "widget:autocomplete", Encode.string cardId )
+
+                        Nothing ->
+                            -- TODO: Improve errors handling.
+                            ( "schema:string", "widget:input-text", Encode.string string )
     in
         Http.fromJson dataIdBodyDecoder
             (Http.send Http.defaultSettings
