@@ -1310,23 +1310,23 @@ viewHeader model language containerClass =
             , nav [ class "navbar navbar-inverse" ]
                 [ div [ class containerClass ]
                     [ Html.form
-                            [ class "navbar-form navbar-right collapse mobile"
-                            , onSubmit Search
-                            ]
-                            [ div [ class "form-group search-bar" ]
-                                [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-search" ]
-                                    []
-                                , input
-                                    [ class "form-control"
-                                    , onInput SearchInputChanged
-                                    , placeholder (I18n.translate language I18n.SearchInputPlaceholder)
-                                    , type' "search"
-                                    , value model.searchInputValue
-                                    ]
-                                    []
+                        [ class "navbar-form navbar-right collapse mobile"
+                        , onSubmit Search
+                        ]
+                        [ div [ class "form-group search-bar" ]
+                            [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-search" ]
+                                []
+                            , input
+                                [ class "form-control"
+                                , onInput SearchInputChanged
+                                , placeholder (I18n.translate language I18n.SearchInputPlaceholder)
+                                , type' "search"
+                                , value model.searchInputValue
                                 ]
+                                []
                             ]
-                    , div [ class "collapse navbar-collapse"]
+                        ]
+                    , div [ class "collapse navbar-collapse" ]
                         [ ul [ class "nav navbar-nav" ]
                             [ li []
                                 [ aForPath
@@ -1390,11 +1390,11 @@ viewHeader model language containerClass =
                     , div [ class "collapse", id "menu-collapse" ]
                         [ ul [ class "nav navbar-nav navbar-inverse" ]
                             [ button
-                            [ class "btn btn-default btn-action"
-                            , onClick (DisplayAddNewModal True)
-                            , type' "button"
-                            ]
-                            [ text (I18n.translate language I18n.AddNew) ]
+                                [ class "btn btn-default btn-action"
+                                , onClick (DisplayAddNewModal True)
+                                , type' "button"
+                                ]
+                                [ text (I18n.translate language I18n.AddNew) ]
                             , li []
                                 [ aForPath
                                     Navigate
@@ -1439,7 +1439,7 @@ viewHeader model language containerClass =
                             , signInOrOutNavItem
                             , signUpNavItem
                             ]
-                        ] 
+                        ]
                     ]
                 ]
             ]

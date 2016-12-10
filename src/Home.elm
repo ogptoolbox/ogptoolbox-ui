@@ -49,7 +49,7 @@ view model searchQuery language =
 
 
 viewBanner : Html Msg
-viewBanner = 
+viewBanner =
     -- let
     --     viewSlide1 =
     --         div [ class "col-md-12 text-center" ]
@@ -123,13 +123,13 @@ viewBanner =
                                 [ div [ class "col-md-12 text-center" ]
                                     [ div [ class "bubbles" ] [] ]
                                 ]
-                               , div [ class "row show" ]
-                                   [ a [ href "#metrics", class "col-md-12 text-center banner-link" ]
-                                     [ text "See results "
+                            , div [ class "row show" ]
+                                [ a [ href "#metrics", class "col-md-12 text-center banner-link" ]
+                                    [ text "See results "
                                     , span [ class "glyphicon glyphicon-menu-down" ]
                                         []
                                     ]
-                               ]
+                                ]
                             ]
                         ]
                     , div [ class "item text-center" ]
