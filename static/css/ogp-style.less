@@ -42,6 +42,7 @@ a {
     &.last {
         padding-bottom: 100px;
     }
+
 }
 
 .btn.btn-default {
@@ -155,7 +156,7 @@ a {
     position: fixed;
     left: 50%;
     right: 0;
-    padding: 0 22px;
+    padding: 0 10px;
     margin: 0;
     z-index: 100000;
     background: white;
@@ -246,9 +247,24 @@ ul.nav.nav-pills {
 .banner-button {
     margin-top: 15px;
 }
-
+a.banner-link {
+    color: white;
+    opacity: 0.8;
+    font-size: 16px;
+    .glyphicon {
+        margin-left: 7px;
+        font-size: 85%;
+    }
+    &:hover {
+        opacity: 1;
+    }
+}
 
 // NAVIGATION
+.navbar {
+    min-height: 83px;
+
+}
 nav.navbar.navbar-default {
     background-image: none;
     background-color: white;
@@ -272,7 +288,7 @@ nav.navbar.navbar-default {
     height: 25px;
     background: url(../img/ogptoolbox-logo.png) no-repeat no-repeat ;
     background-size: 191px ;
-    margin: 27px 0 25px;
+    margin: 29px 0 25px;
     margin-left: 0px !important;
 }
 
@@ -286,10 +302,11 @@ p.navbar-text {
     color: #434343;
     line-height: 50px;
     font-weight: 600;
-    margin-right: 20px;
+    margin-right: 10px;
     font-size: 13px;
+    padding-left: 0px;
 }
-nav.navbar.navbar-inverse {
+.navbar-inverse {
     border: none;
     border-radius: 0;
     background-image: none;
@@ -448,6 +465,10 @@ input[type=radio]:checked ~ div, input[type=checkbox]:checked ~ div {
     color: #a3a3a3;
     margin: 30px 0;
 }
+.row.show    {
+    color: #a3a3a3;
+    margin: 25px 0;
+}
 ol.breadcrumb {
     padding: 16px 0;
     background-color: transparent;
@@ -527,7 +548,8 @@ ol.breadcrumb {
 // FOOTER
 .row.footer {
     background-color: @darkest;
-    padding: 45px 0 20px;
+    padding-top: 45px;
+    padding-bottom: 20px;
     margin-top: 0px;
 
     h4 {
@@ -575,6 +597,11 @@ a.etalab-logo img {
     &:hover {
         opacity: 1;
     }
+
+    @media(max-width:768px) { 
+        margin-bottom: 50px;
+    }
+
 }
 
 .dropdown-language .dropdown-toggle {
@@ -806,11 +833,16 @@ div.metrics {
         font-size: 13px;
         font-weight: 300;
     }
-    h3 {
+    a {
         font-size: 26px;
         font-weight: 400;
         margin: 3px 0 4px;
         color: @dark;
+        display: block;
+
+        &:hover {
+               color: @light-blue; 
+        }
     }
 }
 
@@ -846,6 +878,7 @@ h4.zone-label {
     margin-bottom: 24px;
     cursor: pointer;
     position: relative;
+    overflow: hidden;
 
     button.close {
         position: absolute;
@@ -1276,8 +1309,8 @@ a.show-more {
             padding: 0px;
             padding-left: 15px;
             height: 72px;
-            min-height: 72px;
-            max-height: 72px;
+            min-height: 65px;
+            max-height: 65px;   
 
             h4 {
                 margin: 0px 0 4px;
@@ -1753,7 +1786,7 @@ body, html, #main, .main-container {
         right: 0;
         margin: auto 0;
         opacity: .5;
-        width: 100%;
+        width: 110%;
 
     }
     .breadcrumb>.active {
@@ -1804,7 +1837,7 @@ body, html, #main, .main-container {
 
     h4, h3, h2 {
         text-align: left;
-        padding-left: 120px;
+        padding-left: 0px;
         color: white;
     }
     h4 {
@@ -1815,6 +1848,8 @@ body, html, #main, .main-container {
         font-size: 52px;
         margin-top: -10px;
         font-weight: 300;
+        line-height: 0.9em;
+        margin: -2px 0 16px;
     }
     h3 {
         font-size: 17px;
@@ -2290,4 +2325,189 @@ h3.user-mail {
 //LOADER
 .loader {
     margin: 30px 0;
+}
+
+
+
+//MOBILE OPTILIZATION
+@media(max-width:760px) { 
+
+    .container {
+    padding: 28px;
+    }
+    header .container {
+    padding: 0 15px;
+    }
+
+    .navbar-toggle {
+        float: left;
+        margin-left: 15px;
+        margin-top: 28px;
+        margin-right: 20px;
+        border: none;
+    }
+    .navbar-default .navbar-collapse, .navbar-default .navbar-form {
+        border-color: transparent;
+    }
+
+    p.navbar-text {
+        float: left;
+        line-height: 0;
+        position: relative;
+        top: -40px;
+        left: 58px;
+        font-size: 13px;
+    }
+    a.navbar-brand {
+        position: relative;
+        top: -6px;
+    }
+
+    .search-bar {
+
+        span.glyphicon.glyphicon-search {
+        color: grey;
+        position: relative;
+        top: 4px;
+        left: 13px;
+        }
+
+        input.form-control {
+        width: 92%;
+        }
+    }
+
+    .form-control {
+        display: initial;
+    }
+
+    button.btn.btn-default.btn-action {
+        margin-left: -30px;
+        margin-top: 8px;
+        margin-bottom: 15px;
+    }
+
+    form.navbar-form.navbar-right {
+    margin: 0;
+    border: none;
+    padding: 5px 0px 15px;
+    box-shadow: none;
+    }
+    .mobile {
+        display: block;
+    }
+    #menu-collapse .navbar-inverse {
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 75px;
+        padding: 28px 0 20px;
+        z-index: 1000;
+    }
+    .banner {
+        height: 420px;
+    }
+    .row.show {
+        margin: 13px 0;
+        a {
+            font-size: 13px;
+        }
+    }
+
+    div.metrics {
+        padding: 20px 0;
+
+        a {
+            margin: 0;
+                font-size: 20px;
+        }
+    }
+    
+}
+
+// TABLETTE
+@media(max-width:768px) { 
+    .browse-tag {
+        display: none;
+    }
+    .row.browse {
+    padding: 150px 10px;
+}
+    .scroll-content {
+        left: 0;
+    }
+    .full-bg img.cover, .banner.screenshot img {
+        width: auto;
+        height: 100%;
+    }
+    .banner.collection-header {
+        height: auto;
+
+    }
+    .row.fixed {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+    }
+
+    p.navbar-text {
+        font-size: 14px;
+    }
+    .banner {
+        height: 470px;
+    }
+    .list {
+        &.p90 {
+            padding-top: 0px;
+            padding-bottom: 70px;
+        }
+        .thumbnail {
+            .visual {
+                width: 100px;
+            }
+        }
+    }
+
+    .content-right {
+        padding-left: 10px;
+        margin-top: 40px;
+    }
+    .modal-dialog {
+        width: 90%;
+        margin: 20px auto;
+
+        .media.action .icon {
+            padding: 6px 20px;
+        }
+    }
+    .container-fluid {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    header .container-fluid {
+        padding: 0 10px;
+    }
+
+}
+
+@media(min-width:768px) and (max-width:1050px) { 
+    .row.list.p90 {
+        padding-top: 70px;
+    }
+    .browse-tag {
+        display: block;
+        float: left;
+        height: 520px;
+        width: 100%;
+        z-index: 1000;
+    }
+    .scroll-content {
+    top: 300px;
+    left: 0;
+    }
+    .banner {
+        height: 470px;
+    }
+
+
 }

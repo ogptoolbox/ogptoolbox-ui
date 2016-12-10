@@ -1265,7 +1265,7 @@ viewHeader model language containerClass =
                             [ attribute "aria-controls" "navbar"
                             , attribute "aria-expanded" "false"
                             , class "navbar-toggle collapsed"
-                            , attribute "data-target" "#navbar"
+                            , attribute "data-target" "#menu-collapse"
                             , attribute "data-toggle" "collapse"
                             , type' "button"
                             ]
@@ -1287,40 +1287,41 @@ viewHeader model language containerClass =
                         , p [ class "navbar-text" ]
                             [ text (I18n.translate language I18n.HeaderTitle) ]
                         ]
-                    , ul [ class "nav navbar-nav navbar-right" ]
+                    , ul [ class "nav navbar-nav navbar-right collapse navbar-collapse" ]
                         [ profileOrResetPasswordNavItem
                         , signInOrOutNavItem
                         , signUpNavItem
-                        , button
-                            [ class "btn btn-default btn-action"
-                            , onClick (DisplayAddNewModal True)
-                            , type' "button"
+                        , li []
+                            [ button
+                                [ class "btn btn-default btn-action"
+                                , onClick (DisplayAddNewModal True)
+                                , type' "button"
+                                ]
+                                [ text (I18n.translate language I18n.AddNew) ]
                             ]
-                            [ text (I18n.translate language I18n.AddNew) ]
                         ]
                     ]
                 ]
             , nav [ class "navbar navbar-inverse" ]
                 [ div [ class containerClass ]
-                    [ div [ class "navbar-header" ]
-                        [ button
-                            [ attribute "aria-expanded" "false"
-                            , class "navbar-toggle collapsed"
-                            , attribute "data-target" "#bs-example-navbar-collapse-1"
-                            , attribute "data-toggle" "collapse"
-                            , type' "button"
+                    [ Html.form
+                            [ class "navbar-form navbar-right collapse mobile"
+                            , onSubmit Search
                             ]
-                            [ span [ class "sr-only" ]
-                                [ text "Toggle navigation" ]
-                            , span [ class "icon-bar" ]
-                                []
-                            , span [ class "icon-bar" ]
-                                []
-                            , span [ class "icon-bar" ]
-                                []
+                            [ div [ class "form-group search-bar" ]
+                                [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-search" ]
+                                    []
+                                , input
+                                    [ class "form-control"
+                                    , onInput SearchInputChanged
+                                    , placeholder (I18n.translate language I18n.SearchInputPlaceholder)
+                                    , type' "search"
+                                    , value model.searchInputValue
+                                    ]
+                                    []
+                                ]
                             ]
-                        ]
-                    , div [ class "collapse navbar-collapse", id "bs-example-navbar-collapse-1" ]
+                    , div [ class "collapse navbar-collapse"]
                         [ ul [ class "nav navbar-nav" ]
                             [ li []
                                 [ aForPath
@@ -1381,6 +1382,59 @@ viewHeader model language containerClass =
                                 ]
                             ]
                         ]
+                    , div [ class "collapse", id "menu-collapse" ]
+                        [ ul [ class "nav navbar-nav navbar-inverse" ]
+                            [ button
+                            [ class "btn btn-default btn-action"
+                            , onClick (DisplayAddNewModal True)
+                            , type' "button"
+                            ]
+                            [ text (I18n.translate language I18n.AddNew) ]
+                            , li []
+                                [ aForPath
+                                    Navigate
+                                    language
+                                    "/tools"
+                                    []
+                                    [ text (I18n.translate language (I18n.Tool I18n.Plural)) ]
+                                ]
+                            , li []
+                                [ aForPath
+                                    Navigate
+                                    language
+                                    "/use-cases"
+                                    []
+                                    [ text (I18n.translate language (I18n.UseCase I18n.Plural)) ]
+                                ]
+                              --   , li []
+                              --       [ aForPath
+                              --           Navigate
+                              --           language
+                              --           "/organizations"
+                              --           []
+                              --           [ text (I18n.translate language (I18n.Organization I18n.Plural)) ]
+                              --       ]
+                            , li []
+                                [ aForPath
+                                    Navigate
+                                    language
+                                    "/collections"
+                                    []
+                                    [ text (I18n.translate language (I18n.Collection I18n.Plural)) ]
+                                ]
+                            , li []
+                                [ aForPath
+                                    Navigate
+                                    language
+                                    "/help"
+                                    []
+                                    [ text (I18n.translate language I18n.Help) ]
+                                ]
+                            , profileOrResetPasswordNavItem
+                            , signInOrOutNavItem
+                            , signUpNavItem
+                            ]
+                        ] 
                     ]
                 ]
             ]

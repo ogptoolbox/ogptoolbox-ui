@@ -175,8 +175,8 @@ getTranslationSet translationId =
             }
 
         AboutContributionContent ->
-            { english = s "Very simply. You only have to create an account on the platform and click on \"Add\" at the top right of the screen and you will be guided."
-            , french = s "It's easy. Creat your account on the platform and click on “Add” at the top right of the screen. You will be guided!"
+            { english = s "It's easy. Creat your account on the platform and click on “Add” at the top right of the screen. You will be guided!"
+            , french = s "C'est très simple. Il suffit tout d'abord de créer un compte sur la plateforme. Ensuite, cliquer sur \"Ajouter\" en haut à droite et vous serez guidé."
             , spanish = todo
             }
 
@@ -260,13 +260,13 @@ getTranslationSet translationId =
 
         AboutModeration ->
             { english = s "How are contributions moderated?"
-            , french = s "Comment puis-je renseigner un outil, un cas d'usage, une collection ?"
+            , french = s "Comment sont modérées les contributions ?"
             , spanish = todo
             }
 
         AboutModerationContent ->
             { english = s "The OGP Toolbox is based on community moderation. Data from the harvested catalogues and users’ contributions are automatically sort out through an open vote system. For each field, the most popular suggested description is highlighted in the tool, use case or organization card. The vote on available propositions is accessible by clicking on the “edit” button at the right of each field."
-            , french = s "C'est très simple. Il suffit tout d'abord de créer un compte sur la plateforme. Ensuite, cliquer sur \"Ajouter\" en haut à droite et vous serez guidé."
+            , french = s "OGP Toolbox s'appuie sur une modération communautaire. Les données provenant des catalogues moissonnées et des contributions des utilisateurs sont triées de façon automatique à travers un système de vote ouvert. Pour chaque champ, la proposition de description ou de valeur la plus votée est mise en avant sur la fiche outil, cas d'usage ou organisation. Le vote sur les propositions disponibles est accessible en cliquant sur le bouton \"edit\" à la droite de chaque champ. "
             , spanish = todo
             }
 
@@ -326,7 +326,7 @@ getTranslationSet translationId =
 
         AboutSourceContent ->
             { english = s "The code includes three components, each of which is available on framagit:"
-            , french = s "La plateforme référence 4 types d'objets :"
+            , french = s "Le code comporte trois composants, chacun étant stocké sur un dépôt Framagit :"
             , spanish = todo
             }
 
