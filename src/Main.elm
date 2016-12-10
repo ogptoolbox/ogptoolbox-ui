@@ -1228,10 +1228,7 @@ viewHeader model language containerClass =
                     li []
                         [ a
                             [ href "#"
-                            , onWithOptions
-                                "click"
-                                { preventDefault = True, stopPropagation = False }
-                                (Json.Decode.succeed (AuthenticatorRouteMsg (Just Authenticator.Model.SignOutRoute)))
+                            , onClick (AuthenticatorMsg Authenticator.Types.signOutMsg)
                             ]
                             [ text (I18n.translate language I18n.SignOut) ]
                         ]
