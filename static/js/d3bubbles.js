@@ -546,19 +546,31 @@ function installPolyfill () {
 
 
 function mount(options) {
+
+    var element = document.querySelector(options.selector);
+    var rect = element.getBoundingClientRect();
+    var containerHeight = rect.height;
+
+    var minRadius = 40;
+
+    // Calculate max radius based on container height
+    // Reduce radius depending on number of bubbles selected
+    var padding = 20;
+    var maxRadius = ((containerHeight / 2) - padding) - (options.selectedCount * 10);
+
     var tagcloud = new D3Bubbles({
         width: 'auto',
-        height: 490,
+        height: 'auto',
         wrapper: '#tag',
         container: options.selector,
         data: options.data,
         bubbles: {
             bubbles_per_px: 0.02,
-            bubbles_max: false,
+            bubbles_max: 'auto',
         },
         radius: {
-            min:30,
-            max:100
+            min: minRadius,
+            max: maxRadius
         },
         colors: {
             bubbles:['#656a6e', '#4cc7c8'],
