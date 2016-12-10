@@ -1156,7 +1156,7 @@ viewFooter model language =
                                 [ aForPath
                                     Navigate
                                     language
-                                    "/about"
+                                    "/help"
                                     []
                                     [ text (I18n.translate language I18n.About) ]
                                 ]
