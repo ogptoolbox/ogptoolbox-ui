@@ -117,7 +117,7 @@ getCollection authentication collectionId =
     Http.fromJson dataIdBodyDecoder
         (Http.send Http.defaultSettings
             { verb = "GET"
-            , url = apiUrl ++ "collections/" ++ collectionId ++ "?show=values&depth=2"
+            , url = apiUrl ++ "collections/" ++ collectionId ++ "?show=values&depth=3"
             , headers = ( "Accept", "application/json" ) :: authenticationHeaders authentication
             , body = Http.empty
             }
