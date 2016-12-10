@@ -5,7 +5,7 @@ import Authenticator.ResetPassword as ResetPassword
 import Authenticator.SignIn as SignIn
 import Authenticator.SignOut as SignOut
 import Authenticator.SignUp as SignUp
-import Authenticator.Update exposing (Msg(..))
+import Authenticator.Types exposing (InternalMsg(..), Msg(..))
 import Html exposing (Html)
 import Html.App
 import I18n
@@ -31,13 +31,13 @@ viewModalBody : I18n.Language -> Route -> Model -> Html Msg
 viewModalBody language route model =
     case route of
         ResetPasswordRoute ->
-            Html.App.map ResetPasswordMsg (ResetPassword.viewModalBody model.resetPassword)
+            Html.App.map (ForSelf << ResetPasswordMsg) (ResetPassword.viewModalBody model.resetPassword)
 
         SignInRoute ->
-            Html.App.map SignInMsg (SignIn.viewModalBody language model.signIn)
+            Html.App.map (ForSelf << SignInMsg) (SignIn.viewModalBody language model.signIn)
 
         SignOutRoute ->
-            Html.App.map SignOutMsg (SignOut.viewModalBody model.signOut)
+            Html.App.map (ForSelf << SignOutMsg) (SignOut.viewModalBody model.signOut)
 
         SignUpRoute ->
-            Html.App.map SignUpMsg (SignUp.viewModalBody model.signUp)
+            Html.App.map (ForSelf << SignUpMsg) (SignUp.viewModalBody model.signUp)

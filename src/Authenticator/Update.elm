@@ -5,16 +5,10 @@ import Authenticator.ResetPassword as ResetPassword
 import Authenticator.SignIn as SignIn
 import Authenticator.SignOut as SignOut
 import Authenticator.SignUp as SignUp
+import Authenticator.Types exposing (..)
 
 
-type Msg
-    = ResetPasswordMsg ResetPassword.Msg
-    | SignInMsg SignIn.Msg
-    | SignOutMsg SignOut.Msg
-    | SignUpMsg SignUp.Msg
-
-
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : InternalMsg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ResetPasswordMsg subMsg ->
@@ -25,7 +19,7 @@ update msg model =
                 model' =
                     { model | authentication = authentication, resetPassword = resetPassword }
             in
-                ( model', Cmd.map ResetPasswordMsg resetPasswordEffect )
+                ( model', Cmd.map (ForSelf << ResetPasswordMsg) resetPasswordEffect )
 
         SignInMsg subMsg ->
             let
@@ -35,7 +29,7 @@ update msg model =
                 model' =
                     { model | authentication = authentication, signIn = signIn }
             in
-                ( model', Cmd.map SignInMsg signInEffect )
+                ( model', Cmd.map (ForSelf << SignInMsg) signInEffect )
 
         SignOutMsg subMsg ->
             let
@@ -45,7 +39,7 @@ update msg model =
                 model' =
                     { model | authentication = Nothing, signOut = signOut }
             in
-                ( model', Cmd.map SignOutMsg signOutEffect )
+                ( model', Cmd.map (ForSelf << SignOutMsg) signOutEffect )
 
         SignUpMsg subMsg ->
             let
@@ -55,4 +49,4 @@ update msg model =
                 model' =
                     { model | authentication = authentication, signUp = signUp }
             in
-                ( model', Cmd.map SignUpMsg signUpEffect )
+                ( model', Cmd.map (ForSelf << SignUpMsg) signUpEffect )

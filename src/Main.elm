@@ -9,6 +9,7 @@ import AddNewCollection.Types
 import AddNewCollection.View
 import Authenticator.Activate
 import Authenticator.Model
+import Authenticator.Types
 import Authenticator.Update
 import Authenticator.View
 import Card.State
@@ -449,7 +450,7 @@ type Msg
     | ActivationMsg Authenticator.Activate.InternalMsg
     | AddNewMsg AddNew.Types.InternalMsg
     | AddNewCollectionMsg AddNewCollection.Types.InternalMsg
-    | AuthenticatorMsg Authenticator.Update.Msg
+    | AuthenticatorMsg Authenticator.Types.InternalMsg
     | AuthenticatorRouteMsg (Maybe Authenticator.Model.Route)
     | CardMsg Card.Types.InternalMsg
     | CollectionMsg Collection.Types.InternalMsg
@@ -483,6 +484,14 @@ translateAddNewCollectionMsg : AddNewCollection.Types.MsgTranslator Msg
 translateAddNewCollectionMsg =
     AddNewCollection.Types.translateMsg
         { onInternalMsg = AddNewCollectionMsg
+        , onNavigate = Navigate
+        }
+
+
+translateAuthenticatorMsg : Authenticator.Types.MsgTranslator Msg
+translateAuthenticatorMsg =
+    Authenticator.Types.translateMsg
+        { onInternalMsg = AuthenticatorMsg
         , onNavigate = Navigate
         }
 
@@ -614,7 +623,7 @@ update msg model =
                         else
                             ( model', Cmd.none )
                 in
-                    model'' ! [ Cmd.map AuthenticatorMsg childCmd, effect'' ]
+                    model'' ! [ Cmd.map translateAuthenticatorMsg childCmd, effect'' ]
 
             AuthenticatorRouteMsg authenticatorRouteMaybe ->
                 ( { model | authenticatorRouteMaybe = authenticatorRouteMaybe }
@@ -1027,9 +1036,8 @@ viewAuthenticatorModal model language =
                             , h4 [ class "modal-title", id "modal-title" ]
                                 [ text (Authenticator.View.modalTitle authenticatorRoute) ]
                             ]
-                        , Html.App.map
-                            AuthenticatorMsg
-                            (Authenticator.View.viewModalBody language authenticatorRoute model.authenticatorModel)
+                        , Authenticator.View.viewModalBody language authenticatorRoute model.authenticatorModel
+                            |> Html.App.map translateAuthenticatorMsg
                         ]
                     ]
                 ]
