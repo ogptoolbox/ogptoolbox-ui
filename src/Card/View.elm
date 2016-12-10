@@ -984,7 +984,7 @@ viewSidebar language card values =
                             Just url ->
                                 div []
                                     [ button
-                                        [ class "button call-add"
+                                        [ class "button call-add pull-right"
                                         , onClick (ForSelf (LoadProperties card.id "logo"))
                                         ]
                                         [ text "Edit" ]
