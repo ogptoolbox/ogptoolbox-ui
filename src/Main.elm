@@ -224,6 +224,7 @@ urlUpdate ( i18nRoute, location ) model =
                                                 Collection.State.update
                                                     (Collection.Types.LoadCollection collectionId)
                                                     model.collectionModel
+                                                    model.authentication
                                                     language
 
                                             newModel =
@@ -237,6 +238,7 @@ urlUpdate ( i18nRoute, location ) model =
                                                 Collections.State.update
                                                     Collections.Types.LoadCollections
                                                     model.collectionsModel
+                                                    model.authentication
                                                     language
 
                                             newModel =
@@ -631,7 +633,7 @@ update msg model =
             CollectionMsg childMsg ->
                 let
                     ( collectionModel, childCmd ) =
-                        Collection.State.update childMsg model.collectionModel language
+                        Collection.State.update childMsg model.collectionModel model.authentication language
                 in
                     ( { model | collectionModel = collectionModel }
                     , Cmd.map translateCollectionMsg childCmd
@@ -640,7 +642,7 @@ update msg model =
             CollectionsMsg childMsg ->
                 let
                     ( collectionsModel, childCmd ) =
-                        Collections.State.update childMsg model.collectionsModel language
+                        Collections.State.update childMsg model.collectionsModel model.authentication language
                 in
                     ( { model | collectionsModel = collectionsModel }
                     , Cmd.map translateCollectionsMsg childCmd

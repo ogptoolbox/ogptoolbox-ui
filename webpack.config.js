@@ -25,8 +25,14 @@ var commonConfig = {
     noParse: /\.elm$/,
     loaders: [
       {
-        test: /\.(eot|ttf|woff|woff2|png|svg)$/,
-        loader: 'file-loader'
+        test: /\.(png|svg|ttf|eot|svg)(\?[\s\S]+)?$/,
+        loader: 'file'
+      },
+      {
+        test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        // Limiting the size of the woff fonts breaks font-awesome ONLY for the extract text plugin
+        // loader: 'url?limit=10000&mimetype=application/font-woff'
+        loader: 'url'
       }
     ]
   },
@@ -46,6 +52,7 @@ if (TARGET_ENV === 'development') {
   module.exports = merge(commonConfig, {
     entry: [
       'webpack-dev-server/client?http://localhost:3011',
+      'font-awesome-loader',
       'expose?$!expose?jQuery!jquery',
       'bootstrap-webpack!./bootstrap.config.js',
       path.join(__dirname, 'static/js/index.js')
@@ -76,6 +83,7 @@ if (TARGET_ENV === 'production') {
   console.log('Building for prod...');
   module.exports = merge(commonConfig, {
     entry: [
+      'font-awesome-loader',
       'expose?$!expose?jQuery!jquery',
       'bootstrap-webpack!./bootstrap.config.prod.js',
       path.join(__dirname, 'static/js/index.js')

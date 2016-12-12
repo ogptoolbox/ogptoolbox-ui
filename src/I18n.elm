@@ -101,6 +101,7 @@ type TranslationId
     | SeeAllAndCompare
     | Score
     | SearchInputPlaceholder
+    | Share
     | ShowAll Int
     | SignIn
     | SignOut
@@ -110,10 +111,13 @@ type TranslationId
     | Tags
     | TimeoutExplanation
     | Tool GrammaticalNumber
+    | TweetMessage String String
     | Type
     | UseCase GrammaticalNumber
+    | UseCases
     | UsedBy
     | UsedFor
+    | Uses
     | UnexpectedPayloadExplanation
     | UseIt
     | Website
@@ -773,6 +777,12 @@ to strengthen governance.
             , spanish = todo
             }
 
+        Share ->
+            { english = s "Share"
+            , french = s "Partager"
+            , spanish = todo
+            }
+
         ShowAll count ->
             { english = s ("Show all " ++ (toString count))
             , french = s ("Voir tous (" ++ (toString count) ++ ")")
@@ -845,6 +855,12 @@ to strengthen governance.
                         s "Herramientas"
             }
 
+        TweetMessage name url ->
+            { english = s ("Discover " ++ name ++ " on OGPToolbox.org: " ++ url)
+            , french = s ("Découvrez " ++ name ++ " dans OGPToolbox.org : " ++ url)
+            , spanish = todo
+            }
+
         Type ->
             { english = s "Type"
             , french = s "Type"
@@ -875,6 +891,12 @@ to strengthen governance.
                         s "Casos de uso"
             }
 
+        UseCases ->
+            { english = s "Use cases"
+            , french = s "Cas d'usage"
+            , spanish = s "Casos de uso"
+            }
+
         UsedBy ->
             { english = s "Used by"
             , french = s "Utilisé par"
@@ -884,6 +906,12 @@ to strengthen governance.
         UsedFor ->
             { english = s "Used for"
             , french = s "Utilisé pour"
+            , spanish = todo
+            }
+
+        Uses ->
+            { english = s "Uses"
+            , french = s "Utilise"
             , spanish = todo
             }
 

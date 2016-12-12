@@ -7,8 +7,10 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Html.Helpers exposing (..)
+import Http
 import I18n
 import Routes
+import String
 import Types exposing (..)
 import Views exposing (viewLoading, viewWebData)
 import WebData exposing (..)
@@ -127,7 +129,55 @@ viewCollectionContent : I18n.Language -> User -> Collection -> Dict String Card 
 viewCollectionContent language user collection cards values =
     div [ class "row" ]
         [ div [ class "container" ]
-            [ div [ class "row" ]
+            [ div
+                [ class "row" ]
+                [ div [ class "col-xs-12" ]
+                    [ div [ class "panel panel-default panel-side" ]
+                        [ h6 [ class "panel-title" ]
+                            [ text (I18n.translate language I18n.Share) ]
+                        , div [ class "panel-body chart" ]
+                            -- [ button [ class "btn btn-default btn-action btn-round", type' "button" ]
+                            --     [ i [ attribute "aria-hidden" "true", class "fa fa-facebook" ]
+                            --         []
+                            --     ]
+                            [ a
+                                [ class "btn btn-default btn-action btn-round twitter-share-button"
+                                , href
+                                    (let
+                                        url =
+                                            (String.dropRight 1 Configuration.appUrl)
+                                                ++ (Routes.makeUrlWithLanguage
+                                                        language
+                                                        ("/collections/" ++ collection.id)
+                                                   )
+
+                                        -- TODO: i18n
+                                     in
+                                        ("https://twitter.com/intent/tweet?text="
+                                            ++ Http.uriEncode
+                                                (I18n.translate
+                                                    language
+                                                    (I18n.TweetMessage collection.name url)
+                                                )
+                                        )
+                                    )
+                                ]
+                                [ i [ attribute "aria-hidden" "true", class "fa fa-twitter" ]
+                                    []
+                                ]
+                              -- , button [ class "btn btn-default btn-action btn-round", type' "button" ]
+                              --     [ i [ attribute "aria-hidden" "true", class "fa fa-google-plus" ]
+                              --         []
+                              --     ]
+                              -- , button [ class "btn btn-default btn-action btn-round", type' "button" ]
+                              --     [ i [ attribute "aria-hidden" "true", class "fa fa-linkedin" ]
+                              --         []
+                              --     ]
+                            ]
+                        ]
+                    ]
+                ]
+            , div [ class "row" ]
                 [ div [ class "col-md-12 content" ]
                     [ div [ class "row" ]
                         [ div [ class "col-xs-12" ]
@@ -171,11 +221,7 @@ viewCollectionContent language user collection cards values =
                                                             card =
                                                                 getCard cards cardId
                                                         in
-                                                            if
-                                                                List.any
-                                                                    (\subTypeId -> List.member subTypeId card.subTypeIds)
-                                                                    cardTypesForTool
-                                                            then
+                                                            if cardSubTypeIdsIntersect card.subTypeIds cardTypesForTool then
                                                                 Just card
                                                             else
                                                                 Nothing

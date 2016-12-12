@@ -7,6 +7,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Html.Helpers exposing (aExternal, aForPath, aIfIsUrl)
+import Http
 import I18n exposing (..)
 import Json.Decode as Decode
 import Routes
@@ -140,10 +141,10 @@ viewCardContent language card cards values =
                                         )
 
                                 Just keyValue ->
-                                    viewValueType language cards values keyValue.value
+                                    viewValueType language cards values False keyValue.value
                             ]
                         , td []
-                            [ viewValueType language cards values valueValue.value
+                            [ viewValueType language cards values True valueValue.value
                             ]
                         , td []
                             [ button
@@ -174,6 +175,15 @@ viewCardContent language card cards values =
                         [ text (getName language card values)
                         , small []
                             [ text (getSubTypes language card values |> String.join ", ") ]
+                        , button
+                            [ attribute "data-target" "#edit-content"
+                            , attribute "data-toggle" "modal"
+                            , class "btn btn-default btn-xs btn-action4"
+                            , onClick (ForSelf (LoadProperties card.id "name"))
+                            , style [ ( "margin-left", "15px" ) ]
+                            , type' "button"
+                            ]
+                            [ text "Edit" ]
                         ]
                     ]
                 ]
@@ -297,83 +307,221 @@ viewCardContent language card cards values =
                                         ]
                                     ]
                                 ]
-                           , div [ class "panel panel-default" ]
-                                [ div [ class "panel-heading" ]
-                                    [ div [ class "row" ]
-                                        [ div [ class "col-xs-8 text-left" ]
-                                            [ h3 [ class "panel-title" ]
-                                                [ text (I18n.translate language I18n.UsedFor) ]
+                           , (if cardSubTypeIdsIntersect card.subTypeIds cardTypesForOrganization then
+                                div [ class "panel panel-default" ]
+                                    [ div [ class "panel-heading" ]
+                                        [ div [ class "row" ]
+                                            [ div [ class "col-xs-8 text-left" ]
+                                                [ h3 [ class "panel-title" ]
+                                                    [ text (I18n.translate language I18n.UseCases) ]
+                                                ]
+                                            , div [ class "col-xs-4 text-right up7" ]
+                                                -- [ a [ class "show-more" ]
+                                                --     [ bestOf usagesKeys ]
+                                                [ button
+                                                    [ class "btn btn-default btn-xs btn-action"
+                                                    , onClick (ForSelf (LoadProperties card.id "use-cases"))
+                                                    , type' "button"
+                                                    ]
+                                                    [ text "Add" ]
+                                                ]
                                             ]
                                         ]
-                                    ]
-                                , div [ class "panel-body" ]
-                                    -- TODO Get different keys by card.type
-                                    [ case Dict.get "use-case" card.references of
-                                        Nothing ->
-                                            div [ class "call-container" ]
-                                                [ p [] [ text "No use case listed for this tool yet." ]
-                                                , button [ class "button call-add" ] [ text "+ Add a use case" ]
-                                                ]
+                                    , div [ class "panel-body" ]
+                                        -- TODO Get different keys by card.type
+                                        [ case Dict.get "use-case" card.references of
+                                            Nothing ->
+                                                div [ class "call-container" ]
+                                                    [ p [] [ text "No use case listed for this tool yet." ]
+                                                    , button
+                                                        [ class "button call-add"
+                                                        , onClick (ForSelf (LoadProperties card.id "use-cases"))
+                                                        ]
+                                                        [ text "+ Add a use case" ]
+                                                    ]
 
-                                        Just cardIds ->
-                                            div [ class "row list" ]
-                                                [ div [ class "col-xs-12" ]
-                                                    (List.filterMap
-                                                        (\cardId ->
-                                                            Dict.get cardId cards
-                                                                |> Maybe.map
-                                                                    (viewCardListItem
-                                                                        navigate
-                                                                        language
-                                                                        values
-                                                                    )
+                                            Just cardIds ->
+                                                div [ class "row list" ]
+                                                    [ div [ class "col-xs-12" ]
+                                                        (List.filterMap
+                                                            (\cardId ->
+                                                                Dict.get cardId cards
+                                                                    |> Maybe.map
+                                                                        (viewCardListItem
+                                                                            navigate
+                                                                            language
+                                                                            values
+                                                                        )
+                                                            )
+                                                            cardIds
                                                         )
-                                                        cardIds
-                                                    )
-                                                ]
-                                    ]
-                                ]
-                           , div [ class "panel panel-default" ]
-                                [ div [ class "panel-heading" ]
-                                    [ div [ class "row" ]
-                                        [ div [ class "col-xs-8 text-left" ]
-                                            [ h3 [ class "panel-title" ]
-                                                [ text (I18n.translate language I18n.UsedBy) ]
-                                            ]
-                                        , div [ class "col-xs-4 text-right up7" ]
-                                            [ a [ class "show-more" ]
-                                                [ bestOf usedByKeys ]
-                                            , button [ class "btn btn-default btn-xs btn-action", type' "button" ]
-                                                [ text "Add" ]
-                                            ]
+                                                    ]
                                         ]
                                     ]
-                                , div [ class "panel-body" ]
-                                    [ case Dict.get "organization" card.references of
-                                        Nothing ->
-                                            div [ class "call-container" ]
-                                                [ p [] [ text "No organization listed for this tool yet." ]
-                                                , button [ class "button call-add" ] [ text "+ Add an organization" ]
+                              else
+                                text ""
+                             )
+                           , (if cardSubTypeIdsIntersect card.subTypeIds cardTypesForTool then
+                                div [ class "panel panel-default" ]
+                                    [ div [ class "panel-heading" ]
+                                        [ div [ class "row" ]
+                                            [ div [ class "col-xs-8 text-left" ]
+                                                [ h3 [ class "panel-title" ]
+                                                    [ text (I18n.translate language I18n.UsedFor) ]
                                                 ]
+                                            , div [ class "col-xs-4 text-right up7" ]
+                                                -- [ a [ class "show-more" ]
+                                                --     [ bestOf usedForKeys ]
+                                                [ button
+                                                    [ class "btn btn-default btn-xs btn-action"
+                                                    , onClick (ForSelf (LoadProperties card.id "used-for"))
+                                                    , type' "button"
+                                                    ]
+                                                    [ text "Add" ]
+                                                ]
+                                            ]
+                                        ]
+                                    , div [ class "panel-body" ]
+                                        -- TODO Get different keys by card.type
+                                        [ case Dict.get "use-case" card.references of
+                                            Nothing ->
+                                                div [ class "call-container" ]
+                                                    [ p [] [ text "No use case listed for this tool yet." ]
+                                                    , button
+                                                        [ class "button call-add"
+                                                        , onClick (ForSelf (LoadProperties card.id "used-for"))
+                                                        ]
+                                                        [ text "+ Add a use case" ]
+                                                    ]
 
-                                        Just cardIds ->
-                                            div [ class "row list" ]
-                                                [ div [ class "col-xs-12" ]
-                                                    (List.filterMap
-                                                        (\cardId ->
-                                                            Dict.get cardId cards
-                                                                |> Maybe.map
-                                                                    (viewCardListItem
-                                                                        navigate
-                                                                        language
-                                                                        values
-                                                                    )
+                                            Just cardIds ->
+                                                div [ class "row list" ]
+                                                    [ div [ class "col-xs-12" ]
+                                                        (List.filterMap
+                                                            (\cardId ->
+                                                                Dict.get cardId cards
+                                                                    |> Maybe.map
+                                                                        (viewCardListItem
+                                                                            navigate
+                                                                            language
+                                                                            values
+                                                                        )
+                                                            )
+                                                            cardIds
                                                         )
-                                                        cardIds
-                                                    )
-                                                ]
+                                                    ]
+                                        ]
                                     ]
-                                ]
+                              else
+                                text ""
+                             )
+                           , (if not (cardSubTypeIdsIntersect card.subTypeIds cardTypesForTool) then
+                                div [ class "panel panel-default" ]
+                                    [ div [ class "panel-heading" ]
+                                        [ div [ class "row" ]
+                                            [ div [ class "col-xs-8 text-left" ]
+                                                [ h3 [ class "panel-title" ]
+                                                    [ text (I18n.translate language I18n.Uses) ]
+                                                ]
+                                            , div [ class "col-xs-4 text-right up7" ]
+                                                -- [ a [ class "show-more" ]
+                                                --     [ bestOf usesKeys ]
+                                                [ button
+                                                    [ class "btn btn-default btn-xs btn-action"
+                                                    , onClick (ForSelf (LoadProperties card.id "uses"))
+                                                    , type' "button"
+                                                    ]
+                                                    [ text "Add" ]
+                                                ]
+                                            ]
+                                        ]
+                                    , div [ class "panel-body" ]
+                                        -- TODO Get different keys by card.type
+                                        [ case Dict.get "software" card.references of
+                                            Nothing ->
+                                                div [ class "call-container" ]
+                                                    [ p [] [ text "No tool listed for this use case yet." ]
+                                                    , button
+                                                        [ class "button call-add"
+                                                        , onClick (ForSelf (LoadProperties card.id "uses"))
+                                                        ]
+                                                        [ text "+ Add a tool" ]
+                                                    ]
+
+                                            Just cardIds ->
+                                                div [ class "row list" ]
+                                                    [ div [ class "col-xs-12" ]
+                                                        (List.filterMap
+                                                            (\cardId ->
+                                                                Dict.get cardId cards
+                                                                    |> Maybe.map
+                                                                        (viewCardListItem
+                                                                            navigate
+                                                                            language
+                                                                            values
+                                                                        )
+                                                            )
+                                                            cardIds
+                                                        )
+                                                    ]
+                                        ]
+                                    ]
+                              else
+                                text ""
+                             )
+                           , (if not (cardSubTypeIdsIntersect card.subTypeIds cardTypesForOrganization) then
+                                div [ class "panel panel-default" ]
+                                    [ div [ class "panel-heading" ]
+                                        [ div [ class "row" ]
+                                            [ div [ class "col-xs-8 text-left" ]
+                                                [ h3 [ class "panel-title" ]
+                                                    [ text (I18n.translate language I18n.UsedBy) ]
+                                                ]
+                                            , div [ class "col-xs-4 text-right up7" ]
+                                                -- [ a [ class "show-more" ]
+                                                --     [ bestOf usedByKeys ]
+                                                [ button
+                                                    [ class "btn btn-default btn-xs btn-action"
+                                                    , onClick (ForSelf (LoadProperties card.id "used-by"))
+                                                    , type' "button"
+                                                    ]
+                                                    [ text "Add" ]
+                                                ]
+                                            ]
+                                        ]
+                                    , div [ class "panel-body" ]
+                                        [ case Dict.get "organization" card.references of
+                                            Nothing ->
+                                                div [ class "call-container" ]
+                                                    [ p [] [ text "No organization listed for this tool yet." ]
+                                                    , button
+                                                        [ class "button call-add"
+                                                        , onClick (ForSelf (LoadProperties card.id "used-by"))
+                                                        ]
+                                                        [ text "+ Add an organization" ]
+                                                    ]
+
+                                            Just cardIds ->
+                                                div [ class "row list" ]
+                                                    [ div [ class "col-xs-12" ]
+                                                        (List.filterMap
+                                                            (\cardId ->
+                                                                Dict.get cardId cards
+                                                                    |> Maybe.map
+                                                                        (viewCardListItem
+                                                                            navigate
+                                                                            language
+                                                                            values
+                                                                        )
+                                                            )
+                                                            cardIds
+                                                        )
+                                                    ]
+                                        ]
+                                    ]
+                              else
+                                text ""
+                             )
                            ]
                     )
                 ]
@@ -508,7 +656,7 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                                 []
 
                             Just value ->
-                                [ viewValueType language cards values value.value ]
+                                [ viewValueType language cards values True value.value ]
                          )
                         )
                     , div [ class "media-right" ]
@@ -834,7 +982,14 @@ viewSidebar language card values =
                     [ div [ class "visual" ]
                         [ case getImageLogoUrl language "1000" card values of
                             Just url ->
-                                img [ alt "Logo", src url ] []
+                                div []
+                                    [ button
+                                        [ class "button call-add"
+                                        , onClick (ForSelf (LoadProperties card.id "logo"))
+                                        ]
+                                        [ text "Edit" ]
+                                    , img [ alt "Logo", src url ] []
+                                    ]
 
                             Nothing ->
                                 div [ class "call-container" ]
@@ -971,11 +1126,64 @@ viewSidebar language card values =
                 ]
             ]
           -- , viewSimilarTools -- TODO
+        , div
+            [ class "row" ]
+            [ div [ class "col-xs-12" ]
+                [ div [ class "panel panel-default panel-side" ]
+                    [ h6 [ class "panel-title" ]
+                        [ text (I18n.translate language I18n.Share) ]
+                    , div [ class "panel-body chart" ]
+                        -- [ button [ class "btn btn-default btn-action btn-round", type' "button" ]
+                        --     [ i [ attribute "aria-hidden" "true", class "fa fa-facebook" ]
+                        --         []
+                        --     ]
+                        [ a
+                            [ class "btn btn-default btn-action btn-round twitter-share-button"
+                            , href
+                                (let
+                                    cardName =
+                                        case getOneString language nameKeys card values of
+                                            Just name ->
+                                                name
+
+                                            Nothing ->
+                                                "Untitled Card"
+
+                                    url =
+                                        (String.dropRight 1 Configuration.appUrl)
+                                            ++ (Routes.makeUrlWithLanguage language (Routes.urlPathForCard card))
+
+                                    -- TODO: i18n
+                                 in
+                                    ("https://twitter.com/intent/tweet?text="
+                                        ++ Http.uriEncode
+                                            (I18n.translate
+                                                language
+                                                (I18n.TweetMessage cardName url)
+                                            )
+                                    )
+                                )
+                            ]
+                            [ i [ attribute "aria-hidden" "true", class "fa fa-twitter" ]
+                                []
+                            ]
+                          -- , button [ class "btn btn-default btn-action btn-round", type' "button" ]
+                          --     [ i [ attribute "aria-hidden" "true", class "fa fa-google-plus" ]
+                          --         []
+                          --     ]
+                          -- , button [ class "btn btn-default btn-action btn-round", type' "button" ]
+                          --     [ i [ attribute "aria-hidden" "true", class "fa fa-linkedin" ]
+                          --         []
+                          --     ]
+                        ]
+                    ]
+                ]
+            ]
         ]
 
 
-viewValueType : I18n.Language -> Dict String Card -> Dict String Value -> ValueType -> Html Msg
-viewValueType language cards values value =
+viewValueType : I18n.Language -> Dict String Card -> Dict String Value -> Bool -> ValueType -> Html Msg
+viewValueType language cards values showLanguage value =
     let
         cardLink cardId =
             case Dict.get cardId cards of
@@ -1009,16 +1217,20 @@ viewValueType language cards values value =
                     ]
 
             LocalizedStringValue values ->
-                dl []
-                    (values
-                        |> Dict.toList
-                        |> List.concatMap
-                            (\( languageCode, childValue ) ->
-                                [ dt [] [ text languageCode ]
-                                , dd [] [ aIfIsUrl [] childValue ]
-                                ]
-                            )
-                    )
+                let
+                    viewString languageCode string =
+                        if showLanguage || Dict.size values > 1 then
+                            [ dt [] [ text languageCode ]
+                            , dd [] [ aIfIsUrl [] string ]
+                            ]
+                        else
+                            [ aIfIsUrl [] string ]
+                in
+                    dl []
+                        (values
+                            |> Dict.toList
+                            |> List.concatMap (\( languageCode, childValue ) -> viewString languageCode childValue)
+                        )
 
             BooleanValue bool ->
                 text (toString bool)
@@ -1029,14 +1241,14 @@ viewValueType language cards values value =
             CardIdArrayValue childValues ->
                 ul [ class "list-unstyled" ]
                     (List.map
-                        (\childValue -> li [] [ viewValueType language cards values (CardIdValue childValue) ])
+                        (\childValue -> li [] [ viewValueType language cards values showLanguage (CardIdValue childValue) ])
                         childValues
                     )
 
             ValueIdArrayValue childValues ->
                 ul [ class "list-unstyled" ]
                     (List.map
-                        (\childValue -> li [] [ viewValueType language cards values (ValueIdValue childValue) ])
+                        (\childValue -> li [] [ viewValueType language cards values showLanguage (ValueIdValue childValue) ])
                         childValues
                     )
 
@@ -1052,4 +1264,4 @@ viewValueType language cards values value =
                         text ("Error: referenced value not found for valueId: " ++ valueId)
 
                     Just subValue ->
-                        viewValueType language cards values subValue.value
+                        viewValueType language cards values showLanguage subValue.value

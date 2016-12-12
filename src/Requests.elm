@@ -15,6 +15,11 @@ import Types exposing (..)
 import Task exposing (Task)
 
 
+idRegex : Regex.Regex
+idRegex =
+    Regex.regex "(^|/)(\\d+)(\\?|$)"
+
+
 activateUser : String -> String -> Task Http.Error UserBody
 activateUser userId authorization =
     Http.fromJson userBodyDecoder
@@ -38,6 +43,22 @@ authenticationHeaders authentication =
 
         Nothing ->
             []
+
+
+extractId : String -> Maybe String
+extractId url =
+    (Regex.find Regex.All idRegex url
+        |> List.head
+    )
+        `Maybe.andThen`
+            (\match ->
+                case match.submatches |> List.drop 1 |> List.head of
+                    Nothing ->
+                        Nothing
+
+                    Just maybe ->
+                        maybe
+            )
 
 
 getCard : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
@@ -91,20 +112,20 @@ getCards authentication searchQuery limit tagIds cardTypes =
         )
 
 
-getCollection : String -> Task Http.Error DataIdBody
-getCollection collectionId =
+getCollection : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
+getCollection authentication collectionId =
     Http.fromJson dataIdBodyDecoder
         (Http.send Http.defaultSettings
             { verb = "GET"
             , url = apiUrl ++ "collections/" ++ collectionId ++ "?show=values&depth=2"
-            , headers = [ ( "Accept", "application/json" ) ]
+            , headers = ( "Accept", "application/json" ) :: authenticationHeaders authentication
             , body = Http.empty
             }
         )
 
 
-getCollections : Maybe Int -> Task Http.Error DataIdsBody
-getCollections limit =
+getCollections : Maybe Authenticator.Model.Authentication -> Maybe Int -> Task Http.Error DataIdsBody
+getCollections authentication limit =
     Http.fromJson dataIdsBodyDecoder
         (Http.send Http.defaultSettings
             { verb = "GET"
@@ -118,7 +139,7 @@ getCollections limit =
                             Just limit ->
                                 "&limit=" ++ (toString limit)
                        )
-            , headers = [ ( "Accept", "application/json" ) ]
+            , headers = ( "Accept", "application/json" ) :: authenticationHeaders authentication
             , body = Http.empty
             }
         )
@@ -188,7 +209,9 @@ postCardsEasy authentication fields language =
 
         body =
             Encode.object
-                [ ( "language", Encode.string (I18n.iso639_1FromLanguage language) )
+                -- Always use en(glish) language because this is the language of the labels below.
+                -- [ ( "language", Encode.string (I18n.iso639_1FromLanguage language) )
+                [ ( "language", Encode.string "en" )
                 , ( "schemas"
                   , Encode.object
                         [ ( "Description", Encode.string "schema:localized-string" )
@@ -235,27 +258,9 @@ postCardsEasy authentication fields language =
 postCollection : Maybe Authenticator.Model.Authentication -> Maybe String -> AddNewCollectionFields -> String -> Task Http.Error DataIdBody
 postCollection authentication editedCollectionId fields imageUrlPath =
     let
-        regex =
-            Regex.regex "(^|/)(\\d+)(\\?|$)"
-
-        getId : String -> Maybe String
-        getId url =
-            (Regex.find Regex.All regex url
-                |> List.head
-            )
-                `Maybe.andThen`
-                    (\match ->
-                        case match.submatches |> List.drop 1 |> List.head of
-                            Nothing ->
-                                Nothing
-
-                            Just maybe ->
-                                maybe
-                    )
-
         cardIds : List String
         cardIds =
-            String.words fields.cardIds |> List.filterMap getId
+            String.words fields.cardIds |> List.filterMap extractId
 
         url =
             (case editedCollectionId of
@@ -293,7 +298,7 @@ postProperty authentication objectId keyId valueId =
     Http.fromJson dataIdBodyDecoder
         (Http.send Http.defaultSettings
             { verb = "POST"
-            , url = apiUrl ++ "properties?show=ballots&show=values&depth=1"
+            , url = apiUrl ++ "properties?show=ballots&show=values&depth=3"
             , headers =
                 [ ( "Accept", "application/json" )
                 , ( "Content-Type", "application/json" )
@@ -383,7 +388,13 @@ postValue authentication field =
                     ( "schema:uri", "widget:image", Encode.string string )
 
                 CardIdField string ->
-                    ( "schema:card-id", "widget:autocomplete", Encode.string string )
+                    case extractId string of
+                        Just cardId ->
+                            ( "schema:card-id", "widget:autocomplete", Encode.string cardId )
+
+                        Nothing ->
+                            -- TODO: Improve errors handling.
+                            ( "schema:string", "widget:input-text", Encode.string string )
     in
         Http.fromJson dataIdBodyDecoder
             (Http.send Http.defaultSettings

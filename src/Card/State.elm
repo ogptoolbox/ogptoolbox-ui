@@ -31,8 +31,23 @@ update msg ({ editedProperty } as model) authentication language =
             let
                 newModel =
                     { model | editedProperty = Nothing }
+
+                webData =
+                    case getData model.webData of
+                        Nothing ->
+                            Debug.crash "CloseEditPropertiesModal: cannot happen"
+
+                        Just webData ->
+                            webData
+
+                cmd =
+                    Task.perform
+                        LoadCardError
+                        LoadCardSuccess
+                        (Requests.getCard authentication webData.data.id)
+                        |> Cmd.map ForSelf
             in
-                ( newModel, Cmd.none )
+                ( newModel, cmd )
 
         DisplayUseItModal displayUseItModal ->
             ( { model | displayUseItModal = displayUseItModal }
@@ -81,18 +96,11 @@ update msg ({ editedProperty } as model) authentication language =
 
         LoadProperties cardId keyId ->
             let
-                webData =
-                    case getData model.webData of
-                        Nothing ->
-                            Debug.crash "LoadProperties: cannot happen"
-
-                        Just webData ->
-                            webData
-
                 newEditedProperty =
                     Just
                         { ballots = Dict.empty
                         , cardId = cardId
+                        , cards = Dict.empty
                         , keyId = keyId
                         , properties = Dict.empty
                         , propertyIds = []
@@ -126,6 +134,7 @@ update msg ({ editedProperty } as model) authentication language =
                         (\editedProperty ->
                             { editedProperty
                                 | ballots = data.ballots
+                                , cards = Dict.union data.cards editedProperty.cards
                                 , properties = data.properties
                                 , propertyIds = data.ids
                                 , values = Dict.union data.values editedProperty.values
@@ -193,6 +202,9 @@ update msg ({ editedProperty } as model) authentication language =
                                 newBallots =
                                     Dict.union data.ballots editedProperty.ballots
 
+                                newCards =
+                                    Dict.union data.cards editedProperty.cards
+
                                 newPropertyIds =
                                     data.id :: editedProperty.propertyIds
 
@@ -204,6 +216,7 @@ update msg ({ editedProperty } as model) authentication language =
                             in
                                 { editedProperty
                                     | ballots = newBallots
+                                    , cards = newCards
                                     , properties = newProperties
                                     , propertyIds = newPropertyIds
                                     , selectedField = LocalizedInputTextField (I18n.iso639_1FromLanguage language) ""
@@ -212,8 +225,48 @@ update msg ({ editedProperty } as model) authentication language =
                         )
                         editedProperty
 
+                webData =
+                    case getData model.webData of
+                        Nothing ->
+                            Debug.crash "SubmitValueSuccess: cannot happen: no webData"
+
+                        Just webData ->
+                            webData
+
+                existingData =
+                    webData.data
+
+                newData =
+                    case editedProperty of
+                        Just editedProperty ->
+                            let
+                                newBallots =
+                                    Dict.union data.ballots existingData.ballots
+
+                                newCards =
+                                    Dict.union data.cards existingData.cards
+
+                                newProperties =
+                                    Dict.union data.properties existingData.properties
+
+                                newValues =
+                                    Dict.union data.values existingData.values
+                            in
+                                { existingData
+                                    | ballots = newBallots
+                                    , cards = newCards
+                                    , properties = newProperties
+                                    , values = newValues
+                                }
+
+                        Nothing ->
+                            Debug.crash "SubmitValueSuccess: cannot happen: no editedProperty"
+
                 newModel =
-                    { model | editedProperty = newEditedProperty }
+                    { model
+                        | editedProperty = newEditedProperty
+                        , webData = Data (Loaded { webData | data = newData })
+                    }
             in
                 ( newModel, Cmd.none )
 
@@ -244,6 +297,9 @@ update msg ({ editedProperty } as model) authentication language =
                                 newBallots =
                                     Dict.union data.ballots editedProperty.ballots
 
+                                newCards =
+                                    Dict.union data.cards editedProperty.cards
+
                                 newProperties =
                                     Dict.union data.properties editedProperty.properties
 
@@ -252,6 +308,7 @@ update msg ({ editedProperty } as model) authentication language =
                             in
                                 { editedProperty
                                     | ballots = newBallots
+                                    , cards = newCards
                                     , properties = newProperties
                                     , values = newValues
                                 }
