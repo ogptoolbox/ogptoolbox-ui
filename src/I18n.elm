@@ -38,8 +38,6 @@ type TranslationId
     | AboutModerationContent
     | AboutTarget
     | AboutTargetContent
-    | AboutToolboxPresentation
-    | AboutToolboxPresentationTitle
     | AboutTypes
     | AboutTypesContent
     | AboutTypesContentActor
@@ -49,7 +47,8 @@ type TranslationId
     | AboutSource
     | AboutSourceContent
     | AboutWhat
-    | AboutWhatContent
+    | AboutWhatContent1
+    | AboutWhatContent2
     | AboutWhy
     | AboutWhyContent1
     | AboutWhyContent2
@@ -284,17 +283,7 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
-        AboutToolboxPresentationTitle ->
-            { english = s "What's the OGP Toolbox?"
-            , french = s "Qu'est ce que l'OGP Toolbox ?"
-            , spanish = todo
-            }
 
-        AboutToolboxPresentation ->
-            { english = s "The OGP Toolbox is a collaborative platform that gathers digital tools (software and online services) used throughout the world to improve democracy and promote transparency, participation and collaboration. In this crowdsourced catalog you will find tools developed and used by actors from the public sector (governments,administrations, parliaments, subnational entities), actors from the private sector (companies and start-ups) and actors from the civil society (non-profit organizations, movements and engaged citizens). The OGP Toolbox was conceived as a social network: concrete use cases, technical criteria informed by the community and recommendations in the form of tool collections allow to benefit from the experience of users that have already implemented existing solutions."
-            , french = s "L'OGP Toolbox est une plateforme collaborative qui recense les outils numériques (logiciels et services en ligne) utilisés dans le monde entier pour renforcer la démocratie et promouvoir la transparence, la participation et la collaboration dans l'action publique. Ce catalogue crowdsourcé rassemble des outils développés et utilisés par des acteurs publics (gouvernements, administrations, parlements et collectivités territoriales), comme des acteurs du secteur privé (entreprises et start-ups) ou des acteurs de la société civile (associations, mouvements et citoyens engagés). L'OGP Toolbox est conçue comme un réseau social : des cas d'usages concrets, des critères techniques expertisés par la communauté et des recommandations sous forme de collections d'outils permettent de profiter du savoir-faire des acteurs ayant déjà utilisé les solutions disponibles."
-            , spanish = todo
-            }
 
         AboutTypes ->
             { english = s "What can I find in the OGP Toolbox?"
@@ -350,9 +339,15 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
-        AboutWhatContent ->
-            { english = s "The OGP Toolbox is a collaborative platform that gathers digital tools (software and online services) used throughout the world to improve democracy and promote transparency, participation and collaboration. In this crowdsourced catalog you will find tools developed and used by actors from the public sector (governments, administrations, parliaments, subnational), actors from the private sector (companies and start-ups) and actors from the civil society (non-profit organizations, movements and engaged citizens). The OGP Toolbox was conceived as a social network: concrete use cases, technical criteria informed by the community and recommendations in the form of tool collections allow to benefit from the experience of users that have already implemented existing solutions."
-            , french = s "L'OGP Toolbox est une plateforme collaborative qui recense les outils numériques (logiciels et services en ligne) utilisés dans le monde entier pour renforcer la démocratie et promouvoir la transparence, la participation et la collaboration dans l'action publique. Ce catalogue crowdsourcé rassemble des outils développés et utilisés par des acteurs publics (gouvernements, administrations, parlements et collectivités territoriales), comme des acteurs du secteur privé (entreprises et start-ups) ou des acteurs de la société civile (associations, mouvements et citoyens engagés). L'OGP Toolbox est conçue comme un réseau social : des cas d'usages concrets, des critères techniques expertisés par la communauté et des recommandations sous forme de collections d'outils permettent de profiter du savoir-faire des acteurs ayant déjà utilisé les solutions disponibles. "
+        AboutWhatContent1 ->
+            { english = s "The OGP Toolbox is a collaborative platform that gathers digital tools (software and online services) used throughout the world to improve democracy and promote transparency, participation and collaboration. In this crowdsourced catalog you will find tools developed and used by actors from the public sector (governments, administrations, parliaments, subnational), actors from the private sector (companies and start-ups) and actors from the civil society (non-profit organizations, movements and engaged citizens)."
+            , french = s "L'OGP Toolbox est une plateforme collaborative qui recense les outils numériques (logiciels et services en ligne) utilisés dans le monde entier pour renforcer la démocratie et promouvoir la transparence, la participation et la collaboration dans l'action publique. Ce catalogue crowdsourcé rassemble des outils développés et utilisés par des acteurs publics (gouvernements, administrations, parlements et collectivités territoriales), comme des acteurs du secteur privé (entreprises et start-ups) ou des acteurs de la société civile (associations, mouvements et citoyens engagés)."
+            , spanish = todo
+            }
+
+        AboutWhatContent2 ->
+            { english = s "The OGP Toolbox is designed as a social network: concrete use cases, technical criteria informed by the community and recommendations in the form of tool collections allow to benefit from the experience of users that have already implemented existing solutions."
+            , french = s "L'OGP Toolbox est conçue comme un réseau social : des cas d'usages concrets, des critères techniques expertisés par la communauté et des recommandations sous forme de collections d'outils permettent de profiter du savoir-faire des acteurs ayant déjà utilisé les solutions disponibles. "
             , spanish = todo
             }
 
