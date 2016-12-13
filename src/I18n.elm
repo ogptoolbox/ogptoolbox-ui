@@ -38,6 +38,8 @@ type TranslationId
     | AboutModerationContent
     | AboutTarget
     | AboutTargetContent
+    | AboutToolboxPresentation
+    | AboutToolboxPresentationTitle
     | AboutTypes
     | AboutTypesContent
     | AboutTypesContentActor
@@ -279,6 +281,18 @@ getTranslationSet translationId =
         AboutTargetContent ->
             { english = s "The OGP is intended to all public sector, private sector and  civil society actors that develop projects to promote democracy and promote transparency, participation and collaboration. Any engaged citizen willing to be introduced to new tools and to discover particular use cases will be able to access relevant information, and to get in touch with the users’ community."
             , french = s "L'OGP Toolbox est destinée à tous les acteurs publics, privés et de la société civile portant des projets pour renforcer la démocratie et promouvoir la transparence, la participation et la collaboration dans l'action publique. Tout citoyen engagé voulant s'initier à de nouveaux outils et en découvrir les cas d'usages pourra accéder facilement aux informations pertinentes."
+            , spanish = todo
+            }
+
+        AboutToolboxPresentationTitle ->
+            { english = s "What's the OGP Toolbox?"
+            , french = s "Qu'est ce que l'OGP Toolbox ?"
+            , spanish = todo
+            }
+
+        AboutToolboxPresentation ->
+            { english = s "The OGP Toolbox is a collaborative platform that gathers digital tools (software and online services) used throughout the world to improve democracy and promote transparency, participation and collaboration. In this crowdsourced catalog you will find tools developed and used by actors from the public sector (governments,administrations, parliaments, subnational entities), actors from the private sector (companies and start-ups) and actors from the civil society (non-profit organizations, movements and engaged citizens). The OGP Toolbox was conceived as a social network: concrete use cases, technical criteria informed by the community and recommendations in the form of tool collections allow to benefit from the experience of users that have already implemented existing solutions."
+            , french = s "L'OGP Toolbox est une plateforme collaborative qui recense les outils numériques (logiciels et services en ligne) utilisés dans le monde entier pour renforcer la démocratie et promouvoir la transparence, la participation et la collaboration dans l'action publique. Ce catalogue crowdsourcé rassemble des outils développés et utilisés par des acteurs publics (gouvernements, administrations, parlements et collectivités territoriales), comme des acteurs du secteur privé (entreprises et start-ups) ou des acteurs de la société civile (associations, mouvements et citoyens engagés). L'OGP Toolbox est conçue comme un réseau social : des cas d'usages concrets, des critères techniques expertisés par la communauté et des recommandations sous forme de collections d'outils permettent de profiter du savoir-faire des acteurs ayant déjà utilisé les solutions disponibles."
             , spanish = todo
             }
 
