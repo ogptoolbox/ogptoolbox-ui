@@ -1,151 +1,16 @@
-module Authenticator.SignUp exposing (..)
+module Authenticator.SignUp.View exposing (..)
 
-import Configuration exposing (apiUrl)
-import Decoders exposing (userBodyDecoder)
+import Authenticator.SignUp.Types exposing (..)
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Attributes.Aria exposing (..)
 import Html.Events exposing (..)
-import Http
-import Json.Encode
-import Ports
-import String
-import Types exposing (User, UserBody)
+import I18n
 
 
--- MODEL
-
-
-type alias Errors =
-    Dict String String
-
-
-type alias Fields =
-    { email : String
-    , password : String
-    , username : String
-    }
-
-
-type alias Model =
-    { errors : Errors
-    , email : String
-    , password : String
-    , username : String
-    }
-
-
-init : Model
-init =
-    { errors = Dict.empty
-    , email = ""
-    , password = ""
-    , username = ""
-    }
-
-
-
--- UPDATE
-
-
-type Msg
-    = EmailInput String
-    | Submit
-    | UserCreated (Result Http.Error UserBody)
-    | UsernameInput String
-    | PasswordInput String
-
-
-update : Msg -> Model -> ( Model, Cmd Msg, Maybe User )
-update msg model =
-    case msg of
-        EmailInput text ->
-            ( { model | email = text }, Cmd.none, Nothing )
-
-        PasswordInput text ->
-            ( { model | password = text }, Cmd.none, Nothing )
-
-        Submit ->
-            let
-                errorsList =
-                    (List.filterMap
-                        (\( name, errorMaybe ) ->
-                            case errorMaybe of
-                                Just error ->
-                                    Just ( name, error )
-
-                                Nothing ->
-                                    Nothing
-                        )
-                        [ ( "email"
-                          , if String.isEmpty model.email then
-                                Just "Missing email"
-                            else
-                                Nothing
-                          )
-                        , ( "password"
-                          , if String.isEmpty model.password then
-                                Just "Missing password"
-                            else
-                                Nothing
-                          )
-                        , ( "username"
-                          , if String.isEmpty model.username then
-                                Just "Missing username"
-                            else
-                                Nothing
-                          )
-                        ]
-                    )
-
-                cmd =
-                    if List.isEmpty errorsList then
-                        let
-                            bodyJson =
-                                Json.Encode.object
-                                    [ ( "email", Json.Encode.string model.email )
-                                    , ( "name", Json.Encode.string model.username )
-                                    , ( "urlName", Json.Encode.string model.username )
-                                    , ( "password", Json.Encode.string model.password )
-                                    ]
-                        in
-                            Http.post
-                                (apiUrl ++ "users")
-                                (Http.stringBody "application/json" <| Json.Encode.encode 2 bodyJson)
-                                Decoders.userBodyDecoder
-                                |> Http.send UserCreated
-                    else
-                        Cmd.none
-            in
-                ( { model | errors = Dict.fromList errorsList }, cmd, Nothing )
-
-        UserCreated response ->
-            case response of
-                Result.Err err ->
-                    let
-                        _ =
-                            Debug.log "Authenticator.UserCreated Error" err
-                    in
-                        ( model, Cmd.none, Nothing )
-
-                Result.Ok body ->
-                    let
-                        user =
-                            Just body.data
-                    in
-                        ( model, Ports.storeAuthentication (Ports.userToUserForPort user), user )
-
-        UsernameInput text ->
-            ( { model | username = text }, Cmd.none, Nothing )
-
-
-
--- VIEW
-
-
-viewModalBody : Model -> Html Msg
-viewModalBody model =
+viewModalBody : I18n.Language -> Model -> Html Msg
+viewModalBody language model =
     div [ class "modal-body" ]
         [ div [ class "row" ]
             [ div [ class "col-xs-7" ]
@@ -200,14 +65,16 @@ viewModalBody model =
                             case errorMaybe of
                                 Just error ->
                                     div [ class "form-group has-error" ]
-                                        [ label [ class "control-label", for "email" ] [ text "Email" ]
+                                        [ label
+                                            [ class "control-label", for "email" ]
+                                            [ text (I18n.translate language I18n.Email) ]
                                         , input
                                             [ ariaDescribedby "email-error"
                                             , class "form-control"
                                             , id "email"
                                             , placeholder "john.doe@ogptoolbox.org"
                                             , required True
-                                            , title "Please enter you email"
+                                            , title (I18n.translate language I18n.EnterEmail)
                                             , type_ "email"
                                             , value model.email
                                             , onInput EmailInput
@@ -222,13 +89,15 @@ viewModalBody model =
 
                                 Nothing ->
                                     div [ class "form-group" ]
-                                        [ label [ class "control-label", for "email" ] [ text "Email" ]
+                                        [ label
+                                            [ class "control-label", for "email" ]
+                                            [ text (I18n.translate language I18n.Email) ]
                                         , input
                                             [ class "form-control"
                                             , id "email"
                                             , placeholder "john.doe@ogptoolbox.org"
                                             , required True
-                                            , title "Please enter you email"
+                                            , title (I18n.translate language I18n.EnterEmail)
                                             , type_ "email"
                                             , value model.email
                                             , onInput EmailInput

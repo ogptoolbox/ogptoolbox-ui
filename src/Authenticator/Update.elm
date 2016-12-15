@@ -1,10 +1,10 @@
 module Authenticator.Update exposing (..)
 
 import Authenticator.Model exposing (Authentication, Model)
-import Authenticator.ResetPassword as ResetPassword
-import Authenticator.SignIn as SignIn
-import Authenticator.SignOut as SignOut
-import Authenticator.SignUp as SignUp
+import Authenticator.ResetPassword.State
+import Authenticator.SignIn.State
+import Authenticator.SignOut.State
+import Authenticator.SignUp.State
 import Authenticator.Types exposing (..)
 
 
@@ -14,7 +14,7 @@ update msg model =
         ResetPasswordMsg subMsg ->
             let
                 ( resetPassword, resetPasswordEffect, authentication ) =
-                    ResetPassword.update subMsg model.resetPassword
+                    Authenticator.ResetPassword.State.update subMsg model.resetPassword
 
                 model_ =
                     { model | authentication = authentication, resetPassword = resetPassword }
@@ -24,7 +24,7 @@ update msg model =
         SignInMsg subMsg ->
             let
                 ( signIn, signInEffect, authentication ) =
-                    SignIn.update subMsg model.signIn
+                    Authenticator.SignIn.State.update subMsg model.signIn
 
                 model_ =
                     { model | authentication = authentication, signIn = signIn }
@@ -34,7 +34,7 @@ update msg model =
         SignOutMsg subMsg ->
             let
                 ( signOut, signOutEffect ) =
-                    SignOut.update subMsg model.signOut
+                    Authenticator.SignOut.State.update subMsg model.signOut
 
                 model_ =
                     { model | authentication = Nothing, signOut = signOut }
@@ -44,7 +44,7 @@ update msg model =
         SignUpMsg subMsg ->
             let
                 ( signUp, signUpEffect, authentication ) =
-                    SignUp.update subMsg model.signUp
+                    Authenticator.SignUp.State.update subMsg model.signUp
 
                 model_ =
                     { model | authentication = authentication, signUp = signUp }

@@ -1,139 +1,13 @@
-module Authenticator.SignIn exposing (..)
+module Authenticator.SignIn.View exposing (..)
 
-import Configuration exposing (apiUrl)
-import Decoders exposing (userBodyDecoder)
+import Authenticator.SignIn.Types exposing (..)
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Attributes.Aria exposing (..)
 import Html.Events exposing (..)
-import Http
 import I18n
-import Json.Encode
-import Ports
-import String
-import Types exposing (User, UserBody)
 import Views exposing (getHttpErrorAsString)
-
-
--- MODEL
-
-
-type alias Errors =
-    Dict String String
-
-
-type alias Fields =
-    { password : String
-    , username : String
-    }
-
-
-type alias Model =
-    { httpError : Maybe Http.Error
-    , errors : Errors
-    , password : String
-    , username : String
-    }
-
-
-init : Model
-init =
-    { httpError = Nothing
-    , errors = Dict.empty
-    , password = ""
-    , username = ""
-    }
-
-
-
--- UPDATE
-
-
-type Msg
-    = SignedIn (Result Http.Error UserBody)
-    | Submit
-    | UsernameInput String
-    | PasswordInput String
-
-
-update : Msg -> Model -> ( Model, Cmd Msg, Maybe User )
-update msg model =
-    case msg of
-        PasswordInput text ->
-            ( { model | password = text }, Cmd.none, Nothing )
-
-        SignedIn response ->
-            case response of
-                Result.Err err ->
-                    let
-                        _ =
-                            Debug.log "Authenticator.SignedIn Error" err
-                    in
-                        ( model, Cmd.none, Nothing )
-
-                Result.Ok body ->
-                    let
-                        user =
-                            Just body.data
-                    in
-                        ( { model | httpError = Nothing }
-                        , Ports.storeAuthentication (Ports.userToUserForPort user)
-                        , user
-                        )
-
-        Submit ->
-            let
-                errorsList =
-                    (List.filterMap
-                        (\( name, errorMaybe ) ->
-                            case errorMaybe of
-                                Just error ->
-                                    Just ( name, error )
-
-                                Nothing ->
-                                    Nothing
-                        )
-                        [ ( "password"
-                          , if String.isEmpty model.password then
-                                Just "Missing password"
-                            else
-                                Nothing
-                          )
-                        , ( "username"
-                          , if String.isEmpty model.username then
-                                Just "Missing username"
-                            else
-                                Nothing
-                          )
-                        ]
-                    )
-
-                cmd =
-                    if List.isEmpty errorsList then
-                        let
-                            bodyJson =
-                                Json.Encode.object
-                                    [ ( "userName", Json.Encode.string model.username )
-                                    , ( "password", Json.Encode.string model.password )
-                                    ]
-                        in
-                            Http.post
-                                (apiUrl ++ "login")
-                                (Http.stringBody "application/json" <| Json.Encode.encode 2 bodyJson)
-                                Decoders.userBodyDecoder
-                                |> Http.send SignedIn
-                    else
-                        Cmd.none
-            in
-                ( { model | errors = Dict.fromList errorsList }, cmd, Nothing )
-
-        UsernameInput text ->
-            ( { model | username = text }, Cmd.none, Nothing )
-
-
-
--- VIEW
 
 
 viewModalBody : I18n.Language -> Model -> Html Msg
@@ -150,14 +24,16 @@ viewModalBody language model =
                             case errorMaybe of
                                 Just error ->
                                     div [ class "form-group has-error" ]
-                                        [ label [ class "control-label", for "username" ] [ text "Email" ]
+                                        [ label
+                                            [ class "control-label", for "username" ]
+                                            [ text (I18n.translate language I18n.Email) ]
                                         , input
                                             [ ariaDescribedby "username-error"
                                             , class "form-control"
                                             , id "username"
                                             , placeholder "john.doe@ogptoolbox.org"
                                             , required True
-                                            , title "Please enter you email"
+                                            , title (I18n.translate language I18n.EnterEmail)
                                             , type_ "text"
                                             , value model.username
                                             , onInput UsernameInput
@@ -172,13 +48,15 @@ viewModalBody language model =
 
                                 Nothing ->
                                     div [ class "form-group" ]
-                                        [ label [ class "control-label", for "username" ] [ text "Email" ]
+                                        [ label
+                                            [ class "control-label", for "username" ]
+                                            [ text (I18n.translate language I18n.Email) ]
                                         , input
                                             [ class "form-control"
                                             , id "username"
                                             , placeholder "john.doe@ogptoolbox.org"
                                             , required True
-                                            , title "Please enter you email"
+                                            , title (I18n.translate language I18n.EnterEmail)
                                             , type_ "text"
                                             , value model.username
                                             , onInput UsernameInput
@@ -192,14 +70,16 @@ viewModalBody language model =
                             case errorMaybe of
                                 Just error ->
                                     div [ class "form-group has-error" ]
-                                        [ label [ class "control-label", for "password" ] [ text "Password" ]
+                                        [ label
+                                            [ class "control-label", for "password" ]
+                                            [ text (I18n.translate language I18n.Password) ]
                                         , input
                                             [ ariaDescribedby "password-error"
                                             , class "form-control"
                                             , id "password"
                                             , placeholder "John Doe"
                                             , required True
-                                            , title "Please enter you password"
+                                            , title (I18n.translate language I18n.EnterPassword)
                                             , type_ "password"
                                             , value model.password
                                             , onInput PasswordInput
@@ -214,31 +94,35 @@ viewModalBody language model =
 
                                 Nothing ->
                                     div [ class "form-group" ]
-                                        [ label [ class "control-label", for "password" ] [ text "Password" ]
+                                        [ label
+                                            [ class "control-label", for "password" ]
+                                            [ text (I18n.translate language I18n.Password) ]
                                         , input
                                             [ class "form-control"
                                             , id "password"
                                             , placeholder "Your secret password"
                                             , required True
-                                            , title "Please enter you password"
+                                            , title (I18n.translate language I18n.EnterPassword)
                                             , type_ "password"
                                             , value model.password
                                             , onInput PasswordInput
                                             ]
                                             []
                                         ]
+                         , a
+                            [ class "forgot"
+                            , href "#"
+                              -- , onWithOptions
+                              --     "click"
+                              --     { preventDefault = True, stopPropagation = False }
+                              --     (Json.Decode.succeed (Authenticator.Types.AuthenticatorRouteMsg (Just Authenticator.Types.SignUpRoute)))
+                            ]
+                            [ small [] [ text (I18n.translate language I18n.ResetPasswordLink) ] ]
                            -- , div [ class "alert alert-error hide", id "loginErrorMsg" ]
                            --     [ text "Wrong username og password" ]
-                           -- , div [ class "checkbox" ]
-                           --     [ label []
-                           --         [ input [ id "remember", name "remember", type' "checkbox" ]
-                           --             []
-                           --         , text "Remember login                                  "
-                           --         ]
-                           --     ]
                          , button
                             [ class "btn btn-block btn-default grey", type_ "submit" ]
-                            [ text "Sign In" ]
+                            [ text (I18n.translate language I18n.SignIn) ]
                          ]
                             ++ (case model.httpError of
                                     Nothing ->
@@ -253,46 +137,48 @@ viewModalBody language model =
             , div [ class "col-xs-6" ]
                 [ div [ class "well well-right" ]
                     [ p [ class "lead" ]
-                        [ text "Sign in your account now" ]
-                    , ul [ class "list-unstyled", attribute "style" "line-height: 2" ]
+                        [ text (I18n.translate language I18n.CreateAccountNow) ]
+                    , ul [ class "list-unstyled" ]
                         [ li []
                             [ span [ class "fa fa-check text-success" ]
                                 []
-                            , text "Improve existing content"
+                            , text (I18n.translate language I18n.ImproveExistingContent)
                             ]
                         , li []
                             [ span [ class "fa fa-check text-success" ]
                                 []
-                            , text "Vote the best contributions"
+                            , text (I18n.translate language I18n.VoteBestContributions)
                             ]
                         , li []
                             [ span [ class "fa fa-check text-success" ]
                                 []
-                            , text "Add a new tool or usage"
+                            , text (I18n.translate language I18n.AddToolOrUseCase)
                             ]
                         , li []
                             [ span [ class "fa fa-check text-success" ]
                                 []
-                            , text "Create a page for your organization "
+                            , text (I18n.translate language I18n.CreateOrganizationPage)
                             ]
-                          -- , li []
-                          --     [ a [ href "/read-more/" ]
-                          --         [ u []
-                          --             [ text "TODO Read more" ]
-                          --         ]
-                          --     ]
+                        , li []
+                            [ a [ href "#" ]
+                                [ u []
+                                    [ text (I18n.translate language I18n.ReadMore) ]
+                                ]
+                            ]
                         ]
-                      -- , p []
-                      --     [ a
-                      --         [ class "btn btn-block btn-default "
-                      --         , href "#"
-                      --         , onWithOptions
-                      --             "click"
-                      --             { preventDefault = True, stopPropagation = False }
-                      --             (Json.Decode.succeed (AuthenticatorRouteMsg (Just Authenticator.Model.SignUpRoute)))
-                      --         ]
-                      --         [ text (I18n.translate language I18n.RegisterNow) ]
-                      --     ]
+                    , a
+                        [ class "btn btn-block btn-default "
+                        , href "#"
+                        -- , onWithOptions
+                        --     "click"
+                        --     { preventDefault = True, stopPropagation = False }
+                        --     (Json.Decode.succeed
+                        --         (Authenticator.Types.ForParent
+                        --             (Authenticator.Types.AuthenticatorRouteMsg (Just Authenticator.Types.SignUpRoute))
+                        --         )
+                        --     )
+                        ]
+                        [ text (I18n.translate language I18n.RegisterNow) ]
                     ]
                 ]
             ]

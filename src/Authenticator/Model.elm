@@ -1,9 +1,13 @@
 module Authenticator.Model exposing (..)
 
-import Authenticator.ResetPassword as ResetPassword
-import Authenticator.SignIn as SignIn
-import Authenticator.SignOut as SignOut
-import Authenticator.SignUp as SignUp
+import Authenticator.ResetPassword.State
+import Authenticator.ResetPassword.Types
+import Authenticator.SignIn.State
+import Authenticator.SignIn.Types
+import Authenticator.SignOut.State
+import Authenticator.SignOut.Types
+import Authenticator.SignUp.State
+import Authenticator.SignUp.Types
 import Types exposing (User)
 
 
@@ -13,25 +17,18 @@ type alias Authentication =
 
 type alias Model =
     { authentication : Maybe Authentication
-    , resetPassword : ResetPassword.Model
-    , signIn : SignIn.Model
-    , signOut : SignOut.Model
-    , signUp : SignUp.Model
+    , resetPassword : Authenticator.ResetPassword.Types.Model
+    , signIn : Authenticator.SignIn.Types.Model
+    , signOut : Authenticator.SignOut.Types.Model
+    , signUp : Authenticator.SignUp.Types.Model
     }
-
-
-type Route
-    = ResetPasswordRoute
-    | SignInRoute
-    | SignOutRoute
-    | SignUpRoute
 
 
 init : Model
 init =
     { authentication = Nothing
-    , resetPassword = ResetPassword.init
-    , signIn = SignIn.init
-    , signOut = SignOut.init
-    , signUp = SignUp.init
+    , resetPassword = Authenticator.ResetPassword.State.init
+    , signIn = Authenticator.SignIn.State.init
+    , signOut = Authenticator.SignOut.State.init
+    , signUp = Authenticator.SignUp.State.init
     }

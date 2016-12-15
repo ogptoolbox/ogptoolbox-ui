@@ -67,6 +67,7 @@ type TranslationId
     | AddNewUseCase
     | AddNewUseCaseCatchPhrase
     | AdditionalInformations
+    | AddToolOrUseCase
     | AuthenticationRequired
     | AuthenticationRequiredExplanation
     | BadPayloadExplanation
@@ -78,13 +79,19 @@ type TranslationId
     | Collection GrammaticalNumber
     | Copyright
     | CountVersionsAvailable Int
+    | CreateAccountNow
+    | CreateOrganizationPage
+    | Email
     | EmailSentForAccountActivation
+    | EnterEmail
+    | EnterPassword
     | FooterAbout
     | FooterDiscover
     | GenericError
     | HeaderTitle
     | Help
     | Home
+    | ImproveExistingContent
     | Language Language
     | LanguageWord
     | License
@@ -96,17 +103,21 @@ type TranslationId
     | PageLoadingExplanation
     | PageNotFound
     | PageNotFoundExplanation
+    | Password
     | PublishOrganization
     | PublishTool
     | PublishUseCase
+    | ReadMore
     | RegisterNow
     | ResetPassword
+    | ResetPasswordLink
     | SeeAllAndCompare
     | Score
     | SearchInputPlaceholder
     | Share
     | ShowAll Int
     | SignIn
+    | SignInToContribute
     | SignOut
     | SignUp
     | SimilarTools
@@ -122,6 +133,7 @@ type TranslationId
     | UsedFor
     | Uses
     | UseIt
+    | VoteBestContributions
     | Website
 
 
@@ -428,6 +440,12 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        AddToolOrUseCase ->
+            { english = s "Add a new tool or use case"
+            , french = s "Ajoutez un nouvel outil ou cas d'usage"
+            , spanish = todo
+            }
+
         AuthenticationRequired ->
             { english = s "Authentication required"
             , french = todo
@@ -605,9 +623,39 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        CreateAccountNow ->
+            { english = s "Create your account now"
+            , french = s "Créez votre compte maintenant"
+            , spanish = todo
+            }
+
+        CreateOrganizationPage ->
+            { english = s "Create a page for your organization "
+            , french = s "Créez une page pour votre organisation"
+            , spanish = todo
+            }
+
+        Email ->
+            { english = s "Email"
+            , french = s "Courriel"
+            , spanish = todo
+            }
+
         EmailSentForAccountActivation ->
             { english = s "An email has been sent. Click the link it contains, to activate your account."
             , french = s "Un courriel vous a été envoyé. Cliquez sur le lien qu'il contient pour activer votre compte."
+            , spanish = todo
+            }
+
+        EnterEmail ->
+            { english = s "Please enter your email"
+            , french = s "Veuillez entrer votre courriel"
+            , spanish = todo
+            }
+
+        EnterPassword ->
+            { english = s "Please enter your password"
+            , french = s "Veuillez entrer votre mot de passe"
             , spanish = todo
             }
 
@@ -645,6 +693,12 @@ getTranslationSet translationId =
             { english = s "Home"
             , french = s "Accueil"
             , spanish = s "Inicio"
+            }
+
+        ImproveExistingContent ->
+            { english = s "Improve existing content"
+            , french = s "Améliorez le contenu existant"
+            , spanish = todo
             }
 
         Language language ->
@@ -749,6 +803,12 @@ to strengthen governance.
             , spanish = todo
             }
 
+        Password ->
+            { english = s "Password"
+            , french = s "Mot de passe"
+            , spanish = todo
+            }
+
         PublishUseCase ->
             { english = s "Publish use case"
             , french = s "Poublier ce cas d'usage"
@@ -767,6 +827,12 @@ to strengthen governance.
             , spanish = todo
             }
 
+        ReadMore ->
+            { english = s "Read more"
+            , french = s "En savoir plus"
+            , spanish = todo
+            }
+
         RegisterNow ->
             { english = s "Register now!"
             , french = s "Inscrivez vous maintenant !"
@@ -776,6 +842,12 @@ to strengthen governance.
         ResetPassword ->
             { english = s "Reset Password"
             , french = s "Changer de mot de passe"
+            , spanish = todo
+            }
+
+        ResetPasswordLink ->
+            { english = s "I forgot my password"
+            , french = s "J'ai oublié mon mot de passe"
             , spanish = todo
             }
 
@@ -813,6 +885,12 @@ to strengthen governance.
             { english = s "Sign In"
             , french = s "Se connecter"
             , spanish = s "Acceder"
+            }
+
+        SignInToContribute ->
+            { english = s "Sign in to contribute"
+            , french = s "Identifiez-vous pour contribuer"
+            , spanish = todo
             }
 
         SignOut ->
@@ -938,6 +1016,12 @@ to strengthen governance.
         UseIt ->
             { english = s "Use it"
             , french = s "Utiliser"
+            , spanish = todo
+            }
+
+        VoteBestContributions ->
+            { english = s "Vote for the best contributions"
+            , french = s "Votez pour les meilleurs contributions"
             , spanish = todo
             }
 
