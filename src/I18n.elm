@@ -141,26 +141,26 @@ getTranslationSet translationId =
             }
 
         AboutAccessContent ->
-            { english = s "Harvested data are available on framagit and accessible under a cc-0 license:"
-            , french = s "Les données moissonnées sont stockées sur un dépôt Framagit et disponible sous licence cc-0:"
+            { english = s "Harvested data are available on a Framagit repository and accessible under a CC0 license:"
+            , french = s "Les données moissonnées sont stockées sur un dépôt Framagit et disponible sous licence CC0 :"
             , spanish = todo
             }
 
         AboutCategories ->
             { english = s "How are tools and use cases categorized?"
-            , french = s "Comment sont catégorisés les outils et les usages ?"
+            , french = s "Comment sont catégorisés les outils et les cas usages ?"
             , spanish = todo
             }
 
         AboutCategoriesContent1 ->
-            { english = s "Rather than classify each tool (and their use cases) in monholitic and exclusive categories (i.e. “a tool cannot be in more than one category”), the platform is based on tags (labels), which enable to qualify each tool and each usage with as many key words as necessary. This is calledsocial tagging or “folksonomy”"
+            { english = s "Rather than classify each tool (and their use cases) in monolithic and exclusive categories (i.e. “a tool cannot be in more than one category”), the platform is based on tags, allowing to qualify each tool and each usage with as many key words as necessary. This is called social tagging or “folksonomy”"
             , french = s "Plutôt que de classer les outils (et leurs usages) dans de grandes catégories monolithiques et exclusives (i.e. \"un outil ne peut pas être dans plus d'une catégorie à la fois\"), la plateforme repose sur un système de \"tags\" (labels), permettant de qualifier chaque outil et chaque usage avec autant de mots clés que vous jugerez nécessaire. C'est ce qu'on appelle \"tagging\" social ou \"folksonomie\""
             , spanish = todo
             }
 
         AboutCategoriesContent2 ->
-            { english = s "These tags are represented by clickable bubbles. By navigating in different “bubbles” (tags), you will thus be able to find the same tool under multiple key words."
-            , french = s "Ces tags sont représentés sous forme de bulles cliquables. En naviguant dans des \"bulles\" (tags) différentes, vous pourrez ainsi retrouver le même outil dès lors qu'il est associé à plusieurs mots-clés."
+            { english = s "These tags are represented by bubbles. By cliking in different bubbles, you're simply searching in the Toolbox the tools and use cases matching those key words. Results are updated in real-time on the page."
+            , french = s "Ces tags sont représentés sous forme de bulles. En cliquant sur différentes bulles, vous cherchez tout simplement dans la Toolbox les outils et cas d'usage qui correspondent à ces mots clés. Les résultats s'affichent en temps réel sur la page."
             , spanish = todo
             }
 
@@ -226,7 +226,7 @@ getTranslationSet translationId =
 
         AboutDevContent ->
             { english = s "The OGP Toolbox is a free software developed by Etalab, the Prime Minister taskforce in charge of open data and open government French policy, on behalf of the OGP community. Co-created by the open government and the civic tech international community throughout 2016, the OGP Toolbox is one of the main deliverables of the Global Summit of the Open Government Partnership (7, 8 and 9 December 2016)."
-            , french = s "L'OGP Toolbox a été développée par Etalab, service du Premier Ministre en charge de l'ouverture des données publiques et du gouvernement ouvert de la France, pour le compte de la communauté du Partenariat du Gouvernement Ouvert. Co-créé avec les communautés internationales du gouvernement ouvert et de la civic tech tout au long de l'année 2016, l'OGP Toolbox est un des principaux livrables du Sommet mondial du Partenariat pour un Gouvernement Ouvert (7, 8 et 9 décembre 2016)."
+            , french = s "L'OGP Toolbox a été développée par Etalab, service du Premier Ministre en charge de l'ouverture des données publiques et du gouvernement ouvert de la France, pour le compte de la communauté du Partenariat du Gouvernement Ouvert. Co-créée avec les communautés internationales du gouvernement ouvert et de la civic tech tout au long de l'année 2016, l'OGP Toolbox est un des principaux livrables du Sommet mondial du Partenariat pour un Gouvernement Ouvert (7, 8 et 9 décembre 2016)."
             , spanish = todo
             }
 
@@ -303,14 +303,14 @@ getTranslationSet translationId =
             }
 
         AboutTypesContentActor ->
-            { english = s "users or tool developers, who are part of the public sphere (government, subnational, administration), the private sphere (businesses…), the civil society (non-profit organizations…) or simple citizens."
+            { english = s "User or tool developer, part of the public sphere (government, subnational, administration), the private sphere (businesses…), the civil society (non-profit organizations…) or a simple citizen."
             , french = s "Utilisateur ou développeur d'outil, faisant partie de la sphère publique (Etat, collectivité, administration...) ou privée (entreprise...), de la société civile (association, ONG...) ou simple citoyen."
             , spanish = todo
             }
 
         AboutTypesContentCollection ->
-            { english = s "A series of solutions gathered by an actor to push them forward, for example \"Tools used by the French Government\", \"Online consultations tools\"…."
-            , french = s "Le code comporte trois composants, chacun étant stocké sur un dépôt Framagit :"
+            { english = s "A collection is a list of tools recommended by an actor. The same as bookmarks or favorites, but for tools! For example the French government has a created a collection of public consultation tools that can be used by its administrations."
+            , french = s "Une collection est une liste d'outils recommandés par un acteur. Pareil qu'un marque-page ou un favori, mais pour des outils ! Par exemple le gouvernement français a créé une collection d'outils de consultation publique mis à la disposition de ses administrations."
             , spanish = todo
             }
 
@@ -327,8 +327,8 @@ getTranslationSet translationId =
             }
 
         AboutSourceContent ->
-            { english = s "The code includes three components, each of which is available on framagit:"
-            , french = s "Le code comporte trois composants, chacun étant stocké sur un dépôt Framagit :"
+            { english = s "The code is composed of the three following components:"
+            , french = s "Le code est composé des trois composants suivants :"
             , spanish = todo
             }
 
