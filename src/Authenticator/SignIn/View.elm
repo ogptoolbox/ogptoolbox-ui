@@ -21,29 +21,29 @@ viewModalBody language model =
                     [ Html.form [ onSubmit (ForSelf <| Submit) ]
                         ([ let
                             errorMaybe =
-                                Dict.get "username" model.errors
+                                Dict.get "email" model.errors
                            in
                             case errorMaybe of
                                 Just error ->
                                     div [ class "form-group has-error" ]
                                         [ label
-                                            [ class "control-label", for "username" ]
+                                            [ class "control-label", for "email" ]
                                             [ text (I18n.translate language I18n.Email) ]
                                         , input
-                                            [ ariaDescribedby "username-error"
+                                            [ ariaDescribedby "email-error"
                                             , class "form-control"
-                                            , id "username"
+                                            , id "email"
                                             , placeholder "john.doe@ogptoolbox.org"
                                             , required True
                                             , title (I18n.translate language I18n.EnterEmail)
                                             , type_ "text"
-                                            , value model.username
+                                            , value model.email
                                             , onInput (ForSelf << UsernameInput)
                                             ]
                                             []
                                         , span
                                             [ class "help-block"
-                                            , id "username-error"
+                                            , id "email-error"
                                             ]
                                             [ text error ]
                                         ]
@@ -51,16 +51,16 @@ viewModalBody language model =
                                 Nothing ->
                                     div [ class "form-group" ]
                                         [ label
-                                            [ class "control-label", for "username" ]
+                                            [ class "control-label", for "email" ]
                                             [ text (I18n.translate language I18n.Email) ]
                                         , input
                                             [ class "form-control"
-                                            , id "username"
+                                            , id "email"
                                             , placeholder "john.doe@ogptoolbox.org"
                                             , required True
                                             , title (I18n.translate language I18n.EnterEmail)
                                             , type_ "text"
-                                            , value model.username
+                                            , value model.email
                                             , onInput (ForSelf << UsernameInput)
                                             ]
                                             []
@@ -79,7 +79,7 @@ viewModalBody language model =
                                             [ ariaDescribedby "password-error"
                                             , class "form-control"
                                             , id "password"
-                                            , placeholder "John Doe"
+                                            , placeholder (I18n.translate language I18n.PasswordPlaceholder)
                                             , required True
                                             , title (I18n.translate language I18n.EnterPassword)
                                             , type_ "password"
@@ -102,7 +102,7 @@ viewModalBody language model =
                                         , input
                                             [ class "form-control"
                                             , id "password"
-                                            , placeholder "Your secret password"
+                                            , placeholder (I18n.translate language I18n.PasswordPlaceholder)
                                             , required True
                                             , title (I18n.translate language I18n.EnterPassword)
                                             , type_ "password"
@@ -114,14 +114,16 @@ viewModalBody language model =
                          , a
                             [ class "forgot"
                             , href "#"
-                              -- , onWithOptions
-                              --     "click"
-                              --     { preventDefault = True, stopPropagation = False }
-                              --     (Json.Decode.succeed (Authenticator.Types.AuthenticatorRouteMsg (Just Authenticator.Types.SignUpRoute)))
+                            , onWithOptions
+                                "click"
+                                { preventDefault = True, stopPropagation = False }
+                                (Json.Decode.succeed
+                                    (ForParent (ChangeRoute (Just Authenticator.Routes.ResetPasswordRoute)))
+                                )
                             ]
                             [ small [] [ text (I18n.translate language I18n.ResetPasswordLink) ] ]
                            -- , div [ class "alert alert-error hide", id "loginErrorMsg" ]
-                           --     [ text "Wrong username og password" ]
+                           --     [ text "Wrong email or password" ]
                          , button
                             [ class "btn btn-block btn-default grey", type_ "submit" ]
                             [ text (I18n.translate language I18n.SignIn) ]

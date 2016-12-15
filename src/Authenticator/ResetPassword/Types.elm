@@ -8,11 +8,6 @@ type alias Errors =
     Dict String String
 
 
-type alias Fields =
-    { email : String
-    }
-
-
 type alias Model =
     { errors : Errors
     , email : String

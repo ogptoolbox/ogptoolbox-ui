@@ -14,12 +14,6 @@ type ExternalMsg
     = ChangeRoute (Maybe Route)
 
 
-type alias Fields =
-    { password : String
-    , username : String
-    }
-
-
 type InternalMsg
     = SignedIn (Result Http.Error UserBody)
     | Submit
@@ -28,10 +22,10 @@ type InternalMsg
 
 
 type alias Model =
-    { httpError : Maybe Http.Error
+    { email : String
     , errors : Errors
+    , httpError : Maybe Http.Error
     , password : String
-    , username : String
     }
 
 

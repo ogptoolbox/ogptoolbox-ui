@@ -23,14 +23,16 @@ viewModalBody language model =
                             case errorMaybe of
                                 Just error ->
                                     div [ class "form-group has-error" ]
-                                        [ label [ class "control-label", for "username" ] [ text "Username" ]
+                                        [ label
+                                            [ class "control-label", for "username" ]
+                                            [ text (I18n.translate language I18n.Username) ]
                                         , input
                                             [ ariaDescribedby "username-error"
                                             , class "form-control"
                                             , id "username"
-                                            , placeholder "John Doe"
+                                            , placeholder (I18n.translate language I18n.UsernamePlaceholder)
                                             , required True
-                                            , title "Please enter you username"
+                                            , title (I18n.translate language I18n.EnterUsername)
                                             , type_ "text"
                                             , value model.username
                                             , onInput UsernameInput
@@ -45,13 +47,15 @@ viewModalBody language model =
 
                                 Nothing ->
                                     div [ class "form-group" ]
-                                        [ label [ class "control-label", for "username" ] [ text "Username" ]
+                                        [ label
+                                            [ class "control-label", for "username" ]
+                                            [ text (I18n.translate language I18n.Username) ]
                                         , input
                                             [ class "form-control"
                                             , id "username"
-                                            , placeholder "John Doe"
+                                            , placeholder (I18n.translate language I18n.UsernamePlaceholder)
                                             , required True
-                                            , title "Please enter you username"
+                                            , title (I18n.translate language I18n.EnterUsername)
                                             , type_ "text"
                                             , value model.username
                                             , onInput UsernameInput
@@ -111,14 +115,16 @@ viewModalBody language model =
                             case errorMaybe of
                                 Just error ->
                                     div [ class "form-group has-error" ]
-                                        [ label [ class "control-label", for "password" ] [ text "Password" ]
+                                        [ label
+                                            [ class "control-label", for "password" ]
+                                            [ text (I18n.translate language I18n.Password) ]
                                         , input
                                             [ ariaDescribedby "password-error"
                                             , class "form-control"
                                             , id "password"
-                                            , placeholder "Your secret password"
+                                            , placeholder (I18n.translate language I18n.PasswordPlaceholder)
                                             , required True
-                                            , title "Please enter you password"
+                                            , title (I18n.translate language I18n.EnterPassword)
                                             , type_ "password"
                                             , value model.password
                                             , onInput PasswordInput
@@ -133,13 +139,15 @@ viewModalBody language model =
 
                                 Nothing ->
                                     div [ class "form-group" ]
-                                        [ label [ class "control-label", for "password" ] [ text "Password" ]
+                                        [ label
+                                            [ class "control-label", for "password" ]
+                                            [ text (I18n.translate language I18n.Password) ]
                                         , input
                                             [ class "form-control"
                                             , id "password"
-                                            , placeholder "John Doe"
+                                            , placeholder (I18n.translate language I18n.PasswordPlaceholder)
                                             , required True
-                                            , title "Please enter you password"
+                                            , title (I18n.translate language I18n.EnterPassword)
                                             , type_ "password"
                                             , value model.password
                                             , onInput PasswordInput
@@ -147,42 +155,42 @@ viewModalBody language model =
                                             []
                                         ]
                         , button
-                            [ class "btn btn-primary", type_ "submit" ]
-                            [ text "Sign Up" ]
+                            [ class "btn btn-block btn-default grey", type_ "submit" ]
+                            [ text (I18n.translate language I18n.Register) ]
                         ]
                     ]
                 ]
             , div [ class "col-xs-5" ]
                 [ div [ class "well well-right" ]
                     [ p [ class "lead" ]
-                        [ text "Create your account now" ]
+                        [ text (I18n.translate language I18n.CreateAccountNow) ]
                     , ul [ class "list-unstyled" ]
                         [ li []
                             [ span [ class "fa fa-check text-success" ]
                                 []
-                            , text "Improve existing content"
+                            , text (I18n.translate language I18n.ImproveExistingContent)
                             ]
                         , li []
                             [ span [ class "fa fa-check text-success" ]
                                 []
-                            , text "Vote the best contributions"
+                            , text (I18n.translate language I18n.VoteBestContributions)
                             ]
                         , li []
                             [ span [ class "fa fa-check text-success" ]
                                 []
-                            , text "Add a new tool or usage"
+                            , text (I18n.translate language I18n.AddToolOrUseCase)
                             ]
                         , li []
                             [ span [ class "fa fa-check text-success" ]
                                 []
-                            , text "Create a page for your organization "
+                            , text (I18n.translate language I18n.CreateOrganizationPage)
                             ]
-                          -- , li []
-                          --     [ a [ href "/read-more/" ]
-                          --         [ u []
-                          --             [ text "Read more" ]
-                          --         ]
-                          --     ]
+                        , li []
+                            [ a [ href "#" ]
+                                [ u []
+                                    [ text (I18n.translate language I18n.ReadMore) ]
+                                ]
+                            ]
                         ]
                     ]
                 ]

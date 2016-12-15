@@ -13,7 +13,7 @@ viewModalBody : I18n.Language -> Model -> Html Msg
 viewModalBody language model =
     div [ class "modal-body" ]
         [ div [ class "row" ]
-            [ div [ class "col-xs-6" ]
+            [ div [ class "col-xs-12" ]
                 [ div [ class "well" ]
                     [ Html.form [ onSubmit Submit ]
                         [ let
@@ -23,7 +23,9 @@ viewModalBody language model =
                             case errorMaybe of
                                 Just error ->
                                     div [ class "form-group has-error" ]
-                                        [ label
+                                        [ p []
+                                            [ text (I18n.translate language I18n.ResetPasswordExplanation) ]
+                                        , label
                                             [ class "control-label", for "email" ]
                                             [ text (I18n.translate language I18n.Email) ]
                                         , input
@@ -47,7 +49,9 @@ viewModalBody language model =
 
                                 Nothing ->
                                     div [ class "form-group" ]
-                                        [ label
+                                        [ p []
+                                            [ text (I18n.translate language I18n.ResetPasswordExplanation) ]
+                                        , label
                                             [ class "control-label", for "email" ]
                                             [ text (I18n.translate language I18n.Email) ]
                                         , input
@@ -64,20 +68,7 @@ viewModalBody language model =
                                         ]
                         , button
                             [ class "btn btn-block btn-default grey", type_ "submit" ]
-                            [ text "Reset Password" ]
-                        ]
-                    ]
-                ]
-            , div [ class "col-xs-6" ]
-                [ div [ class "well well-right" ]
-                    [ p [ class "lead" ]
-                        [ text "Password Lost?" ]
-                    , ul [ class "list-unstyled", attribute "style" "line-height: 2" ]
-                        [ li []
-                            [ span [ class "fa fa-check text-success" ]
-                                []
-                            , text "Send an email to verify your account."
-                            ]
+                            [ text (I18n.translate language I18n.Send) ]
                         ]
                     ]
                 ]

@@ -85,6 +85,7 @@ type TranslationId
     | EmailSentForAccountActivation
     | EnterEmail
     | EnterPassword
+    | EnterUsername
     | FooterAbout
     | FooterDiscover
     | GenericError
@@ -104,16 +105,20 @@ type TranslationId
     | PageNotFound
     | PageNotFoundExplanation
     | Password
+    | PasswordPlaceholder
     | PublishOrganization
     | PublishTool
     | PublishUseCase
     | ReadMore
+    | Register
     | RegisterNow
     | ResetPassword
+    | ResetPasswordExplanation
     | ResetPasswordLink
-    | SeeAllAndCompare
     | Score
     | SearchInputPlaceholder
+    | SeeAllAndCompare
+    | Send
     | Share
     | ShowAll Int
     | SignIn
@@ -131,6 +136,8 @@ type TranslationId
     | UseCases
     | UsedBy
     | UsedFor
+    | Username
+    | UsernamePlaceholder
     | Uses
     | UseIt
     | VoteBestContributions
@@ -659,6 +666,12 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        EnterUsername ->
+            { english = s "Please enter your username"
+            , french = s "Veuillez entrer votre nom d'utilisateur"
+            , spanish = todo
+            }
+
         FooterAbout ->
             { english = s "About"
             , french = s "A propos"
@@ -809,6 +822,12 @@ to strengthen governance.
             , spanish = todo
             }
 
+        PasswordPlaceholder ->
+            { english = s "Your secret password"
+            , french = s "Votre mot de passe secret"
+            , spanish = todo
+            }
+
         PublishUseCase ->
             { english = s "Publish use case"
             , french = s "Poublier ce cas d'usage"
@@ -833,6 +852,12 @@ to strengthen governance.
             , spanish = todo
             }
 
+        Register ->
+            { english = s "Register"
+            , french = s "Créer le compte"
+            , spanish = todo
+            }
+
         RegisterNow ->
             { english = s "Register now!"
             , french = s "Inscrivez vous maintenant !"
@@ -845,15 +870,15 @@ to strengthen governance.
             , spanish = todo
             }
 
-        ResetPasswordLink ->
-            { english = s "I forgot my password"
-            , french = s "J'ai oublié mon mot de passe"
+        ResetPasswordExplanation ->
+            { english = s "Enter your email. We will send you the instructions to create a new password."
+            , french = s "Entrez votre courriel. Nous vous enverrons les instructions pour changer de mot de passe."
             , spanish = todo
             }
 
-        SeeAllAndCompare ->
-            { english = s "See all and compare"
-            , french = s "Voir tous et comparer"
+        ResetPasswordLink ->
+            { english = s "I forgot my password"
+            , french = s "J'ai oublié mon mot de passe"
             , spanish = todo
             }
 
@@ -866,6 +891,18 @@ to strengthen governance.
         SearchInputPlaceholder ->
             { english = s "Search for a tool, use case or organization"
             , french = s "Rechercher un outil, un cas d'usage ou une organisation"
+            , spanish = todo
+            }
+
+        SeeAllAndCompare ->
+            { english = s "See all and compare"
+            , french = s "Voir tous et comparer"
+            , spanish = todo
+            }
+
+        Send ->
+            { english = s "Send"
+            , french = s "Envoyer"
             , spanish = todo
             }
 
@@ -883,7 +920,7 @@ to strengthen governance.
 
         SignIn ->
             { english = s "Sign In"
-            , french = s "Se connecter"
+            , french = s "Identification"
             , spanish = s "Acceder"
             }
 
@@ -1004,6 +1041,18 @@ to strengthen governance.
         UsedFor ->
             { english = s "Used for"
             , french = s "Utilisé pour"
+            , spanish = todo
+            }
+
+        Username ->
+            { english = s "Username"
+            , french = s "Nom d'utilisateur"
+            , spanish = todo
+            }
+
+        UsernamePlaceholder ->
+            { english = s "John Doe"
+            , french = s "Françoise Martin"
             , spanish = todo
             }
 

@@ -12,10 +12,10 @@ import Types exposing (User)
 
 init : Model
 init =
-    { httpError = Nothing
+    { email = ""
     , errors = Dict.empty
+    , httpError = Nothing
     , password = ""
-    , username = ""
     }
 
 
@@ -56,15 +56,15 @@ update msg model =
                                 Nothing ->
                                     Nothing
                         )
-                        [ ( "password"
-                          , if String.isEmpty model.password then
-                                Just "Missing password"
+                        [ ( "email"
+                          , if String.isEmpty model.email then
+                                Just "Missing email"
                             else
                                 Nothing
                           )
-                        , ( "username"
-                          , if String.isEmpty model.username then
-                                Just "Missing username"
+                        , ( "password"
+                          , if String.isEmpty model.password then
+                                Just "Missing password"
                             else
                                 Nothing
                           )
@@ -76,7 +76,7 @@ update msg model =
                         let
                             bodyJson =
                                 Json.Encode.object
-                                    [ ( "userName", Json.Encode.string model.username )
+                                    [ ( "userName", Json.Encode.string model.email )
                                     , ( "password", Json.Encode.string model.password )
                                     ]
                         in
@@ -91,4 +91,4 @@ update msg model =
                 ( { model | errors = Dict.fromList errorsList }, cmd, Nothing )
 
         UsernameInput text ->
-            ( { model | username = text }, Cmd.none, Nothing )
+            ( { model | email = text }, Cmd.none, Nothing )
