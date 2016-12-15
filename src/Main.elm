@@ -1216,7 +1216,7 @@ viewFooter model language =
 viewHeader : Model -> I18n.Language -> String -> Html Msg
 viewHeader model language containerClass =
     let
-        profileOrResetPasswordNavItem =
+        profileNavItem =
             case model.authentication of
                 Just authentication ->
                     li []
@@ -1265,23 +1265,6 @@ viewHeader model language containerClass =
                             ]
                             [ text (I18n.translate language I18n.SignIn) ]
                         ]
-
-        signUpNavItem =
-            case model.authentication of
-                Just authentication ->
-                    text ""
-
-                Nothing ->
-                    li []
-                        [ a
-                            [ href "#"
-                            , onWithOptions
-                                "click"
-                                { preventDefault = True, stopPropagation = False }
-                                (Json.Decode.succeed (ChangeAuthenticatorRoute (Just Authenticator.Routes.SignUpRoute)))
-                            ]
-                            [ text (I18n.translate language I18n.SignUp) ]
-                        ]
     in
         header []
             [ nav [ class "navbar navbar-default navbar-fixed-top", attribute "role" "navigation" ]
@@ -1314,9 +1297,8 @@ viewHeader model language containerClass =
                             [ text (I18n.translate language I18n.HeaderTitle) ]
                         ]
                     , ul [ class "nav navbar-nav navbar-right collapse navbar-collapse" ]
-                        [ profileOrResetPasswordNavItem
+                        [ profileNavItem
                         , signInOrOutNavItem
-                        , signUpNavItem
                         , li []
                             [ button
                                 [ class "btn btn-default btn-action"
@@ -1456,9 +1438,8 @@ viewHeader model language containerClass =
                                     []
                                     [ text (I18n.translate language I18n.Help) ]
                                 ]
-                            , profileOrResetPasswordNavItem
+                            , profileNavItem
                             , signInOrOutNavItem
-                            , signUpNavItem
                             ]
                         ]
                     ]
