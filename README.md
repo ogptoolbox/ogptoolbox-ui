@@ -1,6 +1,8 @@
 # OGPToolbox-UI
 
-Web user interface for OGP toolbox
+Web user interface for the OGP toolbox
+
+See it in action: https://ogptoolbox.org/
 
 ## Install
 
