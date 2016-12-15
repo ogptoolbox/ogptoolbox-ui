@@ -182,7 +182,13 @@ view language =
                             [ text (I18n.translate language (I18n.AboutCategoriesContent1))
                             , a [ href (I18n.translate language (I18n.AboutCategoriesContentLink)), target "_blank" ]
                                 [ text (" (" ++ (I18n.translate language (I18n.AboutCategoriesContentLink)) ++ "). ") ]
-                            , text (I18n.translate language (I18n.AboutCategoriesContent2))
+                            ]
+                        ]
+                    ]
+                , div [ class "row" ]
+                    [ div [ class "col-md-12" ]
+                        [ p []
+                            [ text (I18n.translate language (I18n.AboutCategoriesContent2))
                             ]
                         ]
                     ]
