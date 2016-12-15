@@ -13,40 +13,40 @@ update msg model =
     case msg of
         ResetPasswordMsg subMsg ->
             let
-                ( resetPassword, resetPasswordEffect, authentication ) =
+                ( resetPassword, resetPasswordCmd, authentication ) =
                     Authenticator.ResetPassword.State.update subMsg model.resetPassword
 
                 model_ =
                     { model | authentication = authentication, resetPassword = resetPassword }
             in
-                ( model_, Cmd.map (ForSelf << ResetPasswordMsg) resetPasswordEffect )
+                ( model_, Cmd.map (ForSelf << ResetPasswordMsg) resetPasswordCmd )
 
         SignInMsg subMsg ->
             let
-                ( signIn, signInEffect, authentication ) =
+                ( signIn, signInCmd, authentication ) =
                     Authenticator.SignIn.State.update subMsg model.signIn
 
                 model_ =
                     { model | authentication = authentication, signIn = signIn }
             in
-                ( model_, Cmd.map (ForSelf << SignInMsg) signInEffect )
+                ( model_, Cmd.map translateSignInMsg signInCmd )
 
         SignOutMsg subMsg ->
             let
-                ( signOut, signOutEffect ) =
+                ( signOut, signOutCmd ) =
                     Authenticator.SignOut.State.update subMsg model.signOut
 
                 model_ =
                     { model | authentication = Nothing, signOut = signOut }
             in
-                ( model_, Cmd.map (ForSelf << SignOutMsg) signOutEffect )
+                ( model_, Cmd.map (ForSelf << SignOutMsg) signOutCmd )
 
         SignUpMsg subMsg ->
             let
-                ( signUp, signUpEffect, authentication ) =
+                ( signUp, signUpCmd, authentication ) =
                     Authenticator.SignUp.State.update subMsg model.signUp
 
                 model_ =
                     { model | authentication = authentication, signUp = signUp }
             in
-                ( model_, Cmd.map (ForSelf << SignUpMsg) signUpEffect )
+                ( model_, Cmd.map (ForSelf << SignUpMsg) signUpCmd )

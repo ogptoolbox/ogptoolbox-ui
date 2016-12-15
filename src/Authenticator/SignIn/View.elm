@@ -1,5 +1,6 @@
 module Authenticator.SignIn.View exposing (..)
 
+import Authenticator.Routes
 import Authenticator.SignIn.Types exposing (..)
 import Dict exposing (Dict)
 import Html exposing (..)
@@ -7,6 +8,7 @@ import Html.Attributes exposing (..)
 import Html.Attributes.Aria exposing (..)
 import Html.Events exposing (..)
 import I18n
+import Json.Decode
 import Views exposing (getHttpErrorAsString)
 
 
@@ -16,7 +18,7 @@ viewModalBody language model =
         [ div [ class "row" ]
             [ div [ class "col-xs-6" ]
                 [ div [ class "well" ]
-                    [ Html.form [ onSubmit Submit ]
+                    [ Html.form [ onSubmit (ForSelf <| Submit) ]
                         ([ let
                             errorMaybe =
                                 Dict.get "username" model.errors
@@ -36,7 +38,7 @@ viewModalBody language model =
                                             , title (I18n.translate language I18n.EnterEmail)
                                             , type_ "text"
                                             , value model.username
-                                            , onInput UsernameInput
+                                            , onInput (ForSelf << UsernameInput)
                                             ]
                                             []
                                         , span
@@ -59,7 +61,7 @@ viewModalBody language model =
                                             , title (I18n.translate language I18n.EnterEmail)
                                             , type_ "text"
                                             , value model.username
-                                            , onInput UsernameInput
+                                            , onInput (ForSelf << UsernameInput)
                                             ]
                                             []
                                         ]
@@ -82,7 +84,7 @@ viewModalBody language model =
                                             , title (I18n.translate language I18n.EnterPassword)
                                             , type_ "password"
                                             , value model.password
-                                            , onInput PasswordInput
+                                            , onInput (ForSelf << PasswordInput)
                                             ]
                                             []
                                         , span
@@ -105,7 +107,7 @@ viewModalBody language model =
                                             , title (I18n.translate language I18n.EnterPassword)
                                             , type_ "password"
                                             , value model.password
-                                            , onInput PasswordInput
+                                            , onInput (ForSelf << PasswordInput)
                                             ]
                                             []
                                         ]
@@ -169,14 +171,10 @@ viewModalBody language model =
                     , a
                         [ class "btn btn-block btn-default "
                         , href "#"
-                        -- , onWithOptions
-                        --     "click"
-                        --     { preventDefault = True, stopPropagation = False }
-                        --     (Json.Decode.succeed
-                        --         (Authenticator.Types.ForParent
-                        --             (Authenticator.Types.AuthenticatorRouteMsg (Just Authenticator.Types.SignUpRoute))
-                        --         )
-                        --     )
+                        , onWithOptions
+                            "click"
+                            { preventDefault = True, stopPropagation = False }
+                            (Json.Decode.succeed (ForParent (ChangeRoute (Just Authenticator.Routes.SignUpRoute))))
                         ]
                         [ text (I18n.translate language I18n.RegisterNow) ]
                     ]

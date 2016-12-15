@@ -1,19 +1,20 @@
 module Authenticator.Types exposing (..)
 
 import Authenticator.ResetPassword.Types
+import Authenticator.Routes exposing (Route)
 import Authenticator.SignIn.Types
 import Authenticator.SignOut.Types
 import Authenticator.SignUp.Types
 
 
 type ExternalMsg
-    = AuthenticatorRouteMsg (Maybe Route)
+    = ChangeRoute (Maybe Route)
     | Navigate String
 
 
 type InternalMsg
     = ResetPasswordMsg Authenticator.ResetPassword.Types.Msg
-    | SignInMsg Authenticator.SignIn.Types.Msg
+    | SignInMsg Authenticator.SignIn.Types.InternalMsg
     | SignOutMsg Authenticator.SignOut.Types.Msg
     | SignUpMsg Authenticator.SignUp.Types.Msg
 
@@ -24,7 +25,7 @@ type Msg
 
 
 type alias MsgTranslation parentMsg =
-    { onAuthenticatorRouteMsg : Maybe Route -> parentMsg
+    { onChangeRoute : Maybe Route -> parentMsg
     , onInternalMsg : InternalMsg -> parentMsg
     , onNavigate : String -> parentMsg
     }
@@ -32,13 +33,6 @@ type alias MsgTranslation parentMsg =
 
 type alias MsgTranslator parentMsg =
     Msg -> parentMsg
-
-
-type Route
-    = ResetPasswordRoute
-    | SignInRoute
-    | SignOutRoute
-    | SignUpRoute
 
 
 navigate : String -> Msg
@@ -52,13 +46,21 @@ signOutMsg =
 
 
 translateMsg : MsgTranslation parentMsg -> MsgTranslator parentMsg
-translateMsg { onAuthenticatorRouteMsg, onInternalMsg, onNavigate } msg =
+translateMsg { onChangeRoute, onInternalMsg, onNavigate } msg =
     case msg of
-        ForParent (AuthenticatorRouteMsg route) ->
-            onAuthenticatorRouteMsg route
+        ForParent (ChangeRoute route) ->
+            onChangeRoute route
 
         ForParent (Navigate path) ->
             onNavigate path
 
         ForSelf internalMsg ->
             onInternalMsg internalMsg
+
+
+translateSignInMsg : Authenticator.SignIn.Types.MsgTranslator Msg
+translateSignInMsg =
+    Authenticator.SignIn.Types.translateMsg
+        { onChangeRoute = ForParent << ChangeRoute
+        , onInternalMsg = ForSelf << SignInMsg
+        }

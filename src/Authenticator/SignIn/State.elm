@@ -19,7 +19,7 @@ init =
     }
 
 
-update : Msg -> Model -> ( Model, Cmd Msg, Maybe User )
+update : InternalMsg -> Model -> ( Model, Cmd Msg, Maybe User )
 update msg model =
     case msg of
         PasswordInput text ->
@@ -84,7 +84,7 @@ update msg model =
                                 (apiUrl ++ "login")
                                 (Http.stringBody "application/json" <| Json.Encode.encode 2 bodyJson)
                                 Decoders.userBodyDecoder
-                                |> Http.send SignedIn
+                                |> Http.send (ForSelf << SignedIn)
                     else
                         Cmd.none
             in

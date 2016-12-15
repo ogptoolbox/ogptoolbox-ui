@@ -9,6 +9,7 @@ import AddNewCollection.Types
 import AddNewCollection.View
 import Authenticator.Activate
 import Authenticator.Model
+import Authenticator.Routes
 import Authenticator.Types
 import Authenticator.Update
 import Authenticator.View
@@ -75,7 +76,7 @@ type alias Model =
     , activationModel : Authenticator.Activate.Model
     , authentication : Maybe Authenticator.Model.Authentication
     , authenticatorModel : Authenticator.Model.Model
-    , authenticatorRouteMaybe : Maybe Authenticator.Types.Route
+    , authenticatorRouteMaybe : Maybe Authenticator.Routes.Route
     , cardModel : Card.Types.Model
     , collectionModel : Collection.Types.Model
     , collectionsModel : Collections.Types.Model
@@ -127,8 +128,8 @@ type Msg
     | AddNewMsg AddNew.Types.InternalMsg
     | AddNewCollectionMsg AddNewCollection.Types.InternalMsg
     | AuthenticatorMsg Authenticator.Types.InternalMsg
-    | AuthenticatorRouteMsg (Maybe Authenticator.Types.Route)
     | CardMsg Card.Types.InternalMsg
+    | ChangeAuthenticatorRoute (Maybe Authenticator.Routes.Route)
     | CollectionMsg Collection.Types.InternalMsg
     | CollectionsMsg Collections.Types.InternalMsg
     | DisplayAddNewModal Bool
@@ -168,7 +169,7 @@ translateAddNewCollectionMsg =
 translateAuthenticatorMsg : Authenticator.Types.MsgTranslator Msg
 translateAuthenticatorMsg =
     Authenticator.Types.translateMsg
-        { onAuthenticatorRouteMsg = AuthenticatorRouteMsg
+        { onChangeRoute = ChangeAuthenticatorRoute
         , onInternalMsg = AuthenticatorMsg
         , onNavigate = Navigate
         }
@@ -300,11 +301,6 @@ update msg model =
                 in
                     model__ ! [ Cmd.map translateAuthenticatorMsg childCmd, effect__ ]
 
-            AuthenticatorRouteMsg authenticatorRouteMaybe ->
-                ( { model | authenticatorRouteMaybe = authenticatorRouteMaybe }
-                , Cmd.none
-                )
-
             CardMsg childMsg ->
                 let
                     ( cardModel, childCmd ) =
@@ -313,6 +309,11 @@ update msg model =
                     ( { model | cardModel = cardModel }
                     , Cmd.map translateCardMsg childCmd
                     )
+
+            ChangeAuthenticatorRoute authenticatorRouteMaybe ->
+                ( { model | authenticatorRouteMaybe = authenticatorRouteMaybe }
+                , Cmd.none
+                )
 
             CollectionMsg childMsg ->
                 let
@@ -1045,7 +1046,7 @@ viewAuthenticatorModal model language =
                                 , onWithOptions
                                     "click"
                                     { preventDefault = True, stopPropagation = False }
-                                    (Json.Decode.succeed (AuthenticatorRouteMsg Nothing))
+                                    (Json.Decode.succeed (ChangeAuthenticatorRoute Nothing))
                                 , type_ "button"
                                 ]
                                 [ span [ ariaHidden True ]
@@ -1237,7 +1238,7 @@ viewHeader model language containerClass =
         --             "click"
         --             { preventDefault = True, stopPropagation = False }
         --             (Json.Decode.succeed
-        --                 (AuthenticatorRouteMsg (Just Authenticator.Types.ResetPasswordRoute))
+        --                 (ChangeAuthenticatorRoute (Just Authenticator.Routes.ResetPasswordRoute))
         --             )
         --         ]
         --         [ text (I18n.translate language I18n.ResetPassword) ]
@@ -1260,7 +1261,7 @@ viewHeader model language containerClass =
                             , onWithOptions
                                 "click"
                                 { preventDefault = True, stopPropagation = False }
-                                (Json.Decode.succeed (AuthenticatorRouteMsg (Just Authenticator.Types.SignInRoute)))
+                                (Json.Decode.succeed (ChangeAuthenticatorRoute (Just Authenticator.Routes.SignInRoute)))
                             ]
                             [ text (I18n.translate language I18n.SignIn) ]
                         ]
@@ -1277,7 +1278,7 @@ viewHeader model language containerClass =
                             , onWithOptions
                                 "click"
                                 { preventDefault = True, stopPropagation = False }
-                                (Json.Decode.succeed (AuthenticatorRouteMsg (Just Authenticator.Types.SignUpRoute)))
+                                (Json.Decode.succeed (ChangeAuthenticatorRoute (Just Authenticator.Routes.SignUpRoute)))
                             ]
                             [ text (I18n.translate language I18n.SignUp) ]
                         ]
