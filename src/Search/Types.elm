@@ -23,17 +23,12 @@ type ExternalMsg
 type InternalMsg
     = BubbleDeselect Ports.D3BubblesPopularTag
     | BubbleSelect Ports.D3BubblesPopularTag
-    | CollectionsLoadError Http.Error
-    | CollectionsLoadSuccess DataIdsBody
+    | GotCollections (Result Http.Error DataIdsBody)
+    | GotOrganizations (Result Http.Error DataIdsBody)
+    | GotTagsPopularity (Result Http.Error PopularTagsData)
+    | GotTools (Result Http.Error DataIdsBody)
+    | GotUseCases (Result Http.Error DataIdsBody)
     | Load
-    | OrganizationsLoadError Http.Error
-    | OrganizationsLoadSuccess DataIdsBody
-    | PopularTagsLoadError Http.Error
-    | PopularTagsLoadSuccess PopularTagsData
-    | ToolsLoadError Http.Error
-    | ToolsLoadSuccess DataIdsBody
-    | UseCasesLoadError Http.Error
-    | UseCasesLoadSuccess DataIdsBody
 
 
 type Msg

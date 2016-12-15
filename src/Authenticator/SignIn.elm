@@ -12,7 +12,6 @@ import I18n
 import Json.Encode
 import Ports
 import String
-import Task
 import Types exposing (User, UserBody)
 import Views exposing (getHttpErrorAsString)
 
@@ -52,9 +51,8 @@ init =
 
 
 type Msg
-    = Error Http.Error
+    = SignedIn (Result Http.Error UserBody)
     | Submit
-    | Success UserBody
     | UsernameInput String
     | PasswordInput String
 
@@ -62,15 +60,27 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg, Maybe User )
 update msg model =
     case msg of
-        Error err ->
-            let
-                _ =
-                    Debug.log "Authenticator.SignIn Error" err
-            in
-                ( { model | httpError = Just err }, Cmd.none, Nothing )
-
         PasswordInput text ->
             ( { model | password = text }, Cmd.none, Nothing )
+
+        SignedIn response ->
+            case response of
+                Result.Err err ->
+                    let
+                        _ =
+                            Debug.log "Authenticator.SignedIn Error" err
+                    in
+                        ( model, Cmd.none, Nothing )
+
+                Result.Ok body ->
+                    let
+                        user =
+                            Just body.data
+                    in
+                        ( { model | httpError = Nothing }
+                        , Ports.storeAuthentication (Ports.userToUserForPort user)
+                        , user
+                        )
 
         Submit ->
             let
@@ -108,32 +118,15 @@ update msg model =
                                     , ( "password", Json.Encode.string model.password )
                                     ]
                         in
-                            Task.perform
-                                Error
-                                Success
-                                (Http.fromJson userBodyDecoder
-                                    (Http.send Http.defaultSettings
-                                        { verb = "POST"
-                                        , url = apiUrl ++ "login"
-                                        , headers =
-                                            [ ( "Accept", "application/json" )
-                                            , ( "Content-Type", "application/json" )
-                                            ]
-                                        , body = Http.string (Json.Encode.encode 2 bodyJson)
-                                        }
-                                    )
-                                )
+                            Http.post
+                                (apiUrl ++ "login")
+                                (Http.stringBody "application/json" <| Json.Encode.encode 2 bodyJson)
+                                Decoders.userBodyDecoder
+                                |> Http.send SignedIn
                     else
                         Cmd.none
             in
                 ( { model | errors = Dict.fromList errorsList }, cmd, Nothing )
-
-        Success body ->
-            let
-                user =
-                    Just body.data
-            in
-                ( { model | httpError = Nothing }, Ports.storeAuthentication (Ports.userToUserForPort user), user )
 
         UsernameInput text ->
             ( { model | username = text }, Cmd.none, Nothing )
@@ -165,7 +158,7 @@ viewModalBody language model =
                                             , placeholder "john.doe@ogptoolbox.org"
                                             , required True
                                             , title "Please enter you email"
-                                            , type' "text"
+                                            , type_ "text"
                                             , value model.username
                                             , onInput UsernameInput
                                             ]
@@ -186,7 +179,7 @@ viewModalBody language model =
                                             , placeholder "john.doe@ogptoolbox.org"
                                             , required True
                                             , title "Please enter you email"
-                                            , type' "text"
+                                            , type_ "text"
                                             , value model.username
                                             , onInput UsernameInput
                                             ]
@@ -207,7 +200,7 @@ viewModalBody language model =
                                             , placeholder "John Doe"
                                             , required True
                                             , title "Please enter you password"
-                                            , type' "password"
+                                            , type_ "password"
                                             , value model.password
                                             , onInput PasswordInput
                                             ]
@@ -228,7 +221,7 @@ viewModalBody language model =
                                             , placeholder "Your secret password"
                                             , required True
                                             , title "Please enter you password"
-                                            , type' "password"
+                                            , type_ "password"
                                             , value model.password
                                             , onInput PasswordInput
                                             ]
@@ -244,7 +237,7 @@ viewModalBody language model =
                            --         ]
                            --     ]
                          , button
-                            [ class "btn btn-block btn-default grey", type' "submit" ]
+                            [ class "btn btn-block btn-default grey", type_ "submit" ]
                             [ text "Sign In" ]
                          ]
                             ++ (case model.httpError of

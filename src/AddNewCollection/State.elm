@@ -3,13 +3,13 @@ module AddNewCollection.State exposing (..)
 import Authenticator.Model
 import Constants
 import Dict exposing (Dict)
+import Http
 import I18n exposing (getImageUrlOrOgpLogo, getName)
 import Navigation
 import Ports
 import Requests
 import Routes
 import String
-import Task
 import AddNewCollection.Types exposing (..)
 import WebData exposing (..)
 
@@ -35,6 +35,84 @@ subscriptions model =
 update : InternalMsg -> Model -> Maybe Authenticator.Model.Authentication -> I18n.Language -> ( Model, Cmd Msg )
 update msg ({ fields } as model) authentication language =
     case msg of
+        CollectionPosted response ->
+            case response of
+                Result.Err err ->
+                    let
+                        _ =
+                            Debug.log "AddNewCollection.State CollectionPosted Error" err
+
+                        newModel =
+                            { model | webData = Failure err }
+                    in
+                        ( newModel, Cmd.none )
+
+                Result.Ok body ->
+                    let
+                        newModel =
+                            { model | webData = Data (Loaded body) }
+
+                        urlPath =
+                            "/collections/" ++ body.data.id
+
+                        cmd =
+                            Routes.makeUrlWithLanguage language urlPath
+                                |> Navigation.newUrl
+                    in
+                        ( newModel, cmd )
+
+        GotCollection response ->
+            case response of
+                Result.Err err ->
+                    let
+                        _ =
+                            Debug.log "AddNewCollection.State GotCollection Error" err
+
+                        newModel =
+                            { model | webData = Failure err }
+                    in
+                        ( newModel, Cmd.none )
+
+                Result.Ok body ->
+                    let
+                        collection =
+                            case Dict.get body.data.id body.data.collections of
+                                Nothing ->
+                                    Debug.crash ("Collection not found id=" ++ body.data.id)
+
+                                Just collection ->
+                                    collection
+
+                        cardIds =
+                            String.join "\n" collection.cardIds
+
+                        newModel =
+                            { model
+                                | fields =
+                                    { cardIds = cardIds
+                                    , description = collection.description
+                                    , name = collection.name
+                                    }
+                                , imageUploadStatus =
+                                    case collection.logo of
+                                        Nothing ->
+                                            NotUploaded
+
+                                        Just urlPath ->
+                                            Uploaded urlPath
+                                , webData = Data (Loaded body)
+                            }
+
+                        cmd =
+                            Ports.setDocumentMetatags
+                                { title =
+                                    "Edit Collection"
+                                    -- TODO i18n
+                                , imageUrl = Constants.logoUrl
+                                }
+                    in
+                        ( newModel, cmd )
+
         ImageSelected ->
             let
                 cmd =
@@ -56,10 +134,8 @@ update msg ({ fields } as model) authentication language =
                             Cmd.none
 
                         Selected ->
-                            Task.perform
-                                ImageUploadError
-                                ImageUploadSuccess
-                                (Requests.postUploadImage authentication data.contents)
+                            Requests.postUploadImage authentication data.contents
+                                |> Http.send ImageUploaded
                                 |> Cmd.map ForSelf
 
                         Read _ ->
@@ -73,14 +149,17 @@ update msg ({ fields } as model) authentication language =
             in
                 ( newModel, cmd )
 
-        ImageUploadError err ->
+        ImageUploaded (Result.Err err) ->
             let
+                _ =
+                    Debug.log "AddNewCollection.State ImageUploaded Error" err
+
                 newModel =
                     { model | imageUploadStatus = UploadError err }
             in
                 ( newModel, Cmd.none )
 
-        ImageUploadSuccess urlPath ->
+        ImageUploaded (Result.Ok urlPath) ->
             let
                 newModel =
                     { model | imageUploadStatus = Uploaded urlPath }
@@ -96,61 +175,8 @@ update msg ({ fields } as model) authentication language =
                     }
 
                 cmd =
-                    Task.perform
-                        LoadCollectionError
-                        LoadCollectionSuccess
-                        (Requests.getCollection authentication collectionId)
-                        |> Cmd.map ForSelf
-            in
-                ( newModel, cmd )
-
-        LoadCollectionError err ->
-            let
-                _ =
-                    Debug.log "AddNewCollection.State LoadCollectionError" err
-
-                newModel =
-                    { model | webData = Failure err }
-            in
-                ( newModel, Cmd.none )
-
-        LoadCollectionSuccess body ->
-            let
-                collection =
-                    case Dict.get body.data.id body.data.collections of
-                        Nothing ->
-                            Debug.crash ("Collection not found id=" ++ body.data.id)
-
-                        Just collection ->
-                            collection
-
-                cardIds =
-                    String.join "\n" collection.cardIds
-
-                newModel =
-                    { model
-                        | fields =
-                            { cardIds = cardIds
-                            , description = collection.description
-                            , name = collection.name
-                            }
-                        , imageUploadStatus =
-                            case collection.logo of
-                                Nothing ->
-                                    NotUploaded
-
-                                Just urlPath ->
-                                    Uploaded urlPath
-                        , webData = Data (Loaded body)
-                    }
-
-                cmd =
-                    Ports.setDocumentMetatags
-                        { title =
-                            "Edit Collection"
-                            -- TODO i18n
-                        , imageUrl = Constants.logoUrl
-                        }
+                    Requests.getCollection authentication collectionId
+                        |> Http.send (ForSelf << GotCollection)
             in
                 ( newModel, cmd )
 
@@ -177,35 +203,12 @@ update msg ({ fields } as model) authentication language =
                             ""
 
                 cmd =
-                    Task.perform
-                        PostNewCollectionError
-                        PostNewCollectionSuccess
-                        (Requests.postCollection authentication model.editedCollectionId model.fields imageUrlPath)
-                        |> Cmd.map ForSelf
-            in
-                ( newModel, cmd )
-
-        PostNewCollectionError err ->
-            let
-                _ =
-                    Debug.log "AddNewCollection.State PostNewCollectionError" err
-
-                newModel =
-                    { model | webData = Failure err }
-            in
-                ( newModel, Cmd.none )
-
-        PostNewCollectionSuccess body ->
-            let
-                newModel =
-                    { model | webData = Data (Loaded body) }
-
-                urlPath =
-                    "/collections/" ++ body.data.id
-
-                cmd =
-                    Routes.makeUrlWithLanguage language urlPath
-                        |> Navigation.newUrl
+                    Requests.postCollection
+                        authentication
+                        model.editedCollectionId
+                        model.fields
+                        imageUrlPath
+                        |> Http.send (ForSelf << CollectionPosted)
             in
                 ( newModel, cmd )
 

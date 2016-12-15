@@ -11,7 +11,6 @@ import Http
 import Json.Encode
 import Ports
 import String
-import Task
 import Types exposing (User, UserBody)
 
 
@@ -52,9 +51,8 @@ init =
 
 type Msg
     = EmailInput String
-    | Error Http.Error
     | Submit
-    | Success UserBody
+    | UserCreated (Result Http.Error UserBody)
     | UsernameInput String
     | PasswordInput String
 
@@ -64,13 +62,6 @@ update msg model =
     case msg of
         EmailInput text ->
             ( { model | email = text }, Cmd.none, Nothing )
-
-        Error err ->
-            let
-                _ =
-                    Debug.log "Authenticator.SignUp Error" err
-            in
-                ( model, Cmd.none, Nothing )
 
         PasswordInput text ->
             ( { model | password = text }, Cmd.none, Nothing )
@@ -119,32 +110,31 @@ update msg model =
                                     , ( "password", Json.Encode.string model.password )
                                     ]
                         in
-                            Task.perform
-                                Error
-                                Success
-                                (Http.fromJson userBodyDecoder
-                                    (Http.send Http.defaultSettings
-                                        { verb = "POST"
-                                        , url = apiUrl ++ "users"
-                                        , headers =
-                                            [ ( "Accept", "application/json" )
-                                            , ( "Content-Type", "application/json" )
-                                            ]
-                                        , body = Http.string (Json.Encode.encode 2 bodyJson)
-                                        }
-                                    )
-                                )
+                            Http.post
+                                (apiUrl ++ "users")
+                                (Http.stringBody "application/json" <| Json.Encode.encode 2 bodyJson)
+                                Decoders.userBodyDecoder
+                                |> Http.send UserCreated
                     else
                         Cmd.none
             in
                 ( { model | errors = Dict.fromList errorsList }, cmd, Nothing )
 
-        Success body ->
-            let
-                user =
-                    Just body.data
-            in
-                ( model, Ports.storeAuthentication (Ports.userToUserForPort user), user )
+        UserCreated response ->
+            case response of
+                Result.Err err ->
+                    let
+                        _ =
+                            Debug.log "Authenticator.UserCreated Error" err
+                    in
+                        ( model, Cmd.none, Nothing )
+
+                Result.Ok body ->
+                    let
+                        user =
+                            Just body.data
+                    in
+                        ( model, Ports.storeAuthentication (Ports.userToUserForPort user), user )
 
         UsernameInput text ->
             ( { model | username = text }, Cmd.none, Nothing )
@@ -176,7 +166,7 @@ viewModalBody model =
                                             , placeholder "John Doe"
                                             , required True
                                             , title "Please enter you username"
-                                            , type' "text"
+                                            , type_ "text"
                                             , value model.username
                                             , onInput UsernameInput
                                             ]
@@ -197,7 +187,7 @@ viewModalBody model =
                                             , placeholder "John Doe"
                                             , required True
                                             , title "Please enter you username"
-                                            , type' "text"
+                                            , type_ "text"
                                             , value model.username
                                             , onInput UsernameInput
                                             ]
@@ -218,7 +208,7 @@ viewModalBody model =
                                             , placeholder "john.doe@ogptoolbox.org"
                                             , required True
                                             , title "Please enter you email"
-                                            , type' "email"
+                                            , type_ "email"
                                             , value model.email
                                             , onInput EmailInput
                                             ]
@@ -239,7 +229,7 @@ viewModalBody model =
                                             , placeholder "john.doe@ogptoolbox.org"
                                             , required True
                                             , title "Please enter you email"
-                                            , type' "email"
+                                            , type_ "email"
                                             , value model.email
                                             , onInput EmailInput
                                             ]
@@ -260,7 +250,7 @@ viewModalBody model =
                                             , placeholder "Your secret password"
                                             , required True
                                             , title "Please enter you password"
-                                            , type' "password"
+                                            , type_ "password"
                                             , value model.password
                                             , onInput PasswordInput
                                             ]
@@ -281,14 +271,14 @@ viewModalBody model =
                                             , placeholder "John Doe"
                                             , required True
                                             , title "Please enter you password"
-                                            , type' "password"
+                                            , type_ "password"
                                             , value model.password
                                             , onInput PasswordInput
                                             ]
                                             []
                                         ]
                         , button
-                            [ class "btn btn-primary", type' "submit" ]
+                            [ class "btn btn-primary", type_ "submit" ]
                             [ text "Sign Up" ]
                         ]
                     ]

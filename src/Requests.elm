@@ -12,7 +12,6 @@ import Json.Encode as Encode
 import Regex
 import String
 import Types exposing (..)
-import Task exposing (Task)
 
 
 idRegex : Regex.Regex
@@ -20,24 +19,25 @@ idRegex =
     Regex.regex "(^|/)(\\d+)(\\?|$)"
 
 
-activateUser : String -> String -> Task Http.Error UserBody
+activateUser : String -> String -> Http.Request UserBody
 activateUser userId authorization =
-    Http.fromJson userBodyDecoder
-        (Http.send Http.defaultSettings
-            { verb = "GET"
-            , url = apiUrl ++ "users/" ++ userId ++ "/activate?authorization=" ++ authorization
-            , headers = [ ( "Accept", "application/json" ) ]
-            , body = Http.empty
-            }
-        )
+    Http.request
+        { method = "GET"
+        , headers = [ Http.header "Cache-Control" "no-cache" ]
+        , url = apiUrl ++ "users/" ++ userId ++ "/activate?authorization=" ++ authorization
+        , body = Http.emptyBody
+        , expect = Http.expectJson userBodyDecoder
+        , timeout = Nothing
+        , withCredentials = False
+        }
 
 
-authenticationHeaders : Maybe Authenticator.Model.Authentication -> List ( String, String )
+authenticationHeaders : Maybe Authenticator.Model.Authentication -> List Http.Header
 authenticationHeaders authentication =
     case authentication of
         Just authentication ->
-            [ ( "Retruco-API-Key", authentication.apiKey )
-            , ( "Cache-Control", "no-cache" )
+            [ Http.header "Retruco-API-Key" authentication.apiKey
+            , Http.header "Cache-Control" "no-cache"
               -- Don't cache API requests when user is logged.
             ]
 
@@ -50,7 +50,7 @@ extractId url =
     (Regex.find Regex.All idRegex url
         |> List.head
     )
-        `Maybe.andThen`
+        |> Maybe.andThen
             (\match ->
                 case match.submatches |> List.drop 1 |> List.head of
                     Nothing ->
@@ -61,16 +61,17 @@ extractId url =
             )
 
 
-getCard : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
+getCard : Maybe Authenticator.Model.Authentication -> String -> Http.Request DataIdBody
 getCard authentication cardId =
-    Http.fromJson dataIdBodyDecoder
-        (Http.send Http.defaultSettings
-            { verb = "GET"
-            , url = apiUrl ++ "objects/" ++ cardId ++ "?show=references&show=values&depth=2"
-            , headers = ( "Accept", "application/json" ) :: authenticationHeaders authentication
-            , body = Http.empty
-            }
-        )
+    Http.request
+        { method = "GET"
+        , headers = authenticationHeaders authentication
+        , url = apiUrl ++ "objects/" ++ cardId ++ "?show=references&show=values&depth=2"
+        , body = Http.emptyBody
+        , expect = Http.expectJson dataIdBodyDecoder
+        , timeout = Nothing
+        , withCredentials = False
+        }
 
 
 getCards :
@@ -79,103 +80,120 @@ getCards :
     -> Maybe Int
     -> List String
     -> List String
-    -> Task Http.Error DataIdsBody
+    -> Http.Request DataIdsBody
 getCards authentication searchQuery limit tagIds cardTypes =
-    Http.fromJson dataIdsBodyDecoder
-        (Http.send Http.defaultSettings
-            { verb = "GET"
-            , url =
-                apiUrl
-                    ++ "cards?"
-                    ++ (List.map (\cardType -> "type=" ++ cardType) cardTypes
-                            ++ (([ Just "show=values"
-                                 , Just "depth=1"
-                                 , (if String.isEmpty searchQuery then
-                                        Nothing
-                                    else
-                                        Just ("term=" ++ searchQuery)
-                                   )
-                                 , limit |> Maybe.map (\limit -> "limit=" ++ (toString limit))
-                                 ]
-                                    |> List.filterMap identity
-                                )
-                                    ++ (tagIds
-                                            |> List.filter (\s -> not (String.isEmpty s))
-                                            |> List.map (\tagId -> "tag=" ++ tagId)
-                                       )
+    Http.request
+        { method = "GET"
+        , headers = authenticationHeaders authentication
+        , url =
+            apiUrl
+                ++ "cards?"
+                ++ (List.map (\cardType -> "type=" ++ cardType) cardTypes
+                        ++ (([ Just "show=values"
+                             , Just "depth=1"
+                             , (if String.isEmpty searchQuery then
+                                    Nothing
+                                else
+                                    Just ("term=" ++ searchQuery)
                                )
-                            |> String.join "&"
-                       )
-            , headers = ( "Accept", "application/json" ) :: authenticationHeaders authentication
-            , body = Http.empty
-            }
-        )
+                             , limit |> Maybe.map (\limit -> "limit=" ++ (toString limit))
+                             ]
+                                |> List.filterMap identity
+                            )
+                                ++ (tagIds
+                                        |> List.filter (\s -> not (String.isEmpty s))
+                                        |> List.map (\tagId -> "tag=" ++ tagId)
+                                   )
+                           )
+                        |> String.join "&"
+                   )
+        , body = Http.emptyBody
+        , expect = Http.expectJson dataIdsBodyDecoder
+        , timeout = Nothing
+        , withCredentials = False
+        }
 
 
-getCollection : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error DataIdBody
+getCollection :
+    Maybe Authenticator.Model.Authentication
+    -> String
+    -> Http.Request DataIdBody
 getCollection authentication collectionId =
-    Http.fromJson dataIdBodyDecoder
-        (Http.send Http.defaultSettings
-            { verb = "GET"
-            , url = apiUrl ++ "collections/" ++ collectionId ++ "?show=values&depth=3"
-            , headers = ( "Accept", "application/json" ) :: authenticationHeaders authentication
-            , body = Http.empty
-            }
-        )
+    Http.request
+        { method = "GET"
+        , headers = authenticationHeaders authentication
+        , url = apiUrl ++ "collections/" ++ collectionId ++ "?show=values&depth=3"
+        , body = Http.emptyBody
+        , expect = Http.expectJson dataIdBodyDecoder
+        , timeout = Nothing
+        , withCredentials = False
+        }
 
 
-getCollections : Maybe Authenticator.Model.Authentication -> Maybe Int -> Task Http.Error DataIdsBody
+getCollections :
+    Maybe Authenticator.Model.Authentication
+    -> Maybe Int
+    -> Http.Request DataIdsBody
 getCollections authentication limit =
-    Http.fromJson dataIdsBodyDecoder
-        (Http.send Http.defaultSettings
-            { verb = "GET"
-            , url =
-                apiUrl
-                    ++ "collections?show=values&depth=1"
-                    ++ (case limit of
-                            Nothing ->
-                                ""
+    Http.request
+        { method = "GET"
+        , headers = authenticationHeaders authentication
+        , url =
+            apiUrl
+                ++ "collections?show=values&depth=1"
+                ++ (case limit of
+                        Nothing ->
+                            ""
 
-                            Just limit ->
-                                "&limit=" ++ (toString limit)
-                       )
-            , headers = ( "Accept", "application/json" ) :: authenticationHeaders authentication
-            , body = Http.empty
-            }
-        )
+                        Just limit ->
+                            "&limit=" ++ (toString limit)
+                   )
+        , body = Http.emptyBody
+        , expect = Http.expectJson dataIdsBodyDecoder
+        , timeout = Nothing
+        , withCredentials = False
+        }
 
 
-getCollectionsForAuthor : Authenticator.Model.Authentication -> Task Http.Error DataIdsBody
+getCollectionsForAuthor : Authenticator.Model.Authentication -> Http.Request DataIdsBody
 getCollectionsForAuthor authentication =
-    Http.fromJson dataIdsBodyDecoder
-        (Http.send Http.defaultSettings
-            { verb = "GET"
-            , url = apiUrl ++ "users/" ++ authentication.urlName ++ "/collections?show=values&depth=1"
-            , headers =
-                [ ( "Accept", "application/json" )
-                , ( "Retruco-API-Key", authentication.apiKey )
-                ]
-            , body = Http.empty
-            }
-        )
+    Http.request
+        { method = "GET"
+        , headers = authenticationHeaders (Just authentication)
+        , url = apiUrl ++ "users/" ++ authentication.urlName ++ "/collections?show=values&depth=1"
+        , body = Http.emptyBody
+        , expect = Http.expectJson dataIdsBodyDecoder
+        , timeout = Nothing
+        , withCredentials = False
+        }
 
 
-getObjectProperties : Maybe Authenticator.Model.Authentication -> String -> String -> Task Http.Error DataIdsBody
+getObjectProperties :
+    Maybe Authenticator.Model.Authentication
+    -> String
+    -> String
+    -> Http.Request DataIdsBody
 getObjectProperties authentication objectId keyId =
-    Http.fromJson dataIdsBodyDecoder
-        (Http.send Http.defaultSettings
-            { verb = "GET"
-            , url = apiUrl ++ "objects/" ++ objectId ++ "/properties/" ++ keyId ++ "?show=ballots&show=values&depth=1"
-            , headers = ( "Accept", "application/json" ) :: authenticationHeaders authentication
-            , body = Http.empty
-            }
-        )
+    Http.request
+        { method = "GET"
+        , headers = authenticationHeaders authentication
+        , url = apiUrl ++ "objects/" ++ objectId ++ "/properties/" ++ keyId ++ "?show=ballots&show=values&depth=1"
+        , body = Http.emptyBody
+        , expect = Http.expectJson dataIdsBodyDecoder
+        , timeout = Nothing
+        , withCredentials = False
+        }
 
 
-getTagsPopularity : List String -> Task Http.Error PopularTagsData
-getTagsPopularity tagIds =
-    let
-        url =
+getTagsPopularity :
+    Maybe Authenticator.Model.Authentication
+    -> List String
+    -> Http.Request PopularTagsData
+getTagsPopularity authentication tagIds =
+    Http.request
+        { method = "GET"
+        , headers = authenticationHeaders authentication
+        , url =
             apiUrl
                 ++ "cards/tags-popularity?type=use-case&"
                 ++ (tagIds
@@ -183,23 +201,19 @@ getTagsPopularity tagIds =
                         |> List.map (\tagId -> "tag=" ++ tagId)
                         |> String.join "&"
                    )
-    in
-        Http.fromJson popularTagsDataDecoder
-            (Http.send Http.defaultSettings
-                { verb = "GET"
-                , url = url
-                , headers = [ ( "Accept", "application/json" ) ]
-                , body = Http.empty
-                }
-            )
+        , body = Http.emptyBody
+        , expect = Http.expectJson popularTagsDataDecoder
+        , timeout = Nothing
+        , withCredentials = False
+        }
 
 
-postCardsEasy :
+postCard :
     Maybe Authenticator.Model.Authentication
     -> Dict String String
     -> I18n.Language
-    -> Task Http.Error DataIdBody
-postCardsEasy authentication fields language =
+    -> Http.Request DataIdBody
+postCard authentication fields language =
     let
         languageCode =
             I18n.iso639_1FromLanguage language
@@ -238,24 +252,25 @@ postCardsEasy authentication fields language =
                   )
                 , ( "widgets", Encode.object [] )
                 ]
-                |> Encode.encode 2
-                |> Http.string
+                |> Http.jsonBody
     in
-        Http.fromJson dataIdBodyDecoder
-            (Http.send Http.defaultSettings
-                { verb = "POST"
-                , url = apiUrl ++ "cards/easy"
-                , headers =
-                    [ ( "Accept", "application/json" )
-                    , ( "Content-Type", "application/json" )
-                    ]
-                        ++ authenticationHeaders authentication
-                , body = body
-                }
-            )
+        Http.request
+            { method = "POST"
+            , headers = authenticationHeaders authentication
+            , url = apiUrl ++ "cards/easy"
+            , body = body
+            , expect = Http.expectJson dataIdBodyDecoder
+            , timeout = Nothing
+            , withCredentials = False
+            }
 
 
-postCollection : Maybe Authenticator.Model.Authentication -> Maybe String -> AddNewCollectionFields -> String -> Task Http.Error DataIdBody
+postCollection :
+    Maybe Authenticator.Model.Authentication
+    -> Maybe String
+    -> AddNewCollectionFields
+    -> String
+    -> Http.Request DataIdBody
 postCollection authentication editedCollectionId fields imageUrlPath =
     let
         cardIds : List String
@@ -263,95 +278,84 @@ postCollection authentication editedCollectionId fields imageUrlPath =
             String.words fields.cardIds |> List.filterMap extractId
 
         url =
-            (case editedCollectionId of
+            case editedCollectionId of
                 Just collectionId ->
                     apiUrl ++ "collections/" ++ collectionId
 
                 Nothing ->
                     apiUrl ++ "collections"
-            )
     in
-        Http.fromJson dataIdBodyDecoder
-            (Http.send Http.defaultSettings
-                { verb = "POST"
-                , url = url
-                , headers =
-                    [ ( "Accept", "application/json" )
-                    , ( "Content-Type", "application/json" )
-                    ]
-                        ++ authenticationHeaders authentication
-                , body =
-                    Encode.object
-                        [ ( "cardIds", Encode.list (List.map Encode.string cardIds) )
-                        , ( "description", Encode.string fields.description )
-                        , ( "logo", Encode.string imageUrlPath )
-                        , ( "name", Encode.string fields.name )
-                        ]
-                        |> Encode.encode 2
-                        |> Http.string
-                }
-            )
-
-
-postProperty : Maybe Authenticator.Model.Authentication -> String -> String -> String -> Task Http.Error DataIdBody
-postProperty authentication objectId keyId valueId =
-    Http.fromJson dataIdBodyDecoder
-        (Http.send Http.defaultSettings
-            { verb = "POST"
-            , url = apiUrl ++ "properties?show=ballots&show=values&depth=3"
-            , headers =
-                [ ( "Accept", "application/json" )
-                , ( "Content-Type", "application/json" )
-                ]
-                    ++ authenticationHeaders authentication
+        Http.request
+            { method = "POST"
+            , headers = authenticationHeaders authentication
+            , url = url
             , body =
                 Encode.object
-                    [ ( "keyId", Encode.string keyId )
-                    , ( "objectId", Encode.string objectId )
-                    , ( "valueId", Encode.string valueId )
+                    [ ( "cardIds", Encode.list (List.map Encode.string cardIds) )
+                    , ( "description", Encode.string fields.description )
+                    , ( "logo", Encode.string imageUrlPath )
+                    , ( "name", Encode.string fields.name )
                     ]
-                    |> Encode.encode 2
-                    |> Http.string
+                    |> Http.jsonBody
+            , expect = Http.expectJson dataIdBodyDecoder
+            , timeout = Nothing
+            , withCredentials = False
             }
-        )
 
 
-postRating : Maybe Authenticator.Model.Authentication -> String -> Int -> Task Http.Error DataIdBody
+postProperty :
+    Maybe Authenticator.Model.Authentication
+    -> String
+    -> String
+    -> String
+    -> Http.Request DataIdBody
+postProperty authentication objectId keyId valueId =
+    Http.request
+        { method = "POST"
+        , headers = authenticationHeaders authentication
+        , url = apiUrl ++ "properties?show=ballots&show=values&depth=3"
+        , body =
+            Encode.object
+                [ ( "keyId", Encode.string keyId )
+                , ( "objectId", Encode.string objectId )
+                , ( "valueId", Encode.string valueId )
+                ]
+                |> Http.jsonBody
+        , expect = Http.expectJson dataIdBodyDecoder
+        , timeout = Nothing
+        , withCredentials = False
+        }
+
+
+postRating : Maybe Authenticator.Model.Authentication -> String -> Int -> Http.Request DataIdBody
 postRating authentication propertyId rating =
-    Http.fromJson dataIdBodyDecoder
-        (Http.send Http.defaultSettings
-            { verb = "POST"
-            , url = apiUrl ++ "statements/" ++ propertyId ++ "/rating?show=ballots&depth=1"
-            , headers =
-                [ ( "Accept", "application/json" )
-                , ( "Content-Type", "application/json" )
-                ]
-                    ++ authenticationHeaders authentication
-            , body = Encode.object [ ( "rating", Encode.int rating ) ] |> Encode.encode 2 |> Http.string
-            }
-        )
+    Http.request
+        { method = "POST"
+        , headers = authenticationHeaders authentication
+        , url = apiUrl ++ "statements/" ++ propertyId ++ "/rating?show=ballots&depth=1"
+        , body = Encode.object [ ( "rating", Encode.int rating ) ] |> Http.jsonBody
+        , expect = Http.expectJson dataIdBodyDecoder
+        , timeout = Nothing
+        , withCredentials = False
+        }
 
 
-postUploadImage : Maybe Authenticator.Model.Authentication -> String -> Task Http.Error String
+postUploadImage : Maybe Authenticator.Model.Authentication -> String -> Http.Request String
 postUploadImage authentication contents =
-    Http.fromJson (Decode.at [ "data", "path" ] Decode.string)
-        (Http.send Http.defaultSettings
-            { verb = "POST"
-            , url = apiUrl ++ "uploads/images/json"
-            , headers =
-                [ ( "Accept", "application/json" )
-                , ( "Content-Type", "application/json" )
-                ]
-                    ++ authenticationHeaders authentication
-            , body =
-                Encode.object [ ( "file", Encode.string contents ) ]
-                    |> Encode.encode 2
-                    |> Http.string
-            }
-        )
+    Http.request
+        { method = "POST"
+        , headers = authenticationHeaders authentication
+        , url = apiUrl ++ "uploads/images/json"
+        , body =
+            Encode.object [ ( "file", Encode.string contents ) ]
+                |> Http.jsonBody
+        , expect = Http.expectJson (Decode.at [ "data", "path" ] Decode.string)
+        , timeout = Nothing
+        , withCredentials = False
+        }
 
 
-postValue : Maybe Authenticator.Model.Authentication -> Field -> Task Http.Error DataIdBody
+postValue : Maybe Authenticator.Model.Authentication -> Field -> Http.Request DataIdBody
 postValue authentication field =
     let
         ( schemaId, widgetId, encodedValue ) =
@@ -396,22 +400,18 @@ postValue authentication field =
                             -- TODO: Improve errors handling.
                             ( "schema:string", "widget:input-text", Encode.string string )
     in
-        Http.fromJson dataIdBodyDecoder
-            (Http.send Http.defaultSettings
-                { verb = "POST"
-                , url = apiUrl ++ "values"
-                , headers =
-                    [ ( "Accept", "application/json" )
-                    , ( "Content-Type", "application/json" )
+        Http.request
+            { method = "POST"
+            , headers = authenticationHeaders authentication
+            , url = apiUrl ++ "values"
+            , body =
+                Encode.object
+                    [ ( "schema", Encode.string schemaId )
+                    , ( "value", encodedValue )
+                    , ( "widget", Encode.string widgetId )
                     ]
-                        ++ authenticationHeaders authentication
-                , body =
-                    Encode.object
-                        [ ( "schema", Encode.string schemaId )
-                        , ( "value", encodedValue )
-                        , ( "widget", Encode.string widgetId )
-                        ]
-                        |> Encode.encode 2
-                        |> Http.string
-                }
-            )
+                    |> Http.jsonBody
+            , expect = Http.expectJson dataIdBodyDecoder
+            , timeout = Nothing
+            , withCredentials = False
+            }

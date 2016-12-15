@@ -1,11 +1,11 @@
 module Search.View exposing (..)
 
 import Constants
-import Hop.Types
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Helpers exposing (aForPath)
 import I18n exposing (getImageUrl, getManyStrings, getOneString, getSubTypes)
+import Navigation
 import Routes
 import Search.Types exposing (..)
 import Types exposing (..)
@@ -13,7 +13,7 @@ import Views exposing (viewCardListItem, viewLoading, viewWebData)
 import WebData exposing (getData, getLoadingStatusData, LoadingStatus(..), WebData(..))
 
 
-view : Model -> CardType -> I18n.Language -> Hop.Types.Location -> Html Msg
+view : Model -> CardType -> I18n.Language -> Navigation.Location -> Html Msg
 view { organizations, tools, useCases } activeCardType language location =
     let
         webData =

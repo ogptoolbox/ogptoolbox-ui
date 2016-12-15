@@ -16,37 +16,37 @@ update msg model =
                 ( resetPassword, resetPasswordEffect, authentication ) =
                     ResetPassword.update subMsg model.resetPassword
 
-                model' =
+                model_ =
                     { model | authentication = authentication, resetPassword = resetPassword }
             in
-                ( model', Cmd.map (ForSelf << ResetPasswordMsg) resetPasswordEffect )
+                ( model_, Cmd.map (ForSelf << ResetPasswordMsg) resetPasswordEffect )
 
         SignInMsg subMsg ->
             let
                 ( signIn, signInEffect, authentication ) =
                     SignIn.update subMsg model.signIn
 
-                model' =
+                model_ =
                     { model | authentication = authentication, signIn = signIn }
             in
-                ( model', Cmd.map (ForSelf << SignInMsg) signInEffect )
+                ( model_, Cmd.map (ForSelf << SignInMsg) signInEffect )
 
         SignOutMsg subMsg ->
             let
                 ( signOut, signOutEffect ) =
                     SignOut.update subMsg model.signOut
 
-                model' =
+                model_ =
                     { model | authentication = Nothing, signOut = signOut }
             in
-                ( model', Cmd.map (ForSelf << SignOutMsg) signOutEffect )
+                ( model_, Cmd.map (ForSelf << SignOutMsg) signOutEffect )
 
         SignUpMsg subMsg ->
             let
                 ( signUp, signUpEffect, authentication ) =
                     SignUp.update subMsg model.signUp
 
-                model' =
+                model_ =
                     { model | authentication = authentication, signUp = signUp }
             in
-                ( model', Cmd.map (ForSelf << SignUpMsg) signUpEffect )
+                ( model_, Cmd.map (ForSelf << SignUpMsg) signUpEffect )

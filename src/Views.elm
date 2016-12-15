@@ -117,21 +117,24 @@ viewCardListItem navigate language values card =
 getHttpErrorAsString : I18n.Language -> Http.Error -> String
 getHttpErrorAsString language err =
     case err of
-        Timeout ->
-            I18n.translate language I18n.TimeoutExplanation
+        BadPayload message response ->
+            I18n.translate language I18n.BadPayloadExplanation
+
+        BadStatus response ->
+            if response.status.code == 404 then
+                I18n.translate language I18n.PageNotFoundExplanation
+            else
+                -- TODO Add I18n.BadStatusExplanation prefix
+                toString response
+
+        BadUrl message ->
+            I18n.translate language I18n.BadUrlExplanation
 
         NetworkError ->
             I18n.translate language I18n.NetworkErrorExplanation
 
-        UnexpectedPayload string ->
-            I18n.translate language I18n.UnexpectedPayloadExplanation
-
-        BadResponse code string ->
-            if code == 404 then
-                I18n.translate language I18n.PageNotFoundExplanation
-            else
-                -- TODO Add I18n.BadResponseExplanation prefix
-                string
+        Timeout ->
+            I18n.translate language I18n.TimeoutExplanation
 
 
 viewLoading : I18n.Language -> Html msg
@@ -198,21 +201,24 @@ viewWebData language viewSuccess webData =
 
                 title =
                     case err of
-                        Timeout ->
+                        BadPayload message response ->
+                            genericTitle
+
+                        BadStatus response ->
+                            if response.status.code == 404 then
+                                I18n.translate language I18n.PageNotFound
+                            else
+                                -- TODO Add I18n.BadStatusExplanation prefix
+                                genericTitle
+
+                        BadUrl message ->
                             genericTitle
 
                         NetworkError ->
                             genericTitle
 
-                        UnexpectedPayload _ ->
+                        Timeout ->
                             genericTitle
-
-                        BadResponse code _ ->
-                            if code == 404 then
-                                I18n.translate language I18n.PageNotFound
-                            else
-                                -- TODO Add I18n.BadResponse prefix
-                                genericTitle
             in
                 viewBigMessage title (getHttpErrorAsString language err)
 

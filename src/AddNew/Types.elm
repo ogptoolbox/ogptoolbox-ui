@@ -26,14 +26,12 @@ type ExternalMsg
 
 
 type InternalMsg
-    = Error Http.Error
+    = CardPosted (Result Http.Error DataIdBody)
+    | ImageRead Ports.ImagePortData
+    | ImageSelected
+    | ImageUploaded (Result Http.Error String)
     | SetField String String
     | SubmitFields
-    | SubmittedFields DataIdBody
-    | ImageSelected
-    | ImageRead Ports.ImagePortData
-    | ImageUploadError Http.Error
-    | ImageUploadSuccess String
 
 
 type Msg

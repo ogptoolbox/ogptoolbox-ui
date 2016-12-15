@@ -88,7 +88,7 @@ viewBanner language user collection =
                                         , attribute "data-target" "#edit-content"
                                         , attribute "data-toggle" "modal"
                                         , onClick (navigate ("/collections/" ++ collection.id ++ "/edit"))
-                                        , type' "button"
+                                        , type_ "button"
                                         ]
                                         [ text "Edit collection"
                                           -- TODO i18n
@@ -154,7 +154,7 @@ viewCollectionContent language user collection cards values =
                                         -- TODO: i18n
                                      in
                                         ("https://twitter.com/intent/tweet?text="
-                                            ++ Http.uriEncode
+                                            ++ Http.encodeUri
                                                 (I18n.translate
                                                     language
                                                     (I18n.TweetMessage collection.name url)

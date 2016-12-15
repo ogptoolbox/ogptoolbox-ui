@@ -3,6 +3,7 @@ module Card.State exposing (..)
 import Authenticator.Model
 import Card.Types exposing (..)
 import Dict exposing (Dict)
+import Http
 import I18n exposing (getImageUrlOrOgpLogo, getName)
 import Ports
 import Requests
@@ -41,11 +42,8 @@ update msg ({ editedProperty } as model) authentication language =
                             webData
 
                 cmd =
-                    Task.perform
-                        LoadCardError
-                        LoadCardSuccess
-                        (Requests.getCard authentication webData.data.id)
-                        |> Cmd.map ForSelf
+                    Requests.getCard authentication webData.data.id
+                        |> Http.send (ForSelf << GotCard)
             in
                 ( newModel, cmd )
 
@@ -54,43 +52,68 @@ update msg ({ editedProperty } as model) authentication language =
             , Cmd.none
             )
 
+        GotCard response ->
+            case response of
+                Result.Err err ->
+                    let
+                        _ =
+                            Debug.log "Card.State GotCard Error" err
+                    in
+                        ( { model | webData = Failure err }, Cmd.none )
+
+                Result.Ok body ->
+                    let
+                        card =
+                            getCard body.data.cards body.data.id
+
+                        newModel =
+                            { model | webData = Data (Loaded body) }
+
+                        cmd =
+                            Ports.setDocumentMetatags
+                                { title = getName language card body.data.values
+                                , imageUrl = getImageUrlOrOgpLogo language body.data.id body.data.cards body.data.values
+                                }
+                    in
+                        ( newModel, cmd )
+
+        GotProperties response ->
+            case response of
+                Result.Err err ->
+                    let
+                        _ =
+                            Debug.log "Card.State GotProperties Error" err
+                    in
+                        ( model, Cmd.none )
+
+                Result.Ok { data } ->
+                    let
+                        newEditedProperty =
+                            Maybe.map
+                                (\editedProperty ->
+                                    { editedProperty
+                                        | ballots = data.ballots
+                                        , cards = Dict.union data.cards editedProperty.cards
+                                        , properties = data.properties
+                                        , propertyIds = data.ids
+                                        , values = Dict.union data.values editedProperty.values
+                                    }
+                                )
+                                editedProperty
+
+                        newModel =
+                            { model | editedProperty = newEditedProperty }
+                    in
+                        ( newModel, Cmd.none )
+
         LoadCard cardId ->
             let
                 newModel =
                     { model | webData = Data (Loading Nothing) }
 
                 cmd =
-                    Task.perform
-                        LoadCardError
-                        LoadCardSuccess
-                        (Requests.getCard authentication cardId)
-                        |> Cmd.map ForSelf
-            in
-                ( newModel, cmd )
-
-        LoadCardError err ->
-            let
-                _ =
-                    Debug.log "Card.State LoadCardError" err
-
-                newModel =
-                    { model | webData = Failure err }
-            in
-                ( newModel, Cmd.none )
-
-        LoadCardSuccess body ->
-            let
-                card =
-                    getCard body.data.cards body.data.id
-
-                newModel =
-                    { model | webData = Data (Loaded body) }
-
-                cmd =
-                    Ports.setDocumentMetatags
-                        { title = getName language card body.data.values
-                        , imageUrl = getImageUrlOrOgpLogo language body.data.id body.data.cards body.data.values
-                        }
+                    Requests.getCard authentication cardId
+                        |> Http.send (ForSelf << GotCard)
             in
                 ( newModel, cmd )
 
@@ -112,40 +135,10 @@ update msg ({ editedProperty } as model) authentication language =
                     { model | editedProperty = newEditedProperty }
 
                 cmd =
-                    Task.perform
-                        LoadPropertiesError
-                        LoadPropertiesSuccess
-                        (Requests.getObjectProperties authentication cardId keyId)
-                        |> Cmd.map ForSelf
+                    Requests.getObjectProperties authentication cardId keyId
+                        |> Http.send (ForSelf << GotProperties)
             in
                 ( newModel, cmd )
-
-        LoadPropertiesError err ->
-            let
-                _ =
-                    Debug.log "Card.State LoadPropertiesError" err
-            in
-                ( model, Cmd.none )
-
-        LoadPropertiesSuccess { data } ->
-            let
-                newEditedProperty =
-                    Maybe.map
-                        (\editedProperty ->
-                            { editedProperty
-                                | ballots = data.ballots
-                                , cards = Dict.union data.cards editedProperty.cards
-                                , properties = data.properties
-                                , propertyIds = data.ids
-                                , values = Dict.union data.values editedProperty.values
-                            }
-                        )
-                        editedProperty
-
-                newModel =
-                    { model | editedProperty = newEditedProperty }
-            in
-                ( newModel, Cmd.none )
 
         SelectField field ->
             let
@@ -170,30 +163,31 @@ update msg ({ editedProperty } as model) authentication language =
                             ( cardId, keyId )
 
                 task =
-                    (Requests.postValue authentication selectedField)
-                        `Task.andThen`
+                    Http.toTask (Requests.postValue authentication selectedField)
+                        |> Task.andThen
                             (\dataIdBody ->
-                                Requests.postProperty
-                                    authentication
-                                    cardId
-                                    keyId
-                                    dataIdBody.data.id
+                                Http.toTask
+                                    (Requests.postProperty
+                                        authentication
+                                        cardId
+                                        keyId
+                                        dataIdBody.data.id
+                                    )
                             )
 
                 cmd =
-                    Task.perform SubmitValueError SubmitValueSuccess task
-                        |> Cmd.map ForSelf
+                    Task.attempt (ForSelf << PropertyPosted) task
             in
                 ( model, cmd )
 
-        SubmitValueError err ->
+        PropertyPosted (Result.Err err) ->
             let
                 _ =
-                    Debug.log "Card.State SubmitValueError" err
+                    Debug.log "Card.State PropertyPosted Error" err
             in
                 ( model, Cmd.none )
 
-        SubmitValueSuccess { data } ->
+        PropertyPosted (Result.Ok { data }) ->
             let
                 newEditedProperty =
                     Maybe.map
@@ -270,25 +264,14 @@ update msg ({ editedProperty } as model) authentication language =
             in
                 ( newModel, Cmd.none )
 
-        VotePropertyDown propertyId ->
-            let
-                cmd =
-                    Task.perform
-                        VotePropertyError
-                        VotePropertySuccess
-                        (Requests.postRating authentication propertyId -1)
-                        |> Cmd.map ForSelf
-            in
-                ( model, cmd )
-
-        VotePropertyError err ->
+        RatingPosted (Result.Err err) ->
             let
                 _ =
-                    Debug.log "Card.State VotePropertyError" err
+                    Debug.log "Card.State RatingPosted Error" err
             in
                 ( model, Cmd.none )
 
-        VotePropertySuccess { data } ->
+        RatingPosted (Result.Ok { data }) ->
             let
                 newEditedProperty =
                     Maybe.map
@@ -320,13 +303,20 @@ update msg ({ editedProperty } as model) authentication language =
             in
                 ( newModel, Cmd.none )
 
+        VotePropertyDown propertyId ->
+            let
+                cmd =
+                    Requests.postRating authentication propertyId -1
+                        |> Http.send RatingPosted
+                        |> Cmd.map ForSelf
+            in
+                ( model, cmd )
+
         VotePropertyUp propertyId ->
             let
                 cmd =
-                    Task.perform
-                        VotePropertyError
-                        VotePropertySuccess
-                        (Requests.postRating authentication propertyId 1)
+                    Requests.postRating authentication propertyId 1
+                        |> Http.send RatingPosted
                         |> Cmd.map ForSelf
             in
                 ( model, cmd )

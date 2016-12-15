@@ -87,7 +87,7 @@ viewOrganization model language =
                                 , onInput (\x -> ForSelf (SetField "Name" x))
                                 , placeholder "What's the official name of the organization?"
                                 , required True
-                                , type' "text"
+                                , type_ "text"
                                 ]
                                 []
                             ]
@@ -132,7 +132,7 @@ viewOrganization model language =
                                 , id "websiteLinkField"
                                 , onInput (\x -> ForSelf (SetField "Website" x))
                                 , placeholder "Enter the address of the informational website"
-                                , type' "url"
+                                , type_ "url"
                                 ]
                                 []
                             ]
@@ -168,7 +168,7 @@ viewOrganization model language =
                         [ button
                             [ class "btn btn-default pull-right"
                             , disabled (publishedDisabled model.imageUploadStatus)
-                            , type' "submit"
+                            , type_ "submit"
                             ]
                             [ text (I18n.translate language I18n.PublishOrganization) ]
                         ]
@@ -193,7 +193,7 @@ viewTool model language =
                                 , onInput (\x -> ForSelf (SetField "Name" x))
                                 , placeholder "What's the official name of the tool?"
                                 , required True
-                                , type' "text"
+                                , type_ "text"
                                 ]
                                 []
                             ]
@@ -237,7 +237,7 @@ viewTool model language =
                                 [ class "form-control"
                                 , id "licenseField"
                                 , onInput (\x -> ForSelf (SetField "License" x))
-                                , type' "text"
+                                , type_ "text"
                                 ]
                                 []
                             ]
@@ -251,7 +251,7 @@ viewTool model language =
                                 , id "websiteLinkField"
                                 , onInput (\x -> ForSelf (SetField "Website" x))
                                 , placeholder "Enter the address of the informational website"
-                                , type' "url"
+                                , type_ "url"
                                 ]
                                 []
                             ]
@@ -263,7 +263,7 @@ viewTool model language =
                                 , id "downloadLinkField"
                                 , onInput (\x -> ForSelf (SetField "Download" x))
                                 , placeholder "Enter the address to download the tool"
-                                , type' "url"
+                                , type_ "url"
                                 ]
                                 []
                             ]
@@ -311,7 +311,7 @@ viewTool model language =
                                             , id "releaseDateField"
                                             , onInput (\x -> ForSelf (SetField "Release Date" x))
                                               -- , placeholder "What's the official name of the tool?" -- TODO
-                                            , type' "date"
+                                            , type_ "date"
                                             ]
                                             []
                                         ]
@@ -323,7 +323,7 @@ viewTool model language =
                                             , id "publisherField"
                                             , onInput (\x -> ForSelf (SetField "Publisher" x))
                                               -- , placeholder "What's the official name of the tool?" -- TODO
-                                            , type' "text"
+                                            , type_ "text"
                                             ]
                                             []
                                         ]
@@ -379,7 +379,7 @@ viewTool model language =
                                             , input
                                                 [ id "logoField"
                                                 , on "change" (Decode.succeed (ForSelf ImageSelected))
-                                                , type' "file"
+                                                , type_ "file"
                                                 ]
                                                 []
                                             ]
@@ -402,7 +402,7 @@ viewTool model language =
                         [ button
                             [ class "btn btn-default pull-right"
                             , disabled (publishedDisabled model.imageUploadStatus)
-                            , type' "submit"
+                            , type_ "submit"
                             ]
                             [ text (I18n.translate language I18n.PublishTool) ]
                         ]
@@ -427,7 +427,7 @@ viewUseCase model language =
                                 , onInput (\x -> ForSelf (SetField "Name" x))
                                 , placeholder "What's the official name of the use case?"
                                 , required True
-                                , type' "text"
+                                , type_ "text"
                                 ]
                                 []
                             ]
@@ -472,7 +472,7 @@ viewUseCase model language =
                                 , id "websiteLinkField"
                                 , onInput (\x -> ForSelf (SetField "Website" x))
                                 , placeholder "Enter the address of the informational website"
-                                , type' "url"
+                                , type_ "url"
                                 ]
                                 []
                             ]
@@ -511,7 +511,7 @@ viewUseCase model language =
                                             , input
                                                 [ id "logoField"
                                                 , on "change" (Decode.succeed (ForSelf ImageSelected))
-                                                , type' "file"
+                                                , type_ "file"
                                                 ]
                                                 []
                                             ]
@@ -534,7 +534,7 @@ viewUseCase model language =
                         [ button
                             [ class "btn btn-default pull-right"
                             , disabled (publishedDisabled model.imageUploadStatus)
-                            , type' "submit"
+                            , type_ "submit"
                             ]
                             [ text (I18n.translate language I18n.PublishUseCase) ]
                         ]

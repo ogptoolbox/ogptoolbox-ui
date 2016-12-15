@@ -68,6 +68,8 @@ type TranslationId
     | AdditionalInformations
     | AuthenticationRequired
     | AuthenticationRequiredExplanation
+    | BadPayloadExplanation
+    | BadUrlExplanation
     | BestOf Int
     | CallToActionForCategory
     | CallToActionForDescription CardType
@@ -118,7 +120,6 @@ type TranslationId
     | UsedBy
     | UsedFor
     | Uses
-    | UnexpectedPayloadExplanation
     | UseIt
     | Website
 
@@ -477,6 +478,18 @@ getTranslationSet translationId =
         AddNewToolCatchPhrase ->
             { english = s "Software or services, available online or through mobile applications."
             , french = s "Programme informatique ou service, disponible sur le web ou via des applications mobiles."
+            , spanish = todo
+            }
+
+        BadPayloadExplanation ->
+            { english = s "The server returned unexpected data."
+            , french = s "Le server a retourné des données imprévues"
+            , spanish = todo
+            }
+
+        BadUrlExplanation ->
+            { english = s "Bad URL."
+            , french = s "URL incorrecte."
             , spanish = todo
             }
 
@@ -915,12 +928,6 @@ to strengthen governance.
             , spanish = todo
             }
 
-        UnexpectedPayloadExplanation ->
-            { english = s "The server returned unexpected data."
-            , french = s "Le server a retourné des données imprévues"
-            , spanish = todo
-            }
-
         UseIt ->
             { english = s "Use it"
             , french = s "Utiliser"
@@ -1027,7 +1034,7 @@ getManyStrings language keyIds card values =
             |> List.map
                 (\keyId ->
                     Dict.get keyId card.properties
-                        `Maybe.andThen` (\valueId -> Dict.get valueId values)
+                        |> Maybe.andThen (\valueId -> Dict.get valueId values)
                         |> Maybe.map (\value -> getStrings value.value)
                         |> Maybe.withDefault []
                 )
@@ -1042,10 +1049,10 @@ getOneString language keyIds card values =
         |> List.map
             (\keyId ->
                 Dict.get keyId card.properties
-                    `Maybe.andThen` (\valueId -> Dict.get valueId values)
-                    `Maybe.andThen` (\value -> getOneStringFromValueType language values value.value)
+                    |> Maybe.andThen (\valueId -> Dict.get valueId values)
+                    |> Maybe.andThen (\value -> getOneStringFromValueType language values value.value)
             )
-        |> Maybe.oneOf
+        |> oneOfMaybes
 
 
 getOneStringFromValueType : Language -> Dict String Value -> ValueType -> Maybe String
@@ -1080,7 +1087,7 @@ getOneStringFromValueType language values valueType =
 
         ValueIdValue valueId ->
             Dict.get valueId values
-                `Maybe.andThen` (\subValue -> getOneStringFromValueType language values subValue.value)
+                |> Maybe.andThen (\subValue -> getOneStringFromValueType language values subValue.value)
 
         WrongValue _ _ ->
             Nothing
@@ -1239,6 +1246,28 @@ iso639_1FromLanguage language =
             "fr"
 
 
+{-| Pick the first `Maybe` that actually has a value. Useful when you want to
+try a couple different things, but there is no default value.
+
+    oneOf [ Nothing, Just 42, Just 71 ] == Just 42
+    oneOf [ Nothing, Nothing, Just 71 ] == Just 71
+    oneOf [ Nothing, Nothing, Nothing ] == Nothing
+-}
+oneOfMaybes : List (Maybe a) -> Maybe a
+oneOfMaybes maybes =
+    case maybes of
+        [] ->
+            Nothing
+
+        maybe :: rest ->
+            case maybe of
+                Nothing ->
+                    oneOfMaybes rest
+
+                Just _ ->
+                    maybe
+
+
 translate : Language -> TranslationId -> String
 translate language translationId =
     let
@@ -1256,7 +1285,7 @@ translate language translationId =
                 Spanish ->
                     translationSet.spanish
     in
-        Maybe.oneOf
+        oneOfMaybes
             [ translateHelp language
             , translateHelp English
               -- |> Maybe.map (\str -> "(EN) " ++ str)

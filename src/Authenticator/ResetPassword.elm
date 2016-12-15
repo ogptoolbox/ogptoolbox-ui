@@ -10,7 +10,6 @@ import Html.Events exposing (..)
 import Http
 import Json.Encode
 import String
-import Task
 import Types exposing (User, UserBody)
 
 
@@ -44,21 +43,32 @@ init =
 
 
 type Msg
-    = Error Http.Error
+    = PasswordReset (Result Http.Error String)
     | Submit
-    | Success String
     | UsernameInput String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg, Maybe User )
 update msg model =
     case msg of
-        Error err ->
-            let
-                _ =
-                    Debug.log "Authenticator.ResetPassword Error" err
-            in
-                ( model, Cmd.none, Nothing )
+        PasswordReset response ->
+            case response of
+                Result.Err err ->
+                    let
+                        _ =
+                            Debug.log "Authenticator.PasswordReset Error" err
+                    in
+                        ( model, Cmd.none, Nothing )
+
+                Result.Ok message ->
+                    let
+                        cmd =
+                            Cmd.none
+
+                        -- authenticatorRouteMsg Nothing
+                        --     |> (\msg -> Task.perform (\_ -> Debug.crash "") (\_ -> msg) (Task.succeed ()))
+                    in
+                        ( model, cmd, Nothing )
 
         Submit ->
             let
@@ -89,35 +99,15 @@ update msg model =
                                     [ ( "email", Json.Encode.string model.email )
                                     ]
                         in
-                            Task.perform
-                                Error
-                                Success
-                                (Http.fromJson Decoders.messageBodyDecoder
-                                    (Http.send Http.defaultSettings
-                                        { verb = "POST"
-                                        , url = apiUrl ++ "users/reset-password"
-                                        , headers =
-                                            [ ( "Accept", "application/json" )
-                                            , ( "Content-Type", "application/json" )
-                                            ]
-                                        , body = Http.string (Json.Encode.encode 2 bodyJson)
-                                        }
-                                    )
-                                )
+                            Http.post
+                                (apiUrl ++ "users/reset-password")
+                                (Http.stringBody "application/json" <| Json.Encode.encode 2 bodyJson)
+                                Decoders.messageBodyDecoder
+                                |> Http.send PasswordReset
                     else
                         Cmd.none
             in
                 ( { model | errors = Dict.fromList errorsList }, cmd, Nothing )
-
-        Success message ->
-            let
-                cmd =
-                    Cmd.none
-
-                -- authenticatorRouteMsg Nothing
-                --     |> (\msg -> Task.perform (\_ -> Debug.crash "") (\_ -> msg) (Task.succeed ()))
-            in
-                ( model, cmd, Nothing )
 
         UsernameInput text ->
             ( { model | email = text }, Cmd.none, Nothing )
@@ -149,7 +139,7 @@ viewModalBody model =
                                             , placeholder "john.doe@ogptoolbox.org"
                                             , required True
                                             , title "Please enter you email"
-                                            , type' "text"
+                                            , type_ "text"
                                             , value model.email
                                             , onInput UsernameInput
                                             ]
@@ -170,14 +160,14 @@ viewModalBody model =
                                             , placeholder "john.doe@ogptoolbox.org"
                                             , required True
                                             , title "Please enter you email"
-                                            , type' "text"
+                                            , type_ "text"
                                             , value model.email
                                             , onInput UsernameInput
                                             ]
                                             []
                                         ]
                         , button
-                            [ class "btn btn-block btn-default grey", type' "submit" ]
+                            [ class "btn btn-block btn-default grey", type_ "submit" ]
                             [ text "Reset Password" ]
                         ]
                     ]

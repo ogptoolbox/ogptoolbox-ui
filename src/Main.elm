@@ -25,10 +25,9 @@ import Constants
 import Decoders
 import Dict exposing (Dict)
 import Dom.Scroll
+import Erl
 import Home
-import Hop.Types exposing (Location)
 import Html exposing (..)
-import Html.App
 import Html.Attributes exposing (..)
 import Html.Attributes.Aria exposing (ariaHidden, ariaLabelledby)
 import Html.Events exposing (onClick, onInput, onSubmit, onWithOptions)
@@ -50,12 +49,11 @@ import UserProfile.View
 import Views exposing (viewBigMessage, viewNotAuthentified, viewNotFound)
 
 
-main : Program Flags
+main : Program Flags Model Msg
 main =
-    Navigation.programWithFlags urlParser
+    Navigation.programWithFlags LocationChanged
         { init = init
         , update = update
-        , urlUpdate = urlUpdate
         , view = view
         , subscriptions = subscriptions
         }
@@ -82,17 +80,17 @@ type alias Model =
     , collectionModel : Collection.Types.Model
     , collectionsModel : Collections.Types.Model
     , displayAddNewModal : Bool
-    , i18nRoute : I18nRoute
-    , location : Hop.Types.Location
+    , location : Navigation.Location
     , navigatorLanguage : Maybe I18n.Language
+    , route : Route
     , searchInputValue : String
     , searchModel : Search.Types.Model
     , userProfileModel : UserProfile.Types.Model
     }
 
 
-init : Flags -> ( I18nRoute, Hop.Types.Location ) -> ( Model, Cmd Msg )
-init flags ( i18nRoute, location ) =
+init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
+init flags location =
     { addNewModel = AddNew.State.init
     , addNewCollectionModel = AddNewCollection.State.init
     , activationModel = Authenticator.Activate.init
@@ -105,340 +103,18 @@ init flags ( i18nRoute, location ) =
     , collectionModel = Collection.State.init
     , collectionsModel = Collections.State.init
     , displayAddNewModal = False
-    , i18nRoute = i18nRoute
     , location = location
     , navigatorLanguage =
         flags.language
             |> String.left 2
             |> String.toLower
             |> I18n.languageFromIso639_1
+    , route = I18nRouteWithoutLanguage ""
     , searchInputValue = ""
     , searchModel = Search.State.init
     , userProfileModel = UserProfile.State.init
     }
-        |> urlUpdate ( i18nRoute, location )
-
-
-
--- ROUTING
-
-
-urlUpdate : ( I18nRoute, Hop.Types.Location ) -> Model -> ( Model, Cmd Msg )
-urlUpdate ( i18nRoute, location ) model =
-    let
-        searchQuery =
-            getSearchQuery location
-
-        ( newModel, cmd ) =
-            case i18nRoute of
-                I18nRouteWithLanguage language route ->
-                    let
-                        indexRoute translationId =
-                            let
-                                getLocalizedString value =
-                                    case value.value of
-                                        LocalizedStringValue valueByLanguage ->
-                                            case I18n.getValueByPreferredLanguage language valueByLanguage of
-                                                Nothing ->
-                                                    Debug.crash "indexRoute"
-
-                                                Just tag ->
-                                                    tag
-
-                                        _ ->
-                                            Debug.crash "indexRoute"
-
-                                selectedTags =
-                                    case Dict.get "tagIds" location.query of
-                                        Nothing ->
-                                            []
-
-                                        Just tagIds ->
-                                            tagIds
-                                                |> String.split ","
-                                                |> List.map
-                                                    (\tagId ->
-                                                        { count = 50
-                                                        , tag = ""
-                                                        , tagId = tagId
-                                                        }
-                                                    )
-
-                                searchModel =
-                                    model.searchModel
-
-                                newSearchModel =
-                                    { searchModel | selectedTags = selectedTags }
-
-                                ( newSearchModel2, searchCmd ) =
-                                    Search.State.update
-                                        Search.Types.Load
-                                        newSearchModel
-                                        model.authentication
-                                        language
-                                        location
-
-                                newModel =
-                                    { model
-                                        | searchModel = newSearchModel2
-                                        , searchInputValue = searchQuery
-                                    }
-                            in
-                                newModel
-                                    ! [ Cmd.map translateSearchMsg searchCmd
-                                      , Ports.setDocumentMetatags
-                                            { title = I18n.translate language translationId
-                                            , imageUrl = Constants.logoUrl
-                                            }
-                                      ]
-                    in
-                        case route of
-                            AboutRoute ->
-                                ( model
-                                , Ports.setDocumentMetatags
-                                    { title = I18n.translate language I18n.Help
-                                    , imageUrl = Constants.logoUrl
-                                    }
-                                )
-
-                            ActivationRoute userId ->
-                                let
-                                    ( activationModel, childCmd ) =
-                                        Authenticator.Activate.update
-                                            (Authenticator.Activate.Load
-                                                userId
-                                                (Dict.get "authorization" location.query |> Maybe.withDefault "")
-                                            )
-                                            model.activationModel
-                                            language
-
-                                    newModel =
-                                        { model | activationModel = activationModel }
-                                in
-                                    ( model, Cmd.map translateActivationMsg childCmd )
-
-                            CollectionsRoute childRoute ->
-                                case childRoute of
-                                    CollectionRoute collectionId ->
-                                        let
-                                            ( collectionModel, childCmd ) =
-                                                Collection.State.update
-                                                    (Collection.Types.LoadCollection collectionId)
-                                                    model.collectionModel
-                                                    model.authentication
-                                                    language
-
-                                            newModel =
-                                                { model | collectionModel = collectionModel }
-                                        in
-                                            ( newModel, Cmd.map translateCollectionMsg childCmd )
-
-                                    CollectionsIndexRoute ->
-                                        let
-                                            ( collectionsModel, childCmd ) =
-                                                Collections.State.update
-                                                    Collections.Types.LoadCollections
-                                                    model.collectionsModel
-                                                    model.authentication
-                                                    language
-
-                                            newModel =
-                                                { model | collectionsModel = collectionsModel }
-                                        in
-                                            ( newModel, Cmd.map translateCollectionsMsg childCmd )
-
-                                    EditCollectionRoute collectionId ->
-                                        let
-                                            ( addNewCollectionModel, childCmd ) =
-                                                AddNewCollection.State.update
-                                                    (AddNewCollection.Types.LoadCollection collectionId)
-                                                    model.addNewCollectionModel
-                                                    model.authentication
-                                                    language
-
-                                            newModel =
-                                                { model | addNewCollectionModel = addNewCollectionModel }
-                                        in
-                                            ( newModel, Cmd.map translateAddNewCollectionMsg childCmd )
-
-                                    NewCollectionRoute ->
-                                        ( model, Cmd.none )
-
-                            HomeRoute ->
-                                indexRoute I18n.Home
-
-                            NotFoundRoute _ ->
-                                ( model
-                                , Ports.setDocumentMetatags
-                                    { title = I18n.translate language I18n.PageNotFound
-                                    , imageUrl = Constants.logoUrl
-                                    }
-                                )
-
-                            OrganizationsRoute childRoute ->
-                                case childRoute of
-                                    OrganizationRoute cardId ->
-                                        let
-                                            ( cardModel, childCmd ) =
-                                                Card.State.update
-                                                    (Card.Types.LoadCard cardId)
-                                                    model.cardModel
-                                                    model.authentication
-                                                    language
-
-                                            newModel =
-                                                { model | cardModel = cardModel }
-                                        in
-                                            ( model, Cmd.map translateCardMsg childCmd )
-
-                                    OrganizationsIndexRoute ->
-                                        indexRoute (I18n.Organization I18n.Plural)
-
-                                    NewOrganizationRoute ->
-                                        let
-                                            addNewModel =
-                                                model.addNewModel
-
-                                            newAddNewModel =
-                                                { addNewModel
-                                                    | fields = Dict.fromList [ ( "Types", "organization" ) ]
-                                                }
-
-                                            newModel =
-                                                { model | addNewModel = newAddNewModel }
-
-                                            cmd =
-                                                Ports.setDocumentMetatags
-                                                    { title = I18n.translate language I18n.AddNewOrganization
-                                                    , imageUrl = Constants.logoUrl
-                                                    }
-                                        in
-                                            ( newModel, cmd )
-
-                            ToolsRoute childRoute ->
-                                case childRoute of
-                                    ToolRoute cardId ->
-                                        let
-                                            ( cardModel, childCmd ) =
-                                                Card.State.update
-                                                    (Card.Types.LoadCard cardId)
-                                                    model.cardModel
-                                                    model.authentication
-                                                    language
-
-                                            newModel =
-                                                { model | cardModel = cardModel }
-                                        in
-                                            ( model, Cmd.map translateCardMsg childCmd )
-
-                                    ToolsIndexRoute ->
-                                        indexRoute (I18n.Tool I18n.Plural)
-
-                                    NewToolRoute ->
-                                        let
-                                            addNewModel =
-                                                model.addNewModel
-
-                                            newAddNewModel =
-                                                { addNewModel
-                                                    | fields = Dict.fromList [ ( "Types", "software" ) ]
-                                                }
-
-                                            newModel =
-                                                { model | addNewModel = newAddNewModel }
-
-                                            cmd =
-                                                Ports.setDocumentMetatags
-                                                    { title = I18n.translate language I18n.AddNewTool
-                                                    , imageUrl = Constants.logoUrl
-                                                    }
-                                        in
-                                            ( newModel, cmd )
-
-                            UseCasesRoute childRoute ->
-                                case childRoute of
-                                    UseCaseRoute cardId ->
-                                        let
-                                            ( cardModel, childCmd ) =
-                                                Card.State.update
-                                                    (Card.Types.LoadCard cardId)
-                                                    model.cardModel
-                                                    model.authentication
-                                                    language
-
-                                            newModel =
-                                                { model | cardModel = cardModel }
-                                        in
-                                            ( model, Cmd.map translateCardMsg childCmd )
-
-                                    UseCasesIndexRoute ->
-                                        indexRoute (I18n.UseCase I18n.Plural)
-
-                                    NewUseCaseRoute ->
-                                        let
-                                            addNewModel =
-                                                model.addNewModel
-
-                                            newAddNewModel =
-                                                { addNewModel
-                                                    | fields = Dict.fromList [ ( "Types", "use-case" ) ]
-                                                }
-
-                                            newModel =
-                                                { model | addNewModel = newAddNewModel }
-
-                                            cmd =
-                                                Ports.setDocumentMetatags
-                                                    { title = I18n.translate language I18n.AddNewUseCase
-                                                    , imageUrl = Constants.logoUrl
-                                                    }
-                                        in
-                                            ( newModel, cmd )
-
-                            UserProfileRoute ->
-                                let
-                                    authentication =
-                                        case model.authentication of
-                                            Nothing ->
-                                                Debug.crash "prevented by viewNotAuthorized"
-
-                                            Just authentication ->
-                                                authentication
-
-                                    ( userProfileModel, childCmd ) =
-                                        UserProfile.State.update
-                                            (UserProfile.Types.LoadCollections authentication.urlName)
-                                            model.userProfileModel
-                                            authentication
-                                            language
-
-                                    newModel =
-                                        { model | userProfileModel = userProfileModel }
-                                in
-                                    ( newModel, Cmd.map translateUserProfileMsg childCmd )
-
-                I18nRouteWithoutLanguage urlPath ->
-                    let
-                        language =
-                            model.navigatorLanguage |> Maybe.withDefault I18n.English
-
-                        command =
-                            makeUrlWithLanguage language
-                                (urlPath ++ (queryStringForParams [ "q", "tagIds" ] location))
-                                |> Navigation.modifyUrl
-                    in
-                        ( model, command )
-    in
-        { newModel
-            | location = location
-            , i18nRoute = i18nRoute
-        }
-            ! [ Task.perform
-                    (\_ -> Debug.crash "Dom.Scroll.toTop \"html-element\"")
-                    (always NoOp)
-                    (Dom.Scroll.toTop "html-element")
-              , cmd
-              ]
+        |> update (LocationChanged location)
 
 
 
@@ -456,6 +132,7 @@ type Msg
     | CollectionMsg Collection.Types.InternalMsg
     | CollectionsMsg Collections.Types.InternalMsg
     | DisplayAddNewModal Bool
+    | LocationChanged Navigation.Location
     | Navigate String
     | NoOp
     | Search
@@ -539,11 +216,8 @@ translateUserProfileMsg =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     let
-        searchQuery =
-            getSearchQuery model.location
-
         language =
-            case model.i18nRoute of
+            case model.route of
                 I18nRouteWithLanguage language _ ->
                     language
 
@@ -606,7 +280,7 @@ update msg model =
                     changed =
                         authenticatorModel.authentication /= model.authentication
 
-                    model' =
+                    model_ =
                         { model
                             | authentication = authenticatorModel.authentication
                             , authenticatorModel = authenticatorModel
@@ -617,13 +291,13 @@ update msg model =
                                     model.authenticatorRouteMaybe
                         }
 
-                    ( model'', effect'' ) =
+                    ( model__, effect__ ) =
                         if changed then
-                            update (Navigate "/") model'
+                            update (Navigate "/") model_
                         else
-                            ( model', Cmd.none )
+                            ( model_, Cmd.none )
                 in
-                    model'' ! [ Cmd.map translateAuthenticatorMsg childCmd, effect'' ]
+                    model__ ! [ Cmd.map translateAuthenticatorMsg childCmd, effect__ ]
 
             AuthenticatorRouteMsg authenticatorRouteMaybe ->
                 ( { model | authenticatorRouteMaybe = authenticatorRouteMaybe }
@@ -662,6 +336,9 @@ update msg model =
                 , Cmd.none
                 )
 
+            LocationChanged location ->
+                urlUpdate location model
+
             Navigate urlPath ->
                 let
                     cmd =
@@ -676,7 +353,7 @@ update msg model =
                 let
                     keptParams =
                         ( "q", model.searchInputValue )
-                            :: (case Dict.get "tagIds" model.location.query of
+                            :: (case getQuerySingleParameter "tagIds" model.location of
                                     Nothing ->
                                         []
 
@@ -737,6 +414,348 @@ update msg model =
                     )
 
 
+urlUpdate : Navigation.Location -> Model -> ( Model, Cmd Msg )
+urlUpdate location model =
+    let
+        searchQuery =
+            getSearchQuery location
+
+        ( newModel, cmd ) =
+            case parseLocation location of
+                Just ((I18nRouteWithLanguage language localizedRoute) as route) ->
+                    let
+                        indexRoute translationId =
+                            let
+                                getLocalizedString value =
+                                    case value.value of
+                                        LocalizedStringValue valueByLanguage ->
+                                            case I18n.getValueByPreferredLanguage language valueByLanguage of
+                                                Nothing ->
+                                                    Debug.crash "indexRoute"
+
+                                                Just tag ->
+                                                    tag
+
+                                        _ ->
+                                            Debug.crash "indexRoute"
+
+                                selectedTags =
+                                    case getQuerySingleParameter "tagIds" location of
+                                        Nothing ->
+                                            []
+
+                                        Just tagIds ->
+                                            tagIds
+                                                |> String.split ","
+                                                |> List.map
+                                                    (\tagId ->
+                                                        { count = 50
+                                                        , tag = ""
+                                                        , tagId = tagId
+                                                        }
+                                                    )
+
+                                searchModel =
+                                    model.searchModel
+
+                                newSearchModel =
+                                    { searchModel | selectedTags = selectedTags }
+
+                                ( newSearchModel2, searchCmd ) =
+                                    Search.State.update
+                                        Search.Types.Load
+                                        newSearchModel
+                                        model.authentication
+                                        language
+                                        location
+
+                                newModel =
+                                    { model
+                                        | searchModel = newSearchModel2
+                                        , searchInputValue = searchQuery
+                                    }
+                            in
+                                newModel
+                                    ! [ Cmd.map translateSearchMsg searchCmd
+                                      , Ports.setDocumentMetatags
+                                            { title = I18n.translate language translationId
+                                            , imageUrl = Constants.logoUrl
+                                            }
+                                      ]
+
+                        ( localizedModel, localizedCmd ) =
+                            case localizedRoute of
+                                AboutRoute ->
+                                    ( model
+                                    , Ports.setDocumentMetatags
+                                        { title = I18n.translate language I18n.Help
+                                        , imageUrl = Constants.logoUrl
+                                        }
+                                    )
+
+                                ActivationRoute userId ->
+                                    let
+                                        ( activationModel, childCmd ) =
+                                            Authenticator.Activate.update
+                                                (Authenticator.Activate.Load
+                                                    userId
+                                                    (Routes.getQuerySingleParameter
+                                                        "authorization"
+                                                        location
+                                                        |> Maybe.withDefault ""
+                                                    )
+                                                )
+                                                model.activationModel
+                                                language
+
+                                        newModel =
+                                            { model | activationModel = activationModel }
+                                    in
+                                        ( model, Cmd.map translateActivationMsg childCmd )
+
+                                CollectionsRoute childRoute ->
+                                    case childRoute of
+                                        CollectionRoute collectionId ->
+                                            let
+                                                ( collectionModel, childCmd ) =
+                                                    Collection.State.update
+                                                        (Collection.Types.LoadCollection collectionId)
+                                                        model.collectionModel
+                                                        model.authentication
+                                                        language
+
+                                                newModel =
+                                                    { model | collectionModel = collectionModel }
+                                            in
+                                                ( newModel, Cmd.map translateCollectionMsg childCmd )
+
+                                        CollectionsIndexRoute ->
+                                            let
+                                                ( collectionsModel, childCmd ) =
+                                                    Collections.State.update
+                                                        Collections.Types.LoadCollections
+                                                        model.collectionsModel
+                                                        model.authentication
+                                                        language
+
+                                                newModel =
+                                                    { model | collectionsModel = collectionsModel }
+                                            in
+                                                ( newModel, Cmd.map translateCollectionsMsg childCmd )
+
+                                        EditCollectionRoute collectionId ->
+                                            let
+                                                ( addNewCollectionModel, childCmd ) =
+                                                    AddNewCollection.State.update
+                                                        (AddNewCollection.Types.LoadCollection collectionId)
+                                                        model.addNewCollectionModel
+                                                        model.authentication
+                                                        language
+
+                                                newModel =
+                                                    { model | addNewCollectionModel = addNewCollectionModel }
+                                            in
+                                                ( newModel, Cmd.map translateAddNewCollectionMsg childCmd )
+
+                                        NewCollectionRoute ->
+                                            ( model, Cmd.none )
+
+                                HomeRoute ->
+                                    indexRoute I18n.Home
+
+                                NotFoundRoute _ ->
+                                    ( model
+                                    , Ports.setDocumentMetatags
+                                        { title = I18n.translate language I18n.PageNotFound
+                                        , imageUrl = Constants.logoUrl
+                                        }
+                                    )
+
+                                OrganizationsRoute childRoute ->
+                                    case childRoute of
+                                        OrganizationRoute cardId ->
+                                            let
+                                                ( cardModel, childCmd ) =
+                                                    Card.State.update
+                                                        (Card.Types.LoadCard cardId)
+                                                        model.cardModel
+                                                        model.authentication
+                                                        language
+
+                                                newModel =
+                                                    { model | cardModel = cardModel }
+                                            in
+                                                ( model, Cmd.map translateCardMsg childCmd )
+
+                                        OrganizationsIndexRoute ->
+                                            indexRoute (I18n.Organization I18n.Plural)
+
+                                        NewOrganizationRoute ->
+                                            let
+                                                addNewModel =
+                                                    model.addNewModel
+
+                                                newAddNewModel =
+                                                    { addNewModel
+                                                        | fields = Dict.fromList [ ( "Types", "organization" ) ]
+                                                    }
+
+                                                newModel =
+                                                    { model | addNewModel = newAddNewModel }
+
+                                                cmd =
+                                                    Ports.setDocumentMetatags
+                                                        { title = I18n.translate language I18n.AddNewOrganization
+                                                        , imageUrl = Constants.logoUrl
+                                                        }
+                                            in
+                                                ( newModel, cmd )
+
+                                ToolsRoute childRoute ->
+                                    case childRoute of
+                                        ToolRoute cardId ->
+                                            let
+                                                ( cardModel, childCmd ) =
+                                                    Card.State.update
+                                                        (Card.Types.LoadCard cardId)
+                                                        model.cardModel
+                                                        model.authentication
+                                                        language
+
+                                                newModel =
+                                                    { model | cardModel = cardModel }
+                                            in
+                                                ( model, Cmd.map translateCardMsg childCmd )
+
+                                        ToolsIndexRoute ->
+                                            indexRoute (I18n.Tool I18n.Plural)
+
+                                        NewToolRoute ->
+                                            let
+                                                addNewModel =
+                                                    model.addNewModel
+
+                                                newAddNewModel =
+                                                    { addNewModel
+                                                        | fields = Dict.fromList [ ( "Types", "software" ) ]
+                                                    }
+
+                                                newModel =
+                                                    { model | addNewModel = newAddNewModel }
+
+                                                cmd =
+                                                    Ports.setDocumentMetatags
+                                                        { title = I18n.translate language I18n.AddNewTool
+                                                        , imageUrl = Constants.logoUrl
+                                                        }
+                                            in
+                                                ( newModel, cmd )
+
+                                UseCasesRoute childRoute ->
+                                    case childRoute of
+                                        UseCaseRoute cardId ->
+                                            let
+                                                ( cardModel, childCmd ) =
+                                                    Card.State.update
+                                                        (Card.Types.LoadCard cardId)
+                                                        model.cardModel
+                                                        model.authentication
+                                                        language
+
+                                                newModel =
+                                                    { model | cardModel = cardModel }
+                                            in
+                                                ( model, Cmd.map translateCardMsg childCmd )
+
+                                        UseCasesIndexRoute ->
+                                            indexRoute (I18n.UseCase I18n.Plural)
+
+                                        NewUseCaseRoute ->
+                                            let
+                                                addNewModel =
+                                                    model.addNewModel
+
+                                                newAddNewModel =
+                                                    { addNewModel
+                                                        | fields = Dict.fromList [ ( "Types", "use-case" ) ]
+                                                    }
+
+                                                newModel =
+                                                    { model | addNewModel = newAddNewModel }
+
+                                                cmd =
+                                                    Ports.setDocumentMetatags
+                                                        { title = I18n.translate language I18n.AddNewUseCase
+                                                        , imageUrl = Constants.logoUrl
+                                                        }
+                                            in
+                                                ( newModel, cmd )
+
+                                UserProfileRoute ->
+                                    let
+                                        authentication =
+                                            case model.authentication of
+                                                Nothing ->
+                                                    Debug.crash "prevented by viewNotAuthorized"
+
+                                                Just authentication ->
+                                                    authentication
+
+                                        ( userProfileModel, childCmd ) =
+                                            UserProfile.State.update
+                                                (UserProfile.Types.LoadCollections authentication.urlName)
+                                                model.userProfileModel
+                                                authentication
+                                                language
+
+                                        newModel =
+                                            { model | userProfileModel = userProfileModel }
+                                    in
+                                        ( newModel, Cmd.map translateUserProfileMsg childCmd )
+                    in
+                        ( { localizedModel | route = route }, localizedCmd )
+
+                Just ((I18nRouteWithoutLanguage urlPath) as route) ->
+                    let
+                        language =
+                            model.navigatorLanguage |> Maybe.withDefault I18n.English
+
+                        command =
+                            makeUrlWithLanguage language
+                                (urlPath ++ (queryStringForParams [ "q", "tagIds" ] location))
+                                |> Navigation.modifyUrl
+                    in
+                        ( { model | route = route }, command )
+
+                Nothing ->
+                    let
+                        language =
+                            model.navigatorLanguage |> Maybe.withDefault I18n.English
+
+                        url =
+                            location.href
+                                |> Erl.parse
+
+                        newUrl =
+                            { url | path = (I18n.iso639_1FromLanguage language) :: url.path }
+                    in
+                        ( model, Navigation.modifyUrl (Erl.toString newUrl) )
+    in
+        { newModel | location = location }
+            ! [ Task.attempt
+                    (\result ->
+                        case result of
+                            Result.Err _ ->
+                                Debug.crash "Dom.Scroll.toTop \"html-element\""
+
+                            Result.Ok _ ->
+                                NoOp
+                    )
+                    (Dom.Scroll.toTop "html-element")
+              , cmd
+              ]
+
+
 
 -- VIEW
 
@@ -776,7 +795,7 @@ view model =
         searchQuery =
             getSearchQuery model.location
     in
-        case model.i18nRoute of
+        case model.route of
             I18nRouteWithLanguage language route ->
                 case route of
                     AboutRoute ->
@@ -785,34 +804,34 @@ view model =
 
                     ActivationRoute userId ->
                         Authenticator.Activate.view model.activationModel language userId
-                            |> Html.App.map translateActivationMsg
+                            |> Html.map translateActivationMsg
                             |> standardLayout language
 
                     CollectionsRoute childRoute ->
                         case childRoute of
                             CollectionRoute _ ->
                                 Collection.View.view model.collectionModel language
-                                    |> Html.App.map translateCollectionMsg
+                                    |> Html.map translateCollectionMsg
                                     |> standardLayout language
 
                             CollectionsIndexRoute ->
                                 Collections.View.view model.collectionsModel language
-                                    |> Html.App.map translateCollectionsMsg
+                                    |> Html.map translateCollectionsMsg
                                     |> standardLayout language
 
                             EditCollectionRoute _ ->
                                 AddNewCollection.View.view model.addNewCollectionModel language
-                                    |> Html.App.map translateAddNewCollectionMsg
+                                    |> Html.map translateAddNewCollectionMsg
                                     |> standardLayout language
 
                             NewCollectionRoute ->
                                 AddNewCollection.View.view model.addNewCollectionModel language
-                                    |> Html.App.map translateAddNewCollectionMsg
+                                    |> Html.map translateAddNewCollectionMsg
                                     |> standardLayout language
 
                     HomeRoute ->
                         Home.view model.searchModel (getSearchQuery model.location) language
-                            |> Html.App.map translateSearchMsg
+                            |> Html.map translateSearchMsg
                             |> standardLayout language
 
                     NotFoundRoute _ ->
@@ -826,51 +845,51 @@ view model =
                         case childRoute of
                             OrganizationRoute _ ->
                                 Card.View.view model.cardModel language
-                                    |> Html.App.map translateCardMsg
+                                    |> Html.map translateCardMsg
                                     |> standardLayout language
 
                             OrganizationsIndexRoute ->
                                 Search.View.view model.searchModel OrganizationCard language model.location
-                                    |> Html.App.map translateSearchMsg
+                                    |> Html.map translateSearchMsg
                                     |> fullscreenLayout language
 
                             NewOrganizationRoute ->
                                 AddNew.View.viewOrganization model.addNewModel language
-                                    |> Html.App.map translateAddNewMsg
+                                    |> Html.map translateAddNewMsg
                                     |> standardLayout language
 
                     ToolsRoute childRoute ->
                         case childRoute of
                             ToolRoute _ ->
                                 Card.View.view model.cardModel language
-                                    |> Html.App.map translateCardMsg
+                                    |> Html.map translateCardMsg
                                     |> standardLayout language
 
                             ToolsIndexRoute ->
                                 Search.View.view model.searchModel ToolCard language model.location
-                                    |> Html.App.map translateSearchMsg
+                                    |> Html.map translateSearchMsg
                                     |> fullscreenLayout language
 
                             NewToolRoute ->
                                 AddNew.View.viewTool model.addNewModel language
-                                    |> Html.App.map translateAddNewMsg
+                                    |> Html.map translateAddNewMsg
                                     |> standardLayout language
 
                     UseCasesRoute childRoute ->
                         case childRoute of
                             UseCaseRoute _ ->
                                 Card.View.view model.cardModel language
-                                    |> Html.App.map translateCardMsg
+                                    |> Html.map translateCardMsg
                                     |> standardLayout language
 
                             UseCasesIndexRoute ->
                                 Search.View.view model.searchModel UseCaseCard language model.location
-                                    |> Html.App.map translateSearchMsg
+                                    |> Html.map translateSearchMsg
                                     |> fullscreenLayout language
 
                             NewUseCaseRoute ->
                                 AddNew.View.viewUseCase model.addNewModel language
-                                    |> Html.App.map translateAddNewMsg
+                                    |> Html.map translateAddNewMsg
                                     |> standardLayout language
 
                     UserProfileRoute ->
@@ -880,7 +899,7 @@ view model =
 
                             Just user ->
                                 UserProfile.View.view model.userProfileModel language user
-                                    |> Html.App.map translateUserProfileMsg
+                                    |> Html.map translateUserProfileMsg
                         )
                             |> standardLayout language
 
@@ -907,7 +926,7 @@ viewAddNewModal model language =
                             [ class "close"
                             , attribute "data-dismiss" "modal"
                             , onClick (DisplayAddNewModal False)
-                            , type' "button"
+                            , type_ "button"
                             ]
                             [ span [ attribute "aria-hidden" "true" ]
                                 [ text "×" ]
@@ -996,7 +1015,7 @@ viewAlert model language =
             else
                 div [ class "alert alert-success alert-dismissible", attribute "role" "alert" ]
                     [ div [ class "container" ]
-                        [ button [ attribute "aria-label" "Close", class "close", attribute "data-dismiss" "alert", type' "button" ]
+                        [ button [ attribute "aria-label" "Close", class "close", attribute "data-dismiss" "alert", type_ "button" ]
                             [ span [ attribute "aria-hidden" "true" ]
                                 [ text "×" ]
                             ]
@@ -1026,7 +1045,7 @@ viewAuthenticatorModal model language =
                                     "click"
                                     { preventDefault = True, stopPropagation = False }
                                     (Json.Decode.succeed (AuthenticatorRouteMsg Nothing))
-                                , type' "button"
+                                , type_ "button"
                                 ]
                                 [ span [ ariaHidden True ]
                                     [ text "×" ]
@@ -1037,7 +1056,7 @@ viewAuthenticatorModal model language =
                                 [ text (Authenticator.View.modalTitle authenticatorRoute) ]
                             ]
                         , Authenticator.View.viewModalBody language authenticatorRoute model.authenticatorModel
-                            |> Html.App.map translateAuthenticatorMsg
+                            |> Html.map translateAuthenticatorMsg
                         ]
                     ]
                 ]
@@ -1074,7 +1093,7 @@ viewFooter model language =
                                         , class "btn btn-default dropdown-toggle"
                                         , attribute "data-toggle" "dropdown"
                                         , id "dropdownMenu1"
-                                        , type' "button"
+                                        , type_ "button"
                                         ]
                                         [ text (I18n.translate language (I18n.Language language))
                                         , span [ class "caret" ] []
@@ -1272,7 +1291,7 @@ viewHeader model language containerClass =
                             , class "navbar-toggle collapsed"
                             , attribute "data-target" "#menu-collapse"
                             , attribute "data-toggle" "collapse"
-                            , type' "button"
+                            , type_ "button"
                             ]
                             [ span [ class "sr-only" ]
                                 [ text "Toggle navigation" ]
@@ -1300,7 +1319,7 @@ viewHeader model language containerClass =
                             [ button
                                 [ class "btn btn-default btn-action"
                                 , onClick (DisplayAddNewModal True)
-                                , type' "button"
+                                , type_ "button"
                                 ]
                                 [ text (I18n.translate language I18n.AddNew) ]
                             ]
@@ -1320,7 +1339,7 @@ viewHeader model language containerClass =
                                 [ class "form-control"
                                 , onInput SearchInputChanged
                                 , placeholder (I18n.translate language I18n.SearchInputPlaceholder)
-                                , type' "search"
+                                , type_ "search"
                                 , value model.searchInputValue
                                 ]
                                 []
@@ -1380,7 +1399,7 @@ viewHeader model language containerClass =
                                     [ class "form-control"
                                     , onInput SearchInputChanged
                                     , placeholder (I18n.translate language I18n.SearchInputPlaceholder)
-                                    , type' "search"
+                                    , type_ "search"
                                     , value model.searchInputValue
                                     ]
                                     []
@@ -1392,7 +1411,7 @@ viewHeader model language containerClass =
                             [ button
                                 [ class "btn btn-default btn-action"
                                 , onClick (DisplayAddNewModal True)
-                                , type' "button"
+                                , type_ "button"
                                 ]
                                 [ text (I18n.translate language I18n.AddNew) ]
                             , li []

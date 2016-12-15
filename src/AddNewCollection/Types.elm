@@ -34,16 +34,13 @@ type ExternalMsg
 
 
 type InternalMsg
-    = ImageSelected
+    = CollectionPosted (Result Http.Error DataIdBody)
+    | GotCollection (Result Http.Error DataIdBody)
+    | ImageSelected
     | ImageRead Ports.ImagePortData
-    | ImageUploadError Http.Error
-    | ImageUploadSuccess String
+    | ImageUploaded (Result Http.Error String)
     | LoadCollection String
-    | LoadCollectionError Http.Error
-    | LoadCollectionSuccess DataIdBody
     | PostNewCollection
-    | PostNewCollectionError Http.Error
-    | PostNewCollectionSuccess DataIdBody
     | SetCardIds String
     | SetDescription String
     | SetName String

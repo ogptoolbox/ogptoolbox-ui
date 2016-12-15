@@ -151,7 +151,7 @@ viewBanner =
                                                 [ attribute "checked" ""
                                                 , id "optionsRadios1"
                                                 , name "optionsRadios"
-                                                , type' "radio"
+                                                , type_ "radio"
                                                 , value "option1"
                                                 ]
                                                 []
@@ -166,7 +166,7 @@ viewBanner =
                                                 [ attribute "checked" ""
                                                 , id "optionsRadios1"
                                                 , name "optionsRadios"
-                                                , type' "radio"
+                                                , type_ "radio"
                                                 , value "option1"
                                                 ]
                                                 []
@@ -181,7 +181,7 @@ viewBanner =
                                                 [ attribute "checked" ""
                                                 , id "optionsRadios1"
                                                 , name "optionsRadios"
-                                                , type' "radio"
+                                                , type_ "radio"
                                                 , value "option1"
                                                 ]
                                                 []
@@ -196,7 +196,7 @@ viewBanner =
                                                 [ attribute "checked" ""
                                                 , id "optionsRadios1"
                                                 , name "optionsRadios"
-                                                , type' "radio"
+                                                , type_ "radio"
                                                 , value "option1"
                                                 ]
                                                 []
@@ -211,7 +211,7 @@ viewBanner =
                                                 [ attribute "checked" ""
                                                 , id "optionsRadios1"
                                                 , name "optionsRadios"
-                                                , type' "radio"
+                                                , type_ "radio"
                                                 , value "option1"
                                                 ]
                                                 []
@@ -226,7 +226,7 @@ viewBanner =
                                                 [ attribute "checked" ""
                                                 , id "optionsRadios1"
                                                 , name "optionsRadios"
-                                                , type' "radio"
+                                                , type_ "radio"
                                                 , value "option1"
                                                 ]
                                                 []
@@ -241,7 +241,7 @@ viewBanner =
                                                 [ attribute "checked" ""
                                                 , id "optionsRadios1"
                                                 , name "optionsRadios"
-                                                , type' "radio"
+                                                , type_ "radio"
                                                 , value "option1"
                                                 ]
                                                 []
@@ -256,7 +256,7 @@ viewBanner =
                                                 [ attribute "checked" ""
                                                 , id "optionsRadios1"
                                                 , name "optionsRadios"
-                                                , type' "radio"
+                                                , type_ "radio"
                                                 , value "option1"
                                                 ]
                                                 []
@@ -298,7 +298,7 @@ viewBanner =
                                             [ attribute "checked" ""
                                             , id "optionsRadios1"
                                             , name "optionsRadios"
-                                            , type' "checkbox"
+                                            , type_ "checkbox"
                                             , value "option1"
                                             ]
                                             []

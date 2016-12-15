@@ -14,9 +14,8 @@ type ExternalMsg
 
 
 type InternalMsg
-    = LoadCollections
-    | LoadCollectionsError Http.Error
-    | LoadCollectionsSuccess DataIdsBody
+    = GotCollections (Result Http.Error DataIdsBody)
+    | LoadCollections
 
 
 type Msg

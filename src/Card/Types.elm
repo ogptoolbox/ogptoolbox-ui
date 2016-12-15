@@ -32,19 +32,15 @@ type ExternalMsg
 type InternalMsg
     = CloseEditPropertiesModal
     | DisplayUseItModal Bool
+    | GotCard (Result Http.Error DataIdBody)
+    | GotProperties (Result Http.Error DataIdsBody)
     | LoadCard String
-    | LoadCardError Http.Error
-    | LoadCardSuccess DataIdBody
     | LoadProperties String String
-    | LoadPropertiesError Http.Error
-    | LoadPropertiesSuccess DataIdsBody
+    | PropertyPosted (Result Http.Error DataIdBody)
+    | RatingPosted (Result Http.Error DataIdBody)
     | SelectField Field
     | SubmitValue Field
-    | SubmitValueError Http.Error
-    | SubmitValueSuccess DataIdBody
     | VotePropertyDown String
-    | VotePropertyError Http.Error
-    | VotePropertySuccess DataIdBody
     | VotePropertyUp String
 
 

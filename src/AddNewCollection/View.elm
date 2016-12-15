@@ -88,7 +88,7 @@ view model language =
                                 , placeholder "What's the official name of the collection?"
                                   -- TODO i18n
                                 , required True
-                                , type' "text"
+                                , type_ "text"
                                 , value model.fields.name
                                 ]
                                 []
@@ -163,7 +163,7 @@ view model language =
                                             , input
                                                 [ id "logoField"
                                                 , on "change" (Decode.succeed (ForSelf ImageSelected))
-                                                , type' "file"
+                                                , type_ "file"
                                                 ]
                                                 []
                                             ]
@@ -186,7 +186,7 @@ view model language =
                         [ button
                             [ class "btn btn-default pull-right"
                             , disabled (publishedDisabled model.imageUploadStatus)
-                            , type' "submit"
+                            , type_ "submit"
                             ]
                             [ text "Publish"
                               -- TODO i18n

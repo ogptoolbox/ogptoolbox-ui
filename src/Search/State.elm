@@ -2,9 +2,10 @@ module Search.State exposing (..)
 
 import Authenticator.Model
 import Dict exposing (Dict)
-import Hop
-import Hop.Types
+import Erl
+import Http
 import I18n
+import Navigation
 import Ports
 import Requests
 import Routes
@@ -55,18 +56,16 @@ update :
     -> Model
     -> Maybe Authenticator.Model.Authentication
     -> I18n.Language
-    -> Hop.Types.Location
+    -> Navigation.Location
     -> ( Model, Cmd Msg )
 update msg model authentication language location =
     let
         navigateCmd selectedTags =
-            location
-                |> Hop.removeQuery "tagIds"
-                |> Hop.addQuery
-                    (Dict.fromList [ ( "tagIds", selectedTags |> List.map .tagId |> String.join "," ) ])
-                |> Routes.makeUrlFromLocation
+            Erl.parse location.href
+                |> Erl.setQuery "tagIds" (selectedTags |> List.map .tagId |> String.join ",")
+                |> Erl.toString
                 |> navigate
-                |> (\msg -> Task.perform (\_ -> Debug.crash "") (\_ -> msg) (Task.succeed ()))
+                |> (\msg -> Task.perform (\_ -> msg) (Task.succeed ()))
     in
         case msg of
             BubbleDeselect deselectedTag ->
@@ -102,20 +101,146 @@ update msg model authentication language location =
                 in
                     ( newModel, navigateCmd newSelectedTags )
 
-            CollectionsLoadError err ->
-                let
-                    _ =
-                        Debug.log "Search.State CollectionsLoadError" err
+            GotCollections response ->
+                case response of
+                    Result.Err err ->
+                        let
+                            _ =
+                                Debug.log "Search.State GotCollections Error" err
 
-                    newModel =
-                        { model | collections = Failure err }
-                in
-                    ( newModel, Cmd.none )
+                            newModel =
+                                { model | collections = Failure err }
+                        in
+                            ( newModel, Cmd.none )
 
-            CollectionsLoadSuccess body ->
-                ( { model | collections = Data (Loaded body) }
-                , Cmd.none
-                )
+                    Result.Ok body ->
+                        ( { model | collections = Data (Loaded body) }
+                        , Cmd.none
+                        )
+
+            GotOrganizations response ->
+                case response of
+                    Result.Err err ->
+                        let
+                            _ =
+                                Debug.log "Search.State GotOrganizations Error" err
+
+                            newModel =
+                                { model | organizations = Failure err }
+                        in
+                            ( newModel, Cmd.none )
+
+                    Result.Ok body ->
+                        ( { model | organizations = Data (Loaded body) }
+                        , Cmd.none
+                        )
+
+            GotTagsPopularity response ->
+                case response of
+                    Result.Err err ->
+                        let
+                            _ =
+                                Debug.log "Search.State GotTagsPopularity Error" err
+
+                            newModel =
+                                { model | popularTagsData = Failure err }
+                        in
+                            ( newModel, Cmd.none )
+
+                    Result.Ok popularTagsData ->
+                        let
+                            getLocalizedString value =
+                                case value.value of
+                                    LocalizedStringValue valueByLanguage ->
+                                        case I18n.getValueByPreferredLanguage language valueByLanguage of
+                                            Nothing ->
+                                                Debug.crash "update PopularTagsLoadSuccess"
+
+                                            Just tag ->
+                                                tag
+
+                                    _ ->
+                                        Debug.crash "update PopularTagsLoadSuccess"
+
+                            selectedTags =
+                                case Routes.getQuerySingleParameter "tagIds" location of
+                                    Nothing ->
+                                        []
+
+                                    Just tagIds ->
+                                        tagIds
+                                            |> String.split ","
+                                            |> List.filterMap
+                                                (\tagId ->
+                                                    Dict.get tagId popularTagsData.values
+                                                        |> Maybe.map
+                                                            (\value ->
+                                                                { count = 50
+                                                                , tag = getLocalizedString value
+                                                                , tagId = tagId
+                                                                }
+                                                            )
+                                                )
+
+                            newModel =
+                                { model
+                                    | popularTagsData = Data (Loaded popularTagsData)
+                                    , selectedTags = selectedTags
+                                }
+
+                            popularTags =
+                                List.map
+                                    (\{ count, tagId } ->
+                                        { count = count
+                                        , tag =
+                                            getValue popularTagsData.values tagId
+                                                |> getLocalizedString
+                                        , tagId = tagId
+                                        }
+                                    )
+                                    popularTagsData.popularity
+
+                            cmd =
+                                Ports.mountd3bubbles
+                                    { popularTags = popularTags
+                                    , selectedTags = selectedTags
+                                    }
+                        in
+                            ( newModel, cmd )
+
+            GotTools response ->
+                case response of
+                    Result.Err err ->
+                        let
+                            _ =
+                                Debug.log "Search.State GotTools Error" err
+
+                            newModel =
+                                { model | tools = Failure err }
+                        in
+                            ( newModel, Cmd.none )
+
+                    Result.Ok body ->
+                        ( { model | tools = Data (Loaded body) }
+                        , Cmd.none
+                        )
+
+            GotUseCases response ->
+                case response of
+                    Result.Err err ->
+                        let
+                            _ =
+                                Debug.log "Search.State GotUseCases Error" err
+
+                            newModel =
+                                { model | useCases = Failure err }
+                        in
+                            ( newModel, Cmd.none )
+
+                    Result.Ok body ->
+                        ( { model | useCases = Data (Loaded body) }
+                        , Cmd.none
+                        )
 
             Load ->
                 let
@@ -137,161 +262,31 @@ update msg model authentication language location =
                             searchQuery =
                                 Routes.getSearchQuery location
                         in
-                            List.map (Cmd.map ForSelf)
-                                [ Task.perform
-                                    CollectionsLoadError
-                                    CollectionsLoadSuccess
-                                    (Requests.getCollections authentication (Just 3))
-                                , Task.perform
-                                    OrganizationsLoadError
-                                    OrganizationsLoadSuccess
-                                    (Requests.getCards
-                                        authentication
-                                        searchQuery
-                                        limit
-                                        selectedTagIds
-                                        cardTypesForOrganization
-                                    )
-                                , Task.perform
-                                    ToolsLoadError
-                                    ToolsLoadSuccess
-                                    (Requests.getCards
-                                        authentication
-                                        searchQuery
-                                        limit
-                                        selectedTagIds
-                                        cardTypesForTool
-                                    )
-                                , Task.perform
-                                    UseCasesLoadError
-                                    UseCasesLoadSuccess
-                                    (Requests.getCards
-                                        authentication
-                                        searchQuery
-                                        limit
-                                        selectedTagIds
-                                        cardTypesForUseCase
-                                    )
-                                , Task.perform
-                                    PopularTagsLoadError
-                                    PopularTagsLoadSuccess
-                                    (Requests.getTagsPopularity selectedTagIds)
-                                ]
+                            [ Requests.getCollections authentication (Just 3)
+                                |> Http.send (ForSelf << GotCollections)
+                            , Requests.getCards
+                                authentication
+                                searchQuery
+                                limit
+                                selectedTagIds
+                                cardTypesForOrganization
+                                |> Http.send (ForSelf << GotOrganizations)
+                            , Requests.getCards
+                                authentication
+                                searchQuery
+                                limit
+                                selectedTagIds
+                                cardTypesForTool
+                                |> Http.send (ForSelf << GotTools)
+                            , Requests.getCards
+                                authentication
+                                searchQuery
+                                limit
+                                selectedTagIds
+                                cardTypesForUseCase
+                                |> Http.send (ForSelf << GotUseCases)
+                            , Requests.getTagsPopularity authentication selectedTagIds
+                                |> Http.send (ForSelf << GotTagsPopularity)
+                            ]
                 in
                     newModel ! requestsCmds
-
-            OrganizationsLoadError err ->
-                let
-                    _ =
-                        Debug.log "Search.State OrganizationsLoadError" err
-
-                    newModel =
-                        { model | organizations = Failure err }
-                in
-                    ( newModel, Cmd.none )
-
-            OrganizationsLoadSuccess body ->
-                ( { model | organizations = Data (Loaded body) }
-                , Cmd.none
-                )
-
-            PopularTagsLoadError err ->
-                let
-                    _ =
-                        Debug.log "Search.State PopularTagsLoadError" err
-
-                    newModel =
-                        { model | popularTagsData = Failure err }
-                in
-                    ( newModel, Cmd.none )
-
-            PopularTagsLoadSuccess popularTagsData ->
-                let
-                    getLocalizedString value =
-                        case value.value of
-                            LocalizedStringValue valueByLanguage ->
-                                case I18n.getValueByPreferredLanguage language valueByLanguage of
-                                    Nothing ->
-                                        Debug.crash "update PopularTagsLoadSuccess"
-
-                                    Just tag ->
-                                        tag
-
-                            _ ->
-                                Debug.crash "update PopularTagsLoadSuccess"
-
-                    selectedTags =
-                        case Dict.get "tagIds" location.query of
-                            Nothing ->
-                                []
-
-                            Just tagIds ->
-                                tagIds
-                                    |> String.split ","
-                                    |> List.filterMap
-                                        (\tagId ->
-                                            Dict.get tagId popularTagsData.values
-                                                |> Maybe.map
-                                                    (\value ->
-                                                        { count = 50
-                                                        , tag = getLocalizedString value
-                                                        , tagId = tagId
-                                                        }
-                                                    )
-                                        )
-
-                    newModel =
-                        { model
-                            | popularTagsData = Data (Loaded popularTagsData)
-                            , selectedTags = selectedTags
-                        }
-
-                    popularTags =
-                        List.map
-                            (\{ count, tagId } ->
-                                { count = count
-                                , tag =
-                                    getValue popularTagsData.values tagId
-                                        |> getLocalizedString
-                                , tagId = tagId
-                                }
-                            )
-                            popularTagsData.popularity
-
-                    cmd =
-                        Ports.mountd3bubbles
-                            { popularTags = popularTags
-                            , selectedTags = selectedTags
-                            }
-                in
-                    ( newModel, cmd )
-
-            ToolsLoadError err ->
-                let
-                    _ =
-                        Debug.log "Search.State ToolsLoadError" err
-
-                    newModel =
-                        { model | tools = Failure err }
-                in
-                    ( newModel, Cmd.none )
-
-            ToolsLoadSuccess body ->
-                ( { model | tools = Data (Loaded body) }
-                , Cmd.none
-                )
-
-            UseCasesLoadError err ->
-                let
-                    _ =
-                        Debug.log "Search.State UseCasesLoadError" err
-
-                    newModel =
-                        { model | useCases = Failure err }
-                in
-                    ( newModel, Cmd.none )
-
-            UseCasesLoadSuccess body ->
-                ( { model | useCases = Data (Loaded body) }
-                , Cmd.none
-                )

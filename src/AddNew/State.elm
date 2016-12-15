@@ -3,12 +3,12 @@ module AddNew.State exposing (..)
 import AddNew.Types exposing (..)
 import Authenticator.Model
 import Dict
+import Http
 import I18n
 import Navigation
 import Ports
 import Requests
 import Routes
-import Task
 import Types exposing (..)
 
 
@@ -28,15 +28,29 @@ subscriptions model =
 update : InternalMsg -> Model -> Maybe Authenticator.Model.Authentication -> I18n.Language -> ( Model, Cmd Msg )
 update msg model authentication language =
     case msg of
-        Error err ->
-            let
-                _ =
-                    Debug.log "AddNew.State.update Error" err
+        CardPosted response ->
+            case response of
+                Result.Err err ->
+                    let
+                        _ =
+                            Debug.log "AddNew.State GotOrganizations CardPosted" err
 
-                newModel =
-                    { model | error = Just err }
-            in
-                ( newModel, Cmd.none )
+                        newModel =
+                            { model | error = Just err }
+                    in
+                        ( newModel, Cmd.none )
+
+                Result.Ok body ->
+                    let
+                        urlPath =
+                            getCard body.data.cards body.data.id
+                                |> Routes.urlPathForCard
+
+                        cmd =
+                            Routes.makeUrlWithLanguage language urlPath
+                                |> Navigation.newUrl
+                    in
+                        ( model, cmd )
 
         ImageSelected ->
             let
@@ -59,10 +73,8 @@ update msg model authentication language =
                             Cmd.none
 
                         Selected ->
-                            Task.perform
-                                ImageUploadError
-                                ImageUploadSuccess
-                                (Requests.postUploadImage authentication data.contents)
+                            Requests.postUploadImage authentication data.contents
+                                |> Http.send ImageUploaded
                                 |> Cmd.map ForSelf
 
                         Read _ ->
@@ -76,14 +88,17 @@ update msg model authentication language =
             in
                 ( newModel, cmd )
 
-        ImageUploadError err ->
+        ImageUploaded (Result.Err err) ->
             let
+                _ =
+                    Debug.log "AddNew.State ImageUploaded Error" err
+
                 newModel =
                     { model | imageUploadStatus = UploadError err }
             in
                 ( newModel, Cmd.none )
 
-        ImageUploadSuccess urlPath ->
+        ImageUploaded (Result.Ok urlPath) ->
             let
                 newModel =
                     { model
@@ -103,22 +118,7 @@ update msg model authentication language =
         SubmitFields ->
             let
                 cmd =
-                    Task.perform
-                        Error
-                        SubmittedFields
-                        (Requests.postCardsEasy authentication model.fields language)
-                        |> Cmd.map ForSelf
-            in
-                ( model, cmd )
-
-        SubmittedFields body ->
-            let
-                urlPath =
-                    getCard body.data.cards body.data.id
-                        |> Routes.urlPathForCard
-
-                cmd =
-                    Routes.makeUrlWithLanguage language urlPath
-                        |> Navigation.newUrl
+                    Requests.postCard authentication model.fields language
+                        |> Http.send (ForSelf << CardPosted)
             in
                 ( model, cmd )

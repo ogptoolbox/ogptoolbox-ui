@@ -23,8 +23,7 @@ type ExternalMsg
 
 type InternalMsg
     = Load String String
-    | LoadError Http.Error
-    | LoadSuccess UserBody
+    | UserActivated (Result Http.Error UserBody)
 
 
 type Msg
@@ -72,37 +71,36 @@ update msg model language =
                     Data (Loading (getData model))
 
                 cmd =
-                    Task.perform
-                        LoadError
-                        LoadSuccess
-                        (Requests.activateUser userId authorization)
-                        |> Cmd.map ForSelf
+                    Requests.activateUser userId authorization
+                        |> Http.send (ForSelf << UserActivated)
             in
                 ( newModel, cmd )
 
-        LoadError err ->
-            let
-                _ =
-                    Debug.log "Authenticator.Activate Error" err
-            in
-                ( Failure err, Cmd.none )
+        UserActivated response ->
+            case response of
+                Result.Err err ->
+                    let
+                        _ =
+                            Debug.log "Authenticator.UserActivated Error" err
+                    in
+                        ( Failure err, Cmd.none )
 
-        LoadSuccess body ->
-            let
-                user =
-                    body.data
+                Result.Ok body ->
+                    let
+                        user =
+                            body.data
 
-                cmds =
-                    [ Ports.setDocumentMetatags
-                        { title = I18n.translate language I18n.ActivationTitle
-                        , imageUrl = Constants.logoUrl
-                        }
-                    , Ports.storeAuthentication (Ports.userToUserForPort (Just user))
-                    , ForParent (Activate user)
-                        |> (\msg -> Task.perform (\_ -> Debug.crash "") (\_ -> msg) (Task.succeed ()))
-                    ]
-            in
-                Data (Loaded user) ! cmds
+                        cmds =
+                            [ Ports.setDocumentMetatags
+                                { title = I18n.translate language I18n.ActivationTitle
+                                , imageUrl = Constants.logoUrl
+                                }
+                            , Ports.storeAuthentication (Ports.userToUserForPort (Just user))
+                            , ForParent (Activate user)
+                                |> (\msg -> Task.perform (\_ -> msg) (Task.succeed ()))
+                            ]
+                    in
+                        Data (Loaded user) ! cmds
 
 
 view : Model -> I18n.Language -> String -> Html msg

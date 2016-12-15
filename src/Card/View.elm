@@ -150,7 +150,7 @@ viewCardContent language card cards values =
                             [ button
                                 [ class "btn btn-default btn-xs btn-action"
                                 , onClick (ForSelf (LoadProperties card.id keyId))
-                                , type' "button"
+                                , type_ "button"
                                 ]
                                 [ text "Edit" ]
                             ]
@@ -181,7 +181,7 @@ viewCardContent language card cards values =
                             , class "btn btn-default btn-xs btn-action4"
                             , onClick (ForSelf (LoadProperties card.id "name"))
                             , style [ ( "margin-left", "15px" ) ]
-                            , type' "button"
+                            , type_ "button"
                             ]
                             [ text "Edit" ]
                         ]
@@ -249,7 +249,7 @@ viewCardContent language card cards values =
                                                         , attribute "data-toggle" "modal"
                                                         , class "btn btn-default btn-xs btn-action"
                                                         , onClick (ForSelf (LoadProperties card.id "description"))
-                                                        , type' "button"
+                                                        , type_ "button"
                                                         ]
                                                         [ text "Edit" ]
                                                     ]
@@ -321,7 +321,7 @@ viewCardContent language card cards values =
                                                 [ button
                                                     [ class "btn btn-default btn-xs btn-action"
                                                     , onClick (ForSelf (LoadProperties card.id "use-cases"))
-                                                    , type' "button"
+                                                    , type_ "button"
                                                     ]
                                                     [ text "Add" ]
                                                 ]
@@ -375,7 +375,7 @@ viewCardContent language card cards values =
                                                 [ button
                                                     [ class "btn btn-default btn-xs btn-action"
                                                     , onClick (ForSelf (LoadProperties card.id "used-for"))
-                                                    , type' "button"
+                                                    , type_ "button"
                                                     ]
                                                     [ text "Add" ]
                                                 ]
@@ -429,7 +429,7 @@ viewCardContent language card cards values =
                                                 [ button
                                                     [ class "btn btn-default btn-xs btn-action"
                                                     , onClick (ForSelf (LoadProperties card.id "uses"))
-                                                    , type' "button"
+                                                    , type_ "button"
                                                     ]
                                                     [ text "Add" ]
                                                 ]
@@ -483,7 +483,7 @@ viewCardContent language card cards values =
                                                 [ button
                                                     [ class "btn btn-default btn-xs btn-action"
                                                     , onClick (ForSelf (LoadProperties card.id "used-by"))
-                                                    , type' "button"
+                                                    , type_ "button"
                                                     ]
                                                     [ text "Add" ]
                                                 ]
@@ -550,7 +550,7 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                                             (LocalizedInputTextField (I18n.iso639_1FromLanguage language) inputString)
                                         )
                                 )
-                            , type' "text"
+                            , type_ "text"
                             , value string
                             ]
                             []
@@ -583,7 +583,7 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                                     )
                                 )
                             , step "any"
-                            , type' "number"
+                            , type_ "number"
                             , value (toString float)
                             ]
                             []
@@ -592,7 +592,7 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                         input
                             [ class "form-control"
                             , onCheck (selectField BooleanField)
-                            , type' "checkbox"
+                            , type_ "checkbox"
                             ]
                             []
 
@@ -600,7 +600,7 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                         input
                             [ class "form-control"
                             , onInputSelectField InputEmailField
-                            , type' "email"
+                            , type_ "email"
                             , value string
                             ]
                             []
@@ -609,7 +609,7 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                         input
                             [ class "form-control"
                             , onInputSelectField InputUrlField
-                            , type' "url"
+                            , type_ "url"
                             , value string
                             ]
                             []
@@ -618,7 +618,7 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                         input
                             [ class "form-control"
                             , onInputSelectField ImageField
-                            , type' "url"
+                            , type_ "url"
                             , value string
                             ]
                             []
@@ -628,7 +628,7 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                         input
                             [ class "form-control"
                             , onInputSelectField CardIdField
-                            , type' "text"
+                            , type_ "text"
                             , value string
                             ]
                             []
@@ -721,7 +721,7 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                                 [ attribute "data-dismiss" "modal"
                                 , class "close"
                                 , onClick (ForSelf CloseEditPropertiesModal)
-                                , type' "button"
+                                , type_ "button"
                                 ]
                                 [ span [ attribute "aria-hidden" "true" ]
                                     [ text "×" ]
@@ -765,7 +765,7 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                                             [ select
                                                 [ on "change"
                                                     (Html.Events.targetValue
-                                                        `Decode.andThen`
+                                                        |> Decode.andThen
                                                             (\str ->
                                                                 case str of
                                                                     "One line text" ->
@@ -821,7 +821,7 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                                                 [ class "form-group" ]
                                                 [ viewField ]
                                             , div [ class "navbar-right" ]
-                                                [ button [ class "btn btn-default", type' "submit" ]
+                                                [ button [ class "btn btn-default", type_ "submit" ]
                                                     [ text "Publish" ]
                                                 ]
                                             ]
@@ -854,7 +854,7 @@ viewUseItModal language frenchGovDeployUrl =
                             [ class "close"
                             , attribute "data-dismiss" "modal"
                             , onClick (ForSelf (DisplayUseItModal False))
-                            , type' "button"
+                            , type_ "button"
                             ]
                             [ span [ attribute "aria-hidden" "true" ]
                                 [ text "×" ]
@@ -1056,7 +1056,7 @@ viewSidebar language card values =
                                                         [ button
                                                             [ class "btn btn-default btn-action btn-block"
                                                             , onClick (ForSelf (DisplayUseItModal True))
-                                                            , type' "button"
+                                                            , type_ "button"
                                                             ]
                                                             [ text (I18n.translate language I18n.UseIt) ]
                                                         ]
@@ -1099,7 +1099,7 @@ viewSidebar language card values =
                                             [ button
                                                 [ class "btn btn-default btn-xs btn-action"
                                                 , onClick (ForSelf (LoadProperties card.id "tags"))
-                                                , type' "button"
+                                                , type_ "button"
                                                 ]
                                                 [ text "Edit" ]
                                             ]
@@ -1156,7 +1156,7 @@ viewSidebar language card values =
                                     -- TODO: i18n
                                  in
                                     ("https://twitter.com/intent/tweet?text="
-                                        ++ Http.uriEncode
+                                        ++ Http.encodeUri
                                             (I18n.translate
                                                 language
                                                 (I18n.TweetMessage cardName url)

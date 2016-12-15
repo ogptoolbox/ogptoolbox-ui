@@ -42,7 +42,7 @@ viewModalBody model =
     div [ class "modal-body" ]
         [ Html.form [ onSubmit Submit ]
             [ button
-                [ class "btn btn-primary", type' "submit" ]
+                [ class "btn btn-primary", type_ "submit" ]
                 [ text "Sign Out" ]
             ]
         ]
