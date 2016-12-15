@@ -147,11 +147,13 @@ queryStringForParams params location =
 replaceLanguageInLocation : I18n.Language -> Navigation.Location -> String
 replaceLanguageInLocation language location =
     let
-        urlWithoutLanguage =
-            makeUrlFromLocation location
-                |> String.dropLeft 3
+        url = Erl.parse location.href
+        path = List.tail url.path
+            |> Maybe.withDefault []
+            |> (::) (I18n.iso639_1FromLanguage language)
+        newUrl = {url | path = path}
     in
-        "/" ++ (I18n.iso639_1FromLanguage language) ++ urlWithoutLanguage
+        Erl.toString newUrl
 
 
 routeParser : Parser (Route -> a) a
