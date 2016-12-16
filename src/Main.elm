@@ -27,6 +27,7 @@ import Decoders
 import Dict exposing (Dict)
 import Dom.Scroll
 import Erl
+import Faq
 import Home
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -490,7 +491,7 @@ urlUpdate location model =
                                 AboutRoute ->
                                     ( model
                                     , Ports.setDocumentMetatags
-                                        { title = I18n.translate language I18n.Help
+                                        { title = I18n.translate language I18n.About
                                         , imageUrl = Constants.logoUrl
                                         }
                                     )
@@ -561,6 +562,14 @@ urlUpdate location model =
 
                                         NewCollectionRoute ->
                                             ( model, Cmd.none )
+
+                                FaqRoute ->
+                                    ( model
+                                    , Ports.setDocumentMetatags
+                                        { title = I18n.translate language I18n.Faq
+                                        , imageUrl = Constants.logoUrl
+                                        }
+                                    )
 
                                 HomeRoute ->
                                     indexRoute I18n.Home
@@ -830,6 +839,10 @@ view model =
                                 AddNewCollection.View.view model.addNewCollectionModel language
                                     |> Html.map translateAddNewCollectionMsg
                                     |> standardLayout language
+
+                    FaqRoute ->
+                        Faq.view language
+                            |> standardLayout language
 
                     HomeRoute ->
                         Home.view model.searchModel (getSearchQuery model.location) language
@@ -1185,13 +1198,17 @@ viewFooter model language =
                                 [ aForPath
                                     Navigate
                                     language
-                                    "/help"
+                                    "/about"
                                     []
                                     [ text (I18n.translate language I18n.About) ]
                                 ]
                             , li []
-                                [ a [ href (I18n.translate language I18n.OGPsummitLink), target "_blank" ]
-                                    [ text "OpenGovernment Summit 2016" ]
+                                [ aForPath
+                                    Navigate
+                                    language
+                                    "/faq"
+                                    []
+                                    [ text (I18n.translate language I18n.Faq) ]
                                 ]
                             , li []
                                 [ a [ href "http://www.opengovpartnership.org", target "_blank" ]
@@ -1367,7 +1384,7 @@ viewHeader model language containerClass =
                                 [ aForPath
                                     Navigate
                                     language
-                                    "/help"
+                                    "/faq"
                                     []
                                     [ text (I18n.translate language I18n.Help) ]
                                 ]
@@ -1434,7 +1451,7 @@ viewHeader model language containerClass =
                                 [ aForPath
                                     Navigate
                                     language
-                                    "/help"
+                                    "/faq"
                                     []
                                     [ text (I18n.translate language I18n.Help) ]
                                 ]

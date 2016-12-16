@@ -20,6 +20,7 @@ type LocalizedRoute
     = AboutRoute
     | ActivationRoute String
     | CollectionsRoute CollectionsRoute
+    | FaqRoute
     | HomeRoute
     | NotFoundRoute (List String)
     | OrganizationsRoute OrganizationsRoute
@@ -84,8 +85,9 @@ localizedRouteParser : Parser (LocalizedRoute -> a) a
 localizedRouteParser =
     oneOf
         [ map HomeRoute top
+        , map AboutRoute (s "about")
         , map CollectionsRoute (s "collections" </> collectionsRouteParser)
-        , map AboutRoute (s "help")
+        , map FaqRoute (s "faq")
         , map OrganizationsRoute (s "organizations" </> organizationsRouteParser)
         , map UserProfileRoute (s "profile")
         , map ToolsRoute (s "tools" </> toolsRouteParser)
