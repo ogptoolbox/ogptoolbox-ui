@@ -11,7 +11,7 @@ import Routes
 import Search.Types exposing (..)
 import String
 import Types exposing (..)
-import Views exposing (viewLoading, viewTagsWithCallToAction, viewWebData)
+import Views exposing (viewCardThumbnail, viewLoading, viewTagsWithCallToAction, viewWebData)
 import WebData exposing (..)
 
 
@@ -473,60 +473,6 @@ viewMetrics language model =
         ]
 
 
-viewThumbnail : String -> I18n.Language -> Dict String Value -> Card -> Html Msg
-viewThumbnail thumbnailExtraClasses language values card =
-    let
-        name =
-            getName language card values
-
-        urlPath =
-            Routes.urlPathForCard card
-
-        cardType =
-            getCardType card
-    in
-        div [ class "col-xs-12 col-sm-6 col-md-4 col-lg-3" ]
-            [ div
-                [ class ("thumbnail " ++ thumbnailExtraClasses)
-                , onClick (navigate urlPath)
-                ]
-                [ div [ class "visual" ]
-                    [ case getImageUrl language "1000" card values of
-                        Just url ->
-                            img [ alt "Logo", src url ] []
-
-                        Nothing ->
-                            h1 [ class "dynamic" ]
-                                [ text
-                                    (case cardType of
-                                        OrganizationCard ->
-                                            String.left 1 name
-
-                                        ToolCard ->
-                                            String.left 2 name
-
-                                        UseCaseCard ->
-                                            name
-                                    )
-                                ]
-                    ]
-                , div [ class "caption" ]
-                    [ h4 []
-                        [ aForPath navigate language urlPath [] [ text name ] ]
-                    , case getOneString language descriptionKeys card values of
-                        Just description ->
-                            p [] [ text description ]
-
-                        Nothing ->
-                            p
-                                [ class "call" ]
-                                [ text (I18n.translate language (I18n.CallToActionForDescription cardType)) ]
-                    ]
-                , viewTagsWithCallToAction navigate language values card
-                ]
-            ]
-
-
 viewThumbnailLoading : String -> Html Msg
 viewThumbnailLoading thumbnailExtraClasses =
     div [ class "col-xs-12 col-sm-6 col-md-4 col-lg-3" ]
@@ -563,7 +509,7 @@ viewThumbnails thumbnailExtraClasses searchQuery language loadingStatus =
                         body.data.cards |> Dict.values |> List.head
                 in
                     (List.map
-                        (viewThumbnail thumbnailExtraClasses language body.data.values)
+                        (viewCardThumbnail language navigate thumbnailExtraClasses body.data.values)
                         (getOrderedCards body.data)
                     )
                         ++ (case firstCard of
