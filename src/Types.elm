@@ -36,9 +36,9 @@ type alias Card =
 
 
 type CardType
-    = UseCaseCard
-    | OrganizationCard
+    = OrganizationCard
     | ToolCard
+    | UseCaseCard
 
 
 type alias Collection =

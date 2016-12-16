@@ -189,14 +189,14 @@ toolsRouteParser =
 urlBasePathForCardType : CardType -> String
 urlBasePathForCardType cardType =
     case cardType of
-        UseCaseCard ->
-            "/use-cases/"
-
         OrganizationCard ->
             "/organizations/"
 
         ToolCard ->
             "/tools/"
+
+        UseCaseCard ->
+            "/use-cases/"
 
 
 urlBasePathForCard : Card -> String

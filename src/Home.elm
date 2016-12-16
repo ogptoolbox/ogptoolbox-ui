@@ -18,7 +18,7 @@ view : Model -> I18n.Language -> Navigation.Location -> Html Msg
 view model language location =
     div []
         ([ viewBanner
-         , viewMetrics language model
+         , viewMetrics language location model
          ]
             ++ [ div [ class "row section" ]
                     [ div [ class "container" ]
@@ -425,7 +425,7 @@ viewCollectionThumbnail language user collection =
         ]
 
 
-viewMetric : WebData DataIdsBody -> Html msg
+viewMetric : WebData DataIdsBody -> Html Msg
 viewMetric webData =
     case webData of
         NotAsked ->
@@ -443,28 +443,46 @@ viewMetric webData =
                     text (toString body.count)
 
 
-viewMetrics : I18n.Language -> Model -> Html msg
-viewMetrics language model =
+viewMetrics : I18n.Language -> Navigation.Location -> Model -> Html Msg
+viewMetrics language location model =
     div [ class "row metrics", id "metrics" ]
         [ div [ class "container" ]
             [ div [ class "col-xs-4 text-center" ]
                 [ span [ class "metric-label" ]
                     [ text (I18n.translate language (I18n.UseCase I18n.Plural)) ]
-                , a []
+                , aForPath
+                    navigate
+                    language
+                    (Routes.urlBasePathForCardType UseCaseCard
+                        ++ (Routes.queryStringForParams [ "q", "tagIds" ] location)
+                    )
+                    []
                     [ viewMetric model.useCases
                     ]
                 ]
             , div [ class "col-xs-4 text-center" ]
                 [ span [ class "metric-label" ]
                     [ text (I18n.translate language (I18n.Tool I18n.Plural)) ]
-                , a []
+                , aForPath
+                    navigate
+                    language
+                    (Routes.urlBasePathForCardType ToolCard
+                        ++ (Routes.queryStringForParams [ "q", "tagIds" ] location)
+                    )
+                    []
                     [ viewMetric model.tools
                     ]
                 ]
             , div [ class "col-xs-4 text-center" ]
                 [ span [ class "metric-label" ]
                     [ text (I18n.translate language (I18n.Organization I18n.Plural)) ]
-                , a []
+                , aForPath
+                    navigate
+                    language
+                    (Routes.urlBasePathForCardType OrganizationCard
+                        ++ (Routes.queryStringForParams [ "q", "tagIds" ] location)
+                    )
+                    []
                     [ viewMetric model.organizations
                     ]
                 ]
