@@ -6,11 +6,34 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Html.Helpers exposing (aForPath)
 import Http exposing (Error(..))
-import I18n exposing (..)
+import I18n
 import Routes
 import String
 import Types exposing (..)
 import WebData exposing (LoadingStatus, WebData(..))
+
+
+getHttpErrorAsString : I18n.Language -> Http.Error -> String
+getHttpErrorAsString language err =
+    case err of
+        BadPayload message response ->
+            I18n.translate language I18n.BadPayloadExplanation
+
+        BadStatus response ->
+            if response.status.code == 404 then
+                I18n.translate language I18n.PageNotFoundExplanation
+            else
+                -- TODO Add I18n.BadStatusExplanation prefix
+                toString response
+
+        BadUrl message ->
+            I18n.translate language I18n.BadUrlExplanation
+
+        NetworkError ->
+            I18n.translate language I18n.NetworkErrorExplanation
+
+        Timeout ->
+            I18n.translate language I18n.TimeoutExplanation
 
 
 viewBigMessage : String -> String -> Html msg
@@ -42,7 +65,7 @@ viewCardListItem : (String -> msg) -> I18n.Language -> Dict String Value -> Card
 viewCardListItem navigate language values card =
     let
         name =
-            getName language card values
+            I18n.getName language card values
 
         urlPath =
             Routes.urlPathForCard card
@@ -66,7 +89,7 @@ viewCardListItem navigate language values card =
             , onClick (navigate urlPath)
             ]
             [ div [ class "visual" ]
-                [ case getImageUrl language "300" card values of
+                [ case I18n.getImageUrl language "300" card values of
                     Just url ->
                         img [ alt "Logo", src url ] []
 
@@ -94,7 +117,7 @@ viewCardListItem navigate language values card =
                         []
                         [ text name ]
                     , small []
-                        [ text (getSubTypes language card values |> String.join ", ") ]
+                        [ text (I18n.getSubTypes language card values |> String.join ", ") ]
                     ]
                   -- , div [ class "example-author" ]
                   --     [ img [ alt "screen", src "/img/TODO.png" ]
@@ -102,7 +125,7 @@ viewCardListItem navigate language values card =
                   --     , text "TODO The White House"
                   --     ]
                 , p []
-                    (case getOneString language descriptionKeys card values of
+                    (case I18n.getOneString language descriptionKeys card values of
                         Just description ->
                             [ text description ]
 
@@ -114,27 +137,59 @@ viewCardListItem navigate language values card =
             ]
 
 
-getHttpErrorAsString : I18n.Language -> Http.Error -> String
-getHttpErrorAsString language err =
-    case err of
-        BadPayload message response ->
-            I18n.translate language I18n.BadPayloadExplanation
+viewCardThumbnail : I18n.Language -> (String -> msg) -> String -> Dict String Value -> Card -> Html msg
+viewCardThumbnail language navigate extraClass values card =
+    let
+        name =
+            I18n.getName language card values
 
-        BadStatus response ->
-            if response.status.code == 404 then
-                I18n.translate language I18n.PageNotFoundExplanation
-            else
-                -- TODO Add I18n.BadStatusExplanation prefix
-                toString response
+        urlPath =
+            Routes.urlPathForCard card
 
-        BadUrl message ->
-            I18n.translate language I18n.BadUrlExplanation
+        cardType =
+            getCardType card
+    in
+        div [ class "col-xs-12 col-sm-6 col-md-4 col-lg-3" ]
+            [ aForPath
+                navigate
+                language
+                urlPath
+                [ class ("thumbnail " ++ extraClass) ]
+                [ div [ class "visual" ]
+                    [ case I18n.getImageUrl language "500" card values of
+                        Just url ->
+                            img [ alt "logo", src url ] []
 
-        NetworkError ->
-            I18n.translate language I18n.NetworkErrorExplanation
+                        Nothing ->
+                            h1 [ class "dynamic" ]
+                                [ text
+                                    (case cardType of
+                                        OrganizationCard ->
+                                            String.left 1 name
 
-        Timeout ->
-            I18n.translate language I18n.TimeoutExplanation
+                                        ToolCard ->
+                                            String.left 2 name
+
+                                        UseCaseCard ->
+                                            name
+                                    )
+                                ]
+                    ]
+                , div [ class "caption" ]
+                    [ h4 []
+                        [ text name ]
+                    , case I18n.getOneString language descriptionKeys card values of
+                        Just description ->
+                            p [] [ text description ]
+
+                        Nothing ->
+                            p
+                                [ class "call" ]
+                                [ text (I18n.translate language (I18n.CallToActionForDescription cardType)) ]
+                    ]
+                , viewTagsWithCallToAction navigate language values card
+                ]
+            ]
 
 
 viewLoading : I18n.Language -> Html msg
@@ -160,7 +215,7 @@ viewNotFound language =
 viewTagsWithCallToAction : (String -> msg) -> I18n.Language -> Dict String Value -> Card -> Html msg
 viewTagsWithCallToAction navigate language values card =
     div [ class "tags" ]
-        (case getTags language card values of
+        (case I18n.getTags language card values of
             [] ->
                 [ span
                     -- TODO call to action

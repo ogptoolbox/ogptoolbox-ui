@@ -6,13 +6,12 @@ import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Html.Helpers exposing (..)
 import Http
 import I18n
 import Routes
 import String
 import Types exposing (..)
-import Views exposing (viewLoading, viewWebData)
+import Views exposing (viewCardThumbnail, viewLoading, viewWebData)
 import WebData exposing (..)
 
 
@@ -229,7 +228,7 @@ viewCollectionContent language user collection cards values =
                                                     collection.cardIds
                                          in
                                             List.map
-                                                (viewCardThumbnail language values "tool grey")
+                                                (viewCardThumbnail language navigate "tool grey" values)
                                                 toolCards
                                         )
                                     ]
@@ -267,56 +266,10 @@ viewCollectionContent language user collection cards values =
                                     collection.cardIds
                          in
                             List.map
-                                (viewCardThumbnail language values "example")
+                                (viewCardThumbnail language navigate "example" values)
                                 useCaseCards
                         )
                     ]
                 ]
-            ]
-        ]
-
-
-viewCardThumbnail : I18n.Language -> Dict String Value -> String -> Card -> Html Msg
-viewCardThumbnail language values extraClass card =
-    div [ class "col-xs-12 col-sm-6 col-md-4 col-lg-3" ]
-        [ aForPath
-            navigate
-            language
-            (Routes.urlPathForCard card)
-            [ class ("thumbnail " ++ extraClass) ]
-            [ div [ class "visual" ]
-                (case I18n.getImageUrl language "500" card values of
-                    Nothing ->
-                        []
-
-                    Just url ->
-                        [ img [ alt "logo", src url ] [] ]
-                )
-            , div [ class "caption" ]
-                [ h4 []
-                    [ text
-                        (I18n.getOneString language nameKeys card values |> Maybe.withDefault "Untitled"
-                         --TODO i18n
-                        )
-                    ]
-                , p []
-                    [ text (I18n.getOneString language descriptionKeys card values |> Maybe.withDefault "") ]
-                ]
-            , div [ class "tags" ]
-                (List.map
-                    (\{ tag, tagId } ->
-                        let
-                            urlPath =
-                                Routes.urlBasePathForCard card ++ "?tagIds=" ++ tagId
-                        in
-                            aForPath
-                                navigate
-                                language
-                                urlPath
-                                [ class "label label-default label-tool" ]
-                                [ text tag ]
-                    )
-                    (I18n.getTags language card values |> List.take 3)
-                )
             ]
         ]
