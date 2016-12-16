@@ -6,7 +6,7 @@
 >     Johan Richer <johan.richer@data.gouv.fr>
 >
 > Copyright (C) 2016 Etalab
-> https://git.framasoft.org/ogptoolbox/ogptoolbox-ui
+> https://framagit.org/ogptoolbox/ogptoolbox-ui
 >
 > OGPToolbox-UI is free software; you can redistribute it and/or modify
 > it under the terms of the GNU Affero General Public License as
