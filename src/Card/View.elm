@@ -926,7 +926,7 @@ viewUseItModal language frenchGovDeployUrl =
 --         -- TODO Do not hardcode limit
 --         [ div [ class "col-sm-12 text-center" ]
 --             [ a [ class "show-more" ]
---                 [ text ("Show all " ++ (toString count))
+--                 [ text (I18n.ShowAll count)
 --                 , span [ class "glyphicon glyphicon-menu-down" ]
 --                     []
 --                 ]

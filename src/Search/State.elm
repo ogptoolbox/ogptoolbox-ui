@@ -260,7 +260,7 @@ update msg model authentication language location =
                                 List.map .tagId model.selectedTags
 
                             searchQuery =
-                                Routes.getSearchQuery location
+                                Routes.getQuerySearchTerm location
                         in
                             [ Requests.getCollections authentication (Just 3)
                                 |> Http.send (ForSelf << GotCollections)

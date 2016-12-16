@@ -427,7 +427,7 @@ urlUpdate : Navigation.Location -> Model -> ( Model, Cmd Msg )
 urlUpdate location model =
     let
         searchQuery =
-            getSearchQuery location
+            getQuerySearchTerm location
 
         ( newModel, cmd ) =
             case parseLocation location of
@@ -810,7 +810,7 @@ view model =
                 )
 
         searchQuery =
-            getSearchQuery model.location
+            getQuerySearchTerm model.location
     in
         case model.route of
             I18nRouteWithLanguage language route ->
@@ -851,7 +851,7 @@ view model =
                             |> standardLayout language
 
                     HomeRoute ->
-                        Home.view model.searchModel (getSearchQuery model.location) language
+                        Home.view model.searchModel language model.location
                             |> Html.map translateSearchMsg
                             |> standardLayout language
 

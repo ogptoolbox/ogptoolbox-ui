@@ -4,19 +4,18 @@ import Configuration
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onClick)
 import Html.Helpers exposing (aExternal, aForPath)
 import I18n exposing (getImageUrl, getManyStrings, getName, getOneString)
+import Navigation
 import Routes
 import Search.Types exposing (..)
-import String
 import Types exposing (..)
 import Views exposing (viewCardThumbnail, viewLoading, viewTagsWithCallToAction, viewWebData)
 import WebData exposing (..)
 
 
-view : Model -> String -> I18n.Language -> Html Msg
-view model searchQuery language =
+view : Model -> I18n.Language -> Navigation.Location -> Html Msg
+view model language location =
     div []
         ([ viewBanner
          , viewMetrics language model
@@ -27,7 +26,7 @@ view model searchQuery language =
                             [ text (I18n.translate language (I18n.UseCase I18n.Plural)) ]
                          ]
                             ++ [ viewWebData language
-                                    (viewThumbnails "example grey" searchQuery language)
+                                    (viewThumbnails language location "example grey")
                                     model.useCases
                                ]
                         )
@@ -38,7 +37,7 @@ view model searchQuery language =
                             [ text (I18n.translate language (I18n.Tool I18n.Plural)) ]
                          ]
                             ++ [ viewWebData language
-                                    (viewThumbnails "tool" searchQuery language)
+                                    (viewThumbnails language location "tool")
                                     model.tools
                                ]
                         )
@@ -496,8 +495,8 @@ viewThumbnailLoading thumbnailExtraClasses =
         ]
 
 
-viewThumbnails : String -> String -> I18n.Language -> LoadingStatus DataIdsBody -> Html Msg
-viewThumbnails thumbnailExtraClasses searchQuery language loadingStatus =
+viewThumbnails : I18n.Language -> Navigation.Location -> String -> LoadingStatus DataIdsBody -> Html Msg
+viewThumbnails language location thumbnailExtraClasses loadingStatus =
     div [ class "row" ]
         (case loadingStatus of
             Loading _ ->
@@ -522,11 +521,7 @@ viewThumbnails thumbnailExtraClasses searchQuery language loadingStatus =
                                             navigate
                                             language
                                             ((Routes.urlBasePathForCard firstCard)
-                                                ++ (if String.isEmpty searchQuery then
-                                                        ""
-                                                    else
-                                                        "?q=" ++ searchQuery
-                                                   )
+                                                ++ (Routes.queryStringForParams [ "q", "tagIds" ] location)
                                             )
                                             [ class "show-more" ]
                                             [ text (I18n.translate language (I18n.ShowAll body.count))

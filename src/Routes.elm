@@ -62,18 +62,18 @@ collectionsRouteParser =
         ]
 
 
+getQuerySearchTerm : Navigation.Location -> String
+getQuerySearchTerm location =
+    getQuerySingleParameter "q" location
+        |> Maybe.withDefault ""
+
+
 getQuerySingleParameter : String -> Navigation.Location -> Maybe String
 getQuerySingleParameter key location =
     (Erl.parse location.href).query
         |> List.filter (\( k, v ) -> k == key)
         |> List.map (\( k, v ) -> v)
         |> List.head
-
-
-getSearchQuery : Navigation.Location -> String
-getSearchQuery location =
-    getQuerySingleParameter "q" location
-        |> Maybe.withDefault ""
 
 
 idParser : Parser (String -> a) a
@@ -149,11 +149,16 @@ queryStringForParams params location =
 replaceLanguageInLocation : I18n.Language -> Navigation.Location -> String
 replaceLanguageInLocation language location =
     let
-        url = Erl.parse location.href
-        path = List.tail url.path
-            |> Maybe.withDefault []
-            |> (::) (I18n.iso639_1FromLanguage language)
-        newUrl = {url | path = path}
+        url =
+            Erl.parse location.href
+
+        path =
+            List.tail url.path
+                |> Maybe.withDefault []
+                |> (::) (I18n.iso639_1FromLanguage language)
+
+        newUrl =
+            { url | path = path }
     in
         Erl.toString newUrl
 
