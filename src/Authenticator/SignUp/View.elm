@@ -6,6 +6,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Attributes.Aria exposing (..)
 import Html.Events exposing (..)
+import Html.Helpers exposing (..)
 import I18n
 
 
@@ -15,7 +16,7 @@ viewModalBody language model =
         [ div [ class "row" ]
             [ div [ class "col-xs-7" ]
                 [ div [ class "well" ]
-                    [ Html.form [ onSubmit Submit ]
+                    [ Html.form [ onSubmit (ForSelf <| Submit) ]
                         [ let
                             errorMaybe =
                                 Dict.get "username" model.errors
@@ -35,7 +36,7 @@ viewModalBody language model =
                                             , title (I18n.translate language I18n.EnterUsername)
                                             , type_ "text"
                                             , value model.username
-                                            , onInput UsernameInput
+                                            , onInput (ForSelf << UsernameInput)
                                             ]
                                             []
                                         , span
@@ -58,7 +59,7 @@ viewModalBody language model =
                                             , title (I18n.translate language I18n.EnterUsername)
                                             , type_ "text"
                                             , value model.username
-                                            , onInput UsernameInput
+                                            , onInput (ForSelf << UsernameInput)
                                             ]
                                             []
                                         ]
@@ -81,7 +82,7 @@ viewModalBody language model =
                                             , title (I18n.translate language I18n.EnterEmail)
                                             , type_ "email"
                                             , value model.email
-                                            , onInput EmailInput
+                                            , onInput (ForSelf << EmailInput)
                                             ]
                                             []
                                         , span
@@ -104,7 +105,7 @@ viewModalBody language model =
                                             , title (I18n.translate language I18n.EnterEmail)
                                             , type_ "email"
                                             , value model.email
-                                            , onInput EmailInput
+                                            , onInput (ForSelf << EmailInput)
                                             ]
                                             []
                                         ]
@@ -127,7 +128,7 @@ viewModalBody language model =
                                             , title (I18n.translate language I18n.EnterPassword)
                                             , type_ "password"
                                             , value model.password
-                                            , onInput PasswordInput
+                                            , onInput (ForSelf << PasswordInput)
                                             ]
                                             []
                                         , span
@@ -150,7 +151,7 @@ viewModalBody language model =
                                             , title (I18n.translate language I18n.EnterPassword)
                                             , type_ "password"
                                             , value model.password
-                                            , onInput PasswordInput
+                                            , onInput (ForSelf << PasswordInput)
                                             ]
                                             []
                                         ]
@@ -186,7 +187,11 @@ viewModalBody language model =
                             , text (I18n.translate language I18n.CreateOrganizationPage)
                             ]
                         , li []
-                            [ a [ href "#" ]
+                            [ aForPath
+                                (ForParent << Navigate)
+                                language
+                                "/faq"
+                                []
                                 [ u []
                                     [ text (I18n.translate language I18n.ReadMore) ]
                                 ]

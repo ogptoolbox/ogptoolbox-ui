@@ -131,6 +131,7 @@ type Msg
     | AuthenticatorMsg Authenticator.Types.InternalMsg
     | CardMsg Card.Types.InternalMsg
     | ChangeAuthenticatorRoute (Maybe Authenticator.Routes.Route)
+    | CloseAuthenticatorModalAndNavigate String
     | CollectionMsg Collection.Types.InternalMsg
     | CollectionsMsg Collections.Types.InternalMsg
     | DisplayAddNewModal Bool
@@ -172,7 +173,7 @@ translateAuthenticatorMsg =
     Authenticator.Types.translateMsg
         { onChangeRoute = ChangeAuthenticatorRoute
         , onInternalMsg = AuthenticatorMsg
-        , onNavigate = Navigate
+        , onNavigate = CloseAuthenticatorModalAndNavigate
         }
 
 
@@ -314,6 +315,11 @@ update msg model =
             ChangeAuthenticatorRoute authenticatorRouteMaybe ->
                 ( { model | authenticatorRouteMaybe = authenticatorRouteMaybe }
                 , Cmd.none
+                )
+
+            CloseAuthenticatorModalAndNavigate urlPath ->
+                ( { model | authenticatorRouteMaybe = Nothing }
+                , navigate urlPath
                 )
 
             CollectionMsg childMsg ->

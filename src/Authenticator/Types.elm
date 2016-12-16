@@ -16,7 +16,7 @@ type InternalMsg
     = ResetPasswordMsg Authenticator.ResetPassword.Types.Msg
     | SignInMsg Authenticator.SignIn.Types.InternalMsg
     | SignOutMsg Authenticator.SignOut.Types.Msg
-    | SignUpMsg Authenticator.SignUp.Types.Msg
+    | SignUpMsg Authenticator.SignUp.Types.InternalMsg
 
 
 type Msg
@@ -63,4 +63,14 @@ translateSignInMsg =
     Authenticator.SignIn.Types.translateMsg
         { onChangeRoute = ForParent << ChangeRoute
         , onInternalMsg = ForSelf << SignInMsg
+        , onNavigate = ForParent << Navigate
+        }
+
+
+translateSignUpMsg : Authenticator.SignUp.Types.MsgTranslator Msg
+translateSignUpMsg =
+    Authenticator.SignUp.Types.translateMsg
+        { onChangeRoute = ForParent << ChangeRoute
+        , onInternalMsg = ForSelf << SignUpMsg
+        , onNavigate = ForParent << Navigate
         }

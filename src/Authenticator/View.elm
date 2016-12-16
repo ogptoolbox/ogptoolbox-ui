@@ -6,7 +6,7 @@ import Authenticator.Routes exposing (Route(..))
 import Authenticator.SignIn.View
 import Authenticator.SignOut.View
 import Authenticator.SignUp.View
-import Authenticator.Types exposing (InternalMsg(..), Msg(..), translateSignInMsg)
+import Authenticator.Types exposing (InternalMsg(..), Msg(..), translateSignInMsg, translateSignUpMsg)
 import Html exposing (Html)
 import I18n
 
@@ -47,5 +47,5 @@ viewModalBody language route model =
 
         SignUpRoute ->
             Html.map
-                (ForSelf << SignUpMsg)
+                translateSignUpMsg
                 (Authenticator.SignUp.View.viewModalBody language model.signUp)

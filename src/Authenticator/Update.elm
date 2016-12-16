@@ -49,4 +49,4 @@ update msg model =
                 model_ =
                     { model | authentication = authentication, signUp = signUp }
             in
-                ( model_, Cmd.map (ForSelf << SignUpMsg) signUpCmd )
+                ( model_, Cmd.map translateSignUpMsg signUpCmd )

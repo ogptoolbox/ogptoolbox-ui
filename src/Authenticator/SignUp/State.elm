@@ -12,14 +12,14 @@ import Types exposing (User)
 
 init : Model
 init =
-    { errors = Dict.empty
-    , email = ""
+    { email = ""
+    , errors = Dict.empty
     , password = ""
     , username = ""
     }
 
 
-update : Msg -> Model -> ( Model, Cmd Msg, Maybe User )
+update : InternalMsg -> Model -> ( Model, Cmd Msg, Maybe User )
 update msg model =
     case msg of
         EmailInput text ->
@@ -76,7 +76,7 @@ update msg model =
                                 (apiUrl ++ "users")
                                 (Http.stringBody "application/json" <| Json.Encode.encode 2 bodyJson)
                                 Decoders.userBodyDecoder
-                                |> Http.send UserCreated
+                                |> Http.send (ForSelf << UserCreated)
                     else
                         Cmd.none
             in

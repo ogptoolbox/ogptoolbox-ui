@@ -12,6 +12,7 @@ type alias Errors =
 
 type ExternalMsg
     = ChangeRoute (Maybe Route)
+    | Navigate String
 
 
 type InternalMsg
@@ -37,6 +38,7 @@ type Msg
 type alias MsgTranslation parentMsg =
     { onChangeRoute : Maybe Route -> parentMsg
     , onInternalMsg : InternalMsg -> parentMsg
+    , onNavigate : String -> parentMsg
     }
 
 
@@ -45,10 +47,13 @@ type alias MsgTranslator parentMsg =
 
 
 translateMsg : MsgTranslation parentMsg -> MsgTranslator parentMsg
-translateMsg { onChangeRoute, onInternalMsg } msg =
+translateMsg { onChangeRoute, onInternalMsg, onNavigate } msg =
     case msg of
         ForParent (ChangeRoute route) ->
             onChangeRoute route
 
         ForSelf internalMsg ->
             onInternalMsg internalMsg
+
+        ForParent (Navigate path) ->
+            onNavigate path

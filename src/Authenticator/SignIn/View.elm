@@ -7,6 +7,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Attributes.Aria exposing (..)
 import Html.Events exposing (..)
+import Html.Helpers exposing (..)
 import I18n
 import Json.Decode
 import Views exposing (getHttpErrorAsString)
@@ -164,7 +165,11 @@ viewModalBody language model =
                             , text (I18n.translate language I18n.CreateOrganizationPage)
                             ]
                         , li []
-                            [ a [ href "#" ]
+                            [ aForPath
+                                (ForParent << Navigate)
+                                language
+                                "/faq"
+                                []
                                 [ u []
                                     [ text (I18n.translate language I18n.ReadMore) ]
                                 ]
