@@ -41,11 +41,6 @@ var commonConfig = {
       template: 'static/index.html',
       inject: 'body',
       filename: 'index.html'
-    }),
-    new HtmlWebpackPlugin({
-      template: 'static/index-prerender.html',
-      inject: 'body',
-      filename: 'index-prerender.html'
     })
   ],
   postcss: [ autoprefixer( { browsers: ['last 2 versions'] } ) ],
