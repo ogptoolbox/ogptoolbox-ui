@@ -92,8 +92,9 @@ update msg model language =
 
                         cmds =
                             [ Ports.setDocumentMetatags
-                                { title = I18n.translate language I18n.ActivationTitle
+                                { description = I18n.translate language I18n.ActivationDescription
                                 , imageUrl = Constants.logoUrl
+                                , title = I18n.translate language I18n.ActivationTitle
                                 }
                             , Ports.storeAuthentication (Ports.userToUserForPort (Just user))
                             , ForParent (Activate user)

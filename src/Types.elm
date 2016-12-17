@@ -87,8 +87,9 @@ type alias DataIdsBody =
 
 
 type alias DocumentMetatags =
-    { title : String
+    { description : String
     , imageUrl : String
+    , title : String
     }
 
 

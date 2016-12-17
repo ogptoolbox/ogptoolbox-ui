@@ -433,7 +433,7 @@ urlUpdate location model =
             case parseLocation location of
                 Just ((I18nRouteWithLanguage language localizedRoute) as route) ->
                     let
-                        indexRoute translationId =
+                        indexRoute titleSymbol descriptionSymbol =
                             let
                                 getLocalizedString value =
                                     case value.value of
@@ -487,8 +487,9 @@ urlUpdate location model =
                                 newModel
                                     ! [ Cmd.map translateSearchMsg searchCmd
                                       , Ports.setDocumentMetatags
-                                            { title = I18n.translate language translationId
+                                            { description = I18n.translate language descriptionSymbol
                                             , imageUrl = Constants.logoUrl
+                                            , title = I18n.translate language titleSymbol
                                             }
                                       ]
 
@@ -497,8 +498,9 @@ urlUpdate location model =
                                 AboutRoute ->
                                     ( model
                                     , Ports.setDocumentMetatags
-                                        { title = I18n.translate language I18n.About
+                                        { description = I18n.translate language I18n.AboutDescription
                                         , imageUrl = Constants.logoUrl
+                                        , title = I18n.translate language I18n.About
                                         }
                                     )
 
@@ -572,19 +574,21 @@ urlUpdate location model =
                                 FaqRoute ->
                                     ( model
                                     , Ports.setDocumentMetatags
-                                        { title = I18n.translate language I18n.Faq
+                                        { description = I18n.translate language I18n.FaqDescription
                                         , imageUrl = Constants.logoUrl
+                                        , title = I18n.translate language I18n.Faq
                                         }
                                     )
 
                                 HomeRoute ->
-                                    indexRoute I18n.Home
+                                    indexRoute I18n.HomeTitle I18n.HomeDescription
 
                                 NotFoundRoute _ ->
                                     ( model
                                     , Ports.setDocumentMetatags
-                                        { title = I18n.translate language I18n.PageNotFound
+                                        { description = I18n.translate language I18n.PageNotFoundDescription
                                         , imageUrl = Constants.logoUrl
+                                        , title = I18n.translate language I18n.PageNotFound
                                         }
                                     )
 
@@ -605,7 +609,7 @@ urlUpdate location model =
                                                 ( model, Cmd.map translateCardMsg childCmd )
 
                                         OrganizationsIndexRoute ->
-                                            indexRoute (I18n.Organization I18n.Plural)
+                                            indexRoute (I18n.Organization I18n.Plural) I18n.OrganizationsDescription
 
                                         NewOrganizationRoute ->
                                             let
@@ -622,8 +626,10 @@ urlUpdate location model =
 
                                                 cmd =
                                                     Ports.setDocumentMetatags
-                                                        { title = I18n.translate language I18n.AddNewOrganization
+                                                        { description =
+                                                            I18n.translate language I18n.AddNewOrganizationDescription
                                                         , imageUrl = Constants.logoUrl
+                                                        , title = I18n.translate language I18n.AddNewOrganization
                                                         }
                                             in
                                                 ( newModel, cmd )
@@ -645,7 +651,7 @@ urlUpdate location model =
                                                 ( model, Cmd.map translateCardMsg childCmd )
 
                                         ToolsIndexRoute ->
-                                            indexRoute (I18n.Tool I18n.Plural)
+                                            indexRoute (I18n.Tool I18n.Plural) I18n.ToolsDescription
 
                                         NewToolRoute ->
                                             let
@@ -662,8 +668,10 @@ urlUpdate location model =
 
                                                 cmd =
                                                     Ports.setDocumentMetatags
-                                                        { title = I18n.translate language I18n.AddNewTool
+                                                        { description =
+                                                            I18n.translate language I18n.AddNewToolDescription
                                                         , imageUrl = Constants.logoUrl
+                                                        , title = I18n.translate language I18n.AddNewTool
                                                         }
                                             in
                                                 ( newModel, cmd )
@@ -685,7 +693,7 @@ urlUpdate location model =
                                                 ( model, Cmd.map translateCardMsg childCmd )
 
                                         UseCasesIndexRoute ->
-                                            indexRoute (I18n.UseCase I18n.Plural)
+                                            indexRoute (I18n.UseCase I18n.Plural) I18n.UseCasesDescription
 
                                         NewUseCaseRoute ->
                                             let
@@ -702,7 +710,9 @@ urlUpdate location model =
 
                                                 cmd =
                                                     Ports.setDocumentMetatags
-                                                        { title = I18n.translate language I18n.AddNewUseCase
+                                                        { description =
+                                                            I18n.translate language I18n.AddNewUseCaseDescription
+                                                        , title = I18n.translate language I18n.AddNewUseCase
                                                         , imageUrl = Constants.logoUrl
                                                         }
                                             in

@@ -2,6 +2,7 @@ module Collection.State exposing (..)
 
 import Authenticator.Model
 import Constants
+import Dict exposing (Dict)
 import Http
 import I18n exposing (getImageUrlOrOgpLogo, getName)
 import Ports
@@ -35,12 +36,19 @@ update msg model authentication language =
                         newModel =
                             { model | collection = Data (Loaded body) }
 
+                        collection =
+                            case Dict.get body.data.id body.data.collections of
+                                Nothing ->
+                                    Debug.crash ("Collection not found id=" ++ body.data.id)
+
+                                Just collection ->
+                                    collection
+
                         cmd =
                             Ports.setDocumentMetatags
-                                { title =
-                                    "Collection"
-                                    -- TODO i18n
-                                , imageUrl = Constants.logoUrl
+                                { description = collection.description
+                                , imageUrl = collection.logo |> Maybe.withDefault Constants.logoUrl
+                                , title = collection.name
                                 }
                     in
                         ( newModel, cmd )

@@ -105,10 +105,9 @@ update msg ({ fields } as model) authentication language =
 
                         cmd =
                             Ports.setDocumentMetatags
-                                { title =
-                                    "Edit Collection"
-                                    -- TODO i18n
+                                { description = I18n.translate language I18n.CollectionEditDescription
                                 , imageUrl = Constants.logoUrl
+                                , title = I18n.translate language I18n.CollectionEditTitle
                                 }
                     in
                         ( newModel, cmd )

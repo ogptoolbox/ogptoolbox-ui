@@ -15,9 +15,11 @@ type TranslationId
     = About
     | AboutCredits
     | AboutCreditsContent
+    | AboutDescription
     | AboutLead
     | AboutLegal
     | AboutLegalContent
+    | ActivationDescription
     | ActivationFailed
     | ActivationInProgress
     | ActivationNotRequested
@@ -27,11 +29,14 @@ type TranslationId
     | AddNew
     | AddNewCollectionCatchPhrase
     | AddNewOrganization
+    | AddNewOrganizationDescription
     | AddNewOrganizationCatchPhrase
     | AddNewTool
     | AddNewToolCatchPhrase
+    | AddNewToolDescription
     | AddNewUseCase
     | AddNewUseCaseCatchPhrase
+    | AddNewUseCaseDescription
     | AdditionalInformations
     | AddToolOrUseCase
     | AuthenticationRequired
@@ -43,6 +48,10 @@ type TranslationId
     | CallToActionForDescription CardType
     | Close
     | Collection GrammaticalNumber
+    | CollectionEditDescription
+    | CollectionEditTitle
+    | CollectionsDescription
+    | CollectionsTitle
     | Copyright
     | CountVersionsAvailable Int
     | CreateAccountNow
@@ -65,6 +74,7 @@ type TranslationId
     | FaqDataContent0
     | FaqDataContent1
     | FaqDataContent2
+    | FaqDescription
     | FaqDev
     | FaqDevContent
     | FaqLanguages
@@ -94,17 +104,22 @@ type TranslationId
     | HeaderTitle
     | Help
     | Home
+    | HomeDescription
+    | HomeTitle
     | ImproveExistingContent
     | Language Language
     | LanguageWord
     | License
+    | MissingDescription
     | NetworkErrorExplanation
     | OGPsummitLink
     | OpenGovParagraph
     | Organization GrammaticalNumber
+    | OrganizationsDescription
     | PageLoading
     | PageLoadingExplanation
     | PageNotFound
+    | PageNotFoundDescription
     | PageNotFoundExplanation
     | Password
     | PasswordPlaceholder
@@ -132,14 +147,17 @@ type TranslationId
     | Tags
     | TimeoutExplanation
     | Tool GrammaticalNumber
+    | ToolsDescription
     | TweetMessage String String
     | Type
     | UseCase GrammaticalNumber
     | UseCases
+    | UseCasesDescription
     | UsedBy
     | UsedFor
     | Username
     | UsernamePlaceholder
+    | UserProfileDescription
     | Uses
     | UseIt
     | VoteBestContributions
@@ -167,6 +185,9 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        AboutDescription ->
+            getTranslationSet AboutLead
+
         AboutLead ->
             { english = s "About the OGP Toolbox"
             , french = s "À propos de la boite à outils OGP"
@@ -182,6 +203,12 @@ getTranslationSet translationId =
         AboutLegalContent ->
             { english = s "OGPtoolobox.org is edited by the Etalab taskforce, a Prime Minister service, 39 quai André Citroën 75015 PARIS."
             , french = s "OGPtoolobox.org est édité par la mission Etalab, service du Premier Ministre, 39 quai André Citroën 75015 PARIS."
+            , spanish = todo
+            }
+
+        ActivationDescription ->
+            { english = s "Verification of the user's email address."
+            , french = s "Vérification de l'adresse courriel de l'utilisateur"
             , spanish = todo
             }
 
@@ -275,21 +302,15 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
-        AddNewUseCase ->
-            { english = s "Add a new use case"
-            , french = s "Ajouter un nouveau cas d'usage"
-            , spanish = todo
-            }
-
-        AddNewUseCaseCatchPhrase ->
-            { english = s "Example of a concrete use case of one or multiple tools having a participatory dimension."
-            , french = s "Exemple concret d'utilisation d'un ou plusieurs outils avec une dimension de participation citoyenne."
-            , spanish = todo
-            }
-
         AddNewOrganization ->
             { english = s "Add a new organization"
             , french = s "Ajouter une nouvelle organisation"
+            , spanish = todo
+            }
+
+        AddNewOrganizationDescription ->
+            { english = s "Creating a new organization by giving a few generic informations"
+            , french = s "Création d'une nouvelle organisation en fournissant quelques informqtions générales"
             , spanish = todo
             }
 
@@ -305,9 +326,33 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        AddNewToolDescription ->
+            { english = s "Creating a new tool by giving a few generic informations"
+            , french = s "Création d'un nouvel outil en fournissant quelques informqtions générales"
+            , spanish = todo
+            }
+
         AddNewToolCatchPhrase ->
             { english = s "Software or services, available online or through mobile applications."
             , french = s "Programme informatique ou service, disponible sur le web ou via des applications mobiles."
+            , spanish = todo
+            }
+
+        AddNewUseCase ->
+            { english = s "Add a new use case"
+            , french = s "Ajouter un nouveau cas d'usage"
+            , spanish = todo
+            }
+
+        AddNewUseCaseDescription ->
+            { english = s "Creating a new use case by giving a few generic informations"
+            , french = s "Création d'un nouveau cas d'usage en fournissant quelques informqtions générales"
+            , spanish = todo
+            }
+
+        AddNewUseCaseCatchPhrase ->
+            { english = s "Example of a concrete use case of one or multiple tools having a participatory dimension."
+            , french = s "Exemple concret d'utilisation d'un ou plusieurs outils avec une dimension de participation citoyenne."
             , spanish = todo
             }
 
@@ -396,6 +441,30 @@ getTranslationSet translationId =
 
                     Plural ->
                         s "Colecciones"
+            }
+
+        CollectionEditDescription ->
+            { english = s "Creating a new collection or editing an existing one."
+            , french = s "Création d'une nouvelle collection ou édition d'une collection existante."
+            , spanish = todo
+            }
+
+        CollectionEditTitle ->
+            { english = s "Edit Collection"
+            , french = s "Édition d'une collection"
+            , spanish = todo
+            }
+
+        CollectionsDescription ->
+            { english = s "List of tools and use cases collected by a user"
+            , french = s "List d'outils et de cas d'usages collectés par un utilisateur"
+            , spanish = todo
+            }
+
+        CollectionsTitle ->
+            { english = s "Collections"
+            , french = s "Collections"
+            , spanish = todo
             }
 
         Copyright ->
@@ -545,6 +614,12 @@ getTranslationSet translationId =
         FaqDataContent2 ->
             { english = s "OGP Toolbox users can create new tools, use cases and organizations, or edit existing ones."
             , french = s "Les utilisateurs de l'OGP Toolbox peuvent créer de nouvelles fiches d'outil, de cas d'usage et d'organisation, ou éditer des fiches existantes."
+            , spanish = todo
+            }
+
+        FaqDescription ->
+            { english = s "Frequently asked questions (FAQ)"
+            , french = s "Foire aux questions (FAQ)"
             , spanish = todo
             }
 
@@ -722,6 +797,18 @@ getTranslationSet translationId =
             , spanish = s "Inicio"
             }
 
+        HomeDescription ->
+            { english = s "Digital solutions to improve democracy"
+            , french = s "Solutions numériques pour la démocratie"
+            , spanish = todo
+            }
+
+        HomeTitle ->
+            { english = s "OGP Toolbox"
+            , french = s "OGP Toolbox"
+            , spanish = todo
+            }
+
         ImproveExistingContent ->
             { english = s "Improve existing content"
             , french = s "Améliorez le contenu existant"
@@ -757,6 +844,12 @@ getTranslationSet translationId =
         License ->
             { english = s "License"
             , french = s "Licence"
+            , spanish = todo
+            }
+
+        MissingDescription ->
+            { english = s "Missing description"
+            , french = s "Description manquante"
             , spanish = todo
             }
 
@@ -806,6 +899,12 @@ to strengthen governance.
                         s "Organizaciones"
             }
 
+        OrganizationsDescription ->
+            { english = s "List of organizations"
+            , french = s "Liste d'organisations"
+            , spanish = todo
+            }
+
         PageLoading ->
             { english = s "Page is loading"
             , french = s "Chargement en cours"
@@ -821,6 +920,12 @@ to strengthen governance.
         PageNotFound ->
             { english = s "Page Not Found"
             , french = s "Page non trouvée"
+            , spanish = todo
+            }
+
+        PageNotFoundDescription ->
+            { english = s "The request pas doesn't exist."
+            , french = s "La page demandée n'existe pas."
             , spanish = todo
             }
 
@@ -1004,6 +1109,12 @@ to strengthen governance.
                         s "Herramientas"
             }
 
+        ToolsDescription ->
+            { english = s "List of tools"
+            , french = s "Liste d'outils"
+            , spanish = todo
+            }
+
         TweetMessage name url ->
             { english = s ("Discover " ++ name ++ " on OGPToolbox.org: " ++ url)
             , french = s ("Découvrez " ++ name ++ " dans OGPToolbox.org : " ++ url)
@@ -1046,6 +1157,12 @@ to strengthen governance.
             , spanish = s "Casos de uso"
             }
 
+        UseCasesDescription ->
+            { english = s "List of use cases"
+            , french = s "Liste de cas d'usage"
+            , spanish = todo
+            }
+
         UsedBy ->
             { english = s "Used by"
             , french = s "Utilisé par"
@@ -1067,6 +1184,12 @@ to strengthen governance.
         UsernamePlaceholder ->
             { english = s "John Doe"
             , french = s "Françoise Martin"
+            , spanish = todo
+            }
+
+        UserProfileDescription ->
+            { english = s "The profile of user and its favorite collections"
+            , french = s "Le profil de l'utilisation et ses collections favorites"
             , spanish = todo
             }
 

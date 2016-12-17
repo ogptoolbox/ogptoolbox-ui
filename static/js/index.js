@@ -41,6 +41,13 @@ var main = Elm.Main.embed(document.getElementById('main'), flags);
 // Ports
 
 main.ports.setDocumentMetatags.subscribe(function(metatags) {
+    if (metatags.hasOwnProperty('description')) {
+        var element = document.head.querySelector('meta[property="og:description"]');
+        if (element) {
+            element.setAttribute('content', metatags.description);
+        }
+    }
+
     if (metatags.hasOwnProperty('imageUrl')) {
         var element = document.head.querySelector('meta[property="og:image"]');
         if (element) {

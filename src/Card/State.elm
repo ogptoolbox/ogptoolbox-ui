@@ -4,7 +4,7 @@ import Authenticator.Model
 import Card.Types exposing (..)
 import Dict exposing (Dict)
 import Http
-import I18n exposing (getImageUrlOrOgpLogo, getName)
+import I18n exposing (getImageUrlOrOgpLogo, getName, getOneString)
 import Ports
 import Requests
 import Task
@@ -71,8 +71,11 @@ update msg ({ editedProperty } as model) authentication language =
 
                         cmd =
                             Ports.setDocumentMetatags
-                                { title = getName language card body.data.values
+                                { description =
+                                    getOneString language descriptionKeys card body.data.values
+                                        |> Maybe.withDefault (I18n.translate language I18n.MissingDescription)
                                 , imageUrl = getImageUrlOrOgpLogo language body.data.id body.data.cards body.data.values
+                                , title = getName language card body.data.values
                                 }
                     in
                         ( newModel, cmd )
