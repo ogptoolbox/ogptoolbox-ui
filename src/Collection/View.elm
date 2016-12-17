@@ -9,7 +9,6 @@ import Html.Events exposing (..)
 import Http
 import I18n
 import Routes
-import String
 import Types exposing (..)
 import Views exposing (viewCardThumbnail, viewLoading, viewWebData)
 import WebData exposing (..)
@@ -144,11 +143,8 @@ viewCollectionContent language user collection cards values =
                                 , href
                                     (let
                                         url =
-                                            (String.dropRight 1 Configuration.appUrl)
-                                                ++ (Routes.makeUrlWithLanguage
-                                                        language
-                                                        ("/collections/" ++ collection.id)
-                                                   )
+                                            Routes.fullUrl
+                                                (Routes.makeUrlWithLanguage language ("/collections/" ++ collection.id))
 
                                         -- TODO: i18n
                                      in

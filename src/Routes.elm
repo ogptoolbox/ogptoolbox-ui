@@ -1,5 +1,6 @@
 module Routes exposing (..)
 
+import Configuration
 import Erl
 import Http
 import I18n
@@ -60,6 +61,26 @@ collectionsRouteParser =
         , map CollectionRoute idParser
         , map EditCollectionRoute (idParser </> s "edit")
         ]
+
+
+fullUrl : String -> String
+fullUrl url =
+    let
+        parsedAppUrl =
+            Erl.parse Configuration.appUrl
+
+        parsedUrl =
+            Erl.parse url
+    in
+        if List.isEmpty <| List.filter (not << String.isEmpty) parsedUrl.host then
+            Erl.toString <|
+                { parsedUrl
+                    | host = parsedAppUrl.host
+                    , port_ = parsedAppUrl.port_
+                    , protocol = parsedAppUrl.protocol
+                }
+        else
+            url
 
 
 getQuerySearchTerm : Navigation.Location -> String

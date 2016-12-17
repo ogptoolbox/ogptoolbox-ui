@@ -7,6 +7,7 @@ import Http
 import I18n exposing (getImageUrlOrOgpLogo, getName)
 import Ports
 import Requests
+import Routes
 import Collection.Types exposing (..)
 import WebData exposing (..)
 
@@ -47,7 +48,7 @@ update msg model authentication language =
                         cmd =
                             Ports.setDocumentMetatags
                                 { description = collection.description
-                                , imageUrl = collection.logo |> Maybe.withDefault Constants.logoUrl
+                                , imageUrl = Routes.fullUrl <| (collection.logo |> Maybe.withDefault Constants.logoUrl)
                                 , title = collection.name
                                 }
                     in
