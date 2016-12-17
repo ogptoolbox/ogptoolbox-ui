@@ -4,7 +4,6 @@
     "repository": "https://github.com/ogptoolbox/ogptoolbox-ui.git",
     "license": "AGPL-3.0+",
     "source-directories": [
-        "../url-parser/src",
         "src"
     ],
     "exposed-modules": [],

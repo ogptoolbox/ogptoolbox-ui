@@ -6,15 +6,6 @@ See it in action: https://ogptoolbox.org/
 
 ## Install
 
-Currently, OGPToolbox-UI requires a forked version of evancz/url-parser. You need to install it manually:
-
-    git clone https://github.com/ogptoolbox/url-parser
-    cd url-parser
-    elm-package install
-    cd ..
-
-Install OGPToolbox-UI:
-
     git clone https://github.com/ogptoolbox/ogptoolbox-ui
     cd ogptoolbox-ui
 
