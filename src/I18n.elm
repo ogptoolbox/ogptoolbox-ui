@@ -1249,13 +1249,9 @@ getOneStringFromValueType language values valueType =
 
 getName : Language -> Card -> Dict String Value -> String
 getName language card values =
-    -- TODO Name can be Nothing, if down-voted! So return a Maybe String and handle call-to-action
-    case getOneString language nameKeys card values of
-        Nothing ->
-            Debug.crash "getName: unhandled case"
-
-        Just name ->
-            name
+    -- Note: Name can be Nothing, if down-voted.
+    getOneString language nameKeys card values
+        |> Maybe.withDefault "Untitled"
 
 
 getImageUrl : Language -> String -> Card -> Dict String Value -> Maybe String
