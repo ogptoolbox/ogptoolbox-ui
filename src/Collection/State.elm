@@ -48,7 +48,9 @@ update msg model authentication language =
                         cmd =
                             Ports.setDocumentMetatags
                                 { description = collection.description
-                                , imageUrl = Routes.fullUrl <| (collection.logo |> Maybe.withDefault Constants.logoUrl)
+                                , imageUrl =
+                                    Routes.fullApiUrl <|
+                                        (collection.logo |> Maybe.withDefault Constants.logoUrl)
                                 , title = collection.name
                                 }
                     in

@@ -63,6 +63,26 @@ collectionsRouteParser =
         ]
 
 
+fullApiUrl : String -> String
+fullApiUrl url =
+    let
+        parsedApiUrl =
+            Erl.parse Configuration.apiUrl
+
+        parsedUrl =
+            Erl.parse url
+    in
+        if List.isEmpty <| List.filter (not << String.isEmpty) parsedUrl.host then
+            Erl.toString <|
+                { parsedUrl
+                    | host = parsedApiUrl.host
+                    , port_ = parsedApiUrl.port_
+                    , protocol = parsedApiUrl.protocol
+                }
+        else
+            url
+
+
 fullUrl : String -> String
 fullUrl url =
     let
