@@ -47,15 +47,26 @@ main.ports.setDocumentMetatags.subscribe(function(metatags) {
             element.setAttribute('content', metatags.imageUrl);
         }
     }
+
     if (metatags.hasOwnProperty('title')) {
+        var genericTitle = "OGP Toolbox";
+        var title = metatags.title + " – " + genericTitle;
+
+        var element = document.head.querySelector('meta[property="og:title"]');
+        if (element) {
+            element.setAttribute('content', title);
+        }
+
         var elements = document.head.getElementsByTagName('title');
         if (elements.length) {
             var element = elements[0];
-            var genericTitle = "OGP Toolbox";
-            element.innerText = metatags.title
-                ? metatags.title + " – " + genericTitle
-                : genericTitle;
+            element.innerText = title;
         }
+    }
+
+    var element = document.head.querySelector('meta[property="og:url"]');
+    if (element) {
+        element.setAttribute('content', window.location.href);
     }
 });
 
