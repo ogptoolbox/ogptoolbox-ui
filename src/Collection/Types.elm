@@ -16,7 +16,10 @@ type ExternalMsg
 type InternalMsg
     = GotCollection (Result Http.Error DataIdBody)
     | LoadCollection String
-    | Tweet String
+    | ShareOnFacebook String
+    | ShareOnGooglePlus String
+    | ShareOnLinkedIn String
+    | ShareOnTwitter String
 
 
 type Msg

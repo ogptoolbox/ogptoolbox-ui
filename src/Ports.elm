@@ -97,7 +97,16 @@ port fileContentRead : (ImagePortData -> msg) -> Sub msg
 
 
 
--- TWITTER
+-- SHARERS
 
 
-port tweet : String -> Cmd msg
+port shareOnFacebook : String -> Cmd msg
+
+
+port shareOnGooglePlus : String -> Cmd msg
+
+
+port shareOnLinkedIn : String -> Cmd msg
+
+
+port shareOnTwitter : String -> Cmd msg

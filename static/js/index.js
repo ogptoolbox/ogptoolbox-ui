@@ -162,16 +162,51 @@ main.ports.setDocumentMetatags.subscribe(function (metatags) {
 });
 
 
-main.ports.storeAuthentication.subscribe(function (authentication) {
-    if (authentication) {
-        window.localStorage.setItem('authentication', JSON.stringify(authentication, null, 2));
-    } else {
-        window.localStorage.removeItem('authentication');
+main.ports.shareOnFacebook.subscribe(function (url) {
+    var height = 350,
+        width = 520,
+        winHeight = screen.height,
+        winWidth = screen.width;
+    var left = Math.round((winWidth / 2) - (width / 2)),
+        top = 0;
+    if (winHeight > height) {
+        top = Math.round((winHeight / 2) - (height / 2));
     }
+    window.open(url, 'facebook', 'status=no,toolbar=no,resizable=yes,scrollbars=yes,width=' + width +
+        ',height=' + height + ',left=' + left + ',top=' + top);
 });
 
 
-main.ports.tweet.subscribe(function (url) {
+main.ports.shareOnGooglePlus.subscribe(function (url) {
+    var height = 600,
+        width = 600,
+        winHeight = screen.height,
+        winWidth = screen.width;
+    var left = Math.round((winWidth / 2) - (width / 2)),
+        top = 0;
+    if (winHeight > height) {
+        top = Math.round((winHeight / 2) - (height / 2));
+    }
+    window.open(url, 'google+', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,width=' + width +
+        ',height=' + height + ',left=' + left + ',top=' + top);
+});
+
+
+main.ports.shareOnLinkedIn.subscribe(function (url) {
+    var height = 570,
+        width = 520,
+        winHeight = screen.height,
+        winWidth = screen.width;
+    var left = Math.round((winWidth / 2) - (width / 2)),
+        top = 0;
+    if (winHeight > height) {
+        top = Math.round((winHeight / 2) - (height / 2));
+    }
+    window.open(url, 'linkedin', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,width=' + width +
+        ',height=' + height + ',left=' + left + ',top=' + top);
+});
+
+main.ports.shareOnTwitter.subscribe(function (url) {
     var height = 420,
         width = 550,
         winHeight = screen.height,
@@ -181,6 +216,15 @@ main.ports.tweet.subscribe(function (url) {
     if (winHeight > height) {
         top = Math.round((winHeight / 2) - (height / 2));
     }
-    window.open(url, 'intent', 'scrollbars=yes,resizable=yes,toolbar=no,location=yes,width=' + width +
+    window.open(url, 'twitter', 'scrollbars=yes,resizable=yes,toolbar=no,location=yes,width=' + width +
         ',height=' + height + ',left=' + left + ',top=' + top);
+});
+
+
+main.ports.storeAuthentication.subscribe(function (authentication) {
+    if (authentication) {
+        window.localStorage.setItem('authentication', JSON.stringify(authentication, null, 2));
+    } else {
+        window.localStorage.removeItem('authentication');
+    }
 });

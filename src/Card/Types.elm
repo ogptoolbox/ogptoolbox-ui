@@ -39,8 +39,11 @@ type InternalMsg
     | PropertyPosted (Result Http.Error DataIdBody)
     | RatingPosted (Result Http.Error DataIdBody)
     | SelectField Field
+    | ShareOnFacebook String
+    | ShareOnGooglePlus String
+    | ShareOnLinkedIn String
+    | ShareOnTwitter String
     | SubmitValue Field
-    | Tweet String
     | VotePropertyDown String
     | VotePropertyUp String
 

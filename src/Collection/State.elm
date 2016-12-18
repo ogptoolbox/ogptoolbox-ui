@@ -48,7 +48,7 @@ update msg model authentication language =
                             Ports.setDocumentMetadata
                                 { description = collection.description
                                 , imageUrl =
-                                    (collection.logo |> Maybe.withDefault Constants.logoUrl)
+                                    collection.logo |> Maybe.withDefault Constants.logoUrl
                                 , title = collection.name
                                 }
                     in
@@ -65,5 +65,14 @@ update msg model authentication language =
             in
                 ( newModel, cmd )
 
-        Tweet twitterUrl ->
-            ( model, Ports.tweet twitterUrl )
+        ShareOnFacebook url ->
+            ( model, Ports.shareOnFacebook url )
+
+        ShareOnGooglePlus url ->
+            ( model, Ports.shareOnGooglePlus url )
+
+        ShareOnLinkedIn url ->
+            ( model, Ports.shareOnLinkedIn url )
+
+        ShareOnTwitter url ->
+            ( model, Ports.shareOnTwitter url )

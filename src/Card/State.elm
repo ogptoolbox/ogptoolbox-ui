@@ -278,6 +278,18 @@ update msg ({ editedProperty } as model) authentication language =
             in
                 ( newModel, Cmd.none )
 
+        ShareOnFacebook url ->
+            ( model, Ports.shareOnFacebook url )
+
+        ShareOnGooglePlus url ->
+            ( model, Ports.shareOnGooglePlus url )
+
+        ShareOnLinkedIn url ->
+            ( model, Ports.shareOnLinkedIn url )
+
+        ShareOnTwitter url ->
+            ( model, Ports.shareOnTwitter url )
+
         SubmitValue selectedField ->
             let
                 ( cardId, keyId ) =
@@ -305,9 +317,6 @@ update msg ({ editedProperty } as model) authentication language =
                     Task.attempt (ForSelf << PropertyPosted) task
             in
                 ( model, cmd )
-
-        Tweet twitterUrl ->
-            ( model, Ports.tweet twitterUrl )
 
         VotePropertyDown propertyId ->
             let

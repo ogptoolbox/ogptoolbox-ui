@@ -2,6 +2,7 @@ module Card.View exposing (..)
 
 import Card.Types exposing (..)
 import Configuration
+import Constants
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -1138,36 +1139,77 @@ viewSidebar language card values =
                             cardName =
                                 I18n.getName language card values
 
+                            imageUrl =
+                                getOneString language imageUrlPathKeys card values
+                                    |> Maybe.withDefault Constants.logoUrl
+
                             url =
                                 Urls.fullUrl
                                     (Routes.makeUrlWithLanguage language (Routes.urlPathForCard card))
+
+                            facebookUrl =
+                                "http://www.facebook.com/sharer.php?s=100&p[title]="
+                                    ++ Http.encodeUri cardName
+                                    ++ "&p[summary]="
+                                    ++ Http.encodeUri (I18n.translate language (I18n.TweetMessage cardName url))
+                                    ++ "&p[url]="
+                                    ++ Http.encodeUri url
+                                    ++ "&p[images][0]="
+                                    ++ Http.encodeUri imageUrl
+
+                            googlePlusUrl =
+                                "https://plus.google.com/share?url=" ++ Http.encodeUri url
+
+                            linkedInUrl =
+                                "https://www.linkedin.com/shareArticle?mini=true&url="
+                                    ++ Http.encodeUri url
+                                    ++ "&title="
+                                    ++ Http.encodeUri cardName
+                                    ++ "&summary="
+                                    ++ Http.encodeUri (I18n.translate language (I18n.TweetMessage cardName url))
+                                    ++ "&source="
+                                    ++ Http.encodeUri "OGP Toolbox"
 
                             twitterUrl =
                                 "https://twitter.com/intent/tweet?text="
                                     ++ Http.encodeUri (I18n.translate language (I18n.TweetMessage cardName url))
                          in
-                            -- [ button [ class "btn btn-default btn-action btn-round", type' "button" ]
-                            --     [ i [ attribute "aria-hidden" "true", class "fa fa-facebook" ]
-                            --         []
-                            --     ]
                             [ a
+                                [ class "btn btn-default btn-action btn-round"
+                                , href facebookUrl
+                                , onWithOptions
+                                    "click"
+                                    { stopPropagation = True, preventDefault = True }
+                                    (Decode.succeed (ForSelf <| ShareOnFacebook facebookUrl))
+                                ]
+                                [ i [ attribute "aria-hidden" "true", class "fa fa-facebook" ] [] ]
+                            , a
+                                [ class "btn btn-default btn-action btn-round"
+                                , href googlePlusUrl
+                                , onWithOptions
+                                    "click"
+                                    { stopPropagation = True, preventDefault = True }
+                                    (Decode.succeed (ForSelf <| ShareOnGooglePlus googlePlusUrl))
+                                ]
+                                [ i [ attribute "aria-hidden" "true", class "fa fa-google-plus" ] [] ]
+                            , a
+                                [ class "btn btn-default btn-action btn-round"
+                                , href linkedInUrl
+                                , onWithOptions
+                                    "click"
+                                    { stopPropagation = True, preventDefault = True }
+                                    (Decode.succeed (ForSelf <| ShareOnLinkedIn linkedInUrl))
+                                ]
+                                [ i [ attribute "aria-hidden" "true", class "fa fa-linkedin" ] [] ]
+                            , a
                                 [ class "btn btn-default btn-action btn-round"
                                 , href twitterUrl
                                 , onWithOptions
                                     "click"
                                     { stopPropagation = True, preventDefault = True }
-                                    (Decode.succeed (ForSelf <| Tweet twitterUrl))
-                                  -- , onClick (ForSelf <| Tweet twitterUrl)
+                                    (Decode.succeed (ForSelf <| ShareOnTwitter twitterUrl))
                                 ]
                                 [ i [ attribute "aria-hidden" "true", class "fa fa-twitter" ] [] ]
-                              -- , button [ class "btn btn-default btn-action btn-round", type' "button" ]
-                              --     [ i [ attribute "aria-hidden" "true", class "fa fa-google-plus" ]
-                              --         []
-                              --     ]
-                              -- , button [ class "btn btn-default btn-action btn-round", type' "button" ]
-                              --     [ i [ attribute "aria-hidden" "true", class "fa fa-linkedin" ]
-                              --         []
-                              --     ]
                             ]
                         )
                     ]
