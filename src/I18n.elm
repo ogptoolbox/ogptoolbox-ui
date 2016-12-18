@@ -150,6 +150,7 @@ type TranslationId
     | ToolsDescription
     | TweetMessage String String
     | Type
+    | UntitledCard
     | UseCase GrammaticalNumber
     | UseCases
     | UseCasesDescription
@@ -1127,6 +1128,12 @@ to strengthen governance.
             , spanish = s "Tipo"
             }
 
+        UntitledCard ->
+            { english = s "Untitled Card"
+            , french = s "Fiche sans titre"
+            , spanish = s "Tipo"
+            }
+
         UseCase number ->
             { english =
                 case number of
@@ -1374,7 +1381,7 @@ getName : Language -> Card -> Dict String Value -> String
 getName language card values =
     -- Note: Name can be Nothing, if down-voted.
     getOneString language nameKeys card values
-        |> Maybe.withDefault "Untitled"
+        |> Maybe.withDefault (translate language UntitledCard)
 
 
 getImageUrl : Language -> String -> Card -> Dict String Value -> Maybe String
