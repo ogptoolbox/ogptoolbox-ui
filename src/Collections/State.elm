@@ -36,7 +36,7 @@ update msg model authentication language =
                             { model | collections = Data (Loaded body) }
 
                         cmd =
-                            Ports.setDocumentMetatags
+                            Ports.setDocumentMetadata
                                 { description = I18n.translate language I18n.CollectionsDescription
                                 , imageUrl = Constants.logoUrl
                                 , title = I18n.translate language I18n.CollectionsTitle

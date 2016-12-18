@@ -486,7 +486,7 @@ urlUpdate location model =
                             in
                                 newModel
                                     ! [ Cmd.map translateSearchMsg searchCmd
-                                      , Ports.setDocumentMetatags
+                                      , Ports.setDocumentMetadata
                                             { description = I18n.translate language descriptionSymbol
                                             , imageUrl = Constants.logoUrl
                                             , title = I18n.translate language titleSymbol
@@ -497,7 +497,7 @@ urlUpdate location model =
                             case localizedRoute of
                                 AboutRoute ->
                                     ( model
-                                    , Ports.setDocumentMetatags
+                                    , Ports.setDocumentMetadata
                                         { description = I18n.translate language I18n.AboutDescription
                                         , imageUrl = Constants.logoUrl
                                         , title = I18n.translate language I18n.About
@@ -573,7 +573,7 @@ urlUpdate location model =
 
                                 FaqRoute ->
                                     ( model
-                                    , Ports.setDocumentMetatags
+                                    , Ports.setDocumentMetadata
                                         { description = I18n.translate language I18n.FaqDescription
                                         , imageUrl = Constants.logoUrl
                                         , title = I18n.translate language I18n.Faq
@@ -585,7 +585,7 @@ urlUpdate location model =
 
                                 NotFoundRoute _ ->
                                     ( model
-                                    , Ports.setDocumentMetatags
+                                    , Ports.setDocumentMetadata
                                         { description = I18n.translate language I18n.PageNotFoundDescription
                                         , imageUrl = Constants.logoUrl
                                         , title = I18n.translate language I18n.PageNotFound
@@ -625,7 +625,7 @@ urlUpdate location model =
                                                     { model | addNewModel = newAddNewModel }
 
                                                 cmd =
-                                                    Ports.setDocumentMetatags
+                                                    Ports.setDocumentMetadata
                                                         { description =
                                                             I18n.translate language I18n.AddNewOrganizationDescription
                                                         , imageUrl = Constants.logoUrl
@@ -667,7 +667,7 @@ urlUpdate location model =
                                                     { model | addNewModel = newAddNewModel }
 
                                                 cmd =
-                                                    Ports.setDocumentMetatags
+                                                    Ports.setDocumentMetadata
                                                         { description =
                                                             I18n.translate language I18n.AddNewToolDescription
                                                         , imageUrl = Constants.logoUrl
@@ -709,7 +709,7 @@ urlUpdate location model =
                                                     { model | addNewModel = newAddNewModel }
 
                                                 cmd =
-                                                    Ports.setDocumentMetatags
+                                                    Ports.setDocumentMetadata
                                                         { description =
                                                             I18n.translate language I18n.AddNewUseCaseDescription
                                                         , title = I18n.translate language I18n.AddNewUseCase

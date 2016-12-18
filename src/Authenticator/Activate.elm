@@ -91,7 +91,7 @@ update msg model language =
                             body.data
 
                         cmds =
-                            [ Ports.setDocumentMetatags
+                            [ Ports.setDocumentMetadata
                                 { description = I18n.translate language I18n.ActivationDescription
                                 , imageUrl = Constants.logoUrl
                                 , title = I18n.translate language I18n.ActivationTitle

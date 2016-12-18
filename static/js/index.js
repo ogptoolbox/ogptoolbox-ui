@@ -1,10 +1,9 @@
-// pull in desired CSS/LESS files
+// Pull in desired CSS/LESS files.
 require('../css/ogp-style.less');
-// require('../css/retruco.less');
 require('../css/bubbles.less');
 
 
-// user prefered language (http://stackoverflow.com/a/38150585/3548266)
+// User prefered language (http://stackoverflow.com/a/38150585/3548266)
 
 var language = navigator.languages && navigator.languages[0] || // Chrome / Firefox
                navigator.language ||   // All browsers
@@ -21,7 +20,7 @@ var rAF = typeof requestAnimationFrame !== 'undefined'
     : function(callback) { setTimeout(function() { callback(); }, 0); };
 
 
-// authentication
+// Authentication
 
 var authenticationStr = window.localStorage.getItem('authentication');
 var authentication = authenticationStr ? JSON.parse(authenticationStr) : null;
@@ -35,7 +34,6 @@ var flags = {
     language: language
 };
 var main = Elm.Main.embed(document.getElementById('main'), flags);
-
 
 
 // Ports
@@ -74,6 +72,13 @@ main.ports.setDocumentMetatags.subscribe(function(metatags) {
     var element = document.head.querySelector('meta[property="og:url"]');
     if (element) {
         element.setAttribute('content', window.location.href);
+    }
+
+    if (metatags.hasOwnProperty('twitterName')) {
+        var element = document.head.querySelector('meta[property="twitter:site"]');
+        if (element) {
+            element.setAttribute('content', metatags.twitterName);
+        }
     }
 });
 

@@ -1,9 +1,29 @@
 port module Ports exposing (..)
 
-import Types exposing (DocumentMetatags, PopularTag, User, UserForPort)
+import Configuration
+import Types exposing (DocumentMetadata, PopularTag, User, UserForPort)
+import Urls
 
 
--- DOCUMENT METATAGS
+-- DOCUMENT METADATA
+
+
+type alias DocumentMetatags =
+    { description : String
+    , imageUrl : String
+    , title : String
+    , twitterName : String
+    }
+
+
+setDocumentMetadata : DocumentMetadata -> Cmd msg
+setDocumentMetadata metadata =
+    setDocumentMetatags
+        { description = metadata.description
+        , imageUrl = Urls.fullApiUrl metadata.imageUrl
+        , title = metadata.title
+        , twitterName = Configuration.twitterName
+        }
 
 
 port setDocumentMetatags : DocumentMetatags -> Cmd msg

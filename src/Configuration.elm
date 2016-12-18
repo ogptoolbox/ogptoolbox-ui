@@ -14,6 +14,11 @@ appUrl =
     "http://localhost:3011/"
 
 
+twitterName : String
+twitterName =
+    "@OGPToolbox"
+
+
 useItData : Dict String { frenchGovDeployUrl : String }
 useItData =
     Dict.fromList

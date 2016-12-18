@@ -86,7 +86,7 @@ type alias DataIdsBody =
     }
 
 
-type alias DocumentMetatags =
+type alias DocumentMetadata =
     { description : String
     , imageUrl : String
     , title : String

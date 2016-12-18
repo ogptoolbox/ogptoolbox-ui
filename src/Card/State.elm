@@ -9,7 +9,6 @@ import Ports
 import Requests
 import Task
 import Types exposing (..)
-import Urls
 import WebData exposing (..)
 
 
@@ -71,13 +70,11 @@ update msg ({ editedProperty } as model) authentication language =
                             { model | webData = Data (Loaded body) }
 
                         cmd =
-                            Ports.setDocumentMetatags
+                            Ports.setDocumentMetadata
                                 { description =
                                     getOneString language descriptionKeys card body.data.values
                                         |> Maybe.withDefault (I18n.translate language I18n.MissingDescription)
-                                , imageUrl =
-                                    Urls.fullApiUrl <|
-                                        getImageUrlOrOgpLogo language body.data.id body.data.cards body.data.values
+                                , imageUrl = getImageUrlOrOgpLogo language body.data.id body.data.cards body.data.values
                                 , title = getName language card body.data.values
                                 }
                     in

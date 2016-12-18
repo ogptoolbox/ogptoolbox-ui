@@ -104,7 +104,7 @@ update msg ({ fields } as model) authentication language =
                             }
 
                         cmd =
-                            Ports.setDocumentMetatags
+                            Ports.setDocumentMetadata
                                 { description = I18n.translate language I18n.CollectionEditDescription
                                 , imageUrl = Constants.logoUrl
                                 , title = I18n.translate language I18n.CollectionEditTitle
