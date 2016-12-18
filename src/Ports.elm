@@ -20,7 +20,7 @@ setDocumentMetadata : DocumentMetadata -> Cmd msg
 setDocumentMetadata metadata =
     setDocumentMetatags
         { description = metadata.description
-        , imageUrl = Urls.fullApiUrl metadata.imageUrl
+        , imageUrl = Urls.fullApiUrl metadata.imageUrl ++ "?dim=500"
         , title = metadata.title
         , twitterName = Configuration.twitterName
         }
