@@ -64,3 +64,6 @@ update msg model authentication language =
                         |> Http.send (ForSelf << GotCollection)
             in
                 ( newModel, cmd )
+
+        Tweet twitterUrl ->
+            ( model, Ports.tweet twitterUrl )

@@ -169,3 +169,18 @@ main.ports.storeAuthentication.subscribe(function (authentication) {
         window.localStorage.removeItem('authentication');
     }
 });
+
+
+main.ports.tweet.subscribe(function (url) {
+    var height = 420,
+        width = 550,
+        winHeight = screen.height,
+        winWidth = screen.width;
+    var left = Math.round((winWidth / 2) - (width / 2)),
+        top = 0;
+    if (winHeight > height) {
+        top = Math.round((winHeight / 2) - (height / 2));
+    }
+    window.open(url, 'intent', 'scrollbars=yes,resizable=yes,toolbar=no,location=yes,width=' + width +
+        ',height=' + height + ',left=' + left + ',top=' + top);
+});

@@ -16,6 +16,7 @@ type ExternalMsg
 type InternalMsg
     = GotCollection (Result Http.Error DataIdBody)
     | LoadCollection String
+    | Tweet String
 
 
 type Msg

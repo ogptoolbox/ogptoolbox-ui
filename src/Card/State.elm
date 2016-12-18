@@ -143,46 +143,6 @@ update msg ({ editedProperty } as model) authentication language =
             in
                 ( newModel, cmd )
 
-        SelectField field ->
-            let
-                newEditedProperty =
-                    Maybe.map
-                        (\editedProperty -> { editedProperty | selectedField = field })
-                        editedProperty
-
-                newModel =
-                    { model | editedProperty = newEditedProperty }
-            in
-                ( newModel, Cmd.none )
-
-        SubmitValue selectedField ->
-            let
-                ( cardId, keyId ) =
-                    case editedProperty of
-                        Nothing ->
-                            Debug.crash "SubmitValue: cannot happen"
-
-                        Just { cardId, keyId } ->
-                            ( cardId, keyId )
-
-                task =
-                    Http.toTask (Requests.postValue authentication selectedField)
-                        |> Task.andThen
-                            (\dataIdBody ->
-                                Http.toTask
-                                    (Requests.postProperty
-                                        authentication
-                                        cardId
-                                        keyId
-                                        dataIdBody.data.id
-                                    )
-                            )
-
-                cmd =
-                    Task.attempt (ForSelf << PropertyPosted) task
-            in
-                ( model, cmd )
-
         PropertyPosted (Result.Err err) ->
             let
                 _ =
@@ -305,6 +265,49 @@ update msg ({ editedProperty } as model) authentication language =
                     { model | editedProperty = newEditedProperty }
             in
                 ( newModel, Cmd.none )
+
+        SelectField field ->
+            let
+                newEditedProperty =
+                    Maybe.map
+                        (\editedProperty -> { editedProperty | selectedField = field })
+                        editedProperty
+
+                newModel =
+                    { model | editedProperty = newEditedProperty }
+            in
+                ( newModel, Cmd.none )
+
+        SubmitValue selectedField ->
+            let
+                ( cardId, keyId ) =
+                    case editedProperty of
+                        Nothing ->
+                            Debug.crash "SubmitValue: cannot happen"
+
+                        Just { cardId, keyId } ->
+                            ( cardId, keyId )
+
+                task =
+                    Http.toTask (Requests.postValue authentication selectedField)
+                        |> Task.andThen
+                            (\dataIdBody ->
+                                Http.toTask
+                                    (Requests.postProperty
+                                        authentication
+                                        cardId
+                                        keyId
+                                        dataIdBody.data.id
+                                    )
+                            )
+
+                cmd =
+                    Task.attempt (ForSelf << PropertyPosted) task
+            in
+                ( model, cmd )
+
+        Tweet twitterUrl ->
+            ( model, Ports.tweet twitterUrl )
 
         VotePropertyDown propertyId ->
             let

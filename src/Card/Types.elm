@@ -40,6 +40,7 @@ type InternalMsg
     | RatingPosted (Result Http.Error DataIdBody)
     | SelectField Field
     | SubmitValue Field
+    | Tweet String
     | VotePropertyDown String
     | VotePropertyUp String
 

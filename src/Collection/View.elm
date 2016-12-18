@@ -7,6 +7,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Http
 import I18n
+import Json.Decode as Decode
 import Routes
 import Types exposing (..)
 import Urls
@@ -134,41 +135,39 @@ viewCollectionContent language user collection cards values =
                         [ h6 [ class "panel-title" ]
                             [ text (I18n.translate language I18n.Share) ]
                         , div [ class "panel-body chart" ]
-                            -- [ button [ class "btn btn-default btn-action btn-round", type' "button" ]
-                            --     [ i [ attribute "aria-hidden" "true", class "fa fa-facebook" ]
-                            --         []
-                            --     ]
-                            [ a
-                                [ class "btn btn-default btn-action btn-round twitter-share-button"
-                                , href
-                                    (let
-                                        url =
-                                            Urls.fullUrl
-                                                (Routes.makeUrlWithLanguage language ("/collections/" ++ collection.id))
+                            (let
+                                url =
+                                    Urls.fullUrl
+                                        (Routes.makeUrlWithLanguage language ("/collections/" ++ collection.id))
 
-                                        -- TODO: i18n
-                                     in
-                                        ("https://twitter.com/intent/tweet?text="
-                                            ++ Http.encodeUri
-                                                (I18n.translate
-                                                    language
-                                                    (I18n.TweetMessage collection.name url)
-                                                )
-                                        )
-                                    )
+                                twitterUrl =
+                                    "https://twitter.com/intent/tweet?text="
+                                        ++ Http.encodeUri (I18n.translate language (I18n.TweetMessage collection.name url))
+                             in
+                                -- [ button [ class "btn btn-default btn-action btn-round", type' "button" ]
+                                --     [ i [ attribute "aria-hidden" "true", class "fa fa-facebook" ]
+                                --         []
+                                --     ]
+                                [ a
+                                    [ class "btn btn-default btn-action btn-round"
+                                    , href twitterUrl
+                                    , onWithOptions
+                                        "click"
+                                        { stopPropagation = True, preventDefault = True }
+                                        (Decode.succeed (ForSelf <| Tweet twitterUrl))
+                                      -- , onClick (ForSelf <| Tweet twitterUrl)
+                                    ]
+                                    [ i [ attribute "aria-hidden" "true", class "fa fa-twitter" ] [] ]
+                                  -- , button [ class "btn btn-default btn-action btn-round", type' "button" ]
+                                  --     [ i [ attribute "aria-hidden" "true", class "fa fa-google-plus" ]
+                                  --         []
+                                  --     ]
+                                  -- , button [ class "btn btn-default btn-action btn-round", type' "button" ]
+                                  --     [ i [ attribute "aria-hidden" "true", class "fa fa-linkedin" ]
+                                  --         []
+                                  --     ]
                                 ]
-                                [ i [ attribute "aria-hidden" "true", class "fa fa-twitter" ]
-                                    []
-                                ]
-                              -- , button [ class "btn btn-default btn-action btn-round", type' "button" ]
-                              --     [ i [ attribute "aria-hidden" "true", class "fa fa-google-plus" ]
-                              --         []
-                              --     ]
-                              -- , button [ class "btn btn-default btn-action btn-round", type' "button" ]
-                              --     [ i [ attribute "aria-hidden" "true", class "fa fa-linkedin" ]
-                              --         []
-                              --     ]
-                            ]
+                            )
                         ]
                     ]
                 ]

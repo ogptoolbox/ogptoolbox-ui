@@ -5,47 +5,6 @@ import Types exposing (DocumentMetadata, PopularTag, User, UserForPort)
 import Urls
 
 
--- DOCUMENT METADATA
-
-
-type alias DocumentMetatags =
-    { description : String
-    , imageUrl : String
-    , title : String
-    , twitterName : String
-    }
-
-
-setDocumentMetadata : DocumentMetadata -> Cmd msg
-setDocumentMetadata metadata =
-    setDocumentMetatags
-        { description = metadata.description
-        , imageUrl = Urls.fullApiUrl metadata.imageUrl ++ "?dim=500"
-        , title = metadata.title
-        , twitterName = Configuration.twitterName
-        }
-
-
-port setDocumentMetatags : DocumentMetatags -> Cmd msg
-
-
-
--- IMAGE UPLOAD
-
-
-type alias ImagePortData =
-    { contents : String
-    , filename : String
-    }
-
-
-port fileSelected : String -> Cmd msg
-
-
-port fileContentRead : (ImagePortData -> msg) -> Sub msg
-
-
-
 -- AUTHENTICATION
 
 
@@ -94,3 +53,51 @@ port bubbleSelections : (D3BubblesPopularTag -> msg) -> Sub msg
 
 
 port bubbleDeselections : (D3BubblesPopularTag -> msg) -> Sub msg
+
+
+
+-- DOCUMENT METADATA
+
+
+type alias DocumentMetatags =
+    { description : String
+    , imageUrl : String
+    , title : String
+    , twitterName : String
+    }
+
+
+setDocumentMetadata : DocumentMetadata -> Cmd msg
+setDocumentMetadata metadata =
+    setDocumentMetatags
+        { description = metadata.description
+        , imageUrl = Urls.fullApiUrl metadata.imageUrl ++ "?dim=500"
+        , title = metadata.title
+        , twitterName = Configuration.twitterName
+        }
+
+
+port setDocumentMetatags : DocumentMetatags -> Cmd msg
+
+
+
+-- IMAGE UPLOAD
+
+
+type alias ImagePortData =
+    { contents : String
+    , filename : String
+    }
+
+
+port fileSelected : String -> Cmd msg
+
+
+port fileContentRead : (ImagePortData -> msg) -> Sub msg
+
+
+
+-- TWITTER
+
+
+port tweet : String -> Cmd msg
