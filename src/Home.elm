@@ -1,6 +1,5 @@
 module Home exposing (..)
 
-import Configuration
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -10,6 +9,7 @@ import Navigation
 import Routes
 import Search.Types exposing (..)
 import Types exposing (..)
+import Urls
 import Views exposing (viewCardThumbnail, viewLoading, viewTagsWithCallToAction, viewWebData)
 import WebData exposing (..)
 
@@ -408,7 +408,7 @@ viewCollectionThumbnail language user collection =
                         []
 
                     Just logo ->
-                        [ img [ alt "screen", src (Configuration.apiUrlWithPath logo) ] []
+                        [ img [ alt "screen", src (Urls.fullApiUrl logo) ] []
                         ]
                 )
             , div [ class "caption" ]

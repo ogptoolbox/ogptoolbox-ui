@@ -1,12 +1,12 @@
 module AddNewCollection.View exposing (..)
 
 import AddNewCollection.Types exposing (..)
-import Configuration
 import Json.Decode as Decode
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import I18n
+import Urls
 
 
 publishedDisabled : UploadStatus -> Bool
@@ -59,7 +59,7 @@ viewImageUploadStatus imageUploadStatus =
 
             Uploaded urlPath ->
                 img
-                    [ src (Configuration.apiUrlWithPath urlPath)
+                    [ src (Urls.fullApiUrl urlPath)
                     , style [ ( "max-width", "100%" ) ]
                     ]
                     []

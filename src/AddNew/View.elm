@@ -1,12 +1,12 @@
 module AddNew.View exposing (..)
 
 import AddNew.Types exposing (..)
-import Configuration
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (on, onClick, onInput, onSubmit, targetValue)
 import I18n exposing (getImageUrlOrOgpLogo, getName)
 import Json.Decode as Decode
+import Urls
 
 
 publishedDisabled : UploadStatus -> Bool
@@ -59,7 +59,7 @@ viewImageUploadStatus imageUploadStatus =
 
             Uploaded urlPath ->
                 img
-                    [ src (Configuration.apiUrlWithPath urlPath)
+                    [ src (Urls.fullApiUrl urlPath)
                     , style [ ( "max-width", "100%" ) ]
                     ]
                     []

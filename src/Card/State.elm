@@ -7,9 +7,9 @@ import Http
 import I18n exposing (getImageUrlOrOgpLogo, getName, getOneString)
 import Ports
 import Requests
-import Routes
 import Task
 import Types exposing (..)
+import Urls
 import WebData exposing (..)
 
 
@@ -76,7 +76,7 @@ update msg ({ editedProperty } as model) authentication language =
                                     getOneString language descriptionKeys card body.data.values
                                         |> Maybe.withDefault (I18n.translate language I18n.MissingDescription)
                                 , imageUrl =
-                                    Routes.fullApiUrl <|
+                                    Urls.fullApiUrl <|
                                         getImageUrlOrOgpLogo language body.data.id body.data.cards body.data.values
                                 , title = getName language card body.data.values
                                 }

@@ -1,10 +1,10 @@
 module I18n exposing (..)
 
-import Configuration
 import Constants
 import Dict exposing (Dict)
 import String
 import Types exposing (..)
+import Urls
 
 
 -- STRINGS TO TRANSLATE
@@ -1391,14 +1391,14 @@ getImageLogoUrl : Language -> String -> Card -> Dict String Value -> Maybe Strin
 getImageLogoUrl language dim card values =
     getOneString language imageLogoUrlPathKeys card values
         |> Maybe.map
-            (\urlPath -> Configuration.apiUrlWithPath urlPath ++ "?dim=" ++ dim)
+            (\urlPath -> Urls.fullApiUrl urlPath ++ "?dim=" ++ dim)
 
 
 getImageScreenshotUrl : Language -> String -> Card -> Dict String Value -> Maybe String
 getImageScreenshotUrl language dim card values =
     getOneString language imageScreenshotUrlPathKeys card values
         |> Maybe.map
-            (\urlPath -> Configuration.apiUrlWithPath urlPath ++ "?dim=" ++ dim)
+            (\urlPath -> Urls.fullApiUrl urlPath ++ "?dim=" ++ dim)
 
 
 getImageUrlOrOgpLogo : Language -> String -> Dict String Card -> Dict String Value -> String
@@ -1413,7 +1413,7 @@ getImageUrlOrOgpLogo language cardId cards values =
                     Constants.logoUrl
 
                 Just urlPath ->
-                    Configuration.apiUrlWithPath urlPath
+                    Urls.fullApiUrl urlPath
 
 
 getLocalizedStringFromValueId : Language -> Dict String Value -> String -> String

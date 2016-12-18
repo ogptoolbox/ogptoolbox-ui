@@ -1,7 +1,6 @@
 module Collection.View exposing (..)
 
 import Collection.Types exposing (..)
-import Configuration
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -10,6 +9,7 @@ import Http
 import I18n
 import Routes
 import Types exposing (..)
+import Urls
 import Views exposing (viewCardThumbnail, viewLoading, viewWebData)
 import WebData exposing (..)
 
@@ -59,7 +59,7 @@ viewBanner language user collection =
                     []
 
                 Just logo ->
-                    [ img [ class "cover", alt "screen", src (Configuration.apiUrlWithPath logo) ] []
+                    [ img [ class "cover", alt "screen", src (Urls.fullApiUrl logo) ] []
                     ]
              )
                 ++ [ div [ class "container" ]
@@ -143,7 +143,7 @@ viewCollectionContent language user collection cards values =
                                 , href
                                     (let
                                         url =
-                                            Routes.fullUrl
+                                            Urls.fullUrl
                                                 (Routes.makeUrlWithLanguage language ("/collections/" ++ collection.id))
 
                                         -- TODO: i18n

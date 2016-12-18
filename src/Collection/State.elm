@@ -1,14 +1,14 @@
 module Collection.State exposing (..)
 
 import Authenticator.Model
+import Collection.Types exposing (..)
 import Constants
 import Dict exposing (Dict)
 import Http
 import I18n exposing (getImageUrlOrOgpLogo, getName)
 import Ports
 import Requests
-import Routes
-import Collection.Types exposing (..)
+import Urls
 import WebData exposing (..)
 
 
@@ -49,7 +49,7 @@ update msg model authentication language =
                             Ports.setDocumentMetatags
                                 { description = collection.description
                                 , imageUrl =
-                                    Routes.fullApiUrl <|
+                                    Urls.fullApiUrl <|
                                         (collection.logo |> Maybe.withDefault Constants.logoUrl)
                                 , title = collection.name
                                 }

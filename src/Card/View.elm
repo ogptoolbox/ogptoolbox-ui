@@ -13,6 +13,7 @@ import Json.Decode as Decode
 import Routes
 import String
 import Types exposing (..)
+import Urls
 import Views exposing (viewCardListItem, viewLoading, viewWebData)
 import WebData exposing (..)
 
@@ -1150,7 +1151,7 @@ viewSidebar language card values =
                                                 "Untitled Card"
 
                                     url =
-                                        Routes.fullUrl
+                                        Urls.fullUrl
                                             (Routes.makeUrlWithLanguage language (Routes.urlPathForCard card))
 
                                     -- TODO: i18n
