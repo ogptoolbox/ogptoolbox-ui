@@ -680,7 +680,7 @@ getTranslationSet translationId =
             }
 
         FaqTargetContent ->
-            { english = s "The OGP is intended to all public sector, private sector and  civil society actors that develop projects to promote democracy and promote transparency, participation and collaboration. Any engaged citizen willing to be introduced to new tools and to discover particular use cases will be able to access relevant information, and to get in touch with the users’ community."
+            { english = s "The OGP is intended to all public sector, private sector and civil society actors that develop projects to promote democracy and promote transparency, participation and collaboration. Any engaged citizen willing to be introduced to new tools and to discover particular use cases will be able to access relevant information, and to get in touch with the users’ community."
             , french = s "L'OGP Toolbox est destinée à tous les acteurs publics, privés et de la société civile portant des projets pour renforcer la démocratie et promouvoir la transparence, la participation et la collaboration dans l'action publique. Tout citoyen engagé voulant s'initier à de nouveaux outils et en découvrir les cas d'usages pourra accéder facilement aux informations pertinentes."
             , spanish = todo
             }
@@ -692,8 +692,8 @@ getTranslationSet translationId =
             }
 
         FaqTypesContent ->
-            { english = s "The platform provides 4 types of content:"
-            , french = s "La plateforme référence 4 types de contenus :"
+            { english = s "The platform showcases 4 types of items:"
+            , french = s "La plateforme référence 4 types d'éléments :"
             , spanish = todo
             }
 
@@ -758,7 +758,7 @@ getTranslationSet translationId =
             }
 
         FaqWhyContent1 ->
-            { english = s "The OGP Toolbox aims at empowering  public sector, private sector  and civil society actors  by sharing resources and  experiences. The objective is to facilitate cooperation and the implementation of concrete engagements related to the open government through the appropriation of digital tools."
+            { english = s "The OGP Toolbox aims at empowering public sector, private sector and civil society actors by sharing resources and experiences. The objective is to facilitate cooperation and the implementation of concrete engagements related to the open government through the appropriation of digital tools."
             , french = s "L'OGP Toolbox vise à renforcer le pouvoir d'agir des acteurs publics, privés et de la société civile à travers le partage de ressources et d'expériences. L'objectif est de faciliter la mise en oeuvre concrète d'engagements et de coopérations liées au gouvernement ouvert grâce à la maîtrise des outils numériques."
             , spanish = todo
             }
