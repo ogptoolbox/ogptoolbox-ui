@@ -809,7 +809,7 @@ getTranslationSet translationId =
             }
 
         FaqTypesContentActor ->
-            { english = s "An actor is either the user or the developer of a tool, part of the public sector (government, administration, parliament, subnational entity), the private sector (company, startup) or the civil society (non-profit organization, movement, engaged citizen)."
+          { english = s "An actor is either the user or the developer of a tool, part of the public sector (government, administration, parliament, subnational entity), the private sector (company, startup) or the civil society (non-profit organization, movement, engaged citizen)."
             , french = s "Un acteur est un utilisateur ou un développeur d'outil, faisant partie de la sphère publique (gouvernement, administration, parlement, collectivité locale), du secteur privé (entreprise, startup) ou de la société civile (association, mouvement, citoyen engagé)."
             , spanish = todo
             }
