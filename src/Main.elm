@@ -294,13 +294,11 @@ update msg model =
                                     model.authenticatorRouteMaybe
                         }
 
-                    ( model__, effect__ ) =
-                        if changed then
-                            update (Navigate "/") model_
-                        else
-                            ( model_, Cmd.none )
+                    -- Force page reload.
+                    effect_ =
+                        Navigation.modifyUrl <| model.location.href
                 in
-                    model__ ! [ Cmd.map translateAuthenticatorMsg childCmd, effect__ ]
+                    model_ ! [ Cmd.map translateAuthenticatorMsg childCmd, effect_ ]
 
             CardMsg childMsg ->
                 let
