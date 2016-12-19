@@ -12,6 +12,7 @@ import Http
 import I18n exposing (..)
 import Json.Decode as Decode
 import Routes
+import Set
 import String
 import Types exposing (..)
 import Urls
@@ -334,7 +335,7 @@ viewCardContent language card cards values =
                                         [ case Dict.get "use-case" card.references of
                                             Nothing ->
                                                 div [ class "call-container" ]
-                                                    [ p [] [ text "No use case listed for this tool yet." ]
+                                                    [ p [] [ text "No use case listed for this organization yet." ]
                                                     , button
                                                         [ class "button call-add"
                                                         , onClick (ForSelf (LoadProperties card.id "use-cases"))
@@ -439,8 +440,17 @@ viewCardContent language card cards values =
                                         ]
                                     , div [ class "panel-body" ]
                                         -- TODO Get different keys by card.type
-                                        [ case Dict.get "software" card.references of
-                                            Nothing ->
+                                        [ case
+                                            Set.union
+                                                (Set.fromList
+                                                    (Dict.get "platform" card.references |> Maybe.withDefault [])
+                                                )
+                                                (Set.fromList
+                                                    (Dict.get "software" card.references |> Maybe.withDefault [])
+                                                )
+                                                |> Set.toList
+                                          of
+                                            [] ->
                                                 div [ class "call-container" ]
                                                     [ p [] [ text "No tool listed for this use case yet." ]
                                                     , button
@@ -450,7 +460,7 @@ viewCardContent language card cards values =
                                                         [ text "+ Add a tool" ]
                                                     ]
 
-                                            Just cardIds ->
+                                            cardIds ->
                                                 div [ class "row list" ]
                                                     [ div [ class "col-xs-12" ]
                                                         (List.filterMap
