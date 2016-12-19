@@ -1,6 +1,6 @@
 module Collection.State exposing (..)
 
-import Authenticator.Model
+import Authenticator.Types
 import Collection.Types exposing (..)
 import Constants
 import Dict exposing (Dict)
@@ -16,7 +16,7 @@ init =
     { collection = NotAsked }
 
 
-update : InternalMsg -> Model -> Maybe Authenticator.Model.Authentication -> I18n.Language -> ( Model, Cmd Msg )
+update : InternalMsg -> Model -> Maybe Authenticator.Types.Authentication -> I18n.Language -> ( Model, Cmd Msg )
 update msg model authentication language =
     case msg of
         GotCollection response ->

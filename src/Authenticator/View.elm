@@ -1,12 +1,11 @@
 module Authenticator.View exposing (..)
 
-import Authenticator.Model exposing (Model)
 import Authenticator.ResetPassword.View
 import Authenticator.Routes exposing (Route(..))
 import Authenticator.SignIn.View
 import Authenticator.SignOut.View
 import Authenticator.SignUp.View
-import Authenticator.Types exposing (InternalMsg(..), Msg(..), translateSignInMsg, translateSignUpMsg)
+import Authenticator.Types exposing (InternalMsg(..), Model, Msg(..), translateSignInMsg, translateSignUpMsg)
 import Html exposing (Html)
 import I18n
 

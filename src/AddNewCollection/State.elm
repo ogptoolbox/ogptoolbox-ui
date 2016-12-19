@@ -1,6 +1,6 @@
 module AddNewCollection.State exposing (..)
 
-import Authenticator.Model
+import Authenticator.Types
 import Constants
 import Dict exposing (Dict)
 import Http
@@ -32,7 +32,7 @@ subscriptions model =
     Ports.fileContentRead ImageRead
 
 
-update : InternalMsg -> Model -> Maybe Authenticator.Model.Authentication -> I18n.Language -> ( Model, Cmd Msg )
+update : InternalMsg -> Model -> Maybe Authenticator.Types.Authentication -> I18n.Language -> ( Model, Cmd Msg )
 update msg ({ fields } as model) authentication language =
     case msg of
         CollectionPosted response ->

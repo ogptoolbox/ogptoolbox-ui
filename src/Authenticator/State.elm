@@ -1,11 +1,21 @@
-module Authenticator.Update exposing (..)
+module Authenticator.State exposing (..)
 
-import Authenticator.Model exposing (Authentication, Model)
+import Authenticator.Types exposing (Authentication, Model)
 import Authenticator.ResetPassword.State
 import Authenticator.SignIn.State
 import Authenticator.SignOut.State
 import Authenticator.SignUp.State
 import Authenticator.Types exposing (..)
+
+
+init : Model
+init =
+    { authentication = Nothing
+    , resetPassword = Authenticator.ResetPassword.State.init
+    , signIn = Authenticator.SignIn.State.init
+    , signOut = Authenticator.SignOut.State.init
+    , signUp = Authenticator.SignUp.State.init
+    }
 
 
 update : InternalMsg -> Model -> ( Model, Cmd Msg )

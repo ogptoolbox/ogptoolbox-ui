@@ -1,6 +1,6 @@
 module Collections.State exposing (..)
 
-import Authenticator.Model
+import Authenticator.Types
 import Constants
 import Http
 import I18n exposing (getImageUrlOrOgpLogo, getName)
@@ -15,7 +15,7 @@ init =
     { collections = NotAsked }
 
 
-update : InternalMsg -> Model -> Maybe Authenticator.Model.Authentication -> I18n.Language -> ( Model, Cmd Msg )
+update : InternalMsg -> Model -> Maybe Authenticator.Types.Authentication -> I18n.Language -> ( Model, Cmd Msg )
 update msg model authentication language =
     case msg of
         GotCollections response ->

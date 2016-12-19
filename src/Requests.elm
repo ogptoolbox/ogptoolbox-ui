@@ -1,7 +1,7 @@
 module Requests exposing (..)
 
 import AddNewCollection.Types exposing (..)
-import Authenticator.Model
+import Authenticator.Types
 import Configuration exposing (apiUrl)
 import Decoders exposing (..)
 import Dict exposing (Dict)
@@ -32,7 +32,7 @@ activateUser userId authorization =
         }
 
 
-authenticationHeaders : Maybe Authenticator.Model.Authentication -> List Http.Header
+authenticationHeaders : Maybe Authenticator.Types.Authentication -> List Http.Header
 authenticationHeaders authentication =
     case authentication of
         Just authentication ->
@@ -61,7 +61,7 @@ extractId url =
             )
 
 
-getCard : Maybe Authenticator.Model.Authentication -> String -> Http.Request DataIdBody
+getCard : Maybe Authenticator.Types.Authentication -> String -> Http.Request DataIdBody
 getCard authentication cardId =
     Http.request
         { method = "GET"
@@ -75,7 +75,7 @@ getCard authentication cardId =
 
 
 getCards :
-    Maybe Authenticator.Model.Authentication
+    Maybe Authenticator.Types.Authentication
     -> String
     -> Maybe Int
     -> List String
@@ -115,7 +115,7 @@ getCards authentication searchQuery limit tagIds cardTypes =
 
 
 getCollection :
-    Maybe Authenticator.Model.Authentication
+    Maybe Authenticator.Types.Authentication
     -> String
     -> Http.Request DataIdBody
 getCollection authentication collectionId =
@@ -131,7 +131,7 @@ getCollection authentication collectionId =
 
 
 getCollections :
-    Maybe Authenticator.Model.Authentication
+    Maybe Authenticator.Types.Authentication
     -> Maybe Int
     -> Http.Request DataIdsBody
 getCollections authentication limit =
@@ -155,7 +155,7 @@ getCollections authentication limit =
         }
 
 
-getCollectionsForAuthor : Authenticator.Model.Authentication -> Http.Request DataIdsBody
+getCollectionsForAuthor : Authenticator.Types.Authentication -> Http.Request DataIdsBody
 getCollectionsForAuthor authentication =
     Http.request
         { method = "GET"
@@ -169,7 +169,7 @@ getCollectionsForAuthor authentication =
 
 
 getObjectProperties :
-    Maybe Authenticator.Model.Authentication
+    Maybe Authenticator.Types.Authentication
     -> String
     -> String
     -> Http.Request DataIdsBody
@@ -186,7 +186,7 @@ getObjectProperties authentication objectId keyId =
 
 
 getTagsPopularity :
-    Maybe Authenticator.Model.Authentication
+    Maybe Authenticator.Types.Authentication
     -> List String
     -> Http.Request PopularTagsData
 getTagsPopularity authentication tagIds =
@@ -209,7 +209,7 @@ getTagsPopularity authentication tagIds =
 
 
 postCard :
-    Maybe Authenticator.Model.Authentication
+    Maybe Authenticator.Types.Authentication
     -> Dict String String
     -> I18n.Language
     -> Http.Request DataIdBody
@@ -266,7 +266,7 @@ postCard authentication fields language =
 
 
 postCollection :
-    Maybe Authenticator.Model.Authentication
+    Maybe Authenticator.Types.Authentication
     -> Maybe String
     -> AddNewCollectionFields
     -> String
@@ -304,7 +304,7 @@ postCollection authentication editedCollectionId fields imageUrlPath =
 
 
 postProperty :
-    Maybe Authenticator.Model.Authentication
+    Maybe Authenticator.Types.Authentication
     -> String
     -> String
     -> String
@@ -327,7 +327,7 @@ postProperty authentication objectId keyId valueId =
         }
 
 
-postRating : Maybe Authenticator.Model.Authentication -> String -> Int -> Http.Request DataIdBody
+postRating : Maybe Authenticator.Types.Authentication -> String -> Int -> Http.Request DataIdBody
 postRating authentication propertyId rating =
     Http.request
         { method = "POST"
@@ -340,7 +340,7 @@ postRating authentication propertyId rating =
         }
 
 
-postUploadImage : Maybe Authenticator.Model.Authentication -> String -> Http.Request String
+postUploadImage : Maybe Authenticator.Types.Authentication -> String -> Http.Request String
 postUploadImage authentication contents =
     Http.request
         { method = "POST"
@@ -355,7 +355,7 @@ postUploadImage authentication contents =
         }
 
 
-postValue : Maybe Authenticator.Model.Authentication -> Field -> Http.Request DataIdBody
+postValue : Maybe Authenticator.Types.Authentication -> Field -> Http.Request DataIdBody
 postValue authentication field =
     let
         ( schemaId, widgetId, encodedValue ) =

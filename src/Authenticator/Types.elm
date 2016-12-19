@@ -5,6 +5,11 @@ import Authenticator.Routes exposing (Route)
 import Authenticator.SignIn.Types
 import Authenticator.SignOut.Types
 import Authenticator.SignUp.Types
+import Types exposing (User)
+
+
+type alias Authentication =
+    User
 
 
 type ExternalMsg
@@ -17,6 +22,15 @@ type InternalMsg
     | SignInMsg Authenticator.SignIn.Types.InternalMsg
     | SignOutMsg Authenticator.SignOut.Types.Msg
     | SignUpMsg Authenticator.SignUp.Types.InternalMsg
+
+
+type alias Model =
+    { authentication : Maybe Authentication
+    , resetPassword : Authenticator.ResetPassword.Types.Model
+    , signIn : Authenticator.SignIn.Types.Model
+    , signOut : Authenticator.SignOut.Types.Model
+    , signUp : Authenticator.SignUp.Types.Model
+    }
 
 
 type Msg

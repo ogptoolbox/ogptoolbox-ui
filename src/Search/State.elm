@@ -1,6 +1,6 @@
 module Search.State exposing (..)
 
-import Authenticator.Model
+import Authenticator.Types
 import Dict exposing (Dict)
 import Erl
 import Http
@@ -54,7 +54,7 @@ subscriptions model =
 update :
     InternalMsg
     -> Model
-    -> Maybe Authenticator.Model.Authentication
+    -> Maybe Authenticator.Types.Authentication
     -> I18n.Language
     -> Navigation.Location
     -> ( Model, Cmd Msg )

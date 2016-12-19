@@ -1,6 +1,6 @@
 module Card.State exposing (..)
 
-import Authenticator.Model
+import Authenticator.Types
 import Card.Types exposing (..)
 import Dict exposing (Dict)
 import Http
@@ -23,7 +23,7 @@ init =
 update :
     InternalMsg
     -> Model
-    -> Maybe Authenticator.Model.Authentication
+    -> Maybe Authenticator.Types.Authentication
     -> I18n.Language
     -> ( Model, Cmd Msg )
 update msg ({ editedProperty } as model) authentication language =

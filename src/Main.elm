@@ -8,10 +8,9 @@ import AddNewCollection.State
 import AddNewCollection.Types
 import AddNewCollection.View
 import Authenticator.Activate
-import Authenticator.Model
 import Authenticator.Routes
 import Authenticator.Types
-import Authenticator.Update
+import Authenticator.State
 import Authenticator.View
 import Card.State
 import Card.Types
@@ -75,8 +74,8 @@ type alias Model =
     { addNewModel : AddNew.Types.Model
     , addNewCollectionModel : AddNewCollection.Types.Model
     , activationModel : Authenticator.Activate.Model
-    , authentication : Maybe Authenticator.Model.Authentication
-    , authenticatorModel : Authenticator.Model.Model
+    , authentication : Maybe Authenticator.Types.Authentication
+    , authenticatorModel : Authenticator.Types.Model
     , authenticatorRouteMaybe : Maybe Authenticator.Routes.Route
     , cardModel : Card.Types.Model
     , collectionModel : Collection.Types.Model
@@ -99,7 +98,7 @@ init flags location =
     , authentication =
         Json.Decode.decodeValue Decoders.userForPortDecoder flags.authentication
             |> Result.toMaybe
-    , authenticatorModel = Authenticator.Model.init
+    , authenticatorModel = Authenticator.State.init
     , authenticatorRouteMaybe = Nothing
     , cardModel = Card.State.init
     , collectionModel = Collection.State.init
@@ -279,7 +278,7 @@ update msg model =
             AuthenticatorMsg childMsg ->
                 let
                     ( authenticatorModel, childCmd ) =
-                        Authenticator.Update.update childMsg model.authenticatorModel
+                        Authenticator.State.update childMsg model.authenticatorModel
 
                     changed =
                         authenticatorModel.authentication /= model.authentication

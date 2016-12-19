@@ -1,6 +1,6 @@
 module Authenticator.Activate exposing (..)
 
-import Authenticator.Model exposing (..)
+import Authenticator.Types exposing (..)
 import Constants
 import Html exposing (..)
 import Html.Attributes exposing (..)

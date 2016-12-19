@@ -1,7 +1,7 @@
 module AddNew.State exposing (..)
 
 import AddNew.Types exposing (..)
-import Authenticator.Model
+import Authenticator.Types
 import Dict
 import Http
 import I18n
@@ -25,7 +25,7 @@ subscriptions model =
     Ports.fileContentRead ImageRead
 
 
-update : InternalMsg -> Model -> Maybe Authenticator.Model.Authentication -> I18n.Language -> ( Model, Cmd Msg )
+update : InternalMsg -> Model -> Maybe Authenticator.Types.Authentication -> I18n.Language -> ( Model, Cmd Msg )
 update msg model authentication language =
     case msg of
         CardPosted response ->
