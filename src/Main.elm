@@ -964,7 +964,7 @@ viewAddNewModal model language =
                                 [ text "Close" ]
                             ]
                         , h4 [ class "modal-title", id "myModalLabel" ]
-                            [ text "Add an new item" ]
+                            [ text (I18n.translate language (I18n.AddNewItemBox)) ]
                         ]
                     , div [ class "modal-body" ]
                         [ div [ class "row" ]

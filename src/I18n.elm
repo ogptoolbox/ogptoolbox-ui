@@ -27,6 +27,7 @@ type TranslationId
     | ActivationTitle
     | Actor GrammaticalNumber
     | AddNew
+    | AddNewItemBox
     | AddNewCollectionCatchPhrase
     | AddNewOrganization
     | AddNewOrganizationDescription
@@ -90,8 +91,8 @@ type TranslationId
     | FaqTypesContentCollection
     | FaqTypesContentTool
     | FaqTypesContentUseCase
-    | FaqSource
-    | FaqSourceContent
+    | FaqSourceCode
+    | FaqSourceCodeContent
     | FaqWhat
     | FaqWhatContent1
     | FaqWhatContent2
@@ -209,13 +210,13 @@ getTranslationSet translationId =
 
         ActivationDescription ->
             { english = s "Verification of the user's email address."
-            , french = s "Vérification de l'adresse courriel de l'utilisateur"
+            , french = s "Vérification de l'adresse courriel de l'utilisateur."
             , spanish = todo
             }
 
         ActivationFailed ->
-            { english = s "The verification of your email address has failed. Retry please!"
-            , french = s "La vérification de votre adresse courriel a échoué. Veuillez réessayer !"
+            { english = s "The verification of your email address has failed. Please try again."
+            , french = s "La vérification de votre adresse courriel a échoué. Veuillez réessayer."
             , spanish = todo
             }
 
@@ -226,7 +227,7 @@ getTranslationSet translationId =
             }
 
         ActivationNotRequested ->
-            { english = s "Your email address will be verified soon..."
+            { english = s "Your email address will be verified shortly..."
             , french = s "Votre adresse courriel va bientôt être vérifiée..."
             , spanish = todo
             }
@@ -297,15 +298,21 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        AddNewItemBox ->
+            { english = s "Add a new item"
+            , french = s "Ajouter un nouvel élément"
+            , spanish = todo
+            }
+
         AddNewCollectionCatchPhrase ->
-            { english = s "A series of solutions gathered by an actor to push them forward"
-            , french = s "Un ensemble de solutions réunies par un acteur pour les mettre en avant"
+            { english = s "A simple way to recommend your favorite tools."
+            , french = s "Une façon simple de recommander vos outils favoris."
             , spanish = todo
             }
 
         AddNewOrganization ->
-            { english = s "Add a new organization"
-            , french = s "Ajouter une nouvelle organisation"
+            { english = s "Add a new organization."
+            , french = s "Ajouter une nouvelle organisation."
             , spanish = todo
             }
 
@@ -334,8 +341,8 @@ getTranslationSet translationId =
             }
 
         AddNewToolCatchPhrase ->
-            { english = s "Software or services, available online or through mobile applications."
-            , french = s "Programme informatique ou service, disponible sur le web ou via des applications mobiles."
+            { english = s "A software or service, available on the web or through a mobile application."
+            , french = s "Un programme informatique ou service, disponible sur le web ou par une application mobile."
             , spanish = todo
             }
 
@@ -352,8 +359,8 @@ getTranslationSet translationId =
             }
 
         AddNewUseCaseCatchPhrase ->
-            { english = s "Example of a concrete use case of one or multiple tools having a participatory dimension."
-            , french = s "Exemple concret d'utilisation d'un ou plusieurs outils avec une dimension de participation citoyenne."
+            { english = s "A concrete example showing how a tool was used."
+            , french = s "Un exemple concret d'utilisation d'un ou plusieurs outils."
             , spanish = todo
             }
 
@@ -637,14 +644,14 @@ getTranslationSet translationId =
             }
 
         FaqLanguages ->
-            { english = s "Which are the available languages for the OGP Toolbox?"
+            { english = s "In which languages is the OGP Toolbox available?"
             , french = s "Dans quelles langues est disponible la plateforme ?"
             , spanish = todo
             }
 
         FaqLanguagesContent ->
-            { english = s "The OGP Toolbox is available in English and French. The Platform is crowdsourced, which means that outside the online interface  (translated by Etalab), any content can be modified and translated by users. This concerns particularly tools, use case description and tags enabling to categorize them (see below). Content will be displayed in the language you configured. If an element is not available in your language, it will be displayed in English by default. It's your turn to translate it!"
-            , french = s "OGP Toolbox est disponible en Anglais et en Français. La plateforme est crowdsourcée ce qui signifie qu'au-delà de l'interface du site Internet traduit par nos soins, chaque élément de contenu peut être modifié et traduit par les utilisateurs, notamment les descriptions des outils et des usages et les tags permettant de les catégoriser ( voir ci-dessous). Les éléments de contenu s'afficheront en priorité dans la langue que vous aurez paramétrée. Si un élément n'est pas disponible dans votre langue, il s'affiche en anglais par défaut, et vous invite à le traduire."
+            { english = s "The OGP Toolbox is available in English and French. The platform is crowdsourced, which means that other than the online interface (translated by Etalab), any content can be modified and translated by users, such as the description of tools and use cases, as well as the tags used to categorize them (see below). Content will be displayed in the language you configured. If an element is not available in your language, it will be displayed in English by default, with an invitation to translate it."
+            , french = s "OGP Toolbox est disponible en Anglais et en Français. La plateforme est crowdsourcée ce qui signifie qu'au-delà de l'interface du site Internet (traduite par Etalab), chaque élément de contenu peut être modifié et traduit par les utilisateurs, notamment les descriptions des outils et des cas d'usage et les tags permettant de les catégoriser (voir ci-dessous). Les éléments de contenu s'afficheront en priorité dans la langue que vous aurez paramétrée. Si un élément n'est pas disponible dans votre langue, il s'affiche en anglais par défaut, et vous invite à le traduire."
             , spanish = todo
             }
 
@@ -685,42 +692,42 @@ getTranslationSet translationId =
             }
 
         FaqTypesContent ->
-            { english = s "On the platform you can find 4 types of content:"
-            , french = s "La plateforme référence 4 types d'objets :"
+            { english = s "The platform provides 4 types of content:"
+            , french = s "La plateforme référence 4 types de contenus :"
             , spanish = todo
             }
 
         FaqTypesContentTool ->
-            { english = s "Software or services, available online or through mobile applications."
-            , french = s "Programme informatique ou service, disponible sur le web ou via des applications mobiles."
+            { english = s "A digital tool is either a computer program (software), or an online service (platform) available on the web or through a mobile application."
+            , french = s "Un outil numérique est un programme informatique ou un service, disponible sur le web ou par une applications mobile."
             , spanish = todo
             }
 
         FaqTypesContentActor ->
-            { english = s "User or tool developer, part of the public sphere (government, subnational, administration), the private sphere (businesses…), the civil society (non-profit organizations…) or a simple citizen."
-            , french = s "Utilisateur ou développeur d'outil, faisant partie de la sphère publique (Etat, collectivité, administration...) ou privée (entreprise...), de la société civile (association, ONG...) ou simple citoyen."
+          { english = s "An actor is either the user or the developer of a tool, part of the public sector (government, administration, parliament, subnational entity), the private sector (company, startup) or the civil society (non-profit organization, movement, engaged citizen)."
+            , french = s "Un acteur est un utilisateur ou un développeur d'outil, faisant partie de la sphère publique (gouvernement, administration, parlement, collectivité locale), du secteur privé (entreprise, startup) ou de la société civile (association, mouvement, citoyen engagé)."
             , spanish = todo
             }
 
         FaqTypesContentCollection ->
-            { english = s "A collection is a list of tools recommended by an actor. The same as bookmarks or favorites, but for tools! For example the French government has a created a collection of public consultation tools that can be used by its administrations."
-            , french = s "Une collection est une liste d'outils recommandés par un acteur. Pareil qu'un marque-page ou un favori, mais pour des outils ! Par exemple le gouvernement français a créé une collection d'outils de consultation publique mis à la disposition de ses administrations."
+            { english = s "A collection is a list of tools recommended by an actor. The same as bookmarks or favorites, but for tools!"
+            , french = s "Une collection est une liste d'outils recommandés par un acteur. Similaire à un marque-page ou un favori, mais pour des outils !"
             , spanish = todo
             }
 
         FaqTypesContentUseCase ->
-            { english = s "A series of solutions gathered by an actor to push them forward, for example “’Tools used by the French Government”, “Online consultations tools”…."
-            , french = s "un ensemble de solutions réunies par un acteur pour les mettre en avant, par exemple \"Outils utilisés par le gouvernement Français\", \"Outils de consultations en ligne\" ..."
+            { english = s "A use case is a concrete example showing how one or multiple tools were used by an organization."
+            , french = s "Un cas d'usage est un exemple concret d'utilisation d'un ou plusieurs outils par un acteur."
             , spanish = todo
             }
 
-        FaqSource ->
+        FaqSourceCode ->
             { english = s "How can I access the code of the OGP Toolbox?"
             , french = s "Comment puis-je accéder au code de l'OGP Toolbox ?"
             , spanish = todo
             }
 
-        FaqSourceContent ->
+        FaqSourceCodeContent ->
             { english = s "The code is composed of the three following components:"
             , french = s "Le code est composé des trois composants suivants :"
             , spanish = todo
@@ -733,8 +740,8 @@ getTranslationSet translationId =
             }
 
         FaqWhatContent1 ->
-            { english = s "The OGP Toolbox is a collaborative platform that gathers digital tools (software and online services) used throughout the world to improve democracy and promote transparency, participation and collaboration. In this crowdsourced catalog you will find tools developed and used by actors from the public sector (governments, administrations, parliaments, subnational), actors from the private sector (companies and start-ups) and actors from the civil society (non-profit organizations, movements and engaged citizens)."
-            , french = s "L'OGP Toolbox est une plateforme collaborative qui recense les outils numériques (logiciels et services en ligne) utilisés dans le monde entier pour renforcer la démocratie et promouvoir la transparence, la participation et la collaboration dans l'action publique. Ce catalogue crowdsourcé rassemble des outils développés et utilisés par des acteurs publics (gouvernements, administrations, parlements et collectivités territoriales), comme des acteurs du secteur privé (entreprises et start-ups) ou des acteurs de la société civile (associations, mouvements et citoyens engagés)."
+            { english = s "The OGP Toolbox is a collaborative platform that gathers digital tools (software and online services) used throughout the world to improve democracy and promote transparency, participation and collaboration. In this crowdsourced catalog you will find tools developed and used by actors from the public sector (governments, administrations, parliaments, subnational entities), actors from the private sector (companies, startups) and actors from the civil society (non-profit organizations, movements, engaged citizens)."
+            , french = s "L'OGP Toolbox est une plateforme collaborative qui recense les outils numériques (logiciels et services en ligne) utilisés dans le monde entier pour renforcer la démocratie et promouvoir la transparence, la participation et la collaboration dans l'action publique. Ce catalogue crowdsourcé rassemble des outils développés et utilisés par des acteurs publics (gouvernements, administrations, parlements, collectivités locales), comme des acteurs du secteur privé (entreprises, startups) ou des acteurs de la société civile (associations, mouvements, citoyens engagés)."
             , spanish = todo
             }
 
