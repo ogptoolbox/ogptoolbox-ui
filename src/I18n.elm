@@ -73,18 +73,19 @@ type TranslationId
     | EnterPassword
     | EnterUsername
     | Faq
-    | FaqAccess
-    | FaqAccessContent
     | FaqCategories
     | FaqCategoriesContent1
     | FaqCategoriesContent2
     | FaqCategoriesContentLink
     | FaqContribution
     | FaqContributionContent
+    | FaqCode
     | FaqData
-    | FaqDataContent0
-    | FaqDataContent1
-    | FaqDataContent2
+    | FaqCodeData
+    | FaqDataHarvest
+    | FaqDataHarvestContent0
+    | FaqDataHarvestContent1
+    | FaqDataHarvestContent2
     | FaqDescription
     | FaqDev
     | FaqDevContent
@@ -101,8 +102,6 @@ type TranslationId
     | FaqTypesContentCollection
     | FaqTypesContentTool
     | FaqTypesContentUseCase
-    | FaqSourceCode
-    | FaqSourceCodeContent
     | FaqWhat
     | FaqWhatContent1
     | FaqWhatContent2
@@ -658,18 +657,6 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
-        FaqAccess ->
-            { english = s "How can I access OGP Toolbox Data?"
-            , french = s "Comment puis-je accéder aux données de l'OGP Toolbox ?"
-            , spanish = todo
-            }
-
-        FaqAccessContent ->
-            { english = s "Harvested data are available on a Framagit repository and accessible under a CC0 license:"
-            , french = s "Les données moissonnées sont stockées sur un dépôt Framagit et disponible sous licence CC0 :"
-            , spanish = todo
-            }
-
         FaqCategories ->
             { english = s "How are tools and use cases categorized?"
             , french = s "Comment sont catégorisés les outils et les cas usages ?"
@@ -677,20 +664,20 @@ getTranslationSet translationId =
             }
 
         FaqCategoriesContent1 ->
-            { english = s "Rather than classify each tool (and their use cases) in monolithic and exclusive categories (i.e. “a tool cannot be in more than one category”), the platform is based on tags, allowing to qualify each tool and each usage with as many key words as necessary. This is called social tagging or “folksonomy”"
-            , french = s "Plutôt que de classer les outils (et leurs usages) dans de grandes catégories monolithiques et exclusives (i.e. \"un outil ne peut pas être dans plus d'une catégorie à la fois\"), la plateforme repose sur un système de \"tags\" (labels), permettant de qualifier chaque outil et chaque usage avec autant de mots clés que vous jugerez nécessaire. C'est ce qu'on appelle \"tagging\" social ou \"folksonomie\""
-            , spanish = todo
-            }
-
-        FaqCategoriesContent2 ->
-            { english = s "These tags are represented by bubbles. By cliking in different bubbles, you're simply searching in the Toolbox the tools and use cases matching those key words. Results are updated in real-time on the page."
-            , french = s "Ces tags sont représentés sous forme de bulles. En cliquant sur différentes bulles, vous cherchez tout simplement dans la Toolbox les outils et cas d'usage qui correspondent à ces mots clés. Les résultats s'affichent en temps réel sur la page."
+            { english = s "Rather than classify each tool (and their use cases) in monolithic and exclusive categories (i.e. “a tool cannot be in more than one category”), the platform is based on tags, allowing to qualify each tool and each usage with as many key words as necessary. This is called social tagging or “folksonomy”!:"
+            , french = s "Plutôt que de classer les outils (et leurs usages) dans de grandes catégories monolithiques et exclusives (i.e. \"un outil ne peut pas être dans plus d'une catégorie à la fois\"), la plateforme repose sur un système de \"tags\" (labels), permettant de qualifier chaque outil et chaque usage avec autant de mots clés que vous jugerez nécessaire. C'est ce qu'on appelle \"tagging\" social ou \"folksonomie\" :"
             , spanish = todo
             }
 
         FaqCategoriesContentLink ->
             { english = s "https://en.wikipedia.org/wiki/Folksonomy"
             , french = s "https://fr.wikipedia.org/wiki/Folksonomie"
+            , spanish = todo
+            }
+
+        FaqCategoriesContent2 ->
+            { english = s "These tags are represented by bubbles. By cliking in different bubbles, you're simply searching in the Toolbox the tools and use cases matching those key words. Results are updated in real-time on the page."
+            , french = s "Ces tags sont représentés sous forme de bulles. En cliquant sur différentes bulles, vous cherchez tout simplement dans la Toolbox les outils et cas d'usage qui correspondent à ces mots clés. Les résultats s'affichent en temps réel sur la page."
             , spanish = todo
             }
 
@@ -706,25 +693,43 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        FaqCode ->
+            { english = s "Where can I find the source code of the OGP Toolbox?"
+            , french = s "Où puis-je trouver le code source de l'OGP Toolbox ?"
+            , spanish = todo
+            }
+
         FaqData ->
+            { english = s "How can I access the data?"
+            , french = s "Comment puis-je accéder aux données ?"
+            , spanish = todo
+            }
+
+        FaqCodeData ->
+            { english = s "The OGP Toolbox is an open source and open data project. We publish the source code as well as all harvested data on repositories accessible from this page:"
+            , french = s "L'OGP Toolbox est un projet open source et open data. C'est pourquoi nous donnons accès au code source ainsi qu'à toutes les données moissonnées à partir de cette page :"
+            , spanish = todo
+            }
+
+        FaqDataHarvest ->
             { english = s "What is the source of the data?"
             , french = s "D'où proviennent les données ?"
             , spanish = todo
             }
 
-        FaqDataContent0 ->
+        FaqDataHarvestContent0 ->
             { english = s "The OGP Toolbox data comes from multiple sources:"
             , french = s "Les données de l'OGP Toolbox proviennent de sources multiples :"
             , spanish = todo
             }
 
-        FaqDataContent1 ->
+        FaqDataHarvestContent1 ->
             { english = s "Existing catalogs are regularly harvested to feed and update the data base:"
             , french = s "Des catalogues existants sont moissonnés régulièrement pour alimenter et mettre à jour la base de données :"
             , spanish = todo
             }
 
-        FaqDataContent2 ->
+        FaqDataHarvestContent2 ->
             { english = s "OGP Toolbox users can create new tools, use cases and organizations, or edit existing ones."
             , french = s "Les utilisateurs de l'OGP Toolbox peuvent créer de nouvelles fiches d'outil, de cas d'usage et d'organisation, ou éditer des fiches existantes."
             , spanish = todo
@@ -823,18 +828,6 @@ getTranslationSet translationId =
         FaqTypesContentUseCase ->
             { english = s "A use case is a concrete example showing how one or multiple tools were used by an organization."
             , french = s "Un cas d'usage est un exemple concret d'utilisation d'un ou plusieurs outils par un acteur."
-            , spanish = todo
-            }
-
-        FaqSourceCode ->
-            { english = s "How can I access the code of the OGP Toolbox?"
-            , french = s "Comment puis-je accéder au code de l'OGP Toolbox ?"
-            , spanish = todo
-            }
-
-        FaqSourceCodeContent ->
-            { english = s "The code is composed of the three following components:"
-            , french = s "Le code est composé des trois composants suivants :"
             , spanish = todo
             }
 
