@@ -1,32 +1,39 @@
 # OGPToolbox-UI
 
-Web user interface for the OGP toolbox
+Web user interface for the OGP toolbox.  
+![OGP Toolbox Logo](https://fr.ogpsummit.org/app/uploads/2016/06/Picto-toolbox.png)  
+**[The OGP Toolbox](https://ogptoolbox.org/) is a collaborative platform to find and share digital tools used throughout the world for open government initiatives.**
 
-See it in action: https://ogptoolbox.org/
 
-## Install
+The OGP Toolbox is an open source and open data project. Complementary resources are published on these repositories:
+
+* https://github.com/retruco/retruco-api
+* https://git.framasoft.org/codegouv/merge-open-software-base-yaml
+
+---
+
+## Installation
 
     git clone https://github.com/ogptoolbox/ogptoolbox-ui
     cd ogptoolbox-ui
 
-## Install dependencies
+### Install dependencies
 
     npm install
 
 This will install npm dependencies in `node_modules` and Elm dependencies in `elm-stuff`.
 
-## Development
+### Development
 
 Start the hot-reloading webpack dev server:
 
     npm start
 
-Navigate to <http://localhost:3011>.
-
+Navigate to <http://localhost:3011>.  
 Any changes you make to your files (.elm, .js, .css, etc.) will trigger
 a hot reload.
 
-## Production
+### Production
 
 When you're ready to deploy:
 
@@ -50,3 +57,8 @@ To test the production build locally:
     serving as a single page app (all non-file requests redirect to index.html)
 
 Navigate to <http://localhost:3012>.
+
+## Licence
+
+[AGPL v3](https://framagit.org/johanricher/ogptoolbox-ui/blob/master/LICENSE.md)  
+Copyright (C) 2016 Etalab & contributors
