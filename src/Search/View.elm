@@ -1,6 +1,5 @@
 module Search.View exposing (..)
 
-import Constants
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Helpers exposing (aForPath)
@@ -11,6 +10,11 @@ import Search.Types exposing (..)
 import Types exposing (..)
 import Views exposing (viewCardListItem, viewLoading, viewWebData)
 import WebData exposing (getData, getLoadingStatusData, LoadingStatus(..), WebData(..))
+
+
+searchResultsListPaginationSize : Int
+searchResultsListPaginationSize =
+    20
 
 
 view : Model -> CardType -> I18n.Language -> Navigation.Location -> Html Msg
@@ -41,7 +45,7 @@ view { organizations, tools, useCases } activeCardType language location =
                                     (viewCardListItem Search.Types.navigate language body.data.values)
                                     (getOrderedCards body.data)
                                  )
-                                    ++ (if body.count > Constants.searchResultsListPaginationSize then
+                                    ++ (if body.count > searchResultsListPaginationSize then
                                             [ div [ class "col-sm-12 text-center" ]
                                                 [ a [ class "show-more" ]
                                                     [ text (I18n.translate language (I18n.ShowAll body.count))
