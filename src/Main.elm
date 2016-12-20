@@ -76,7 +76,7 @@ type alias Model =
     , activationModel : Authenticator.Activate.Model
     , authentication : Maybe Authenticator.Types.Authentication
     , authenticatorModel : Authenticator.Types.Model
-    , authenticatorRouteMaybe : Maybe Authenticator.Routes.Route
+    , authenticatorRoute : Maybe Authenticator.Routes.Route
     , cardModel : Card.Types.Model
     , collectionModel : Collection.Types.Model
     , collectionsModel : Collections.Types.Model
@@ -100,7 +100,7 @@ init flags location =
         Json.Decode.decodeValue Decoders.userForPortDecoder flags.authentication
             |> Result.toMaybe
     , authenticatorModel = Authenticator.State.init
-    , authenticatorRouteMaybe = Nothing
+    , authenticatorRoute = Nothing
     , cardModel = Card.State.init
     , collectionModel = Collection.State.init
     , collectionsModel = Collections.State.init
@@ -314,11 +314,11 @@ update msg model =
                         { model
                             | authentication = authenticatorModel.authentication
                             , authenticatorModel = authenticatorModel
-                            , authenticatorRouteMaybe =
+                            , authenticatorRoute =
                                 if changed then
                                     Nothing
                                 else
-                                    model.authenticatorRouteMaybe
+                                    model.authenticatorRoute
                         }
                 in
                     ( model_, Cmd.map translateAuthenticatorMsg childCmd )
@@ -332,9 +332,9 @@ update msg model =
                     , Cmd.map translateCardMsg childCmd
                     )
 
-            ChangeAuthenticatorRoute authenticatorRouteMaybe ->
-                ( { model | authenticatorRouteMaybe = authenticatorRouteMaybe }
-                , if authenticatorRouteMaybe == Nothing then
+            ChangeAuthenticatorRoute authenticatorRoute ->
+                ( { model | authenticatorRoute = authenticatorRoute }
+                , if authenticatorRoute == Nothing then
                     if model.authentication == Nothing then
                         navigateAfterSignOut model
                     else
@@ -345,7 +345,7 @@ update msg model =
                 )
 
             CloseAuthenticatorModalAndNavigate urlPath ->
-                ( { model | authenticatorRouteMaybe = Nothing }
+                ( { model | authenticatorRoute = Nothing }
                 , navigate urlPath
                 )
 
@@ -370,7 +370,7 @@ update msg model =
             DismissAuthenticatorModal ->
                 let
                     newModel =
-                        { model | authenticatorRouteMaybe = Nothing }
+                        { model | authenticatorRoute = Nothing }
                 in
                     case model.signOutMsg of
                         Just signOutMsg ->
@@ -451,13 +451,13 @@ update msg model =
                 in
                     model1 ! [ cmd1, navigateAfterSignOut model ]
 
-            StartAuthenticator onCancel authenticatorRouteMaybe ->
-                if model.authenticatorRouteMaybe == Nothing then
+            StartAuthenticator onCancel authenticatorRoute ->
+                if model.authenticatorRoute == Nothing then
                     ( { model
                         | signOutMsg = onCancel
-                        , authenticatorRouteMaybe = authenticatorRouteMaybe
+                        , authenticatorRoute = authenticatorRoute
                       }
-                    , if authenticatorRouteMaybe == Nothing then
+                    , if authenticatorRoute == Nothing then
                         -- Force page reload when authenticator modal closes.
                         Navigation.modifyUrl <| model.location.href
                       else
@@ -1152,7 +1152,7 @@ viewAlert model language =
 
 viewAuthenticatorModal : Model -> I18n.Language -> Html Msg
 viewAuthenticatorModal model language =
-    case model.authenticatorRouteMaybe of
+    case model.authenticatorRoute of
         Just authenticatorRoute ->
             div
                 [ ariaLabelledby "modal-title"
@@ -1193,7 +1193,7 @@ viewAuthenticatorModal model language =
 
 viewBackdrop : Model -> Html Msg
 viewBackdrop model =
-    div [ classList [ ( "modal-backdrop in", model.authenticatorRouteMaybe /= Nothing || model.displayAddNewModal ) ] ]
+    div [ classList [ ( "modal-backdrop in", model.authenticatorRoute /= Nothing || model.displayAddNewModal ) ] ]
         []
 
 
