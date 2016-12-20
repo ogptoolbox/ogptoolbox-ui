@@ -6,7 +6,7 @@ Web user interface for the OGP toolbox.
 ### **[The OGP Toolbox](https://ogptoolbox.org/) is a collaborative platform to find and share digital tools used throughout the world for open government initiatives.**
 
 
-The OGP Toolbox is an open source and open data project. Complementary resources are published in these repositories:
+It's an open source and open data project with complementary resources published here:
 
 * https://github.com/retruco/retruco-api
 * https://git.framasoft.org/codegouv/merge-open-software-base-yaml
