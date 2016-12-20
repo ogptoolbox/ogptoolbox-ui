@@ -44,6 +44,7 @@ import Search.View
 import String
 import Task
 import Types exposing (..)
+import Urls
 import UserProfile.State
 import UserProfile.Types
 import UserProfile.View
@@ -86,6 +87,7 @@ type alias Model =
     , route : Route
     , searchInputValue : String
     , searchModel : Search.Types.Model
+    , signOutMsg : Maybe Msg
     , userProfileModel : UserProfile.Types.Model
     }
 
@@ -113,6 +115,7 @@ init flags location =
     , route = I18nRouteWithoutLanguage ""
     , searchInputValue = ""
     , searchModel = Search.State.init
+    , signOutMsg = Nothing
     , userProfileModel = UserProfile.State.init
     }
         |> update (LocationChanged location)
@@ -133,14 +136,40 @@ type Msg
     | CloseAuthenticatorModalAndNavigate String
     | CollectionMsg Collection.Types.InternalMsg
     | CollectionsMsg Collections.Types.InternalMsg
+    | DismissAuthenticatorModal
     | DisplayAddNewModal Bool
     | LocationChanged Navigation.Location
     | Navigate String
+    | NavigateBack
     | NoOp
     | Search
     | SearchInputChanged String
     | SearchMsg Search.Types.InternalMsg
+    | SignOutImmediately
+    | StartAuthenticator (Maybe Msg) (Maybe Authenticator.Routes.Route)
     | UserProfileMsg UserProfile.Types.InternalMsg
+
+
+navigateAfterSignOut : Model -> Cmd Msg
+navigateAfterSignOut model =
+    case model.signOutMsg of
+        Just signOutMsg ->
+            -- Execute sign out message to redirect to a new location.
+            Task.perform (\_ -> signOutMsg) (Task.succeed ())
+
+        Nothing ->
+            -- Force page reload when sign out stays at the same location.
+            Navigation.modifyUrl model.location.href
+
+
+requireSignIn : Msg -> Model -> ( Model, Cmd Msg )
+requireSignIn signOutMsg model =
+    if model.authentication == Nothing then
+        update (StartAuthenticator (Just NavigateBack) (Just Authenticator.Routes.SignInRoute)) model
+    else
+        ( { model | signOutMsg = Just signOutMsg }
+        , Cmd.none
+        )
 
 
 translateActivationMsg : Authenticator.Activate.MsgTranslator Msg
@@ -293,12 +322,8 @@ update msg model =
                                 else
                                     model.authenticatorRouteMaybe
                         }
-
-                    -- Force page reload.
-                    effect_ =
-                        Navigation.modifyUrl <| model.location.href
                 in
-                    model_ ! [ Cmd.map translateAuthenticatorMsg childCmd, effect_ ]
+                    ( model_, Cmd.map translateAuthenticatorMsg childCmd )
 
             CardMsg childMsg ->
                 let
@@ -311,7 +336,14 @@ update msg model =
 
             ChangeAuthenticatorRoute authenticatorRouteMaybe ->
                 ( { model | authenticatorRouteMaybe = authenticatorRouteMaybe }
-                , Cmd.none
+                , if authenticatorRouteMaybe == Nothing then
+                    if model.authentication == Nothing then
+                        navigateAfterSignOut model
+                    else
+                        -- Force page reload when authentication modal closes.
+                        Navigation.modifyUrl model.location.href
+                  else
+                    Cmd.none
                 )
 
             CloseAuthenticatorModalAndNavigate urlPath ->
@@ -337,6 +369,18 @@ update msg model =
                     , Cmd.map translateCollectionsMsg childCmd
                     )
 
+            DismissAuthenticatorModal ->
+                let
+                    newModel =
+                        { model | authenticatorRouteMaybe = Nothing }
+                in
+                    case model.signOutMsg of
+                        Just signOutMsg ->
+                            update signOutMsg newModel
+
+                        Nothing ->
+                            ( newModel, Cmd.none )
+
             DisplayAddNewModal displayAddNewModal ->
                 ( { model | displayAddNewModal = displayAddNewModal }
                 , Cmd.none
@@ -351,6 +395,9 @@ update msg model =
                         navigate urlPath
                 in
                     ( model, cmd )
+
+            NavigateBack ->
+                ( model, Navigation.back 1 )
 
             NoOp ->
                 ( model, Cmd.none )
@@ -398,6 +445,29 @@ update msg model =
                     ( newModel
                     , Cmd.map translateSearchMsg childCmd
                     )
+
+            SignOutImmediately ->
+                let
+                    ( model1, cmd1 ) =
+                        update (AuthenticatorMsg Authenticator.Types.signOutMsg) model
+                in
+                    model1 ! [ cmd1, navigateAfterSignOut model ]
+
+            StartAuthenticator onCancel authenticatorRouteMaybe ->
+                if model.authenticatorRouteMaybe == Nothing then
+                    ( { model
+                        | signOutMsg = onCancel
+                        , authenticatorRouteMaybe = authenticatorRouteMaybe
+                      }
+                    , if authenticatorRouteMaybe == Nothing then
+                        -- Force page reload when authenticator modal closes.
+                        Navigation.modifyUrl <| model.location.href
+                      else
+                        Cmd.none
+                    )
+                else
+                    -- Don't start a new authenticator session when one is pending.
+                    ( model, Cmd.none )
 
             UserProfileMsg childMsg ->
                 let
@@ -493,7 +563,7 @@ urlUpdate location model =
                         ( localizedModel, localizedCmd ) =
                             case localizedRoute of
                                 AboutRoute ->
-                                    ( model
+                                    ( { model | signOutMsg = Nothing }
                                     , Ports.setDocumentMetadata
                                         { description = I18n.translate language I18n.AboutDescription
                                         , imageUrl = Constants.logoUrl
@@ -515,11 +585,13 @@ urlUpdate location model =
                                                 )
                                                 model.activationModel
                                                 language
-
-                                        newModel =
-                                            { model | activationModel = activationModel }
                                     in
-                                        ( model, Cmd.map translateActivationMsg childCmd )
+                                        ( { model
+                                            | activationModel = activationModel
+                                            , signOutMsg = Nothing
+                                          }
+                                        , Cmd.map translateActivationMsg childCmd
+                                        )
 
                                 CollectionsRoute childRoute ->
                                     case childRoute of
@@ -531,11 +603,13 @@ urlUpdate location model =
                                                         model.collectionModel
                                                         model.authentication
                                                         language
-
-                                                newModel =
-                                                    { model | collectionModel = collectionModel }
                                             in
-                                                ( newModel, Cmd.map translateCollectionMsg childCmd )
+                                                ( { model
+                                                    | collectionModel = collectionModel
+                                                    , signOutMsg = Nothing
+                                                  }
+                                                , Cmd.map translateCollectionMsg childCmd
+                                                )
 
                                         CollectionsIndexRoute ->
                                             let
@@ -545,28 +619,38 @@ urlUpdate location model =
                                                         model.collectionsModel
                                                         model.authentication
                                                         language
-
-                                                newModel =
-                                                    { model | collectionsModel = collectionsModel }
                                             in
-                                                ( newModel, Cmd.map translateCollectionsMsg childCmd )
+                                                ( { model
+                                                    | collectionsModel = collectionsModel
+                                                    , signOutMsg = Nothing
+                                                  }
+                                                , Cmd.map translateCollectionsMsg childCmd
+                                                )
 
                                         EditCollectionRoute collectionId ->
                                             let
+                                                ( model1, cmd1 ) =
+                                                    requireSignIn
+                                                        (Navigate (Urls.parentUrl location.href))
+                                                        model
+
+                                                -- TODO: Only the owner of the collection and an admin can edit it.
                                                 ( addNewCollectionModel, childCmd ) =
                                                     AddNewCollection.State.update
                                                         (AddNewCollection.Types.LoadCollection collectionId)
-                                                        model.addNewCollectionModel
-                                                        model.authentication
+                                                        model1.addNewCollectionModel
+                                                        model1.authentication
                                                         language
-
-                                                newModel =
-                                                    { model | addNewCollectionModel = addNewCollectionModel }
                                             in
-                                                ( newModel, Cmd.map translateAddNewCollectionMsg childCmd )
+                                                { model1
+                                                    | addNewCollectionModel = addNewCollectionModel
+                                                }
+                                                    ! [ cmd1
+                                                      , Cmd.map translateAddNewCollectionMsg childCmd
+                                                      ]
 
                                         NewCollectionRoute ->
-                                            ( model, Cmd.none )
+                                            requireSignIn (Navigate (Urls.parentUrl location.href)) model
 
                                 FaqRoute ->
                                     ( model
@@ -610,26 +694,30 @@ urlUpdate location model =
 
                                         NewOrganizationRoute ->
                                             let
+                                                ( model1, cmd1 ) =
+                                                    requireSignIn
+                                                        (Navigate (Urls.parentUrl location.href))
+                                                        model
+
                                                 addNewModel =
-                                                    model.addNewModel
+                                                    model1.addNewModel
 
                                                 newAddNewModel =
                                                     { addNewModel
                                                         | fields = Dict.fromList [ ( "Types", "organization" ) ]
                                                     }
-
-                                                newModel =
-                                                    { model | addNewModel = newAddNewModel }
-
-                                                cmd =
-                                                    Ports.setDocumentMetadata
-                                                        { description =
-                                                            I18n.translate language I18n.AddNewOrganizationDescription
-                                                        , imageUrl = Constants.logoUrl
-                                                        , title = I18n.translate language I18n.AddNewOrganization
-                                                        }
                                             in
-                                                ( newModel, cmd )
+                                                { model1 | addNewModel = newAddNewModel }
+                                                    ! [ cmd1
+                                                      , Ports.setDocumentMetadata
+                                                            { description =
+                                                                I18n.translate
+                                                                    language
+                                                                    I18n.AddNewOrganizationDescription
+                                                            , imageUrl = Constants.logoUrl
+                                                            , title = I18n.translate language I18n.AddNewOrganization
+                                                            }
+                                                      ]
 
                                 ToolsRoute childRoute ->
                                     case childRoute of
@@ -652,26 +740,28 @@ urlUpdate location model =
 
                                         NewToolRoute ->
                                             let
+                                                ( model1, cmd1 ) =
+                                                    requireSignIn
+                                                        (Navigate (Urls.parentUrl location.href))
+                                                        model
+
                                                 addNewModel =
-                                                    model.addNewModel
+                                                    model1.addNewModel
 
                                                 newAddNewModel =
                                                     { addNewModel
                                                         | fields = Dict.fromList [ ( "Types", "software" ) ]
                                                     }
-
-                                                newModel =
-                                                    { model | addNewModel = newAddNewModel }
-
-                                                cmd =
-                                                    Ports.setDocumentMetadata
-                                                        { description =
-                                                            I18n.translate language I18n.AddNewToolDescription
-                                                        , imageUrl = Constants.logoUrl
-                                                        , title = I18n.translate language I18n.AddNewTool
-                                                        }
                                             in
-                                                ( newModel, cmd )
+                                                { model1 | addNewModel = newAddNewModel }
+                                                    ! [ cmd1
+                                                      , Ports.setDocumentMetadata
+                                                            { description =
+                                                                I18n.translate language I18n.AddNewToolDescription
+                                                            , imageUrl = Constants.logoUrl
+                                                            , title = I18n.translate language I18n.AddNewTool
+                                                            }
+                                                      ]
 
                                 UseCasesRoute childRoute ->
                                     case childRoute of
@@ -694,31 +784,41 @@ urlUpdate location model =
 
                                         NewUseCaseRoute ->
                                             let
+                                                ( model1, cmd1 ) =
+                                                    requireSignIn
+                                                        (Navigate (Urls.parentUrl location.href))
+                                                        model
+
                                                 addNewModel =
-                                                    model.addNewModel
+                                                    model1.addNewModel
 
                                                 newAddNewModel =
                                                     { addNewModel
                                                         | fields = Dict.fromList [ ( "Types", "use-case" ) ]
                                                     }
-
-                                                newModel =
-                                                    { model | addNewModel = newAddNewModel }
-
-                                                cmd =
-                                                    Ports.setDocumentMetadata
-                                                        { description =
-                                                            I18n.translate language I18n.AddNewUseCaseDescription
-                                                        , title = I18n.translate language I18n.AddNewUseCase
-                                                        , imageUrl = Constants.logoUrl
-                                                        }
                                             in
-                                                ( newModel, cmd )
+                                                { model1 | addNewModel = newAddNewModel }
+                                                    ! [ cmd1
+                                                      , Ports.setDocumentMetadata
+                                                            { description =
+                                                                I18n.translate language I18n.AddNewUseCaseDescription
+                                                            , title = I18n.translate language I18n.AddNewUseCase
+                                                            , imageUrl = Constants.logoUrl
+                                                            }
+                                                      ]
 
                                 UserProfileRoute ->
                                     let
+                                        ( model1, cmd1 ) =
+                                            requireSignIn
+                                                -- Logout => Home
+                                                (Navigate (Routes.makeUrlWithLanguage language "/"))
+                                                model
+
+                                        -- TODO: Everybody can see the collections, but he can't see everything nor edit
+                                        -- it.
                                         authentication =
-                                            case model.authentication of
+                                            case model1.authentication of
                                                 Nothing ->
                                                     Debug.crash "prevented by viewNotAuthorized"
 
@@ -728,14 +828,14 @@ urlUpdate location model =
                                         ( userProfileModel, childCmd ) =
                                             UserProfile.State.update
                                                 (UserProfile.Types.LoadCollections authentication.urlName)
-                                                model.userProfileModel
+                                                model1.userProfileModel
                                                 authentication
                                                 language
-
-                                        newModel =
-                                            { model | userProfileModel = userProfileModel }
                                     in
-                                        ( newModel, Cmd.map translateUserProfileMsg childCmd )
+                                        { model1 | userProfileModel = userProfileModel }
+                                            ! [ cmd1
+                                              , Cmd.map translateUserProfileMsg childCmd
+                                              ]
                     in
                         ( { localizedModel | route = route }, localizedCmd )
 
@@ -1072,7 +1172,7 @@ viewAuthenticatorModal model language =
                                 , onWithOptions
                                     "click"
                                     { preventDefault = True, stopPropagation = False }
-                                    (Json.Decode.succeed (ChangeAuthenticatorRoute Nothing))
+                                    (Json.Decode.succeed DismissAuthenticatorModal)
                                 , type_ "button"
                                 ]
                                 [ span [ ariaHidden True ]
@@ -1268,7 +1368,7 @@ viewHeader model language containerClass =
         --             "click"
         --             { preventDefault = True, stopPropagation = False }
         --             (Json.Decode.succeed
-        --                 (ChangeAuthenticatorRoute (Just Authenticator.Routes.ResetPasswordRoute))
+        --                 (StartAuthenticator Nothing (Just Authenticator.Routes.ResetPasswordRoute))
         --             )
         --         ]
         --         [ text (I18n.translate language I18n.ResetPassword) ]
@@ -1279,7 +1379,10 @@ viewHeader model language containerClass =
                     li []
                         [ a
                             [ href "#"
-                            , onClick (AuthenticatorMsg Authenticator.Types.signOutMsg)
+                            , onWithOptions
+                                "click"
+                                { preventDefault = True, stopPropagation = False }
+                                (Json.Decode.succeed SignOutImmediately)
                             ]
                             [ text (I18n.translate language I18n.SignOut) ]
                         ]
@@ -1291,7 +1394,9 @@ viewHeader model language containerClass =
                             , onWithOptions
                                 "click"
                                 { preventDefault = True, stopPropagation = False }
-                                (Json.Decode.succeed (ChangeAuthenticatorRoute (Just Authenticator.Routes.SignInRoute)))
+                                (Json.Decode.succeed
+                                    (StartAuthenticator Nothing (Just Authenticator.Routes.SignInRoute))
+                                )
                             ]
                             [ text (I18n.translate language I18n.SignIn) ]
                         ]

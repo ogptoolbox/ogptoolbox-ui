@@ -2,6 +2,7 @@ module Urls exposing (..)
 
 import Configuration
 import Erl
+import List.Extra
 
 
 fullApiUrl : String -> String
@@ -42,3 +43,15 @@ fullUrl url =
                 }
         else
             url
+
+
+parentUrl : String -> String
+parentUrl url =
+    let
+        parsedUrl =
+            Erl.parse url
+    in
+        if List.isEmpty <| List.filter (not << String.isEmpty) parsedUrl.path then
+            url
+        else
+            Erl.toString <| { parsedUrl | path = List.Extra.init parsedUrl.path |> Maybe.withDefault [] }
