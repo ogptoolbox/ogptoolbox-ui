@@ -1,10 +1,8 @@
 module I18n exposing (..)
 
-import Constants
 import Dict exposing (Dict)
 import String
 import Types exposing (..)
-import Urls
 
 
 -- STRINGS TO TRANSLATE
@@ -1389,45 +1387,6 @@ getName language card values =
     -- Note: Name can be Nothing, if down-voted.
     getOneString language nameKeys card values
         |> Maybe.withDefault (translate language UntitledCard)
-
-
-getImageUrl : Language -> String -> Card -> Dict String Value -> Maybe String
-getImageUrl language dim card values =
-    case getImageLogoUrl language dim card values of
-        Nothing ->
-            getImageScreenshotUrl language dim card values
-
-        Just url ->
-            Just url
-
-
-getImageLogoUrl : Language -> String -> Card -> Dict String Value -> Maybe String
-getImageLogoUrl language dim card values =
-    getOneString language imageLogoUrlPathKeys card values
-        |> Maybe.map
-            (\urlPath -> Urls.fullApiUrl urlPath ++ "?dim=" ++ dim)
-
-
-getImageScreenshotUrl : Language -> String -> Card -> Dict String Value -> Maybe String
-getImageScreenshotUrl language dim card values =
-    getOneString language imageScreenshotUrlPathKeys card values
-        |> Maybe.map
-            (\urlPath -> Urls.fullApiUrl urlPath ++ "?dim=" ++ dim)
-
-
-getImageUrlOrOgpLogo : Language -> String -> Dict String Card -> Dict String Value -> String
-getImageUrlOrOgpLogo language cardId cards values =
-    case Dict.get cardId cards of
-        Nothing ->
-            Constants.logoUrl
-
-        Just card ->
-            case getOneString language imageUrlPathKeys card values of
-                Nothing ->
-                    Constants.logoUrl
-
-                Just urlPath ->
-                    Urls.fullApiUrl urlPath
 
 
 getLocalizedStringFromValueId : Language -> Dict String Value -> String -> String

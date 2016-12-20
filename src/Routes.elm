@@ -97,21 +97,6 @@ localizedRouteParser =
         ]
 
 
-makeUrl : String -> String
-makeUrl path =
-    path
-
-
-makeUrlFromLocation : Navigation.Location -> String
-makeUrlFromLocation location =
-    location.href
-
-
-makeUrlWithLanguage : I18n.Language -> String -> String
-makeUrlWithLanguage language urlPath =
-    makeUrl ("/" ++ (I18n.iso639_1FromLanguage language) ++ urlPath)
-
-
 organizationsRouteParser : Parser (OrganizationsRoute -> a) a
 organizationsRouteParser =
     oneOf

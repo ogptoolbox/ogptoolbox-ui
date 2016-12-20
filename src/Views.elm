@@ -10,6 +10,7 @@ import I18n
 import Routes
 import String
 import Types exposing (..)
+import Urls
 import WebData exposing (LoadingStatus, WebData(..))
 
 
@@ -89,7 +90,7 @@ viewCardListItem navigate language values card =
             , onClick (navigate urlPath)
             ]
             [ div [ class "visual" ]
-                [ case I18n.getImageUrl language "300" card values of
+                [ case Urls.imageFullUrl language "300" card values of
                     Just url ->
                         img [ alt "Logo", src url ] []
 
@@ -156,7 +157,7 @@ viewCardThumbnail language navigate extraClass values card =
                 urlPath
                 [ class ("thumbnail " ++ extraClass) ]
                 [ div [ class "visual" ]
-                    [ case I18n.getImageUrl language "500" card values of
+                    [ case Urls.imageFullUrl language "500" card values of
                         Just url ->
                             img [ alt "logo", src url ] []
 

@@ -1,7 +1,6 @@
 module Authenticator.Activate exposing (..)
 
 import Authenticator.Types exposing (..)
-import Constants
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Http
@@ -10,6 +9,7 @@ import Ports
 import Requests
 import Task
 import Types exposing (..)
+import Urls
 import WebData exposing (..)
 
 
@@ -93,7 +93,7 @@ update msg model language =
                         cmds =
                             [ Ports.setDocumentMetadata
                                 { description = I18n.translate language I18n.ActivationDescription
-                                , imageUrl = Constants.logoUrl
+                                , imageUrl = Urls.appLogoFullUrl
                                 , title = I18n.translate language I18n.ActivationTitle
                                 }
                             , Ports.storeAuthentication (Ports.userToUserForPort (Just user))

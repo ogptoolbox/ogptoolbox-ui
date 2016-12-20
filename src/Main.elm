@@ -21,7 +21,6 @@ import Collection.View
 import Collections.State
 import Collections.Types
 import Collections.View
-import Constants
 import Decoders
 import Dict exposing (Dict)
 import Dom.Scroll
@@ -259,11 +258,10 @@ update msg model =
         navigate urlPath =
             let
                 currentUrlPath =
-                    makeUrlFromLocation model.location
+                    model.location.href
             in
                 if currentUrlPath /= urlPath then
-                    makeUrl urlPath
-                        |> Navigation.newUrl
+                    Navigation.newUrl urlPath
                 else
                     Cmd.none
     in
@@ -555,7 +553,7 @@ urlUpdate location model =
                                     ! [ Cmd.map translateSearchMsg searchCmd
                                       , Ports.setDocumentMetadata
                                             { description = I18n.translate language descriptionSymbol
-                                            , imageUrl = Constants.logoUrl
+                                            , imageUrl = Urls.appLogoFullUrl
                                             , title = I18n.translate language titleSymbol
                                             }
                                       ]
@@ -566,7 +564,7 @@ urlUpdate location model =
                                     ( { model | signOutMsg = Nothing }
                                     , Ports.setDocumentMetadata
                                         { description = I18n.translate language I18n.AboutDescription
-                                        , imageUrl = Constants.logoUrl
+                                        , imageUrl = Urls.appLogoFullUrl
                                         , title = I18n.translate language I18n.About
                                         }
                                     )
@@ -656,7 +654,7 @@ urlUpdate location model =
                                     ( model
                                     , Ports.setDocumentMetadata
                                         { description = I18n.translate language I18n.FaqDescription
-                                        , imageUrl = Constants.logoUrl
+                                        , imageUrl = Urls.appLogoFullUrl
                                         , title = I18n.translate language I18n.Faq
                                         }
                                     )
@@ -668,7 +666,7 @@ urlUpdate location model =
                                     ( model
                                     , Ports.setDocumentMetadata
                                         { description = I18n.translate language I18n.PageNotFoundDescription
-                                        , imageUrl = Constants.logoUrl
+                                        , imageUrl = Urls.appLogoFullUrl
                                         , title = I18n.translate language I18n.PageNotFound
                                         }
                                     )
@@ -714,7 +712,7 @@ urlUpdate location model =
                                                                 I18n.translate
                                                                     language
                                                                     I18n.AddNewOrganizationDescription
-                                                            , imageUrl = Constants.logoUrl
+                                                            , imageUrl = Urls.appLogoFullUrl
                                                             , title = I18n.translate language I18n.AddNewOrganization
                                                             }
                                                       ]
@@ -758,7 +756,7 @@ urlUpdate location model =
                                                       , Ports.setDocumentMetadata
                                                             { description =
                                                                 I18n.translate language I18n.AddNewToolDescription
-                                                            , imageUrl = Constants.logoUrl
+                                                            , imageUrl = Urls.appLogoFullUrl
                                                             , title = I18n.translate language I18n.AddNewTool
                                                             }
                                                       ]
@@ -803,7 +801,7 @@ urlUpdate location model =
                                                             { description =
                                                                 I18n.translate language I18n.AddNewUseCaseDescription
                                                             , title = I18n.translate language I18n.AddNewUseCase
-                                                            , imageUrl = Constants.logoUrl
+                                                            , imageUrl = Urls.appLogoFullUrl
                                                             }
                                                       ]
 
@@ -812,7 +810,7 @@ urlUpdate location model =
                                         ( model1, cmd1 ) =
                                             requireSignIn
                                                 -- Logout => Home
-                                                (Navigate (Routes.makeUrlWithLanguage language "/"))
+                                                (Navigate (Urls.absoluteUrlPathWithLanguage language "/"))
                                                 model
 
                                         -- TODO: Everybody can see the collections, but he can't see everything nor edit
@@ -845,7 +843,7 @@ urlUpdate location model =
                             model.navigatorLanguage |> Maybe.withDefault I18n.English
 
                         command =
-                            makeUrlWithLanguage language
+                            Urls.absoluteUrlPathWithLanguage language
                                 (urlPath ++ (queryStringForParams [ "q", "tagIds" ] location))
                                 |> Navigation.modifyUrl
                     in
@@ -1230,7 +1228,7 @@ viewFooter model language =
                                         (let
                                             aForPath urlPath children =
                                                 a
-                                                    [ href (makeUrl urlPath)
+                                                    [ href urlPath
                                                     , onWithOptions
                                                         "click"
                                                         { stopPropagation = True, preventDefault = True }

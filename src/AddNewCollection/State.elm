@@ -1,16 +1,15 @@
 module AddNewCollection.State exposing (..)
 
+import AddNewCollection.Types exposing (..)
 import Authenticator.Types
-import Constants
 import Dict exposing (Dict)
 import Http
-import I18n exposing (getImageUrlOrOgpLogo, getName)
+import I18n
 import Navigation
 import Ports
 import Requests
-import Routes
 import String
-import AddNewCollection.Types exposing (..)
+import Urls
 import WebData exposing (..)
 
 
@@ -56,7 +55,7 @@ update msg ({ fields } as model) authentication language =
                             "/collections/" ++ body.data.id
 
                         cmd =
-                            Routes.makeUrlWithLanguage language urlPath
+                            Urls.absoluteUrlPathWithLanguage language urlPath
                                 |> Navigation.newUrl
                     in
                         ( newModel, cmd )
@@ -106,7 +105,7 @@ update msg ({ fields } as model) authentication language =
                         cmd =
                             Ports.setDocumentMetadata
                                 { description = I18n.translate language I18n.CollectionEditDescription
-                                , imageUrl = Constants.logoUrl
+                                , imageUrl = Urls.appLogoFullUrl
                                 , title = I18n.translate language I18n.CollectionEditTitle
                                 }
                     in

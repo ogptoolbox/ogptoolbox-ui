@@ -2,14 +2,13 @@ module Card.View exposing (..)
 
 import Card.Types exposing (..)
 import Configuration
-import Constants
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Html.Helpers exposing (aExternal, aForPath, aIfIsUrl)
 import Http
-import I18n exposing (..)
+import I18n
 import Json.Decode as Decode
 import Routes
 import Set
@@ -77,7 +76,7 @@ viewCard language body editedProperty displayUseItModal =
                         )
                     ]
         in
-            case getImageScreenshotUrl language "" card values of
+            case Urls.screenshotFullUrl language "" card values of
                 Just url ->
                     div []
                         [ div [ class "banner screenshot" ]
@@ -121,7 +120,7 @@ viewCardContent language card cards values =
         bestOf keys =
             let
                 count =
-                    List.length (getManyStrings language keys card values)
+                    List.length (I18n.getManyStrings language keys card values)
             in
                 if count == 1 then
                     text ""
@@ -163,7 +162,7 @@ viewCardContent language card cards values =
             [ classList
                 [ ( "col-md-9 content content-right", True )
                 , ( "push-screenshot"
-                  , case getImageScreenshotUrl language "" card values of
+                  , case Urls.screenshotFullUrl language "" card values of
                         Nothing ->
                             False
 
@@ -175,9 +174,9 @@ viewCardContent language card cards values =
             [ div [ class "row" ]
                 [ div [ class "col-xs-12" ]
                     [ h1 []
-                        [ text (getName language card values)
+                        [ text (I18n.getName language card values)
                         , small []
-                            [ text (getSubTypes language card values |> String.join ", ") ]
+                            [ text (I18n.getSubTypes language card values |> String.join ", ") ]
                         , button
                             [ attribute "data-target" "#edit-content"
                             , attribute "data-toggle" "modal"
@@ -192,7 +191,7 @@ viewCardContent language card cards values =
                 ]
             , div [ class "row" ]
                 [ div [ class "col-xs-12" ]
-                    (case getUsages language card values of
+                    (case I18n.getUsages language card values of
                         -- [] ->
                         --     [ button [ class "call-add" ] [ text "+ add a category" ] ]
                         usages ->
@@ -222,7 +221,7 @@ viewCardContent language card cards values =
                                             [ text (I18n.translate language I18n.About) ]
                                         ]
                              in
-                                case getOneString language descriptionKeys card values of
+                                case I18n.getOneString language descriptionKeys card values of
                                     Nothing ->
                                         [ div [ class "panel-heading" ]
                                             [ div [ class "row" ]
@@ -746,7 +745,7 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                                         []
 
                                     Just key ->
-                                        [ case getOneStringFromValueType language values key.value of
+                                        [ case I18n.getOneStringFromValueType language values key.value of
                                             Nothing ->
                                                 Debug.crash "viewEditPropertyModal: property should have a string value"
 
@@ -992,7 +991,7 @@ viewSidebar language card values =
             [ div [ class "col-xs-12" ]
                 [ div [ class "thumbnail orga grey" ]
                     [ div [ class "visual" ]
-                        [ case getImageLogoUrl language "1000" card values of
+                        [ case Urls.logoFullUrl language "1000" card values of
                             Just url ->
                                 div []
                                     [ button
@@ -1029,14 +1028,18 @@ viewSidebar language card values =
                                     [ td [ class "table-label" ]
                                         [ text (I18n.translate language I18n.License) ]
                                     , td []
-                                        [ text (getOneString language licenseKeys card values |> Maybe.withDefault "") ]
+                                        [ text
+                                            (I18n.getOneString language licenseKeys card values
+                                                |> Maybe.withDefault ""
+                                            )
+                                        ]
                                     ]
                                  , let
                                     firstTd =
                                         td [ class "table-label" ]
                                             [ text (I18n.translate language I18n.Website) ]
                                    in
-                                    case getOneString language urlKeys card values of
+                                    case I18n.getOneString language urlKeys card values of
                                         Nothing ->
                                             tr []
                                                 [ firstTd
@@ -1091,7 +1094,7 @@ viewSidebar language card values =
                                     [ text (I18n.translate language I18n.Tags) ]
                                 ]
                      in
-                        case getTags language card values of
+                        case I18n.getTags language card values of
                             [] ->
                                 [ div [ class "panel-heading" ]
                                     [ div [ class "row" ] [ panelTitle ] ]
@@ -1150,12 +1153,12 @@ viewSidebar language card values =
                                 I18n.getName language card values
 
                             imageUrl =
-                                getOneString language imageUrlPathKeys card values
-                                    |> Maybe.withDefault Constants.logoUrl
+                                I18n.getOneString language imageUrlPathKeys card values
+                                    |> Maybe.withDefault Urls.appLogoFullUrl
 
                             url =
                                 Urls.fullUrl
-                                    (Routes.makeUrlWithLanguage language (Routes.urlPathForCard card))
+                                    (Urls.absoluteUrlPathWithLanguage language (Routes.urlPathForCard card))
 
                             facebookUrl =
                                 "http://www.facebook.com/sharer.php?s=100&p[title]="
@@ -1239,7 +1242,7 @@ viewValueType language cards values showLanguage value =
                 Just card ->
                     let
                         linkText =
-                            case getOneString language nameKeys card values of
+                            case I18n.getOneString language nameKeys card values of
                                 Nothing ->
                                     cardId
 

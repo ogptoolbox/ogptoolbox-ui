@@ -1,12 +1,12 @@
 module Collections.State exposing (..)
 
 import Authenticator.Types
-import Constants
+import Collections.Types exposing (..)
 import Http
-import I18n exposing (getImageUrlOrOgpLogo, getName)
+import I18n
 import Ports
 import Requests
-import Collections.Types exposing (..)
+import Urls
 import WebData exposing (..)
 
 
@@ -38,7 +38,7 @@ update msg model authentication language =
                         cmd =
                             Ports.setDocumentMetadata
                                 { description = I18n.translate language I18n.CollectionsDescription
-                                , imageUrl = Constants.logoUrl
+                                , imageUrl = Urls.appLogoFullUrl
                                 , title = I18n.translate language I18n.CollectionsTitle
                                 }
                     in

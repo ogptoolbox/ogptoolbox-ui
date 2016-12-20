@@ -10,6 +10,7 @@ import Ports
 import Requests
 import Routes
 import Types exposing (..)
+import Urls
 
 
 init : Model
@@ -47,7 +48,7 @@ update msg model authentication language =
                                 |> Routes.urlPathForCard
 
                         cmd =
-                            Routes.makeUrlWithLanguage language urlPath
+                            Urls.absoluteUrlPathWithLanguage language urlPath
                                 |> Navigation.newUrl
                     in
                         ( model, cmd )

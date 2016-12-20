@@ -1,7 +1,6 @@
 module Collection.View exposing (..)
 
 import Collection.Types exposing (..)
-import Constants
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -9,7 +8,6 @@ import Html.Events exposing (..)
 import Http
 import I18n
 import Json.Decode as Decode
-import Routes
 import Types exposing (..)
 import Urls
 import Views exposing (viewCardThumbnail, viewLoading, viewWebData)
@@ -139,10 +137,10 @@ viewCollectionContent language user collection cards values =
                             (let
                                 url =
                                     Urls.fullUrl
-                                        (Routes.makeUrlWithLanguage language ("/collections/" ++ collection.id))
+                                        (Urls.absoluteUrlPathWithLanguage language ("/collections/" ++ collection.id))
 
                                 imageUrl =
-                                    collection.logo |> Maybe.withDefault Constants.logoUrl
+                                    collection.logo |> Maybe.withDefault Urls.appLogoFullUrl
 
                                 facebookUrl =
                                     "http://www.facebook.com/sharer.php?s=100&p[title]="

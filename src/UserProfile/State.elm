@@ -1,11 +1,11 @@
 module UserProfile.State exposing (..)
 
 import Authenticator.Types
-import Constants
 import Http
-import I18n exposing (getImageUrlOrOgpLogo, getName)
+import I18n
 import Ports
 import Requests
+import Urls
 import UserProfile.Types exposing (..)
 import WebData exposing (..)
 
@@ -38,7 +38,7 @@ update msg model authentication language =
                         cmd =
                             Ports.setDocumentMetadata
                                 { description = I18n.translate language I18n.UserProfileDescription
-                                , imageUrl = Constants.logoUrl
+                                , imageUrl = Urls.appLogoFullUrl
                                 , title = authentication.name
                                 }
                     in

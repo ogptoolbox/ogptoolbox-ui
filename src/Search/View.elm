@@ -4,7 +4,7 @@ import Constants
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Helpers exposing (aForPath)
-import I18n exposing (getImageUrl, getManyStrings, getOneString, getSubTypes)
+import I18n
 import Navigation
 import Routes
 import Search.Types exposing (..)

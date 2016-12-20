@@ -4,7 +4,7 @@ import AddNew.Types exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (on, onClick, onInput, onSubmit, targetValue)
-import I18n exposing (getImageUrlOrOgpLogo, getName)
+import I18n
 import Json.Decode as Decode
 import Urls
 

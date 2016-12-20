@@ -6,7 +6,7 @@ import Html.Events exposing (onWithOptions)
 import I18n
 import Json.Decode
 import Regex
-import Routes exposing (makeUrlWithLanguage)
+import Urls
 
 
 aExternal : List (Attribute msg) -> List (Html msg) -> Html msg
@@ -24,7 +24,7 @@ aForPath : (String -> msg) -> I18n.Language -> String -> List (Attribute msg) ->
 aForPath navigate language urlPath attributes children =
     let
         urlPathWithLanguage =
-            makeUrlWithLanguage language urlPath
+            Urls.absoluteUrlPathWithLanguage language urlPath
     in
         a
             ([ href urlPathWithLanguage

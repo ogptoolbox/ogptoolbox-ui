@@ -4,7 +4,7 @@ import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Helpers exposing (aExternal, aForPath)
-import I18n exposing (getImageUrl, getManyStrings, getName, getOneString)
+import I18n
 import Navigation
 import Routes
 import Search.Types exposing (..)
