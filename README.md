@@ -61,5 +61,5 @@ Navigate to <http://localhost:3012>.
 
 ## License
 
-[AGPL v3](https://framagit.org/johanricher/ogptoolbox-ui/blob/master/LICENSE.md)  
+[AGPL v3](https://framagit.org/ogptoolbox/ogptoolbox-ui/blob/master/LICENSE.md)  
 Copyright (C) 2016 Etalab & contributors
