@@ -56,7 +56,7 @@ type TranslationId
     | CreateAccountNow
     | CreateOrganizationPage
     | Email
-    | EmailSentForAccountActivation
+    | EmailSentForAccountActivation String
     | EnterEmail
     | EnterPassword
     | EnterUsername
@@ -135,6 +135,7 @@ type TranslationId
     | SearchInputPlaceholder
     | SeeAllAndCompare
     | Send
+    | SendEmailAgain
     | Share
     | ShowAll Int
     | SignIn
@@ -521,9 +522,19 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
-        EmailSentForAccountActivation ->
-            { english = s "An email has been sent. Click the link it contains, to activate your account."
-            , french = s "Un courriel vous a été envoyé. Cliquez sur le lien qu'il contient pour activer votre compte."
+        EmailSentForAccountActivation email ->
+            { english =
+                s
+                    ("An email has been sent to "
+                        ++ email
+                        ++ ". Click the link it contains, to activate your account."
+                    )
+            , french =
+                s
+                    ("Un courriel a été envoyé à "
+                        ++ email
+                        ++ ". Cliquez sur le lien qu'il contient pour activer votre compte."
+                    )
             , spanish = todo
             }
 
@@ -1028,6 +1039,12 @@ to strengthen governance.
         Send ->
             { english = s "Send"
             , french = s "Envoyer"
+            , spanish = todo
+            }
+
+        SendEmailAgain ->
+            { english = s "Send email again"
+            , french = s "Réenvoyer le courriel"
             , spanish = todo
             }
 

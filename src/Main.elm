@@ -573,7 +573,7 @@ urlUpdate location model =
                                     let
                                         ( activationModel, childCmd ) =
                                             Authenticator.Activate.update
-                                                (Authenticator.Activate.Load
+                                                (Authenticator.Activate.ActivateUser
                                                     userId
                                                     (Routes.getQuerySingleParameter
                                                         "authorization"
@@ -1141,11 +1141,23 @@ viewAlert model language =
             else
                 div [ class "alert alert-success alert-dismissible", attribute "role" "alert" ]
                     [ div [ class "container" ]
-                        [ button [ attribute "aria-label" "Close", class "close", attribute "data-dismiss" "alert", type_ "button" ]
-                            [ span [ attribute "aria-hidden" "true" ]
-                                [ text "×" ]
+                        -- [ button [ attribute "aria-label" "Close", class "close", attribute "data-dismiss" "alert", type_ "button" ]
+                        --     [ span [ attribute "aria-hidden" "true" ]
+                        --         [ text "×" ]
+                        --     ]
+                        [ text (I18n.translate language (I18n.EmailSentForAccountActivation authentication.email))
+                        , text " "
+                        , button
+                            [ class "btn btn-default btn-sm"
+                            , type_ "button"
+                            , onWithOptions
+                                "click"
+                                { preventDefault = True, stopPropagation = False }
+                                (Json.Decode.succeed
+                                    (ActivationMsg (Authenticator.Activate.SendActivation authentication))
+                                )
                             ]
-                        , text (I18n.translate language I18n.EmailSentForAccountActivation)
+                            [ text <| I18n.translate language I18n.SendEmailAgain ]
                         ]
                     ]
 

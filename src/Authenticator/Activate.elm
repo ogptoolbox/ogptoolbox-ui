@@ -22,7 +22,9 @@ type ExternalMsg
 
 
 type InternalMsg
-    = Load String String
+    = ActivateUser String String
+    | ActivationSent (Result Http.Error UserBody)
+    | SendActivation Authentication
     | UserActivated (Result Http.Error UserBody)
 
 
@@ -65,7 +67,7 @@ translateMsg { onInternalMsg, onActivate } msg =
 update : InternalMsg -> Model -> I18n.Language -> ( Model, Cmd Msg )
 update msg model language =
     case msg of
-        Load userId authorization ->
+        ActivateUser userId authorization ->
             let
                 newModel =
                     Data (Loading (getData model))
@@ -75,6 +77,26 @@ update msg model language =
                         |> Http.send (ForSelf << UserActivated)
             in
                 ( newModel, cmd )
+
+        ActivationSent response ->
+            case response of
+                Result.Err err ->
+                    let
+                        _ =
+                            Debug.log "Authenticator.ActivationSent Error" err
+                    in
+                        ( model, Cmd.none )
+
+                Result.Ok body ->
+                    ( model, Cmd.none )
+
+        SendActivation authentication ->
+            let
+                cmd =
+                    Requests.sendActivation authentication
+                        |> Http.send (ForSelf << ActivationSent)
+            in
+                ( model, cmd )
 
         UserActivated response ->
             case response of

@@ -415,3 +415,16 @@ postValue authentication field =
             , timeout = Nothing
             , withCredentials = False
             }
+
+
+sendActivation : Authenticator.Types.Authentication -> Http.Request UserBody
+sendActivation authentication =
+    Http.request
+        { method = "GET"
+        , headers = authenticationHeaders <| Just authentication
+        , url = apiUrl ++ "users/" ++ authentication.urlName ++ "/send-activation"
+        , body = Http.emptyBody
+        , expect = Http.expectJson userBodyDecoder
+        , timeout = Nothing
+        , withCredentials = False
+        }
