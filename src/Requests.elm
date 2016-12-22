@@ -417,6 +417,25 @@ postValue authentication field =
             }
 
 
+resetPassword : String -> String -> String -> Http.Request UserBody
+resetPassword userId authorization password =
+    let
+        bodyJson =
+            Encode.object
+                [ ( "password", Encode.string password )
+                ]
+    in
+        Http.request
+            { method = "POST"
+            , headers = [ Http.header "Cache-Control" "no-cache" ]
+            , url = apiUrl ++ "users/" ++ userId ++ "/reset-password?authorization=" ++ authorization
+            , body = (Http.stringBody "application/json" <| Encode.encode 2 bodyJson)
+            , expect = Http.expectJson userBodyDecoder
+            , timeout = Nothing
+            , withCredentials = False
+            }
+
+
 sendActivation : Authenticator.Types.Authentication -> Http.Request UserBody
 sendActivation authentication =
     Http.request

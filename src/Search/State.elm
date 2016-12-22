@@ -8,11 +8,11 @@ import I18n
 import Navigation
 import Ports
 import Requests
-import Routes
 import Search.Types exposing (..)
 import String
 import Task
 import Types exposing (..)
+import Urls
 import WebData exposing (LoadingStatus(..), getData, WebData(..))
 
 
@@ -163,7 +163,7 @@ update msg model authentication language location =
                                         Debug.crash "update PopularTagsLoadSuccess"
 
                             selectedTags =
-                                case Routes.getQuerySingleParameter "tagIds" location of
+                                case Urls.querySingleParameter "tagIds" location of
                                     Nothing ->
                                         []
 
@@ -260,7 +260,7 @@ update msg model authentication language location =
                                 List.map .tagId model.selectedTags
 
                             searchQuery =
-                                Routes.getQuerySearchTerm location
+                                Urls.querySearchTerm location
                         in
                             [ Requests.getCollections authentication (Just 3)
                                 |> Http.send (ForSelf << GotCollections)

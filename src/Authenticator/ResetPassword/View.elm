@@ -15,7 +15,7 @@ viewModalBody language model =
         [ div [ class "row" ]
             [ div [ class "col-xs-12" ]
                 [ div [ class "well" ]
-                    [ Html.form [ onSubmit Submit ]
+                    [ Html.form [ onSubmit (ForSelf <| Submit) ]
                         [ let
                             errorMaybe =
                                 Dict.get "email" model.errors
@@ -37,7 +37,7 @@ viewModalBody language model =
                                             , title (I18n.translate language I18n.EnterEmail)
                                             , type_ "text"
                                             , value model.email
-                                            , onInput UsernameInput
+                                            , onInput (ForSelf << EmailInput)
                                             ]
                                             []
                                         , span
@@ -62,7 +62,7 @@ viewModalBody language model =
                                             , title (I18n.translate language I18n.EnterEmail)
                                             , type_ "text"
                                             , value model.email
-                                            , onInput UsernameInput
+                                            , onInput (ForSelf << EmailInput)
                                             ]
                                             []
                                         ]

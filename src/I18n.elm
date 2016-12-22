@@ -45,6 +45,8 @@ type TranslationId
     | BestOf Int
     | CallToActionForCategory
     | CallToActionForDescription CardType
+    | ChangePassword
+    | ChangePasswordExplanation
     | Close
     | Collection GrammaticalNumber
     | CollectionEditDescription
@@ -55,6 +57,7 @@ type TranslationId
     | CountVersionsAvailable Int
     | CreateAccountNow
     | CreateOrganizationPage
+    | CreateYourAccount
     | Email
     | EmailSentForAccountActivation String
     | EnterEmail
@@ -121,6 +124,7 @@ type TranslationId
     | PageNotFoundDescription
     | PageNotFoundExplanation
     | Password
+    | PasswordLost
     | PasswordPlaceholder
     | PublishOrganization
     | PublishTool
@@ -131,6 +135,7 @@ type TranslationId
     | ResetPassword
     | ResetPasswordExplanation
     | ResetPasswordLink
+    | Save
     | Score
     | SearchInputPlaceholder
     | SeeAllAndCompare
@@ -141,6 +146,7 @@ type TranslationId
     | SignIn
     | SignInToContribute
     | SignOut
+    | SignOutAndContributeLater
     | SignUp
     | SimilarTools
     | Software
@@ -420,6 +426,18 @@ getTranslationSet translationId =
                         todo
             }
 
+        ChangePassword ->
+            { english = s "Change your password"
+            , french = s "Changez votre mot de passe"
+            , spanish = todo
+            }
+
+        ChangePasswordExplanation ->
+            { english = s "Enter a new password to be able to sign-in."
+            , french = s "Entrez un nouveau mot de passe qui vous servira à vous identifier."
+            , spanish = todo
+            }
+
         Close ->
             { english = s "Close"
             , french = s "Fermer"
@@ -513,6 +531,12 @@ getTranslationSet translationId =
         CreateOrganizationPage ->
             { english = s "Create a page for your organization "
             , french = s "Créez une page pour votre organisation"
+            , spanish = todo
+            }
+
+        CreateYourAccount ->
+            { english = s "Create your account"
+            , french = s "Créez votre compte"
             , spanish = todo
             }
 
@@ -958,6 +982,12 @@ to strengthen governance.
             , spanish = todo
             }
 
+        PasswordLost ->
+            { english = s "Password lost?"
+            , french = s "Mot de passe oublié ?"
+            , spanish = todo
+            }
+
         PasswordPlaceholder ->
             { english = s "Your secret password"
             , french = s "Votre mot de passe secret"
@@ -1015,6 +1045,12 @@ to strengthen governance.
         ResetPasswordLink ->
             { english = s "I forgot my password"
             , french = s "J'ai oublié mon mot de passe"
+            , spanish = todo
+            }
+
+        Save ->
+            { english = s "Save"
+            , french = s "Enregistrer"
             , spanish = todo
             }
 
@@ -1076,6 +1112,12 @@ to strengthen governance.
             { english = s "Sign Out"
             , french = s "Se déconnecter"
             , spanish = s "Salir"
+            }
+
+        SignOutAndContributeLater ->
+            { english = s "Sign out and contribute later"
+            , french = s "Déconnectez-vous et contribuez plus tard"
+            , spanish = todo
             }
 
         SignUp ->

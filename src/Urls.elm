@@ -5,6 +5,7 @@ import Dict exposing (Dict)
 import Erl
 import I18n
 import List.Extra
+import Navigation
 import Types exposing (..)
 
 
@@ -100,6 +101,20 @@ parentUrl url =
             url
         else
             Erl.toString <| { parsedUrl | path = List.Extra.init parsedUrl.path |> Maybe.withDefault [] }
+
+
+querySearchTerm : Navigation.Location -> String
+querySearchTerm location =
+    querySingleParameter "q" location
+        |> Maybe.withDefault ""
+
+
+querySingleParameter : String -> Navigation.Location -> Maybe String
+querySingleParameter key location =
+    (Erl.parse location.href).query
+        |> List.filter (\( k, v ) -> k == key)
+        |> List.map (\( k, v ) -> v)
+        |> List.head
 
 
 screenshotFullUrl : I18n.Language -> String -> Card -> Dict String Value -> Maybe String

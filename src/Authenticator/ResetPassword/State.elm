@@ -6,7 +6,7 @@ import Decoders
 import Dict exposing (Dict)
 import Http
 import Json.Encode
-import Types exposing (User)
+import Task
 
 
 init : Model
@@ -16,9 +16,12 @@ init =
     }
 
 
-update : Msg -> Model -> ( Model, Cmd Msg, Maybe User )
+update : InternalMsg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        EmailInput text ->
+            ( { model | email = text }, Cmd.none )
+
         PasswordReset response ->
             case response of
                 Result.Err err ->
@@ -26,17 +29,15 @@ update msg model =
                         _ =
                             Debug.log "Authenticator.PasswordReset Error" err
                     in
-                        ( model, Cmd.none, Nothing )
+                        ( model, Cmd.none )
 
                 Result.Ok message ->
                     let
                         cmd =
-                            Cmd.none
-
-                        -- authenticatorRouteMsg Nothing
-                        --     |> (\msg -> Task.perform (\_ -> Debug.crash "") (\_ -> msg) (Task.succeed ()))
+                            ForParent (ChangeRoute Nothing)
+                                |> (\msg -> Task.perform (\_ -> msg) (Task.succeed ()))
                     in
-                        ( model, cmd, Nothing )
+                        ( model, cmd )
 
         Submit ->
             let
@@ -71,11 +72,8 @@ update msg model =
                                 (apiUrl ++ "users/reset-password")
                                 (Http.stringBody "application/json" <| Json.Encode.encode 2 bodyJson)
                                 Decoders.messageBodyDecoder
-                                |> Http.send PasswordReset
+                                |> Http.send (ForSelf << PasswordReset)
                     else
                         Cmd.none
             in
-                ( { model | errors = Dict.fromList errorsList }, cmd, Nothing )
-
-        UsernameInput text ->
-            ( { model | email = text }, Cmd.none, Nothing )
+                ( { model | errors = Dict.fromList errorsList }, cmd )

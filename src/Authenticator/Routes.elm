@@ -2,7 +2,9 @@ module Authenticator.Routes exposing (..)
 
 
 type Route
-    = ResetPasswordRoute
+    = ActivateRoute String
+    | ChangePasswordRoute String
+    | ResetPasswordRoute
     | SignInRoute
     | SignOutRoute
     | SignUpRoute

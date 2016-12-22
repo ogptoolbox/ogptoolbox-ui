@@ -7,7 +7,6 @@ import AddNew.View
 import AddNewCollection.State
 import AddNewCollection.Types
 import AddNewCollection.View
-import Authenticator.Activate
 import Authenticator.Routes
 import Authenticator.Types
 import Authenticator.State
@@ -73,7 +72,6 @@ type alias Flags =
 type alias Model =
     { addNewModel : AddNew.Types.Model
     , addNewCollectionModel : AddNewCollection.Types.Model
-    , activationModel : Authenticator.Activate.Model
     , authentication : Maybe Authenticator.Types.Authentication
     , authenticatorModel : Authenticator.Types.Model
     , authenticatorRoute : Maybe Authenticator.Routes.Route
@@ -95,7 +93,6 @@ init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
 init flags location =
     { addNewModel = AddNew.State.init
     , addNewCollectionModel = AddNewCollection.State.init
-    , activationModel = Authenticator.Activate.init
     , authentication =
         Json.Decode.decodeValue Decoders.userForPortDecoder flags.authentication
             |> Result.toMaybe
@@ -125,9 +122,7 @@ init flags location =
 
 
 type Msg
-    = Activate User
-    | ActivationMsg Authenticator.Activate.InternalMsg
-    | AddNewMsg AddNew.Types.InternalMsg
+    = AddNewMsg AddNew.Types.InternalMsg
     | AddNewCollectionMsg AddNewCollection.Types.InternalMsg
     | AuthenticatorMsg Authenticator.Types.InternalMsg
     | CardMsg Card.Types.InternalMsg
@@ -141,11 +136,12 @@ type Msg
     | Navigate String
     | NavigateBack
     | NoOp
+    | PasswordChanged
     | Search
     | SearchInputChanged String
     | SearchMsg Search.Types.InternalMsg
     | SignOutImmediately
-    | StartAuthenticator (Maybe Msg) (Maybe Authenticator.Routes.Route)
+    | StartAuthenticator (Maybe Msg) Authenticator.Routes.Route
     | UserProfileMsg UserProfile.Types.InternalMsg
 
 
@@ -164,19 +160,11 @@ navigateAfterSignOut model =
 requireSignIn : Msg -> Model -> ( Model, Cmd Msg )
 requireSignIn signOutMsg model =
     if model.authentication == Nothing then
-        update (StartAuthenticator (Just NavigateBack) (Just Authenticator.Routes.SignInRoute)) model
+        update (StartAuthenticator (Just NavigateBack) Authenticator.Routes.SignInRoute) model
     else
         ( { model | signOutMsg = Just signOutMsg }
         , Cmd.none
         )
-
-
-translateActivationMsg : Authenticator.Activate.MsgTranslator Msg
-translateActivationMsg =
-    Authenticator.Activate.translateMsg
-        { onInternalMsg = ActivationMsg
-        , onActivate = Activate
-        }
 
 
 translateAddNewMsg : AddNew.Types.MsgTranslator Msg
@@ -201,6 +189,7 @@ translateAuthenticatorMsg =
         { onChangeRoute = ChangeAuthenticatorRoute
         , onInternalMsg = AuthenticatorMsg
         , onNavigate = CloseAuthenticatorModalAndNavigate
+        , onPasswordChanged = PasswordChanged
         }
 
 
@@ -266,20 +255,6 @@ update msg model =
                     Cmd.none
     in
         case msg of
-            Activate authentication ->
-                ( { model | authentication = Just authentication }
-                , Cmd.none
-                )
-
-            ActivationMsg childMsg ->
-                let
-                    ( activationModel, childCmd ) =
-                        Authenticator.Activate.update childMsg model.activationModel language
-                in
-                    ( { model | activationModel = activationModel }
-                    , Cmd.map translateActivationMsg childCmd
-                    )
-
             AddNewMsg childMsg ->
                 let
                     ( addNewModel, childCmd ) =
@@ -305,7 +280,7 @@ update msg model =
             AuthenticatorMsg childMsg ->
                 let
                     ( authenticatorModel, childCmd ) =
-                        Authenticator.State.update childMsg model.authenticatorModel
+                        Authenticator.State.update childMsg model.authenticatorModel language
 
                     changed =
                         authenticatorModel.authentication /= model.authentication
@@ -400,11 +375,14 @@ update msg model =
             NoOp ->
                 ( model, Cmd.none )
 
+            PasswordChanged ->
+                ( model, navigate <| Urls.absoluteUrlPathWithLanguage language "/profile" )
+
             Search ->
                 let
                     keptParams =
                         ( "q", model.searchInputValue )
-                            :: (case getQuerySingleParameter "tagIds" model.location of
+                            :: (case Urls.querySingleParameter "tagIds" model.location of
                                     Nothing ->
                                         []
 
@@ -455,13 +433,9 @@ update msg model =
                 if model.authenticatorRoute == Nothing then
                     ( { model
                         | signOutMsg = onCancel
-                        , authenticatorRoute = authenticatorRoute
+                        , authenticatorRoute = Just authenticatorRoute
                       }
-                    , if authenticatorRoute == Nothing then
-                        -- Force page reload when authenticator modal closes.
-                        Navigation.modifyUrl <| model.location.href
-                      else
-                        Cmd.none
+                    , Cmd.none
                     )
                 else
                     -- Don't start a new authenticator session when one is pending.
@@ -492,7 +466,7 @@ urlUpdate : Navigation.Location -> Model -> ( Model, Cmd Msg )
 urlUpdate location model =
     let
         searchQuery =
-            getQuerySearchTerm location
+            Urls.querySearchTerm location
 
         ( newModel, cmd ) =
             case parseLocation location of
@@ -514,7 +488,7 @@ urlUpdate location model =
                                             Debug.crash "indexRoute"
 
                                 selectedTags =
-                                    case getQuerySingleParameter "tagIds" location of
+                                    case Urls.querySingleParameter "tagIds" location of
                                         Nothing ->
                                             []
 
@@ -569,26 +543,20 @@ urlUpdate location model =
                                         }
                                     )
 
-                                ActivationRoute userId ->
+                                AuthenticatorRoute route ->
                                     let
-                                        ( activationModel, childCmd ) =
-                                            Authenticator.Activate.update
-                                                (Authenticator.Activate.ActivateUser
-                                                    userId
-                                                    (Routes.getQuerySingleParameter
-                                                        "authorization"
-                                                        location
-                                                        |> Maybe.withDefault ""
-                                                    )
-                                                )
-                                                model.activationModel
+                                        ( authenticatorModel, childCmd ) =
+                                            Authenticator.State.urlUpdate
                                                 language
+                                                location
+                                                route
+                                                model.authenticatorModel
                                     in
                                         ( { model
-                                            | activationModel = activationModel
+                                            | authenticatorModel = authenticatorModel
                                             , signOutMsg = Nothing
                                           }
-                                        , Cmd.map translateActivationMsg childCmd
+                                        , Cmd.map translateAuthenticatorMsg childCmd
                                         )
 
                                 CollectionsRoute childRoute ->
@@ -915,7 +883,7 @@ view model =
                 )
 
         searchQuery =
-            getQuerySearchTerm model.location
+            Urls.querySearchTerm model.location
     in
         case model.route of
             I18nRouteWithLanguage language route ->
@@ -924,9 +892,12 @@ view model =
                         About.view language
                             |> standardLayout language
 
-                    ActivationRoute userId ->
-                        Authenticator.Activate.view model.activationModel language userId
-                            |> Html.map translateActivationMsg
+                    AuthenticatorRoute route ->
+                        Authenticator.View.view
+                            language
+                            route
+                            model.authenticatorModel
+                            |> Html.map translateAuthenticatorMsg
                             |> standardLayout language
 
                     CollectionsRoute childRoute ->
@@ -1154,7 +1125,7 @@ viewAlert model language =
                                 "click"
                                 { preventDefault = True, stopPropagation = False }
                                 (Json.Decode.succeed
-                                    (ActivationMsg (Authenticator.Activate.SendActivation authentication))
+                                    (AuthenticatorMsg (Authenticator.Types.sendActivationMsg authentication))
                                 )
                             ]
                             [ text <| I18n.translate language I18n.SendEmailAgain ]
@@ -1371,18 +1342,6 @@ viewHeader model language containerClass =
                 Nothing ->
                     text ""
 
-        -- li []
-        --     [ a
-        --         [ href "#"
-        --         , onWithOptions
-        --             "click"
-        --             { preventDefault = True, stopPropagation = False }
-        --             (Json.Decode.succeed
-        --                 (StartAuthenticator Nothing (Just Authenticator.Routes.ResetPasswordRoute))
-        --             )
-        --         ]
-        --         [ text (I18n.translate language I18n.ResetPassword) ]
-        --     ]
         signInOrOutNavItem =
             case model.authentication of
                 Just authentication ->
@@ -1405,7 +1364,7 @@ viewHeader model language containerClass =
                                 "click"
                                 { preventDefault = True, stopPropagation = False }
                                 (Json.Decode.succeed
-                                    (StartAuthenticator Nothing (Just Authenticator.Routes.SignInRoute))
+                                    (StartAuthenticator Nothing Authenticator.Routes.SignInRoute)
                                 )
                             ]
                             [ text (I18n.translate language I18n.SignIn) ]

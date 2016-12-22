@@ -1,5 +1,6 @@
 module Routes exposing (..)
 
+import Authenticator.Routes
 import Erl
 import Http
 import I18n
@@ -18,7 +19,7 @@ type CollectionsRoute
 
 type LocalizedRoute
     = AboutRoute
-    | ActivationRoute String
+    | AuthenticatorRoute Authenticator.Routes.Route
     | CollectionsRoute CollectionsRoute
     | FaqRoute
     | HomeRoute
@@ -62,20 +63,6 @@ collectionsRouteParser =
         ]
 
 
-getQuerySearchTerm : Navigation.Location -> String
-getQuerySearchTerm location =
-    getQuerySingleParameter "q" location
-        |> Maybe.withDefault ""
-
-
-getQuerySingleParameter : String -> Navigation.Location -> Maybe String
-getQuerySingleParameter key location =
-    (Erl.parse location.href).query
-        |> List.filter (\( k, v ) -> k == key)
-        |> List.map (\( k, v ) -> v)
-        |> List.head
-
-
 idParser : Parser (String -> a) a
 idParser =
     string
@@ -92,7 +79,12 @@ localizedRouteParser =
         , map UserProfileRoute (s "profile")
         , map ToolsRoute (s "tools" </> toolsRouteParser)
         , map UseCasesRoute (s "use-cases" </> useCasesRouteParser)
-        , map ActivationRoute (s "users" </> idParser </> s "activate")
+        , map
+            (AuthenticatorRoute << Authenticator.Routes.ActivateRoute)
+            (s "users" </> idParser </> s "activate")
+        , map
+            (AuthenticatorRoute << Authenticator.Routes.ChangePasswordRoute)
+            (s "users" </> idParser </> s "reset-password")
         , map NotFoundRoute remaining
         ]
 
