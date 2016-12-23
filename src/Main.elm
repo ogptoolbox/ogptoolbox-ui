@@ -812,7 +812,7 @@ urlUpdate location model =
 
                         command =
                             Urls.absoluteUrlPathWithLanguage language
-                                (urlPath ++ (queryStringForParams [ "q", "tagIds" ] location))
+                                (urlPath ++ (Urls.queryStringForParams [ "q", "tagIds" ] location))
                                 |> Navigation.modifyUrl
                     in
                         ( { model | route = route }, command )
@@ -1213,17 +1213,17 @@ viewFooter model language =
                                          in
                                             [ li []
                                                 [ aForPath
-                                                    (replaceLanguageInLocation I18n.English model.location)
+                                                    (Urls.replaceLanguageInLocation I18n.English model.location)
                                                     [ text (I18n.translate I18n.English (I18n.Language I18n.English)) ]
                                                 ]
                                             , li []
                                                 [ aForPath
-                                                    (replaceLanguageInLocation I18n.French model.location)
+                                                    (Urls.replaceLanguageInLocation I18n.French model.location)
                                                     [ text (I18n.translate I18n.French (I18n.Language I18n.French)) ]
                                                 ]
                                             , li []
                                                 [ aForPath
-                                                    (replaceLanguageInLocation I18n.Spanish model.location)
+                                                    (Urls.replaceLanguageInLocation I18n.Spanish model.location)
                                                     [ text (I18n.translate I18n.Spanish (I18n.Language I18n.Spanish)) ]
                                                 ]
                                             ]

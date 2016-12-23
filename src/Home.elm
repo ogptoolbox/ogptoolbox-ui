@@ -6,7 +6,6 @@ import Html.Attributes exposing (..)
 import Html.Helpers exposing (aExternal, aForPath)
 import I18n
 import Navigation
-import Routes
 import Search.Types exposing (..)
 import Types exposing (..)
 import Urls
@@ -453,8 +452,8 @@ viewMetrics language location model =
                 , aForPath
                     navigate
                     language
-                    (Routes.urlBasePathForCardType UseCaseCard
-                        ++ (Routes.queryStringForParams [ "q", "tagIds" ] location)
+                    (Urls.urlBasePathForCardType UseCaseCard
+                        ++ (Urls.queryStringForParams [ "q", "tagIds" ] location)
                     )
                     []
                     [ viewMetric model.useCases
@@ -466,8 +465,8 @@ viewMetrics language location model =
                 , aForPath
                     navigate
                     language
-                    (Routes.urlBasePathForCardType ToolCard
-                        ++ (Routes.queryStringForParams [ "q", "tagIds" ] location)
+                    (Urls.urlBasePathForCardType ToolCard
+                        ++ (Urls.queryStringForParams [ "q", "tagIds" ] location)
                     )
                     []
                     [ viewMetric model.tools
@@ -479,8 +478,8 @@ viewMetrics language location model =
                 , aForPath
                     navigate
                     language
-                    (Routes.urlBasePathForCardType OrganizationCard
-                        ++ (Routes.queryStringForParams [ "q", "tagIds" ] location)
+                    (Urls.urlBasePathForCardType OrganizationCard
+                        ++ (Urls.queryStringForParams [ "q", "tagIds" ] location)
                     )
                     []
                     [ viewMetric model.organizations
@@ -538,8 +537,8 @@ viewThumbnails language location thumbnailExtraClasses loadingStatus =
                                         [ aForPath
                                             navigate
                                             language
-                                            ((Routes.urlBasePathForCard firstCard)
-                                                ++ (Routes.queryStringForParams [ "q", "tagIds" ] location)
+                                            ((Urls.urlBasePathForCard firstCard)
+                                                ++ (Urls.queryStringForParams [ "q", "tagIds" ] location)
                                             )
                                             [ class "show-more" ]
                                             [ text (I18n.translate language (I18n.ShowAll body.count))

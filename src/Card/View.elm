@@ -10,7 +10,6 @@ import Html.Helpers exposing (aExternal, aForPath, aIfIsUrl)
 import Http
 import I18n
 import Json.Decode as Decode
-import Routes
 import Set
 import String
 import Types exposing (..)
@@ -199,7 +198,7 @@ viewCardContent language card cards values =
                                 (\{ tag, tagId } ->
                                     let
                                         urlPath =
-                                            Routes.urlBasePathForCard card ++ "?tagIds=" ++ tagId
+                                            Urls.urlBasePathForCard card ++ "?tagIds=" ++ tagId
                                     in
                                         aForPath
                                             navigate
@@ -1127,7 +1126,7 @@ viewSidebar language card values =
                                         (\{ tag, tagId } ->
                                             let
                                                 urlPath =
-                                                    Routes.urlBasePathForCard card ++ "?tagIds=" ++ tagId
+                                                    Urls.urlBasePathForCard card ++ "?tagIds=" ++ tagId
                                             in
                                                 aForPath
                                                     navigate
@@ -1160,7 +1159,7 @@ viewSidebar language card values =
 
                             url =
                                 Urls.fullUrl
-                                    (Urls.absoluteUrlPathWithLanguage language (Routes.urlPathForCard card))
+                                    (Urls.absoluteUrlPathWithLanguage language (Urls.urlPathForCard card))
 
                             facebookUrl =
                                 "http://www.facebook.com/sharer.php?s=100&p[title]="
@@ -1252,7 +1251,7 @@ viewValueType language cards values showLanguage value =
                                     name
 
                         urlPath =
-                            Routes.urlPathForCard card
+                            Urls.urlPathForCard card
                     in
                         aForPath navigate language urlPath [] [ text linkText ]
     in

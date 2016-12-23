@@ -8,7 +8,6 @@ import I18n
 import Navigation
 import Ports
 import Requests
-import Routes
 import Types exposing (..)
 import Urls
 
@@ -45,7 +44,7 @@ update msg model authentication language =
                     let
                         urlPath =
                             getCard body.data.cards body.data.id
-                                |> Routes.urlPathForCard
+                                |> Urls.urlPathForCard
 
                         cmd =
                             Urls.absoluteUrlPathWithLanguage language urlPath

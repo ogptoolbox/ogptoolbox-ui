@@ -3,6 +3,7 @@ module Urls exposing (..)
 import Configuration
 import Dict exposing (Dict)
 import Erl
+import Http
 import I18n
 import List.Extra
 import Navigation
@@ -117,8 +118,68 @@ querySingleParameter key location =
         |> List.head
 
 
+queryStringForParams : List String -> Navigation.Location -> String
+queryStringForParams params location =
+    let
+        keptQuery =
+            (Erl.parse location.href).query
+                |> List.filter (\( k, v ) -> List.member k params)
+    in
+        if List.isEmpty keptQuery then
+            ""
+        else
+            let
+                encodedTuples =
+                    List.map (\( x, y ) -> ( Http.encodeUri x, Http.encodeUri y )) keptQuery
+
+                parts =
+                    List.map (\( a, b ) -> a ++ "=" ++ b) encodedTuples
+            in
+                "?" ++ (String.join "&" parts)
+
+
+replaceLanguageInLocation : I18n.Language -> Navigation.Location -> String
+replaceLanguageInLocation language location =
+    let
+        url =
+            Erl.parse location.href
+
+        path =
+            List.tail url.path
+                |> Maybe.withDefault []
+                |> (::) (I18n.iso639_1FromLanguage language)
+
+        newUrl =
+            { url | path = path }
+    in
+        Erl.toString newUrl
+
+
 screenshotFullUrl : I18n.Language -> String -> Card -> Dict String Value -> Maybe String
 screenshotFullUrl language dim card values =
     I18n.getOneString language imageScreenshotUrlPathKeys card values
         |> Maybe.map
             (\urlPath -> fullApiUrl urlPath ++ "?dim=" ++ dim)
+
+
+urlBasePathForCardType : CardType -> String
+urlBasePathForCardType cardType =
+    case cardType of
+        OrganizationCard ->
+            "/organizations/"
+
+        ToolCard ->
+            "/tools/"
+
+        UseCaseCard ->
+            "/use-cases/"
+
+
+urlBasePathForCard : Card -> String
+urlBasePathForCard card =
+    urlBasePathForCardType (getCardType card)
+
+
+urlPathForCard : Card -> String
+urlPathForCard card =
+    (urlBasePathForCard card) ++ card.id

@@ -7,7 +7,6 @@ import Html.Events exposing (..)
 import Html.Helpers exposing (aForPath)
 import Http exposing (Error(..))
 import I18n
-import Routes
 import String
 import Types exposing (..)
 import Urls
@@ -69,7 +68,7 @@ viewCardListItem navigate language values card =
             I18n.getName language card values
 
         urlPath =
-            Routes.urlPathForCard card
+            Urls.urlPathForCard card
 
         cardType =
             getCardType card
@@ -145,7 +144,7 @@ viewCardThumbnail language navigate extraClass values card =
             I18n.getName language card values
 
         urlPath =
-            Routes.urlPathForCard card
+            Urls.urlPathForCard card
 
         cardType =
             getCardType card
@@ -231,7 +230,7 @@ viewTagsWithCallToAction navigate language values card =
                         (\{ tag, tagId } ->
                             let
                                 urlPath =
-                                    Routes.urlBasePathForCard card ++ "?tagIds=" ++ tagId
+                                    Urls.urlBasePathForCard card ++ "?tagIds=" ++ tagId
                             in
                                 aForPath
                                     navigate

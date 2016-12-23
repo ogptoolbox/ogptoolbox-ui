@@ -5,9 +5,9 @@ import Html.Attributes exposing (..)
 import Html.Helpers exposing (aForPath)
 import I18n
 import Navigation
-import Routes
 import Search.Types exposing (..)
 import Types exposing (..)
+import Urls
 import Views exposing (viewCardListItem, viewLoading, viewWebData)
 import WebData exposing (getData, getLoadingStatusData, LoadingStatus(..), WebData(..))
 
@@ -73,8 +73,8 @@ view { organizations, tools, useCases } activeCardType language location =
                                 [ aForPath
                                     navigate
                                     language
-                                    ((Routes.urlBasePathForCardType cardType)
-                                        ++ (Routes.queryStringForParams [ "q", "tagIds" ] location)
+                                    ((Urls.urlBasePathForCardType cardType)
+                                        ++ (Urls.queryStringForParams [ "q", "tagIds" ] location)
                                     )
                                     []
                                     [ text (I18n.translate language (translationId I18n.Plural))

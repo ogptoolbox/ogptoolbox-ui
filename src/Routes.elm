@@ -1,12 +1,8 @@
 module Routes exposing (..)
 
 import Authenticator.Routes
-import Erl
-import Http
 import I18n
 import Navigation
-import String
-import Types exposing (..)
 import UrlParser exposing ((</>), map, oneOf, parsePath, Parser, remaining, s, string, top)
 
 
@@ -103,43 +99,6 @@ parseLocation location =
     UrlParser.parsePath routeParser location
 
 
-queryStringForParams : List String -> Navigation.Location -> String
-queryStringForParams params location =
-    let
-        keptQuery =
-            (Erl.parse location.href).query
-                |> List.filter (\( k, v ) -> List.member k params)
-    in
-        if List.isEmpty keptQuery then
-            ""
-        else
-            let
-                encodedTuples =
-                    List.map (\( x, y ) -> ( Http.encodeUri x, Http.encodeUri y )) keptQuery
-
-                parts =
-                    List.map (\( a, b ) -> a ++ "=" ++ b) encodedTuples
-            in
-                "?" ++ (String.join "&" parts)
-
-
-replaceLanguageInLocation : I18n.Language -> Navigation.Location -> String
-replaceLanguageInLocation language location =
-    let
-        url =
-            Erl.parse location.href
-
-        path =
-            List.tail url.path
-                |> Maybe.withDefault []
-                |> (::) (I18n.iso639_1FromLanguage language)
-
-        newUrl =
-            { url | path = path }
-    in
-        Erl.toString newUrl
-
-
 routeParser : Parser (Route -> a) a
 routeParser =
     oneOf
@@ -161,29 +120,6 @@ toolsRouteParser =
         , map NewToolRoute (s "new")
         , map ToolRoute idParser
         ]
-
-
-urlBasePathForCardType : CardType -> String
-urlBasePathForCardType cardType =
-    case cardType of
-        OrganizationCard ->
-            "/organizations/"
-
-        ToolCard ->
-            "/tools/"
-
-        UseCaseCard ->
-            "/use-cases/"
-
-
-urlBasePathForCard : Card -> String
-urlBasePathForCard card =
-    urlBasePathForCardType (getCardType card)
-
-
-urlPathForCard : Card -> String
-urlPathForCard card =
-    (urlBasePathForCard card) ++ card.id
 
 
 useCasesRouteParser : Parser (UseCasesRoute -> a) a
