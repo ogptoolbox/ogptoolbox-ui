@@ -327,7 +327,7 @@ update msg ({ editedProperty } as model) authentication language =
         VotePropertyDown propertyId ->
             let
                 cmd =
-                    Requests.postRating authentication propertyId -1
+                    Requests.rateProperty authentication propertyId -1
                         |> Http.send RatingPosted
                         |> Cmd.map ForSelf
             in
@@ -336,7 +336,7 @@ update msg ({ editedProperty } as model) authentication language =
         VotePropertyUp propertyId ->
             let
                 cmd =
-                    Requests.postRating authentication propertyId 1
+                    Requests.rateProperty authentication propertyId 1
                         |> Http.send RatingPosted
                         |> Cmd.map ForSelf
             in

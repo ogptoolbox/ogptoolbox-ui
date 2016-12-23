@@ -327,19 +327,6 @@ postProperty authentication objectId keyId valueId =
         }
 
 
-postRating : Maybe Authenticator.Types.Authentication -> String -> Int -> Http.Request DataIdBody
-postRating authentication propertyId rating =
-    Http.request
-        { method = "POST"
-        , headers = authenticationHeaders authentication
-        , url = apiUrl ++ "statements/" ++ propertyId ++ "/rating?show=ballots&depth=1"
-        , body = Encode.object [ ( "rating", Encode.int rating ) ] |> Http.jsonBody
-        , expect = Http.expectJson dataIdBodyDecoder
-        , timeout = Nothing
-        , withCredentials = False
-        }
-
-
 postUploadImage : Maybe Authenticator.Types.Authentication -> String -> Http.Request String
 postUploadImage authentication contents =
     Http.request
@@ -415,6 +402,19 @@ postValue authentication field =
             , timeout = Nothing
             , withCredentials = False
             }
+
+
+rateProperty : Maybe Authenticator.Types.Authentication -> String -> Int -> Http.Request DataIdBody
+rateProperty authentication propertyId rating =
+    Http.request
+        { method = "POST"
+        , headers = authenticationHeaders authentication
+        , url = apiUrl ++ "statements/" ++ propertyId ++ "/rating?show=ballots&depth=1"
+        , body = Encode.object [ ( "rating", Encode.int rating ) ] |> Http.jsonBody
+        , expect = Http.expectJson dataIdBodyDecoder
+        , timeout = Nothing
+        , withCredentials = False
+        }
 
 
 resetPassword : String -> String -> String -> Http.Request UserBody
