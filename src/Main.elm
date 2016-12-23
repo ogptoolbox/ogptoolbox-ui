@@ -1121,12 +1121,7 @@ viewAlert model language =
                         , button
                             [ class "btn btn-default btn-sm"
                             , type_ "button"
-                            , onWithOptions
-                                "click"
-                                { preventDefault = True, stopPropagation = False }
-                                (Json.Decode.succeed
-                                    (AuthenticatorMsg (Authenticator.Types.sendActivationMsg authentication))
-                                )
+                            , onClick (AuthenticatorMsg (Authenticator.Types.sendActivationMsg authentication))
                             ]
                             [ text <| I18n.translate language I18n.SendEmailAgain ]
                         ]
@@ -1150,10 +1145,7 @@ viewAuthenticatorModal model language =
                             [ button
                                 [ attribute "data-dismiss" "modal"
                                 , class "close"
-                                , onWithOptions
-                                    "click"
-                                    { preventDefault = True, stopPropagation = False }
-                                    (Json.Decode.succeed DismissAuthenticatorModal)
+                                , onClick DismissAuthenticatorModal
                                 , type_ "button"
                                 ]
                                 [ span [ ariaHidden True ]

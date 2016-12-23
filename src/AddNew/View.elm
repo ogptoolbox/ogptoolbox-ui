@@ -3,7 +3,7 @@ module AddNew.View exposing (..)
 import AddNew.Types exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (on, onClick, onInput, onSubmit, targetValue)
+import Html.Events exposing (on, onClick, onInput, targetValue)
 import I18n
 import Json.Decode as Decode
 import Urls
@@ -140,8 +140,7 @@ viewOrganization model language =
                     ]
                 ]
     in
-        Html.form
-            [ onSubmit (ForSelf SubmitFields) ]
+        Html.form []
             [ div [ class "row section" ]
                 [ div [ class "container" ]
                     [ div [ class "row" ]
@@ -168,6 +167,7 @@ viewOrganization model language =
                         [ button
                             [ class "btn btn-default pull-right"
                             , disabled (publishedDisabled model.imageUploadStatus)
+                            , onClick (ForSelf SubmitFields)
                             , type_ "submit"
                             ]
                             [ text (I18n.translate language I18n.PublishOrganization) ]
@@ -349,7 +349,7 @@ viewTool model language =
                     ]
                 ]
     in
-        Html.form [ onSubmit (ForSelf SubmitFields) ]
+        Html.form []
             [ div [ class "row section" ]
                 [ div [ class "container" ]
                     [ div [ class "row" ]
@@ -402,6 +402,7 @@ viewTool model language =
                         [ button
                             [ class "btn btn-default pull-right"
                             , disabled (publishedDisabled model.imageUploadStatus)
+                            , onClick (ForSelf SubmitFields)
                             , type_ "submit"
                             ]
                             [ text (I18n.translate language I18n.PublishTool) ]
@@ -481,7 +482,7 @@ viewUseCase model language =
                 ]
     in
         Html.form
-            [ onSubmit (ForSelf SubmitFields) ]
+            []
             [ div [ class "row section" ]
                 [ div [ class "container" ]
                     [ div [ class "row" ]
@@ -534,6 +535,7 @@ viewUseCase model language =
                         [ button
                             [ class "btn btn-default pull-right"
                             , disabled (publishedDisabled model.imageUploadStatus)
+                            , onClick (ForSelf SubmitFields)
                             , type_ "submit"
                             ]
                             [ text (I18n.translate language I18n.PublishUseCase) ]

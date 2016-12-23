@@ -26,14 +26,17 @@ view language model =
         , div [ class "row" ]
             [ div [ class "col-xs-12" ]
                 [ div [ class "well" ]
-                    [ Html.form [ onSubmit (ForSelf <| Submit) ]
+                    [ Html.form []
                         [ viewPasswordField
                             (ForSelf << PasswordInput)
                             language
                             (Dict.get "password" model.errors)
                             model.password
                         , button
-                            [ class "btn btn-block btn-default grey", type_ "submit" ]
+                            [ class "btn btn-block btn-default grey"
+                            , onClick (ForSelf <| Submit)
+                            , type_ "submit"
+                            ]
                             [ text (I18n.translate language I18n.Save) ]
                         ]
                     ]
