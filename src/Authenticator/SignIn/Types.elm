@@ -16,9 +16,9 @@ type ExternalMsg
 
 
 type InternalMsg
-    = SignedIn (Result Http.Error UserBody)
+    = EmailInput String
+    | SignedIn (Result Http.Error UserBody)
     | Submit
-    | UsernameInput String
     | PasswordInput String
 
 

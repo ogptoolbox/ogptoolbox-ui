@@ -22,6 +22,9 @@ init =
 update : InternalMsg -> Model -> ( Model, Cmd Msg, Maybe User )
 update msg model =
     case msg of
+        EmailInput text ->
+            ( { model | email = text }, Cmd.none, Nothing )
+
         PasswordInput text ->
             ( { model | password = text }, Cmd.none, Nothing )
 
@@ -89,6 +92,3 @@ update msg model =
                         Cmd.none
             in
                 ( { model | errors = Dict.fromList errorsList }, cmd, Nothing )
-
-        UsernameInput text ->
-            ( { model | email = text }, Cmd.none, Nothing )
