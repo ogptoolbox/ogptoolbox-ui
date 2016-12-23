@@ -363,11 +363,7 @@ update msg model =
                 urlUpdate location model
 
             Navigate urlPath ->
-                let
-                    cmd =
-                        navigate urlPath
-                in
-                    ( model, cmd )
+                ( model, navigate urlPath )
 
             NavigateBack ->
                 ( model, Navigation.back 1 )
