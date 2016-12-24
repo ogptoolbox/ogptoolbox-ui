@@ -1,6 +1,7 @@
 module Types exposing (..)
 
 import Dict exposing (Dict)
+import Json.Decode
 
 
 type alias Ballot =
@@ -102,6 +103,12 @@ type Field
     | InputUrlField String
     | ImageField String
     | CardIdField String
+
+
+type alias Flags =
+    { language : String
+    , authentication : Json.Decode.Value
+    }
 
 
 type alias PopularTag =
