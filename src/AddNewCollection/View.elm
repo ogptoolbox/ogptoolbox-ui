@@ -122,7 +122,8 @@ view model language =
                     ]
                 ]
     in
-        Html.form []
+        Html.form
+            [ onSubmit (ForSelf PostNewCollection) ]
             [ div [ class "row section" ]
                 [ div [ class "container" ]
                     [ div [ class "row" ]
@@ -185,7 +186,6 @@ view model language =
                         [ button
                             [ class "btn btn-default pull-right"
                             , disabled (publishedDisabled model.imageUploadStatus)
-                            , onClick (ForSelf PostNewCollection)
                             , type_ "submit"
                             ]
                             [ text "Publish"

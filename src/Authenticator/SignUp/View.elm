@@ -16,7 +16,7 @@ viewModalBody language model =
         [ div [ class "row" ]
             [ div [ class "col-xs-7" ]
                 [ div [ class "well" ]
-                    [ Html.form []
+                    [ Html.form [ onSubmit (ForSelf <| Submit) ]
                         [ viewUsernameField
                             (ForSelf << UsernameInput)
                             language
@@ -33,10 +33,7 @@ viewModalBody language model =
                             (Dict.get "password" model.errors)
                             model.password
                         , button
-                            [ class "btn btn-block btn-default grey"
-                            , onClick (ForSelf <| Submit)
-                            , type_ "submit"
-                            ]
+                            [ class "btn btn-block btn-default grey", type_ "submit" ]
                             [ text (I18n.translate language I18n.Register) ]
                         ]
                     ]

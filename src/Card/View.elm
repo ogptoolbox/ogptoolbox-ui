@@ -769,7 +769,9 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                                         )
                                     , nav [ class "navbar-fixed-bottom grey" ]
                                         [ Html.form
-                                            [ class "navbar-form navbar-left big" ]
+                                            [ class "navbar-form navbar-left big"
+                                            , onSubmit (ForSelf (SubmitValue selectedField))
+                                            ]
                                             [ select
                                                 [ on "change"
                                                     (Html.Events.targetValue
@@ -829,11 +831,7 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                                                 [ class "form-group" ]
                                                 [ viewField ]
                                             , div [ class "navbar-right" ]
-                                                [ button
-                                                    [ class "btn btn-default"
-                                                    , onClick (ForSelf (SubmitValue selectedField))
-                                                    , type_ "submit"
-                                                    ]
+                                                [ button [ class "btn btn-default", type_ "submit" ]
                                                     [ text "Publish" ]
                                                 ]
                                             ]

@@ -19,7 +19,7 @@ viewModalBody language model =
         [ div [ class "row" ]
             [ div [ class "col-xs-6" ]
                 [ div [ class "well" ]
-                    [ Html.form []
+                    [ Html.form [ onSubmit (ForSelf <| Submit) ]
                         ([ viewEmailField
                             (ForSelf << EmailInput)
                             language
@@ -44,10 +44,7 @@ viewModalBody language model =
                            -- , div [ class "alert alert-error hide", id "loginErrorMsg" ]
                            --     [ text "Wrong email or password" ]
                          , button
-                            [ class "btn btn-block btn-default grey"
-                            , onClick (ForSelf <| Submit)
-                            , type_ "submit"
-                            ]
+                            [ class "btn btn-block btn-default grey", type_ "submit" ]
                             [ text (I18n.translate language I18n.SignIn) ]
                          ]
                             ++ (case model.httpError of
