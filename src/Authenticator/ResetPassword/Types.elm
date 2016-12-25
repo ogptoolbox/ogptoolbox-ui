@@ -22,6 +22,7 @@ type InternalMsg
 type alias Model =
     { errors : Errors
     , email : String
+    , httpError : Maybe Http.Error
     }
 
 

@@ -13,6 +13,7 @@ init : Model
 init =
     { errors = Dict.empty
     , email = ""
+    , httpError = Nothing
     }
 
 
@@ -22,22 +23,16 @@ update msg model =
         EmailInput text ->
             ( { model | email = text }, Cmd.none )
 
-        PasswordReset response ->
-            case response of
-                Result.Err err ->
-                    let
-                        _ =
-                            Debug.log "Authenticator.PasswordReset Error" err
-                    in
-                        ( model, Cmd.none )
+        PasswordReset (Err httpError) ->
+            ( { model | httpError = Just httpError }, Cmd.none )
 
-                Result.Ok message ->
-                    let
-                        cmd =
-                            ForParent (ChangeRoute Nothing)
-                                |> (\msg -> Task.perform (\_ -> msg) (Task.succeed ()))
-                    in
-                        ( model, cmd )
+        PasswordReset (Ok message) ->
+            let
+                cmd =
+                    ForParent (ChangeRoute Nothing)
+                        |> (\msg -> Task.perform (\_ -> msg) (Task.succeed ()))
+            in
+                ( { model | httpError = Nothing }, cmd )
 
         Submit ->
             let

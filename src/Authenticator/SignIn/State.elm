@@ -28,24 +28,18 @@ update msg model =
         PasswordInput text ->
             ( { model | password = text }, Cmd.none, Nothing )
 
-        SignedIn response ->
-            case response of
-                Result.Err err ->
-                    let
-                        _ =
-                            Debug.log "Authenticator.SignedIn Error" err
-                    in
-                        ( model, Cmd.none, Nothing )
+        SignedIn (Err httpError) ->
+            ( { model | httpError = Just httpError }, Cmd.none, Nothing )
 
-                Result.Ok body ->
-                    let
-                        user =
-                            Just body.data
-                    in
-                        ( { model | httpError = Nothing }
-                        , Ports.storeAuthentication (Ports.userToUserForPort user)
-                        , user
-                        )
+        SignedIn (Ok body) ->
+            let
+                user =
+                    Just body.data
+            in
+                ( { model | httpError = Nothing }
+                , Ports.storeAuthentication (Ports.userToUserForPort user)
+                , user
+                )
 
         Submit ->
             let

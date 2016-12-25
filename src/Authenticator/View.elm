@@ -48,44 +48,38 @@ view language route model =
                 (Authenticator.ChangePassword.View.view language model.changePassword)
 
         ResetPasswordRoute ->
-            -- Html.map
-            --     translateResetPasswordMsg
-            --     (Authenticator.ResetPassword.View.view language model.resetPassword)
-            viewNotImplemented
+            Html.map
+                translateResetPasswordMsg
+                (Authenticator.ResetPassword.View.view language model.resetPassword)
 
         SignInRoute ->
-            -- Html.map
-            --     translateSignInMsg
-            --     (Authenticator.SignIn.View.view language model.signIn)
-            viewNotImplemented
+            Html.map
+                translateSignInMsg
+                (Authenticator.SignIn.View.view language model.signIn)
 
         SignOutRoute ->
-            -- Html.map
-            --     (ForSelf << SignOutMsg)
-            --     (Authenticator.SignOut.View.view language model.signOut)
-            viewNotImplemented
+            Html.map
+                (ForSelf << SignOutMsg)
+                (Authenticator.SignOut.View.view language model.signOut)
 
         SignUpRoute ->
-            -- Html.map
-            --     translateSignUpMsg
-            --     (Authenticator.SignUp.View.view language model.signUp)
-            viewNotImplemented
+            Html.map
+                translateSignUpMsg
+                (Authenticator.SignUp.View.view language model.signUp)
 
 
 viewModalBody : I18n.Language -> Route -> Model -> Html Msg
 viewModalBody language route model =
     case route of
         ActivateRoute _ ->
-            -- Html.map
-            --     translateActivateMsg
-            --     (Authenticator.Activate.View.viewModalBody language model.activate)
-            viewNotImplemented
+            Html.map
+                translateActivateMsg
+                (Authenticator.Activate.View.viewModalBody language model.activate)
 
         ChangePasswordRoute _ ->
-            -- Html.map
-            --     translateChangePasswordMsg
-            --     (Authenticator.ChangePassword.View.viewModalBody language model.changePassword)
-            viewNotImplemented
+            Html.map
+                translateChangePasswordMsg
+                (Authenticator.ChangePassword.View.viewModalBody language model.changePassword)
 
         ResetPasswordRoute ->
             Html.map

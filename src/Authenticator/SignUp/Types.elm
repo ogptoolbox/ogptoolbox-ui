@@ -26,6 +26,7 @@ type InternalMsg
 type alias Model =
     { email : String
     , errors : Errors
+    , httpError : Maybe Http.Error
     , password : String
     , username : String
     }

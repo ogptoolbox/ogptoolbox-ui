@@ -7,12 +7,18 @@ import Html.Events exposing (..)
 import I18n
 
 
+view : I18n.Language -> Model -> Html Msg
+view language model =
+    Html.form [ onSubmit Submit ]
+        [ button
+            [ class "btn btn-primary"
+            , type_ "submit"
+            ]
+            [ text "Sign Out" ]
+        ]
+
+
 viewModalBody : I18n.Language -> Model -> Html Msg
 viewModalBody language model =
     div [ class "modal-body" ]
-        [ Html.form [ onSubmit Submit ]
-            [ button
-                [ class "btn btn-primary", type_ "submit" ]
-                [ text "Sign Out" ]
-            ]
-        ]
+        [ view language model ]

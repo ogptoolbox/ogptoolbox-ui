@@ -17,6 +17,7 @@ type TranslationId
     | AboutLead
     | AboutLegal
     | AboutLegalContent
+    | AccountCreationFailed
     | ActivationDescription
     | ActivationFailed
     | ActivationInProgress
@@ -38,9 +39,15 @@ type TranslationId
     | AddNewUseCaseDescription
     | AdditionalInformations
     | AddToolOrUseCase
+    | AuthenticationFailed
     | AuthenticationRequired
     | AuthenticationRequiredExplanation
+    | BadAuthorization
+    | BadEmailOrPassword
+    | BadPayload
     | BadPayloadExplanation
+    | BadStatus
+    | BadUrl
     | BadUrlExplanation
     | BestOf Int
     | CallToActionForCategory
@@ -53,6 +60,7 @@ type TranslationId
     | CollectionEditTitle
     | CollectionsDescription
     | CollectionsTitle
+    | Colon
     | Copyright
     | CountVersionsAvailable Int
     | CreateAccountNow
@@ -124,6 +132,7 @@ type TranslationId
     | PageNotFoundDescription
     | PageNotFoundExplanation
     | Password
+    | PasswordChangeFailed
     | PasswordLost
     | PasswordPlaceholder
     | PublishOrganization
@@ -156,6 +165,7 @@ type TranslationId
     | ToolsDescription
     | TweetMessage String String
     | Type
+    | UnknownUser
     | UntitledCard
     | UseCase GrammaticalNumber
     | UseCases
@@ -163,6 +173,7 @@ type TranslationId
     | UsedBy
     | UsedFor
     | Username
+    | UsernameOrEmailAlreadyExist
     | UsernamePlaceholder
     | UserProfileDescription
     | Uses
@@ -210,6 +221,12 @@ getTranslationSet translationId =
         AboutLegalContent ->
             { english = s "OGPtoolobox.org is edited by the Etalab taskforce, a Prime Minister service, 39 quai André Citroën 75015 PARIS."
             , french = s "OGPtoolobox.org est édité par la mission Etalab, service du Premier Ministre, 39 quai André Citroën 75015 PARIS."
+            , spanish = todo
+            }
+
+        AccountCreationFailed ->
+            { english = s "Account création failed"
+            , french = s "Échec de la création du compte"
             , spanish = todo
             }
 
@@ -282,6 +299,12 @@ getTranslationSet translationId =
         AddToolOrUseCase ->
             { english = s "Add a new tool or use case"
             , french = s "Ajoutez un nouvel outil ou cas d'usage"
+            , spanish = todo
+            }
+
+        AuthenticationFailed ->
+            { english = s "Authentication failed"
+            , french = s "L'authentification a échoué"
             , spanish = todo
             }
 
@@ -369,15 +392,45 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        BadAuthorization ->
+            { english = s "Authorization code is wrong or obsolete."
+            , french = s "Le code d'autorisation est erroné ou périmé."
+            , spanish = todo
+            }
+
+        BadEmailOrPassword ->
+            { english = s "Either email address is unknown or password is wrong."
+            , french = s "Soit l'adresse courriel est inconnue, soit le mot de passe est erroné."
+            , spanish = todo
+            }
+
+        BadPayload ->
+            { english = s "Bad payload"
+            , french = s "Contenu incorrect"
+            , spanish = todo
+            }
+
         BadPayloadExplanation ->
             { english = s "The server returned unexpected data."
             , french = s "Le server a retourné des données imprévues"
             , spanish = todo
             }
 
+        BadStatus ->
+            { english = s "Bad status"
+            , french = s "Statut incorrect"
+            , spanish = todo
+            }
+
+        BadUrl ->
+            { english = s "Bad URL"
+            , french = s "URL incorrecte"
+            , spanish = todo
+            }
+
         BadUrlExplanation ->
-            { english = s "Bad URL."
-            , french = s "URL incorrecte."
+            { english = s "The given URL is invalid."
+            , french = s "L'URL fournie n'est pas valide."
             , spanish = todo
             }
 
@@ -490,6 +543,12 @@ getTranslationSet translationId =
             { english = s "Collections"
             , french = s "Collections"
             , spanish = todo
+            }
+
+        Colon ->
+            { english = s ": "
+            , french = s " : "
+            , spanish = s ": "
             }
 
         Copyright ->
@@ -982,6 +1041,12 @@ to strengthen governance.
             , spanish = todo
             }
 
+        PasswordChangeFailed ->
+            { english = s "Password change failed"
+            , french = s "Échec du changement de mot de passe"
+            , spanish = todo
+            }
+
         PasswordLost ->
             { english = s "Password lost?"
             , french = s "Mot de passe oublié ?"
@@ -1192,6 +1257,12 @@ to strengthen governance.
             , spanish = s "Tipo"
             }
 
+        UnknownUser ->
+            { english = s "User is unknown."
+            , french = s "L'utilisateur est inconnu."
+            , spanish = todo
+            }
+
         UntitledCard ->
             { english = s "Untitled Card"
             , french = s "Fiche sans titre"
@@ -1249,6 +1320,12 @@ to strengthen governance.
         Username ->
             { english = s "Username"
             , french = s "Nom d'utilisateur"
+            , spanish = todo
+            }
+
+        UsernameOrEmailAlreadyExist ->
+            { english = s "Username or email are already used."
+            , french = s "Le nom d'utilisateur ou le mot de passe sont déjà utilisés."
             , spanish = todo
             }
 

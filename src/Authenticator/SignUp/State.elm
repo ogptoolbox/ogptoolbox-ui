@@ -14,6 +14,7 @@ init : Model
 init =
     { email = ""
     , errors = Dict.empty
+    , httpError = Nothing
     , password = ""
     , username = ""
     }
@@ -82,21 +83,18 @@ update msg model =
             in
                 ( { model | errors = Dict.fromList errorsList }, cmd, Nothing )
 
-        UserCreated response ->
-            case response of
-                Result.Err err ->
-                    let
-                        _ =
-                            Debug.log "Authenticator.UserCreated Error" err
-                    in
-                        ( model, Cmd.none, Nothing )
+        UserCreated (Err httpError) ->
+            ( { model | httpError = Just httpError }, Cmd.none, Nothing )
 
-                Result.Ok body ->
-                    let
-                        user =
-                            Just body.data
-                    in
-                        ( model, Ports.storeAuthentication (Ports.userToUserForPort user), user )
+        UserCreated (Ok body) ->
+            let
+                user =
+                    Just body.data
+            in
+                ( { model | httpError = Nothing }
+                , Ports.storeAuthentication (Ports.userToUserForPort user)
+                , user
+                )
 
         UsernameInput text ->
             ( { model | username = text }, Cmd.none, Nothing )

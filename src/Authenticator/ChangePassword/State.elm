@@ -13,6 +13,7 @@ init : String -> String -> Model
 init userId authorization =
     { authorization = authorization
     , errors = Dict.empty
+    , httpError = Nothing
     , password = ""
     , userId = userId
     }
@@ -21,30 +22,24 @@ init userId authorization =
 update : InternalMsg -> Model -> I18n.Language -> ( Model, Cmd Msg )
 update msg model language =
     case msg of
-        PasswordReset response ->
-            case response of
-                Result.Err err ->
-                    let
-                        _ =
-                            Debug.log "Authenticator.PasswordChanged Error" err
-                    in
-                        ( model, Cmd.none )
-
-                Result.Ok body ->
-                    let
-                        user =
-                            body.data
-
-                        cmds =
-                            [ Ports.storeAuthentication (Ports.userToUserForPort (Just user))
-                            , ForParent (PasswordChanged user)
-                                |> (\msg -> Task.perform (\_ -> msg) (Task.succeed ()))
-                            ]
-                    in
-                        model ! cmds
-
         PasswordInput text ->
             ( { model | password = text }, Cmd.none )
+
+        PasswordReset (Err httpError) ->
+            ( { model | httpError = Just httpError }, Cmd.none )
+
+        PasswordReset (Ok body) ->
+            let
+                user =
+                    body.data
+
+                cmds =
+                    [ Ports.storeAuthentication (Ports.userToUserForPort (Just user))
+                    , ForParent (PasswordChanged user)
+                        |> (\msg -> Task.perform (\_ -> msg) (Task.succeed ()))
+                    ]
+            in
+                { model | httpError = Nothing } ! cmds
 
         Submit ->
             let

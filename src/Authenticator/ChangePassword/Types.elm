@@ -26,6 +26,7 @@ type alias Errors =
 type alias Model =
     { authorization : String
     , errors : Errors
+    , httpError : Maybe Http.Error
     , password : String
     , userId : String
     }
