@@ -50,25 +50,25 @@ view language route model =
         ResetPasswordRoute ->
             -- Html.map
             --     translateResetPasswordMsg
-            --     (Authenticator.ResetPassword.View.viewModalBody language model.resetPassword)
+            --     (Authenticator.ResetPassword.View.view language model.resetPassword)
             viewNotImplemented
 
         SignInRoute ->
             -- Html.map
             --     translateSignInMsg
-            --     (Authenticator.SignIn.View.viewModalBody language model.signIn)
+            --     (Authenticator.SignIn.View.view language model.signIn)
             viewNotImplemented
 
         SignOutRoute ->
             -- Html.map
             --     (ForSelf << SignOutMsg)
-            --     (Authenticator.SignOut.View.viewModalBody language model.signOut)
+            --     (Authenticator.SignOut.View.view language model.signOut)
             viewNotImplemented
 
         SignUpRoute ->
             -- Html.map
             --     translateSignUpMsg
-            --     (Authenticator.SignUp.View.viewModalBody language model.signUp)
+            --     (Authenticator.SignUp.View.view language model.signUp)
             viewNotImplemented
 
 
