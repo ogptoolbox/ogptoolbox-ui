@@ -9,7 +9,7 @@ import I18n
 
 view : I18n.Language -> Model -> Html Msg
 view language model =
-    Html.form [ onSubmit Submit ]
+    Html.form [ onSubmit (ForSelf <| Submit) ]
         [ button
             [ class "btn btn-primary"
             , type_ "submit"

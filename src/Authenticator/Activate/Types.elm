@@ -10,7 +10,7 @@ type alias Authentication =
 
 
 type ExternalMsg
-    = Activate Authentication
+    = Terminated (Result () (Maybe Authentication))
 
 
 type InternalMsg
@@ -30,8 +30,8 @@ type Msg
 
 
 type alias MsgTranslation parentMsg =
-    { onActivate : Authentication -> parentMsg
-    , onInternalMsg : InternalMsg -> parentMsg
+    { onInternalMsg : InternalMsg -> parentMsg
+    , onTerminated : Result () (Maybe Authentication) -> parentMsg
     }
 
 
@@ -40,10 +40,10 @@ type alias MsgTranslator parentMsg =
 
 
 translateMsg : MsgTranslation parentMsg -> MsgTranslator parentMsg
-translateMsg { onInternalMsg, onActivate } msg =
+translateMsg { onInternalMsg, onTerminated } msg =
     case msg of
-        ForParent (Activate authentication) ->
-            onActivate authentication
-
         ForSelf internalMsg ->
             onInternalMsg internalMsg
+
+        ForParent (Terminated result) ->
+            onTerminated result

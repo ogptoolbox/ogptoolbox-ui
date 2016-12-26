@@ -1,6 +1,6 @@
 module Authenticator.State exposing (..)
 
-import Authenticator.Types exposing (Authentication, Model)
+import Authenticator.Types exposing (Model)
 import Authenticator.Activate.State
 import Authenticator.Activate.Types
 import Authenticator.ChangePassword.State
@@ -12,14 +12,12 @@ import Authenticator.SignUp.State
 import Authenticator.Types exposing (..)
 import I18n
 import Navigation
-import Task
 import Urls
 
 
 init : Model
 init =
     { activate = Authenticator.Activate.State.init
-    , authentication = Nothing
     , changePassword = Authenticator.ChangePassword.State.init "" ""
     , resetPassword = Authenticator.ResetPassword.State.init
     , signIn = Authenticator.SignIn.State.init
@@ -31,9 +29,6 @@ init =
 update : InternalMsg -> Model -> I18n.Language -> ( Model, Cmd Msg )
 update msg model language =
     case msg of
-        ActivateDone authentication ->
-            ( { model | authentication = Just authentication }, Cmd.none )
-
         ActivateMsg subMsg ->
             let
                 ( activate, activateCmd ) =
@@ -43,12 +38,6 @@ update msg model language =
                     { model | activate = activate }
             in
                 ( model_, Cmd.map translateActivateMsg activateCmd )
-
-        ChangePasswordDone authentication ->
-            ( { model | authentication = Just authentication }
-            , ForParent PasswordChanged
-                |> (\msg -> Task.perform (\_ -> msg) (Task.succeed ()))
-            )
 
         ChangePasswordMsg subMsg ->
             let
@@ -72,11 +61,11 @@ update msg model language =
 
         SignInMsg subMsg ->
             let
-                ( signIn, signInCmd, authentication ) =
+                ( signIn, signInCmd ) =
                     Authenticator.SignIn.State.update subMsg model.signIn
 
                 model_ =
-                    { model | authentication = authentication, signIn = signIn }
+                    { model | signIn = signIn }
             in
                 ( model_, Cmd.map translateSignInMsg signInCmd )
 
@@ -86,17 +75,17 @@ update msg model language =
                     Authenticator.SignOut.State.update subMsg model.signOut
 
                 model_ =
-                    { model | authentication = Nothing, signOut = signOut }
+                    { model | signOut = signOut }
             in
-                ( model_, Cmd.map (ForSelf << SignOutMsg) signOutCmd )
+                ( model_, Cmd.map translateSignOutMsg signOutCmd )
 
         SignUpMsg subMsg ->
             let
-                ( signUp, signUpCmd, authentication ) =
+                ( signUp, signUpCmd ) =
                     Authenticator.SignUp.State.update subMsg model.signUp
 
                 model_ =
-                    { model | authentication = authentication, signUp = signUp }
+                    { model | signUp = signUp }
             in
                 ( model_, Cmd.map translateSignUpMsg signUpCmd )
 
@@ -130,17 +119,13 @@ urlUpdate language location route model =
                 )
 
         ResetPasswordRoute ->
-            -- TODO
             ( model, Cmd.none )
 
         SignInRoute ->
-            -- TODO
             ( model, Cmd.none )
 
         SignOutRoute ->
-            -- TODO
             ( model, Cmd.none )
 
         SignUpRoute ->
-            -- TODO
             ( model, Cmd.none )

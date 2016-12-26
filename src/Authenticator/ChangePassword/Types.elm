@@ -10,11 +10,12 @@ type alias Authentication =
 
 
 type ExternalMsg
-    = PasswordChanged Authentication
+    = Terminated (Result () (Maybe Authentication))
 
 
 type InternalMsg
-    = PasswordInput String
+    = Cancel
+    | PasswordInput String
     | PasswordReset (Result Http.Error UserBody)
     | Submit
 
@@ -39,7 +40,7 @@ type Msg
 
 type alias MsgTranslation parentMsg =
     { onInternalMsg : InternalMsg -> parentMsg
-    , onPasswordChanged : Authentication -> parentMsg
+    , onTerminated : Result () (Maybe Authentication) -> parentMsg
     }
 
 
@@ -48,10 +49,10 @@ type alias MsgTranslator parentMsg =
 
 
 translateMsg : MsgTranslation parentMsg -> MsgTranslator parentMsg
-translateMsg { onInternalMsg, onPasswordChanged } msg =
+translateMsg { onInternalMsg, onTerminated } msg =
     case msg of
-        ForParent (PasswordChanged authentication) ->
-            onPasswordChanged authentication
+        ForParent (Terminated result) ->
+            onTerminated result
 
         ForSelf internalMsg ->
             onInternalMsg internalMsg

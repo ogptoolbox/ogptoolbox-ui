@@ -3,7 +3,7 @@ module Root.Types exposing (..)
 import AddNew.Types
 import AddNewCollection.Types
 import Authenticator.Routes
-import Authenticator.Types
+import Authenticator.Types exposing (Authentication)
 import Card.Types
 import Collection.Types
 import Collections.Types
@@ -17,7 +17,9 @@ import UserProfile.Types
 type alias Model =
     { addNewModel : AddNew.Types.Model
     , addNewCollectionModel : AddNewCollection.Types.Model
-    , authentication : Maybe Authenticator.Types.Authentication
+    , authentication : Maybe Authentication
+    , authenticatorCancelMsg : Maybe Msg
+    , authenticatorCompletionMsg : Maybe Msg
     , authenticatorModel : Authenticator.Types.Model
     , authenticatorRoute : Maybe Authenticator.Routes.Route
     , cardModel : Card.Types.Model
@@ -38,23 +40,22 @@ type Msg
     = AddNewMsg AddNew.Types.InternalMsg
     | AddNewCollectionMsg AddNewCollection.Types.InternalMsg
     | AuthenticatorMsg Authenticator.Types.InternalMsg
+    | AuthenticatorTerminated Authenticator.Routes.Route (Result () (Maybe Authentication))
     | CardMsg Card.Types.InternalMsg
-    | ChangeAuthenticatorRoute (Maybe Authenticator.Routes.Route)
+    | ChangeAuthenticatorRoute Authenticator.Routes.Route
     | CloseAuthenticatorModalAndNavigate String
     | CollectionMsg Collection.Types.InternalMsg
     | CollectionsMsg Collections.Types.InternalMsg
-    | DismissAuthenticatorModal
     | DisplayAddNewModal Bool
     | LocationChanged Navigation.Location
     | Navigate String
     | NavigateBack
     | NoOp
-    | PasswordChanged
     | Search
     | SearchInputChanged String
     | SearchMsg Search.Types.InternalMsg
     | SignOutImmediately
-    | StartAuthenticator (Maybe Msg) Authenticator.Routes.Route
+    | StartAuthenticator (Maybe Msg) (Maybe Msg) Authenticator.Routes.Route
     | UserProfileMsg UserProfile.Types.InternalMsg
 
 
@@ -80,7 +81,7 @@ translateAuthenticatorMsg =
         { onChangeRoute = ChangeAuthenticatorRoute
         , onInternalMsg = AuthenticatorMsg
         , onNavigate = CloseAuthenticatorModalAndNavigate
-        , onPasswordChanged = PasswordChanged
+        , onTerminated = AuthenticatorTerminated
         }
 
 

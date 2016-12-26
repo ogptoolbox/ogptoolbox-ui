@@ -3,10 +3,8 @@ module Authenticator.Activate.State exposing (..)
 import Authenticator.Activate.Types exposing (..)
 import Http
 import I18n
-import Ports
 import Requests
 import Task
-import Urls
 import WebData exposing (..)
 
 
@@ -49,29 +47,12 @@ update msg model language =
             in
                 ( model, cmd )
 
-        UserActivated response ->
-            case response of
-                Result.Err err ->
-                    let
-                        _ =
-                            Debug.log "Authenticator.UserActivated Error" err
-                    in
-                        ( Failure err, Cmd.none )
+        UserActivated (Err httpError) ->
+            ( Failure httpError
+            , Task.perform (\_ -> ForParent (Terminated (Err ()))) (Task.succeed ())
+            )
 
-                Result.Ok body ->
-                    let
-                        user =
-                            body.data
-
-                        cmds =
-                            [ Ports.setDocumentMetadata
-                                { description = I18n.translate language I18n.ActivationDescription
-                                , imageUrl = Urls.appLogoFullUrl
-                                , title = I18n.translate language I18n.ActivationTitle
-                                }
-                            , Ports.storeAuthentication (Ports.userToUserForPort (Just user))
-                            , ForParent (Activate user)
-                                |> (\msg -> Task.perform (\_ -> msg) (Task.succeed ()))
-                            ]
-                    in
-                        Data (Loaded user) ! cmds
+        UserActivated (Ok body) ->
+            ( Data (Loaded body.data)
+            , Task.perform (\_ -> ForParent (Terminated (Ok <| Just body.data))) (Task.succeed ())
+            )

@@ -3,6 +3,11 @@ module Authenticator.ResetPassword.Types exposing (..)
 import Authenticator.Routes exposing (Route)
 import Dict exposing (Dict)
 import Http
+import Types exposing (User)
+
+
+type alias Authentication =
+    User
 
 
 type alias Errors =
@@ -10,11 +15,13 @@ type alias Errors =
 
 
 type ExternalMsg
-    = ChangeRoute (Maybe Route)
+    = ChangeRoute Route
+    | Terminated (Result () (Maybe Authentication))
 
 
 type InternalMsg
-    = EmailInput String
+    = Cancel
+    | EmailInput String
     | PasswordReset (Result Http.Error String)
     | Submit
 
@@ -32,8 +39,9 @@ type Msg
 
 
 type alias MsgTranslation parentMsg =
-    { onInternalMsg : InternalMsg -> parentMsg
-    , onChangeRoute : Maybe Route -> parentMsg
+    { onChangeRoute : Route -> parentMsg
+    , onInternalMsg : InternalMsg -> parentMsg
+    , onTerminated : Result () (Maybe Authentication) -> parentMsg
     }
 
 
@@ -42,10 +50,13 @@ type alias MsgTranslator parentMsg =
 
 
 translateMsg : MsgTranslation parentMsg -> MsgTranslator parentMsg
-translateMsg { onChangeRoute, onInternalMsg } msg =
+translateMsg { onChangeRoute, onInternalMsg, onTerminated } msg =
     case msg of
         ForParent (ChangeRoute route) ->
             onChangeRoute route
+
+        ForParent (Terminated result) ->
+            onTerminated result
 
         ForSelf internalMsg ->
             onInternalMsg internalMsg

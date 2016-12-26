@@ -6,8 +6,7 @@ import Decoders
 import Dict exposing (Dict)
 import Http
 import Json.Encode
-import Ports
-import Types exposing (User)
+import Task
 
 
 init : Model
@@ -20,14 +19,19 @@ init =
     }
 
 
-update : InternalMsg -> Model -> ( Model, Cmd Msg, Maybe User )
+update : InternalMsg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        Cancel ->
+            ( { model | httpError = Nothing }
+            , Task.perform (\_ -> ForParent (Terminated (Err ()))) (Task.succeed ())
+            )
+
         EmailInput text ->
-            ( { model | email = text }, Cmd.none, Nothing )
+            ( { model | email = text }, Cmd.none )
 
         PasswordInput text ->
-            ( { model | password = text }, Cmd.none, Nothing )
+            ( { model | password = text }, Cmd.none )
 
         Submit ->
             let
@@ -81,20 +85,15 @@ update msg model =
                     else
                         Cmd.none
             in
-                ( { model | errors = Dict.fromList errorsList }, cmd, Nothing )
+                ( { model | errors = Dict.fromList errorsList }, cmd )
 
         UserCreated (Err httpError) ->
-            ( { model | httpError = Just httpError }, Cmd.none, Nothing )
+            ( { model | httpError = Just httpError }, Cmd.none )
 
         UserCreated (Ok body) ->
-            let
-                user =
-                    Just body.data
-            in
-                ( { model | httpError = Nothing }
-                , Ports.storeAuthentication (Ports.userToUserForPort user)
-                , user
-                )
+            ( { model | httpError = Nothing }
+            , Task.perform (\_ -> ForParent (Terminated (Ok <| Just body.data))) (Task.succeed ())
+            )
 
         UsernameInput text ->
-            ( { model | username = text }, Cmd.none, Nothing )
+            ( { model | username = text }, Cmd.none )

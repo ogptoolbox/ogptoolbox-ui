@@ -3,7 +3,7 @@ module Root.State exposing (..)
 import AddNew.State
 import AddNewCollection.State
 import AddNewCollection.Types
-import Authenticator.Routes
+import Authenticator.Routes exposing (..)
 import Authenticator.State
 import Authenticator.Types
 import Card.State
@@ -38,6 +38,8 @@ init flags location =
     , authentication =
         Json.Decode.decodeValue Decoders.userForPortDecoder flags.authentication
             |> Result.toMaybe
+    , authenticatorCancelMsg = Nothing
+    , authenticatorCompletionMsg = Nothing
     , authenticatorModel = Authenticator.State.init
     , authenticatorRoute = Nothing
     , cardModel = Card.State.init
@@ -59,26 +61,24 @@ init flags location =
         |> update (LocationChanged location)
 
 
-navigateAfterSignOut : Model -> Cmd Msg
-navigateAfterSignOut model =
-    case model.signOutMsg of
-        Just signOutMsg ->
-            -- Execute sign out message to redirect to a new location.
-            Task.perform (\_ -> signOutMsg) (Task.succeed ())
-
-        Nothing ->
-            -- Force page reload when sign out stays at the same location.
-            Navigation.modifyUrl model.location.href
+navigate : String -> String -> Cmd msg
+navigate currentUrlPath urlPath =
+    if currentUrlPath /= urlPath then
+        Navigation.newUrl urlPath
+    else
+        Cmd.none
 
 
 requireSignIn : Msg -> Model -> ( Model, Cmd Msg )
 requireSignIn signOutMsg model =
-    if model.authentication == Nothing then
-        update (StartAuthenticator (Just NavigateBack) Authenticator.Routes.SignInRoute) model
-    else
-        ( { model | signOutMsg = Just signOutMsg }
-        , Cmd.none
-        )
+    let
+        newModel =
+            { model | signOutMsg = Just signOutMsg }
+    in
+        if model.authentication == Nothing then
+            update (StartAuthenticator (Just NavigateBack) Nothing SignInRoute) newModel
+        else
+            ( newModel, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -101,16 +101,6 @@ update msg model =
 
                 _ ->
                     I18n.English
-
-        navigate urlPath =
-            let
-                currentUrlPath =
-                    model.location.href
-            in
-                if currentUrlPath /= urlPath then
-                    Navigation.newUrl urlPath
-                else
-                    Cmd.none
     in
         case msg of
             AddNewMsg childMsg ->
@@ -139,22 +129,50 @@ update msg model =
                 let
                     ( authenticatorModel, childCmd ) =
                         Authenticator.State.update childMsg model.authenticatorModel language
-
-                    changed =
-                        authenticatorModel.authentication /= model.authentication
-
-                    model_ =
-                        { model
-                            | authentication = authenticatorModel.authentication
-                            , authenticatorModel = authenticatorModel
-                            , authenticatorRoute =
-                                if changed then
-                                    Nothing
-                                else
-                                    model.authenticatorRoute
-                        }
                 in
-                    ( model_, Cmd.map translateAuthenticatorMsg childCmd )
+                    ( { model | authenticatorModel = authenticatorModel }
+                    , Cmd.map translateAuthenticatorMsg childCmd
+                    )
+
+            AuthenticatorTerminated route result ->
+                case result of
+                    Err () ->
+                        ( { model
+                            | authenticatorCancelMsg = Nothing
+                            , authenticatorCompletionMsg = Nothing
+                            , authenticatorRoute = Nothing
+                          }
+                        , case model.authenticatorCancelMsg of
+                            Just cancelMsg ->
+                                Task.perform (\_ -> cancelMsg) (Task.succeed ())
+
+                            Nothing ->
+                                Cmd.none
+                        )
+
+                    Ok authentication ->
+                        { model
+                            | authentication = authentication
+                            , authenticatorCancelMsg = Nothing
+                            , authenticatorCompletionMsg = Nothing
+                            , authenticatorRoute = Nothing
+                        }
+                            ! [ Ports.storeAuthentication (Ports.userToUserForPort authentication)
+                              , case model.authenticatorCompletionMsg of
+                                    Just completionMsg ->
+                                        Task.perform (\_ -> completionMsg) (Task.succeed ())
+
+                                    Nothing ->
+                                        -- Don't use navigate to force a page reload.
+                                        Navigation.modifyUrl
+                                            (case route of
+                                                ChangePasswordRoute _ ->
+                                                    Urls.absoluteUrlPathWithLanguage language "/profile"
+
+                                                _ ->
+                                                    model.location.href
+                                            )
+                              ]
 
             CardMsg childMsg ->
                 let
@@ -166,20 +184,13 @@ update msg model =
                     )
 
             ChangeAuthenticatorRoute authenticatorRoute ->
-                ( { model | authenticatorRoute = authenticatorRoute }
-                , if authenticatorRoute == Nothing then
-                    if model.authentication == Nothing then
-                        navigateAfterSignOut model
-                    else
-                        -- Force page reload when authentication modal closes.
-                        Navigation.modifyUrl model.location.href
-                  else
-                    Cmd.none
+                ( { model | authenticatorRoute = Just authenticatorRoute }
+                , Cmd.none
                 )
 
             CloseAuthenticatorModalAndNavigate urlPath ->
                 ( { model | authenticatorRoute = Nothing }
-                , navigate urlPath
+                , navigate model.location.href urlPath
                 )
 
             CollectionMsg childMsg ->
@@ -200,18 +211,6 @@ update msg model =
                     , Cmd.map translateCollectionsMsg childCmd
                     )
 
-            DismissAuthenticatorModal ->
-                let
-                    newModel =
-                        { model | authenticatorRoute = Nothing }
-                in
-                    case model.signOutMsg of
-                        Just signOutMsg ->
-                            update signOutMsg newModel
-
-                        Nothing ->
-                            ( newModel, Cmd.none )
-
             DisplayAddNewModal displayAddNewModal ->
                 ( { model | displayAddNewModal = displayAddNewModal }
                 , Cmd.none
@@ -221,16 +220,13 @@ update msg model =
                 urlUpdate location model
 
             Navigate urlPath ->
-                ( model, navigate urlPath )
+                ( model, navigate model.location.href urlPath )
 
             NavigateBack ->
                 ( model, Navigation.back 1 )
 
             NoOp ->
                 ( model, Cmd.none )
-
-            PasswordChanged ->
-                ( model, navigate <| Urls.absoluteUrlPathWithLanguage language "/profile" )
 
             Search ->
                 let
@@ -252,7 +248,7 @@ update msg model =
                                )
 
                     cmd =
-                        navigate urlPath
+                        navigate model.location.href urlPath
                 in
                     ( model, cmd )
 
@@ -278,15 +274,19 @@ update msg model =
 
             SignOutImmediately ->
                 let
-                    ( model1, cmd1 ) =
-                        update (AuthenticatorMsg Authenticator.Types.signOutMsg) model
+                    newModel =
+                        { model
+                            | authenticatorCancelMsg = Nothing
+                            , authenticatorCompletionMsg = model.signOutMsg
+                        }
                 in
-                    model1 ! [ cmd1, navigateAfterSignOut model ]
+                    update (AuthenticatorMsg Authenticator.Types.signOutMsg) newModel
 
-            StartAuthenticator onCancel authenticatorRoute ->
+            StartAuthenticator cancelMsg completionMsg authenticatorRoute ->
                 if model.authenticatorRoute == Nothing then
                     ( { model
-                        | signOutMsg = onCancel
+                        | authenticatorCancelMsg = cancelMsg
+                        , authenticatorCompletionMsg = completionMsg
                         , authenticatorRoute = Just authenticatorRoute
                       }
                     , Cmd.none
@@ -637,20 +637,17 @@ urlUpdate location model =
 
                                         -- TODO: Everybody can see the collections, but he can't see everything nor edit
                                         -- it.
-                                        authentication =
-                                            case model1.authentication of
-                                                Nothing ->
-                                                    Debug.crash "prevented by viewNotAuthorized"
-
-                                                Just authentication ->
-                                                    authentication
-
                                         ( userProfileModel, childCmd ) =
-                                            UserProfile.State.update
-                                                (UserProfile.Types.LoadCollections authentication.urlName)
-                                                model1.userProfileModel
-                                                authentication
-                                                language
+                                            case model1.authentication of
+                                                Just authentication ->
+                                                    UserProfile.State.update
+                                                        (UserProfile.Types.LoadCollections authentication.urlName)
+                                                        model1.userProfileModel
+                                                        authentication
+                                                        language
+
+                                                Nothing ->
+                                                    ( model1.userProfileModel, Cmd.none )
                                     in
                                         { model1 | userProfileModel = userProfileModel }
                                             ! [ cmd1
@@ -689,8 +686,8 @@ urlUpdate location model =
             ! [ Task.attempt
                     (\result ->
                         case result of
-                            Result.Err _ ->
-                                Debug.crash "Dom.Scroll.toTop \"html-element\""
+                            Result.Err err ->
+                                Debug.crash ("Dom.Scroll.toTop \"html-element\": " ++ toString err)
 
                             Result.Ok _ ->
                                 NoOp

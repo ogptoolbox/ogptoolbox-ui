@@ -59,7 +59,7 @@ view language route model =
 
         SignOutRoute ->
             Html.map
-                (ForSelf << SignOutMsg)
+                translateSignOutMsg
                 (Authenticator.SignOut.View.view language model.signOut)
 
         SignUpRoute ->
@@ -93,15 +93,10 @@ viewModalBody language route model =
 
         SignOutRoute ->
             Html.map
-                (ForSelf << SignOutMsg)
+                translateSignOutMsg
                 (Authenticator.SignOut.View.viewModalBody language model.signOut)
 
         SignUpRoute ->
             Html.map
                 translateSignUpMsg
                 (Authenticator.SignUp.View.viewModalBody language model.signUp)
-
-
-viewNotImplemented : Html Msg
-viewNotImplemented =
-    text "Not implemented"

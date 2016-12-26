@@ -3,7 +3,11 @@ module Authenticator.SignIn.Types exposing (..)
 import Authenticator.Routes exposing (Route)
 import Dict exposing (Dict)
 import Http
-import Types exposing (UserBody)
+import Types exposing (User, UserBody)
+
+
+type alias Authentication =
+    User
 
 
 type alias Errors =
@@ -11,12 +15,14 @@ type alias Errors =
 
 
 type ExternalMsg
-    = ChangeRoute (Maybe Route)
+    = ChangeRoute Route
     | Navigate String
+    | Terminated (Result () (Maybe Authentication))
 
 
 type InternalMsg
-    = EmailInput String
+    = Cancel
+    | EmailInput String
     | SignedIn (Result Http.Error UserBody)
     | Submit
     | PasswordInput String
@@ -36,9 +42,10 @@ type Msg
 
 
 type alias MsgTranslation parentMsg =
-    { onChangeRoute : Maybe Route -> parentMsg
+    { onChangeRoute : Route -> parentMsg
     , onInternalMsg : InternalMsg -> parentMsg
     , onNavigate : String -> parentMsg
+    , onTerminated : Result () (Maybe Authentication) -> parentMsg
     }
 
 
@@ -47,13 +54,16 @@ type alias MsgTranslator parentMsg =
 
 
 translateMsg : MsgTranslation parentMsg -> MsgTranslator parentMsg
-translateMsg { onChangeRoute, onInternalMsg, onNavigate } msg =
+translateMsg { onChangeRoute, onInternalMsg, onNavigate, onTerminated } msg =
     case msg of
         ForParent (ChangeRoute route) ->
             onChangeRoute route
 
-        ForSelf internalMsg ->
-            onInternalMsg internalMsg
-
         ForParent (Navigate path) ->
             onNavigate path
+
+        ForParent (Terminated result) ->
+            onTerminated result
+
+        ForSelf internalMsg ->
+            onInternalMsg internalMsg

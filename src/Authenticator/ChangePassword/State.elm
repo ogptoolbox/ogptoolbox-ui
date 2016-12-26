@@ -4,7 +4,6 @@ import Authenticator.ChangePassword.Types exposing (..)
 import Dict exposing (Dict)
 import Http
 import I18n
-import Ports
 import Requests
 import Task
 
@@ -22,6 +21,11 @@ init userId authorization =
 update : InternalMsg -> Model -> I18n.Language -> ( Model, Cmd Msg )
 update msg model language =
     case msg of
+        Cancel ->
+            ( { model | httpError = Nothing }
+            , Task.perform (\_ -> ForParent (Terminated (Err ()))) (Task.succeed ())
+            )
+
         PasswordInput text ->
             ( { model | password = text }, Cmd.none )
 
@@ -29,17 +33,9 @@ update msg model language =
             ( { model | httpError = Just httpError }, Cmd.none )
 
         PasswordReset (Ok body) ->
-            let
-                user =
-                    body.data
-
-                cmds =
-                    [ Ports.storeAuthentication (Ports.userToUserForPort (Just user))
-                    , ForParent (PasswordChanged user)
-                        |> (\msg -> Task.perform (\_ -> msg) (Task.succeed ()))
-                    ]
-            in
-                { model | httpError = Nothing } ! cmds
+            ( { model | httpError = Nothing }
+            , Task.perform (\_ -> ForParent (Terminated (Ok <| Just body.data))) (Task.succeed ())
+            )
 
         Submit ->
             let

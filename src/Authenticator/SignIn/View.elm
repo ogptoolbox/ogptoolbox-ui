@@ -67,7 +67,7 @@ view language model =
                                 "click"
                                 { preventDefault = True, stopPropagation = False }
                                 (Json.Decode.succeed
-                                    (ForParent (ChangeRoute (Just Authenticator.Routes.ResetPasswordRoute)))
+                                    (ForParent (ChangeRoute Authenticator.Routes.ResetPasswordRoute))
                                 )
                             ]
                             [ small [] [ text (I18n.translate language I18n.ResetPasswordLink) ] ]
@@ -120,7 +120,7 @@ view language model =
                         , onWithOptions
                             "click"
                             { preventDefault = True, stopPropagation = False }
-                            (Json.Decode.succeed (ForParent (ChangeRoute (Just Authenticator.Routes.SignUpRoute))))
+                            (Json.Decode.succeed (ForParent (ChangeRoute Authenticator.Routes.SignUpRoute)))
                         ]
                         [ text (I18n.translate language I18n.RegisterNow) ]
                     ]

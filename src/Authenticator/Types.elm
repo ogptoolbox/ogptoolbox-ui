@@ -3,7 +3,7 @@ module Authenticator.Types exposing (..)
 import Authenticator.Activate.Types
 import Authenticator.ChangePassword.Types
 import Authenticator.ResetPassword.Types
-import Authenticator.Routes exposing (Route)
+import Authenticator.Routes exposing (..)
 import Authenticator.SignIn.Types
 import Authenticator.SignOut.Types
 import Authenticator.SignUp.Types
@@ -15,25 +15,22 @@ type alias Authentication =
 
 
 type ExternalMsg
-    = ChangeRoute (Maybe Route)
+    = ChangeRoute Route
     | Navigate String
-    | PasswordChanged
+    | Terminated Route (Result () (Maybe Authentication))
 
 
 type InternalMsg
-    = ActivateDone Authentication
-    | ActivateMsg Authenticator.Activate.Types.InternalMsg
-    | ChangePasswordDone Authentication
+    = ActivateMsg Authenticator.Activate.Types.InternalMsg
     | ChangePasswordMsg Authenticator.ChangePassword.Types.InternalMsg
     | ResetPasswordMsg Authenticator.ResetPassword.Types.InternalMsg
     | SignInMsg Authenticator.SignIn.Types.InternalMsg
-    | SignOutMsg Authenticator.SignOut.Types.Msg
+    | SignOutMsg Authenticator.SignOut.Types.InternalMsg
     | SignUpMsg Authenticator.SignUp.Types.InternalMsg
 
 
 type alias Model =
     { activate : Authenticator.Activate.Types.Model
-    , authentication : Maybe Authentication
     , changePassword : Authenticator.ChangePassword.Types.Model
     , resetPassword : Authenticator.ResetPassword.Types.Model
     , signIn : Authenticator.SignIn.Types.Model
@@ -48,20 +45,15 @@ type Msg
 
 
 type alias MsgTranslation parentMsg =
-    { onChangeRoute : Maybe Route -> parentMsg
+    { onChangeRoute : Route -> parentMsg
     , onInternalMsg : InternalMsg -> parentMsg
     , onNavigate : String -> parentMsg
-    , onPasswordChanged : parentMsg
+    , onTerminated : Route -> Result () (Maybe Authentication) -> parentMsg
     }
 
 
 type alias MsgTranslator parentMsg =
     Msg -> parentMsg
-
-
-navigate : String -> Msg
-navigate path =
-    ForParent (Navigate path)
 
 
 sendActivationMsg : Authentication -> InternalMsg
@@ -77,8 +69,8 @@ signOutMsg =
 translateActivateMsg : Authenticator.Activate.Types.MsgTranslator Msg
 translateActivateMsg =
     Authenticator.Activate.Types.translateMsg
-        { onActivate = ForSelf << ActivateDone
-        , onInternalMsg = ForSelf << ActivateMsg
+        { onInternalMsg = ForSelf << ActivateMsg
+        , onTerminated = ForParent << (Terminated (ActivateRoute "dummy"))
         }
 
 
@@ -86,12 +78,12 @@ translateChangePasswordMsg : Authenticator.ChangePassword.Types.MsgTranslator Ms
 translateChangePasswordMsg =
     Authenticator.ChangePassword.Types.translateMsg
         { onInternalMsg = ForSelf << ChangePasswordMsg
-        , onPasswordChanged = ForSelf << ChangePasswordDone
+        , onTerminated = ForParent << (Terminated (ChangePasswordRoute "dummy"))
         }
 
 
 translateMsg : MsgTranslation parentMsg -> MsgTranslator parentMsg
-translateMsg { onChangeRoute, onInternalMsg, onNavigate, onPasswordChanged } msg =
+translateMsg { onChangeRoute, onInternalMsg, onNavigate, onTerminated } msg =
     case msg of
         ForParent (ChangeRoute route) ->
             onChangeRoute route
@@ -99,8 +91,8 @@ translateMsg { onChangeRoute, onInternalMsg, onNavigate, onPasswordChanged } msg
         ForParent (Navigate path) ->
             onNavigate path
 
-        ForParent PasswordChanged ->
-            onPasswordChanged
+        ForParent (Terminated route result) ->
+            onTerminated route result
 
         ForSelf internalMsg ->
             onInternalMsg internalMsg
@@ -111,6 +103,7 @@ translateResetPasswordMsg =
     Authenticator.ResetPassword.Types.translateMsg
         { onChangeRoute = ForParent << ChangeRoute
         , onInternalMsg = ForSelf << ResetPasswordMsg
+        , onTerminated = ForParent << (Terminated ResetPasswordRoute)
         }
 
 
@@ -120,6 +113,17 @@ translateSignInMsg =
         { onChangeRoute = ForParent << ChangeRoute
         , onInternalMsg = ForSelf << SignInMsg
         , onNavigate = ForParent << Navigate
+        , onTerminated = ForParent << (Terminated SignInRoute)
+        }
+
+
+translateSignOutMsg : Authenticator.SignOut.Types.MsgTranslator Msg
+translateSignOutMsg =
+    Authenticator.SignOut.Types.translateMsg
+        { onChangeRoute = ForParent << ChangeRoute
+        , onInternalMsg = ForSelf << SignOutMsg
+        , onNavigate = ForParent << Navigate
+        , onTerminated = ForParent << (Terminated SignOutRoute)
         }
 
 
@@ -129,4 +133,5 @@ translateSignUpMsg =
         { onChangeRoute = ForParent << ChangeRoute
         , onInternalMsg = ForSelf << SignUpMsg
         , onNavigate = ForParent << Navigate
+        , onTerminated = ForParent << (Terminated SignUpRoute)
         }

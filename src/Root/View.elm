@@ -322,7 +322,7 @@ viewAuthenticatorModal model language =
                             [ button
                                 [ attribute "data-dismiss" "modal"
                                 , class "close"
-                                , onClick DismissAuthenticatorModal
+                                , onClick (AuthenticatorTerminated authenticatorRoute (Err ()))
                                 , type_ "button"
                                 ]
                                 [ span [ ariaHidden True ]
@@ -533,7 +533,7 @@ viewHeader model language containerClass =
                                 "click"
                                 { preventDefault = True, stopPropagation = False }
                                 (Json.Decode.succeed
-                                    (StartAuthenticator Nothing Authenticator.Routes.SignInRoute)
+                                    (StartAuthenticator Nothing Nothing Authenticator.Routes.SignInRoute)
                                 )
                             ]
                             [ text (I18n.translate language I18n.SignIn) ]

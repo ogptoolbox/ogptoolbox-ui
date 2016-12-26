@@ -20,6 +20,11 @@ init =
 update : InternalMsg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        Cancel ->
+            ( model
+            , Task.perform (\_ -> ForParent (Terminated (Err ()))) (Task.succeed ())
+            )
+
         EmailInput text ->
             ( { model | email = text }, Cmd.none )
 
@@ -27,12 +32,9 @@ update msg model =
             ( { model | httpError = Just httpError }, Cmd.none )
 
         PasswordReset (Ok message) ->
-            let
-                cmd =
-                    ForParent (ChangeRoute Nothing)
-                        |> (\msg -> Task.perform (\_ -> msg) (Task.succeed ()))
-            in
-                ( { model | httpError = Nothing }, cmd )
+            ( { model | httpError = Nothing }
+            , Task.perform (\_ -> ForParent (Terminated (Ok Nothing))) (Task.succeed ())
+            )
 
         Submit ->
             let

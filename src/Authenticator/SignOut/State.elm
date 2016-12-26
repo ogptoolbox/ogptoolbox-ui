@@ -1,7 +1,7 @@
 module Authenticator.SignOut.State exposing (..)
 
 import Authenticator.SignOut.Types exposing (..)
-import Ports
+import Task
 
 
 init : Model
@@ -9,8 +9,15 @@ init =
     {}
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : InternalMsg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        Cancel ->
+            ( model
+            , Task.perform (\_ -> ForParent (Terminated (Err ()))) (Task.succeed ())
+            )
+
         Submit ->
-            ( model, Ports.storeAuthentication Nothing )
+            ( model
+            , Task.perform (\_ -> ForParent (Terminated (Ok Nothing))) (Task.succeed ())
+            )
