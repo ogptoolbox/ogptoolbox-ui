@@ -1175,7 +1175,7 @@ to strengthen governance.
 
         SignOut ->
             { english = s "Sign Out"
-            , french = s "Se déconnecter"
+            , french = s "Me déconnecter"
             , spanish = s "Salir"
             }
 
@@ -1187,7 +1187,7 @@ to strengthen governance.
 
         SignUp ->
             { english = s "Sign Up"
-            , french = s "S'inscrire"
+            , french = s "M'inscrire"
             , spanish = s "Registrarse"
             }
 
