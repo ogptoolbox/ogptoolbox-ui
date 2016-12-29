@@ -113,7 +113,7 @@ viewCard language body editedProperty displayUseItModal =
                         [ container ]
 
 
-viewCardContent : I18n.Language -> Card -> Dict String Card -> Dict String Value -> Html Msg
+viewCardContent : I18n.Language -> Card -> Dict String Card -> Dict String TypedValue -> Html Msg
 viewCardContent language card cards values =
     let
         bestOf keys =
@@ -946,7 +946,7 @@ viewUseItModal language frenchGovDeployUrl =
 --         []
 
 
-viewSidebar : I18n.Language -> Card -> Dict String Value -> Html Msg
+viewSidebar : I18n.Language -> Card -> Dict String TypedValue -> Html Msg
 viewSidebar language card values =
     -- let
     --     viewSimilarTools =
@@ -1230,7 +1230,7 @@ viewSidebar language card values =
         ]
 
 
-viewValueType : I18n.Language -> Dict String Card -> Dict String Value -> Bool -> ValueType -> Html Msg
+viewValueType : I18n.Language -> Dict String Card -> Dict String TypedValue -> Bool -> ValueType -> Html Msg
 viewValueType language cards values showLanguage value =
     let
         cardLink cardId =

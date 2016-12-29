@@ -123,7 +123,7 @@ viewBanner language user collection =
         ]
 
 
-viewCollectionContent : I18n.Language -> User -> Collection -> Dict String Card -> Dict String Value -> Html Msg
+viewCollectionContent : I18n.Language -> User -> Collection -> Dict String Card -> Dict String TypedValue -> Html Msg
 viewCollectionContent language user collection cards values =
     div [ class "row" ]
         [ div [ class "container" ]

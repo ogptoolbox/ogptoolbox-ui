@@ -1409,7 +1409,7 @@ todo =
 -- FUNCTIONS
 
 
-getManyStrings : Language -> List String -> Card -> Dict String Value -> List String
+getManyStrings : Language -> List String -> Card -> Dict String TypedValue -> List String
 getManyStrings language keyIds card values =
     let
         getStrings : ValueType -> List String
@@ -1468,7 +1468,7 @@ getManyStrings language keyIds card values =
             |> Maybe.withDefault []
 
 
-getOneString : Language -> List String -> Card -> Dict String Value -> Maybe String
+getOneString : Language -> List String -> Card -> Dict String TypedValue -> Maybe String
 getOneString language keyIds card values =
     keyIds
         |> List.map
@@ -1480,7 +1480,7 @@ getOneString language keyIds card values =
         |> oneOfMaybes
 
 
-getOneStringFromValueType : Language -> Dict String Value -> ValueType -> Maybe String
+getOneStringFromValueType : Language -> Dict String TypedValue -> ValueType -> Maybe String
 getOneStringFromValueType language values valueType =
     case valueType of
         StringValue value ->
@@ -1518,14 +1518,14 @@ getOneStringFromValueType language values valueType =
             Nothing
 
 
-getName : Language -> Card -> Dict String Value -> String
+getName : Language -> Card -> Dict String TypedValue -> String
 getName language card values =
     -- Note: Name can be Nothing, if down-voted.
     getOneString language nameKeys card values
         |> Maybe.withDefault (translate language UntitledCard)
 
 
-getLocalizedStringFromValueId : Language -> Dict String Value -> String -> String
+getLocalizedStringFromValueId : Language -> Dict String TypedValue -> String -> String
 getLocalizedStringFromValueId language values valueId =
     case Dict.get valueId values of
         Nothing ->
@@ -1541,14 +1541,14 @@ getLocalizedStringFromValueId language values valueId =
                     "This should not happen"
 
 
-getSubTypes : Language -> Card -> Dict String Value -> List String
+getSubTypes : Language -> Card -> Dict String TypedValue -> List String
 getSubTypes language card values =
     List.map
         (getLocalizedStringFromValueId language values)
         card.subTypeIds
 
 
-getTags : Language -> Card -> Dict String Value -> List { tag : String, tagId : String }
+getTags : Language -> Card -> Dict String TypedValue -> List { tag : String, tagId : String }
 getTags language card values =
     List.map
         (\tagId ->
@@ -1559,7 +1559,7 @@ getTags language card values =
         card.tagIds
 
 
-getUsages : Language -> Card -> Dict String Value -> List { tag : String, tagId : String }
+getUsages : Language -> Card -> Dict String TypedValue -> List { tag : String, tagId : String }
 getUsages language card values =
     List.map
         (\tagId ->

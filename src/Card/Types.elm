@@ -14,7 +14,7 @@ type alias EditedProperty =
     , properties : Dict String Property
     , propertyIds : List String
     , selectedField : Field
-    , values : Dict String Value
+    , values : Dict String TypedValue
     }
 
 

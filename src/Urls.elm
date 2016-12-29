@@ -60,7 +60,7 @@ fullUrl url =
             url
 
 
-imageFullUrl : I18n.Language -> String -> Card -> Dict String Value -> Maybe String
+imageFullUrl : I18n.Language -> String -> Card -> Dict String TypedValue -> Maybe String
 imageFullUrl language dim card values =
     case logoFullUrl language dim card values of
         Nothing ->
@@ -70,7 +70,7 @@ imageFullUrl language dim card values =
             Just url
 
 
-imageOrAppLogoFullUrl : I18n.Language -> String -> Dict String Card -> Dict String Value -> String
+imageOrAppLogoFullUrl : I18n.Language -> String -> Dict String Card -> Dict String TypedValue -> String
 imageOrAppLogoFullUrl language cardId cards values =
     case Dict.get cardId cards of
         Nothing ->
@@ -85,7 +85,7 @@ imageOrAppLogoFullUrl language cardId cards values =
                     fullApiUrl urlPath
 
 
-logoFullUrl : I18n.Language -> String -> Card -> Dict String Value -> Maybe String
+logoFullUrl : I18n.Language -> String -> Card -> Dict String TypedValue -> Maybe String
 logoFullUrl language dim card values =
     I18n.getOneString language imageLogoUrlPathKeys card values
         |> Maybe.map
@@ -155,7 +155,7 @@ replaceLanguageInLocation language location =
         Erl.toString newUrl
 
 
-screenshotFullUrl : I18n.Language -> String -> Card -> Dict String Value -> Maybe String
+screenshotFullUrl : I18n.Language -> String -> Card -> Dict String TypedValue -> Maybe String
 screenshotFullUrl language dim card values =
     I18n.getOneString language imageScreenshotUrlPathKeys card values
         |> Maybe.map

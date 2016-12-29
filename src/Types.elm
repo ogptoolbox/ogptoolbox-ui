@@ -59,7 +59,7 @@ type alias DataId =
     , id : String
     , properties : Dict String Property
     , users : Dict String User
-    , values : Dict String Value
+    , values : Dict String TypedValue
     }
 
 
@@ -75,7 +75,7 @@ type alias DataIds =
     , ids : List String
     , properties : Dict String Property
     , users : Dict String User
-    , values : Dict String Value
+    , values : Dict String TypedValue
     }
 
 
@@ -119,7 +119,7 @@ type alias PopularTag =
 
 type alias PopularTagsData =
     { popularity : List PopularTag
-    , values : Dict String Value
+    , values : Dict String TypedValue
     }
 
 
@@ -141,6 +141,16 @@ type alias Property =
     , tags : List (Dict String String)
     , type_ : String
     , valueId : String
+    }
+
+
+type alias TypedValue =
+    { createdAt : String
+    , id : String
+    , schemaId : String
+    , type_ : String
+    , value : ValueType
+    , widgetId : String
     }
 
 
@@ -169,16 +179,6 @@ type alias UserForPort =
 
 type alias UserBody =
     { data : User
-    }
-
-
-type alias Value =
-    { createdAt : String
-    , id : String
-    , schemaId : String
-    , type_ : String
-    , value : ValueType
-    , widgetId : String
     }
 
 
@@ -249,7 +249,7 @@ getProperty properties id =
             property
 
 
-getValue : Dict String Value -> String -> Value
+getValue : Dict String TypedValue -> String -> TypedValue
 getValue values id =
     case Dict.get id values of
         Nothing ->

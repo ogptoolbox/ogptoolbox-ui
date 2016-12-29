@@ -191,7 +191,7 @@ userForPortDecoder =
         |: (field "urlName" string)
 
 
-valueDecoder : Decoder Types.Value
+valueDecoder : Decoder Types.TypedValue
 valueDecoder =
     map5 (,,,,)
         (field "createdAt" string)
@@ -202,7 +202,7 @@ valueDecoder =
         |> andThen
             (\( createdAt, id, schemaId, type_, widgetId ) ->
                 (field "value" (valueTypeDecoder schemaId))
-                    |> map (\value -> Types.Value createdAt id schemaId type_ value widgetId)
+                    |> map (\value -> Types.TypedValue createdAt id schemaId type_ value widgetId)
             )
 
 

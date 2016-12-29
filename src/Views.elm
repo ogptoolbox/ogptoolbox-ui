@@ -61,7 +61,7 @@ viewBigMessage title message =
         ]
 
 
-viewCardListItem : (String -> msg) -> I18n.Language -> Dict String Value -> Card -> Html msg
+viewCardListItem : (String -> msg) -> I18n.Language -> Dict String TypedValue -> Card -> Html msg
 viewCardListItem navigate language values card =
     let
         name =
@@ -137,7 +137,7 @@ viewCardListItem navigate language values card =
             ]
 
 
-viewCardThumbnail : I18n.Language -> (String -> msg) -> String -> Dict String Value -> Card -> Html msg
+viewCardThumbnail : I18n.Language -> (String -> msg) -> String -> Dict String TypedValue -> Card -> Html msg
 viewCardThumbnail language navigate extraClass values card =
     let
         name =
@@ -212,7 +212,7 @@ viewNotFound language =
         (I18n.translate language I18n.PageNotFoundExplanation)
 
 
-viewTagsWithCallToAction : (String -> msg) -> I18n.Language -> Dict String Value -> Card -> Html msg
+viewTagsWithCallToAction : (String -> msg) -> I18n.Language -> Dict String TypedValue -> Card -> Html msg
 viewTagsWithCallToAction navigate language values card =
     div [ class "tags" ]
         (case I18n.getTags language card values of
