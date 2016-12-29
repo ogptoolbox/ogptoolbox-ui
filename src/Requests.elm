@@ -1,7 +1,7 @@
 module Requests exposing (..)
 
 import AddNewCollection.Types exposing (..)
-import Authenticator.Types
+import Authenticator.Types exposing (Authentication)
 import Configuration exposing (apiUrl)
 import Decoders exposing (..)
 import Dict exposing (Dict)
@@ -32,7 +32,7 @@ activateUser userId authorization =
         }
 
 
-authenticationHeaders : Maybe Authenticator.Types.Authentication -> List Http.Header
+authenticationHeaders : Maybe Authentication -> List Http.Header
 authenticationHeaders authentication =
     case authentication of
         Just authentication ->
@@ -61,7 +61,7 @@ extractId url =
             )
 
 
-getCard : Maybe Authenticator.Types.Authentication -> String -> Http.Request DataIdBody
+getCard : Maybe Authentication -> String -> Http.Request DataIdBody
 getCard authentication cardId =
     Http.request
         { method = "GET"
@@ -74,13 +74,7 @@ getCard authentication cardId =
         }
 
 
-getCards :
-    Maybe Authenticator.Types.Authentication
-    -> String
-    -> Maybe Int
-    -> List String
-    -> List String
-    -> Http.Request DataIdsBody
+getCards : Maybe Authentication -> String -> Maybe Int -> List String -> List String -> Http.Request DataIdsBody
 getCards authentication searchQuery limit tagIds cardTypes =
     Http.request
         { method = "GET"
@@ -114,10 +108,7 @@ getCards authentication searchQuery limit tagIds cardTypes =
         }
 
 
-getCollection :
-    Maybe Authenticator.Types.Authentication
-    -> String
-    -> Http.Request DataIdBody
+getCollection : Maybe Authentication -> String -> Http.Request DataIdBody
 getCollection authentication collectionId =
     Http.request
         { method = "GET"
@@ -130,10 +121,7 @@ getCollection authentication collectionId =
         }
 
 
-getCollections :
-    Maybe Authenticator.Types.Authentication
-    -> Maybe Int
-    -> Http.Request DataIdsBody
+getCollections : Maybe Authentication -> Maybe Int -> Http.Request DataIdsBody
 getCollections authentication limit =
     Http.request
         { method = "GET"
@@ -155,7 +143,7 @@ getCollections authentication limit =
         }
 
 
-getCollectionsForAuthor : Authenticator.Types.Authentication -> Http.Request DataIdsBody
+getCollectionsForAuthor : Authentication -> Http.Request DataIdsBody
 getCollectionsForAuthor authentication =
     Http.request
         { method = "GET"
@@ -168,11 +156,7 @@ getCollectionsForAuthor authentication =
         }
 
 
-getObjectProperties :
-    Maybe Authenticator.Types.Authentication
-    -> String
-    -> String
-    -> Http.Request DataIdsBody
+getObjectProperties : Maybe Authentication -> String -> String -> Http.Request DataIdsBody
 getObjectProperties authentication objectId keyId =
     Http.request
         { method = "GET"
@@ -185,10 +169,7 @@ getObjectProperties authentication objectId keyId =
         }
 
 
-getTagsPopularity :
-    Maybe Authenticator.Types.Authentication
-    -> List String
-    -> Http.Request PopularTagsData
+getTagsPopularity : Maybe Authentication -> List String -> Http.Request PopularTagsData
 getTagsPopularity authentication tagIds =
     Http.request
         { method = "GET"
@@ -208,11 +189,7 @@ getTagsPopularity authentication tagIds =
         }
 
 
-postCard :
-    Maybe Authenticator.Types.Authentication
-    -> Dict String String
-    -> I18n.Language
-    -> Http.Request DataIdBody
+postCard : Maybe Authentication -> Dict String String -> I18n.Language -> Http.Request DataIdBody
 postCard authentication fields language =
     let
         languageCode =
@@ -265,12 +242,7 @@ postCard authentication fields language =
             }
 
 
-postCollection :
-    Maybe Authenticator.Types.Authentication
-    -> Maybe String
-    -> AddNewCollectionFields
-    -> String
-    -> Http.Request DataIdBody
+postCollection : Maybe Authentication -> Maybe String -> AddNewCollectionFields -> String -> Http.Request DataIdBody
 postCollection authentication editedCollectionId fields imageUrlPath =
     let
         cardIds : List String
@@ -303,12 +275,7 @@ postCollection authentication editedCollectionId fields imageUrlPath =
             }
 
 
-postProperty :
-    Maybe Authenticator.Types.Authentication
-    -> String
-    -> String
-    -> String
-    -> Http.Request DataIdBody
+postProperty : Maybe Authentication -> String -> String -> String -> Http.Request DataIdBody
 postProperty authentication objectId keyId valueId =
     Http.request
         { method = "POST"
@@ -327,7 +294,7 @@ postProperty authentication objectId keyId valueId =
         }
 
 
-postUploadImage : Maybe Authenticator.Types.Authentication -> String -> Http.Request String
+postUploadImage : Maybe Authentication -> String -> Http.Request String
 postUploadImage authentication contents =
     Http.request
         { method = "POST"
@@ -342,7 +309,7 @@ postUploadImage authentication contents =
         }
 
 
-postValue : Maybe Authenticator.Types.Authentication -> Field -> Http.Request DataIdBody
+postValue : Maybe Authentication -> Field -> Http.Request DataIdBody
 postValue authentication field =
     let
         ( schemaId, widgetId, encodedValue ) =
@@ -404,7 +371,7 @@ postValue authentication field =
             }
 
 
-rateProperty : Maybe Authenticator.Types.Authentication -> String -> Int -> Http.Request DataIdBody
+rateProperty : Maybe Authentication -> String -> Int -> Http.Request DataIdBody
 rateProperty authentication propertyId rating =
     Http.request
         { method = "POST"
@@ -436,7 +403,7 @@ resetPassword userId authorization password =
             }
 
 
-sendActivation : Authenticator.Types.Authentication -> Http.Request UserBody
+sendActivation : Authentication -> Http.Request UserBody
 sendActivation authentication =
     Http.request
         { method = "GET"
