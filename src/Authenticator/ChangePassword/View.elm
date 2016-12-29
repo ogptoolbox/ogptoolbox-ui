@@ -61,7 +61,7 @@ view language model =
                 [ div [ class "col-xs-12" ]
                     [ div [ class "well" ]
                         [ Html.form [ onSubmit (ForSelf <| Submit) ]
-                            [ viewPasswordField
+                            [ viewPasswordControl
                                 (ForSelf << PasswordInput)
                                 language
                                 (Dict.get "password" model.errors)

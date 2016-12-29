@@ -49,7 +49,7 @@ view language model =
                     [ Html.form [ onSubmit (ForSelf <| Submit) ]
                         [ p []
                             [ text (I18n.translate language I18n.ResetPasswordExplanation) ]
-                        , viewEmailField
+                        , viewEmailControl
                             (ForSelf << EmailInput)
                             language
                             (Dict.get "email" model.errors)

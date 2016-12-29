@@ -49,17 +49,17 @@ view language model =
                 [ div [ class "col-xs-7" ]
                     [ div [ class "well" ]
                         [ Html.form [ onSubmit (ForSelf <| Submit) ]
-                            [ viewUsernameField
+                            [ viewUsernameControl
                                 (ForSelf << UsernameInput)
                                 language
                                 (Dict.get "username" model.errors)
                                 model.username
-                            , viewEmailField
+                            , viewEmailControl
                                 (ForSelf << EmailInput)
                                 language
                                 (Dict.get "email" model.errors)
                                 model.email
-                            , viewPasswordField
+                            , viewPasswordControl
                                 (ForSelf << PasswordInput)
                                 language
                                 (Dict.get "password" model.errors)

@@ -29,8 +29,8 @@ errorInfos fieldId error =
                 ( "", [], [] )
 
 
-viewEmailField : (String -> msg) -> I18n.Language -> Maybe String -> String -> Html msg
-viewEmailField valueChanged language error fieldValue =
+viewEmailControl : (String -> msg) -> I18n.Language -> Maybe String -> String -> Html msg
+viewEmailControl valueChanged language error fieldValue =
     let
         fieldId =
             "email"
@@ -67,8 +67,8 @@ viewEmailField valueChanged language error fieldValue =
             )
 
 
-viewPasswordField : (String -> msg) -> I18n.Language -> Maybe String -> String -> Html msg
-viewPasswordField valueChanged language error fieldValue =
+viewPasswordControl : (String -> msg) -> I18n.Language -> Maybe String -> String -> Html msg
+viewPasswordControl valueChanged language error fieldValue =
     let
         fieldId =
             "password"
@@ -105,8 +105,8 @@ viewPasswordField valueChanged language error fieldValue =
             )
 
 
-viewUsernameField : (String -> msg) -> I18n.Language -> Maybe String -> String -> Html msg
-viewUsernameField valueChanged language error fieldValue =
+viewUsernameControl : (String -> msg) -> I18n.Language -> Maybe String -> String -> Html msg
+viewUsernameControl valueChanged language error fieldValue =
     let
         fieldId =
             "username"

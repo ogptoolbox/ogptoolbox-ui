@@ -50,12 +50,12 @@ view language model =
             [ div [ class "col-xs-6" ]
                 [ div [ class "well" ]
                     [ Html.form [ onSubmit (ForSelf <| Submit) ]
-                        [ viewEmailField
+                        [ viewEmailControl
                             (ForSelf << EmailInput)
                             language
                             (Dict.get "email" model.errors)
                             model.email
-                        , viewPasswordField
+                        , viewPasswordControl
                             (ForSelf << PasswordInput)
                             language
                             (Dict.get "password" model.errors)
