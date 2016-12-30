@@ -452,7 +452,7 @@ viewMetrics language location model =
                 , aForPath
                     navigate
                     language
-                    (Urls.urlBasePathForCardType UseCaseCard
+                    (Urls.basePathForCardType UseCaseCard
                         ++ (Urls.queryStringForParams [ "q", "tagIds" ] location)
                     )
                     []
@@ -465,7 +465,7 @@ viewMetrics language location model =
                 , aForPath
                     navigate
                     language
-                    (Urls.urlBasePathForCardType ToolCard
+                    (Urls.basePathForCardType ToolCard
                         ++ (Urls.queryStringForParams [ "q", "tagIds" ] location)
                     )
                     []
@@ -478,7 +478,7 @@ viewMetrics language location model =
                 , aForPath
                     navigate
                     language
-                    (Urls.urlBasePathForCardType OrganizationCard
+                    (Urls.basePathForCardType OrganizationCard
                         ++ (Urls.queryStringForParams [ "q", "tagIds" ] location)
                     )
                     []
@@ -537,7 +537,7 @@ viewThumbnails language location thumbnailExtraClasses loadingStatus =
                                         [ aForPath
                                             navigate
                                             language
-                                            ((Urls.urlBasePathForCard firstCard)
+                                            ((Urls.basePathForCard firstCard)
                                                 ++ (Urls.queryStringForParams [ "q", "tagIds" ] location)
                                             )
                                             [ class "show-more" ]

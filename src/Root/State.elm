@@ -167,7 +167,7 @@ update msg model =
                                         Navigation.modifyUrl
                                             (case route of
                                                 ChangePasswordRoute _ ->
-                                                    Urls.absoluteUrlPathWithLanguage language "/profile"
+                                                    Urls.languagePath language "/profile"
 
                                                 _ ->
                                                     model.location.href
@@ -632,7 +632,7 @@ urlUpdate location model =
                                         ( model1, cmd1 ) =
                                             requireSignIn
                                                 -- Logout => Home
-                                                (Navigate (Urls.absoluteUrlPathWithLanguage language "/"))
+                                                (Navigate (Urls.languagePath language "/"))
                                                 model
 
                                         -- TODO: Everybody can see the collections, but he can't see everything nor edit
@@ -662,7 +662,7 @@ urlUpdate location model =
                             model.navigatorLanguage |> Maybe.withDefault I18n.English
 
                         command =
-                            Urls.absoluteUrlPathWithLanguage language
+                            Urls.languagePath language
                                 (urlPath ++ (Urls.queryStringForParams [ "q", "tagIds" ] location))
                                 |> Navigation.modifyUrl
                     in

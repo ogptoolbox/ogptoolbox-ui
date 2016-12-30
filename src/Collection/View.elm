@@ -137,7 +137,7 @@ viewCollectionContent language user collection cards values =
                             (let
                                 url =
                                     Urls.fullUrl
-                                        (Urls.absoluteUrlPathWithLanguage language ("/collections/" ++ collection.id))
+                                        (Urls.languagePath language ("/collections/" ++ collection.id))
 
                                 imageUrl =
                                     collection.logo |> Maybe.withDefault Urls.appLogoFullUrl

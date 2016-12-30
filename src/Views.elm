@@ -68,7 +68,7 @@ viewCardListItem navigate language values card =
             I18n.getName language card values
 
         urlPath =
-            Urls.urlPathForCard card
+            Urls.pathForCard card
 
         cardType =
             getCardType card
@@ -144,7 +144,7 @@ viewCardThumbnail language navigate extraClass values card =
             I18n.getName language card values
 
         urlPath =
-            Urls.urlPathForCard card
+            Urls.pathForCard card
 
         cardType =
             getCardType card
@@ -230,7 +230,7 @@ viewTagsWithCallToAction navigate language values card =
                         (\{ tag, tagId } ->
                             let
                                 urlPath =
-                                    Urls.urlBasePathForCard card ++ "?tagIds=" ++ tagId
+                                    Urls.basePathForCard card ++ "?tagIds=" ++ tagId
                             in
                                 aForPath
                                     navigate

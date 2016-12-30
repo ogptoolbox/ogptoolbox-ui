@@ -73,7 +73,7 @@ view { organizations, tools, useCases } activeCardType language location =
                                 [ aForPath
                                     navigate
                                     language
-                                    ((Urls.urlBasePathForCardType cardType)
+                                    ((Urls.basePathForCardType cardType)
                                         ++ (Urls.queryStringForParams [ "q", "tagIds" ] location)
                                     )
                                     []

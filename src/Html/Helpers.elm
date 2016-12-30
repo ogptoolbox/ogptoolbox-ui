@@ -24,7 +24,7 @@ aForPath : (String -> msg) -> I18n.Language -> String -> List (Attribute msg) ->
 aForPath navigate language urlPath attributes children =
     let
         urlPathWithLanguage =
-            Urls.absoluteUrlPathWithLanguage language urlPath
+            Urls.languagePath language urlPath
     in
         a
             ([ href urlPathWithLanguage

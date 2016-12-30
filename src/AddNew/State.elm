@@ -44,10 +44,10 @@ update msg model authentication language =
                     let
                         urlPath =
                             getCard body.data.cards body.data.id
-                                |> Urls.urlPathForCard
+                                |> Urls.pathForCard
 
                         cmd =
-                            Urls.absoluteUrlPathWithLanguage language urlPath
+                            Urls.languagePath language urlPath
                                 |> Navigation.newUrl
                     in
                         ( model, cmd )

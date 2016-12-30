@@ -55,7 +55,7 @@ update msg ({ fields } as model) authentication language =
                             "/collections/" ++ body.data.id
 
                         cmd =
-                            Urls.absoluteUrlPathWithLanguage language urlPath
+                            Urls.languagePath language urlPath
                                 |> Navigation.newUrl
                     in
                         ( newModel, cmd )

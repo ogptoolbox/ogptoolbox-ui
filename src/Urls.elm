@@ -10,14 +10,27 @@ import Navigation
 import Types exposing (..)
 
 
-absoluteUrlPathWithLanguage : I18n.Language -> String -> String
-absoluteUrlPathWithLanguage language urlPath =
-    "/" ++ (I18n.iso639_1FromLanguage language) ++ urlPath
-
-
 appLogoFullUrl : String
 appLogoFullUrl =
     Configuration.appUrl ++ "img/ogptoolbox-logo.png"
+
+
+basePathForCardType : CardType -> String
+basePathForCardType cardType =
+    case cardType of
+        OrganizationCard ->
+            "/organizations/"
+
+        ToolCard ->
+            "/tools/"
+
+        UseCaseCard ->
+            "/use-cases/"
+
+
+basePathForCard : Card -> String
+basePathForCard card =
+    basePathForCardType (getCardType card)
 
 
 fullApiUrl : String -> String
@@ -81,15 +94,20 @@ imageOrAppLogoFullUrl language cardId cards values =
                 Nothing ->
                     appLogoFullUrl
 
-                Just urlPath ->
-                    fullApiUrl urlPath
+                Just path ->
+                    fullApiUrl path
+
+
+languagePath : I18n.Language -> String -> String
+languagePath language path =
+    "/" ++ (I18n.iso639_1FromLanguage language) ++ path
 
 
 logoFullUrl : I18n.Language -> String -> Card -> Dict String TypedValue -> Maybe String
 logoFullUrl language dim card values =
     I18n.getOneString language imageLogoUrlPathKeys card values
         |> Maybe.map
-            (\urlPath -> fullApiUrl urlPath ++ "?dim=" ++ dim)
+            (\path -> fullApiUrl path ++ "?dim=" ++ dim)
 
 
 parentUrl : String -> String
@@ -102,6 +120,11 @@ parentUrl url =
             url
         else
             Erl.toString <| { parsedUrl | path = List.Extra.init parsedUrl.path |> Maybe.withDefault [] }
+
+
+pathForCard : Card -> String
+pathForCard card =
+    (basePathForCard card) ++ card.id
 
 
 querySearchTerm : Navigation.Location -> String
@@ -159,27 +182,4 @@ screenshotFullUrl : I18n.Language -> String -> Card -> Dict String TypedValue ->
 screenshotFullUrl language dim card values =
     I18n.getOneString language imageScreenshotUrlPathKeys card values
         |> Maybe.map
-            (\urlPath -> fullApiUrl urlPath ++ "?dim=" ++ dim)
-
-
-urlBasePathForCardType : CardType -> String
-urlBasePathForCardType cardType =
-    case cardType of
-        OrganizationCard ->
-            "/organizations/"
-
-        ToolCard ->
-            "/tools/"
-
-        UseCaseCard ->
-            "/use-cases/"
-
-
-urlBasePathForCard : Card -> String
-urlBasePathForCard card =
-    urlBasePathForCardType (getCardType card)
-
-
-urlPathForCard : Card -> String
-urlPathForCard card =
-    (urlBasePathForCard card) ++ card.id
+            (\path -> fullApiUrl path ++ "?dim=" ++ dim)

@@ -198,7 +198,7 @@ viewCardContent language card cards values =
                                 (\{ tag, tagId } ->
                                     let
                                         urlPath =
-                                            Urls.urlBasePathForCard card ++ "?tagIds=" ++ tagId
+                                            Urls.basePathForCard card ++ "?tagIds=" ++ tagId
                                     in
                                         aForPath
                                             navigate
@@ -1124,7 +1124,7 @@ viewSidebar language card values =
                                         (\{ tag, tagId } ->
                                             let
                                                 urlPath =
-                                                    Urls.urlBasePathForCard card ++ "?tagIds=" ++ tagId
+                                                    Urls.basePathForCard card ++ "?tagIds=" ++ tagId
                                             in
                                                 aForPath
                                                     navigate
@@ -1157,7 +1157,7 @@ viewSidebar language card values =
 
                             url =
                                 Urls.fullUrl
-                                    (Urls.absoluteUrlPathWithLanguage language (Urls.urlPathForCard card))
+                                    (Urls.languagePath language (Urls.pathForCard card))
 
                             facebookUrl =
                                 "http://www.facebook.com/sharer.php?s=100&p[title]="
@@ -1249,7 +1249,7 @@ viewValueType language cards values showLanguage value =
                                     name
 
                         urlPath =
-                            Urls.urlPathForCard card
+                            Urls.pathForCard card
                     in
                         aForPath navigate language urlPath [] [ text linkText ]
     in
