@@ -67,6 +67,7 @@ type TranslationId
     | CreateOrganizationPage
     | CreateYourAccount
     | Email
+    | EmailPlaceholder
     | EmailSentForAccountActivation String
     | EnterEmail
     | EnterPassword
@@ -602,6 +603,12 @@ getTranslationSet translationId =
         Email ->
             { english = s "Email"
             , french = s "Courriel"
+            , spanish = todo
+            }
+
+        EmailPlaceholder ->
+            { english = s "john.doe@example.com"
+            , french = s "martine.dupont@exemple.fr"
             , spanish = todo
             }
 

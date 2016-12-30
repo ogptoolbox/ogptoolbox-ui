@@ -39,7 +39,7 @@ viewEmailControl valueChanged language error controlValue =
             I18n.translate language I18n.Email
 
         controlPlaceholder =
-            "john.doe@example.com"
+            I18n.translate language I18n.EmailPlaceholder
 
         controlTitle =
             I18n.translate language I18n.EnterEmail
