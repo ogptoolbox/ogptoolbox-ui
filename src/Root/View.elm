@@ -366,7 +366,7 @@ viewFooter model language =
                                     [ text (I18n.translate language I18n.LanguageWord) ]
                                 , div [ class "dropdown dropdown-language" ]
                                     [ button
-                                        [ attribute "aria-expanded" "true"
+                                        [ attribute "aria-expanded" "false"
                                         , attribute "aria-haspopup" "true"
                                         , class "btn btn-default dropdown-toggle"
                                         , attribute "data-toggle" "dropdown"
@@ -383,7 +383,7 @@ viewFooter model language =
                                                     [ href urlPath
                                                     , onWithOptions
                                                         "click"
-                                                        { stopPropagation = True, preventDefault = True }
+                                                        { stopPropagation = False, preventDefault = True }
                                                         (Json.Decode.succeed (Navigate urlPath))
                                                     ]
                                                     children
