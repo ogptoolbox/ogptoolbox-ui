@@ -8,10 +8,10 @@ import I18n
 
 
 errorInfos : String -> Maybe String -> ( String, List (Attribute msg), List (Html msg1) )
-errorInfos fieldId error =
+errorInfos controlId error =
     let
         errorId =
-            fieldId ++ "-error"
+            controlId ++ "-error"
     in
         case error of
             Just error ->
@@ -30,33 +30,33 @@ errorInfos fieldId error =
 
 
 viewEmailControl : (String -> msg) -> I18n.Language -> Maybe String -> String -> Html msg
-viewEmailControl valueChanged language error fieldValue =
+viewEmailControl valueChanged language error controlValue =
     let
-        fieldId =
+        controlId =
             "email"
 
-        fieldLabel =
+        controlLabel =
             I18n.translate language I18n.Email
 
-        fieldPlaceholder =
+        controlPlaceholder =
             "john.doe@example.com"
 
-        fieldTitle =
+        controlTitle =
             I18n.translate language I18n.EnterEmail
 
         ( errorClass, errorAttributes, errorBlock ) =
-            errorInfos fieldId error
+            errorInfos controlId error
     in
         div [ class ("form-group" ++ errorClass) ]
-            ([ label [ class "control-label", for fieldId ] [ text fieldLabel ]
+            ([ label [ class "control-label", for controlId ] [ text controlLabel ]
              , input
                 ([ class "form-control"
-                 , id fieldId
-                 , placeholder fieldPlaceholder
+                 , id controlId
+                 , placeholder controlPlaceholder
                  , required True
-                 , title fieldTitle
+                 , title controlTitle
                  , type_ "email"
-                 , value fieldValue
+                 , value controlValue
                  , onInput valueChanged
                  ]
                     ++ errorAttributes
@@ -68,33 +68,33 @@ viewEmailControl valueChanged language error fieldValue =
 
 
 viewPasswordControl : (String -> msg) -> I18n.Language -> Maybe String -> String -> Html msg
-viewPasswordControl valueChanged language error fieldValue =
+viewPasswordControl valueChanged language error controlValue =
     let
-        fieldId =
+        controlId =
             "password"
 
-        fieldLabel =
+        controlLabel =
             I18n.translate language I18n.Password
 
-        fieldPlaceholder =
+        controlPlaceholder =
             I18n.translate language I18n.PasswordPlaceholder
 
-        fieldTitle =
+        controlTitle =
             I18n.translate language I18n.EnterPassword
 
         ( errorClass, errorAttributes, errorBlock ) =
-            errorInfos fieldId error
+            errorInfos controlId error
     in
         div [ class ("form-group" ++ errorClass) ]
-            ([ label [ class "control-label", for fieldId ] [ text fieldLabel ]
+            ([ label [ class "control-label", for controlId ] [ text controlLabel ]
              , input
                 ([ class "form-control"
-                 , id fieldId
-                 , placeholder fieldPlaceholder
+                 , id controlId
+                 , placeholder controlPlaceholder
                  , required True
-                 , title fieldTitle
+                 , title controlTitle
                  , type_ "password"
-                 , value fieldValue
+                 , value controlValue
                  , onInput valueChanged
                  ]
                     ++ errorAttributes
@@ -106,33 +106,33 @@ viewPasswordControl valueChanged language error fieldValue =
 
 
 viewUsernameControl : (String -> msg) -> I18n.Language -> Maybe String -> String -> Html msg
-viewUsernameControl valueChanged language error fieldValue =
+viewUsernameControl valueChanged language error controlValue =
     let
-        fieldId =
+        controlId =
             "username"
 
-        fieldLabel =
+        controlLabel =
             I18n.translate language I18n.Username
 
-        fieldPlaceholder =
+        controlPlaceholder =
             I18n.translate language I18n.UsernamePlaceholder
 
-        fieldTitle =
+        controlTitle =
             I18n.translate language I18n.EnterUsername
 
         ( errorClass, errorAttributes, errorBlock ) =
-            errorInfos fieldId error
+            errorInfos controlId error
     in
         div [ class ("form-group" ++ errorClass) ]
-            ([ label [ class "control-label", for fieldId ] [ text fieldLabel ]
+            ([ label [ class "control-label", for controlId ] [ text controlLabel ]
              , input
                 ([ class "form-control"
-                 , id fieldId
-                 , placeholder fieldPlaceholder
+                 , id controlId
+                 , placeholder controlPlaceholder
                  , required True
-                 , title fieldTitle
+                 , title controlTitle
                  , type_ "text"
-                 , value fieldValue
+                 , value controlValue
                  , onInput valueChanged
                  ]
                     ++ errorAttributes
