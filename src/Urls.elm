@@ -90,7 +90,7 @@ imageOrAppLogoFullUrl language cardId cards values =
             appLogoFullUrl
 
         Just card ->
-            case I18n.getOneString language imageUrlPathKeys card values of
+            case I18n.getOneString language imagePathKeys card values of
                 Nothing ->
                     appLogoFullUrl
 
@@ -105,7 +105,7 @@ languagePath language path =
 
 logoFullUrl : I18n.Language -> String -> Card -> Dict String TypedValue -> Maybe String
 logoFullUrl language dim card values =
-    I18n.getOneString language imageLogoUrlPathKeys card values
+    I18n.getOneString language imageLogoPathKeys card values
         |> Maybe.map
             (\path -> fullApiUrl path ++ "?dim=" ++ dim)
 
@@ -180,6 +180,6 @@ replaceLanguageInLocation language location =
 
 screenshotFullUrl : I18n.Language -> String -> Card -> Dict String TypedValue -> Maybe String
 screenshotFullUrl language dim card values =
-    I18n.getOneString language imageScreenshotUrlPathKeys card values
+    I18n.getOneString language imageScreenshotPathKeys card values
         |> Maybe.map
             (\path -> fullApiUrl path ++ "?dim=" ++ dim)

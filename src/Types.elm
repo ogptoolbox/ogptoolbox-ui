@@ -268,19 +268,19 @@ descriptionKeys =
     [ "description" ]
 
 
-imageLogoUrlPathKeys : List String
-imageLogoUrlPathKeys =
+imageLogoPathKeys : List String
+imageLogoPathKeys =
     [ "logo" ]
 
 
-imageScreenshotUrlPathKeys : List String
-imageScreenshotUrlPathKeys =
+imageScreenshotPathKeys : List String
+imageScreenshotPathKeys =
     [ "screenshot" ]
 
 
-imageUrlPathKeys : List String
-imageUrlPathKeys =
-    imageLogoUrlPathKeys ++ imageScreenshotUrlPathKeys
+imagePathKeys : List String
+imagePathKeys =
+    imageLogoPathKeys ++ imageScreenshotPathKeys
 
 
 licenseKeys : List String

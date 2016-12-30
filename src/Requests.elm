@@ -243,7 +243,7 @@ postCard authentication fields language =
 
 
 postCollection : Maybe Authentication -> Maybe String -> AddNewCollectionFields -> String -> Http.Request DataIdBody
-postCollection authentication editedCollectionId fields imageUrlPath =
+postCollection authentication editedCollectionId fields imagePath =
     let
         cardIds : List String
         cardIds =
@@ -265,7 +265,7 @@ postCollection authentication editedCollectionId fields imageUrlPath =
                 Encode.object
                     [ ( "cardIds", Encode.list (List.map Encode.string cardIds) )
                     , ( "description", Encode.string fields.description )
-                    , ( "logo", Encode.string imageUrlPath )
+                    , ( "logo", Encode.string imagePath )
                     , ( "name", Encode.string fields.name )
                     ]
                     |> Http.jsonBody

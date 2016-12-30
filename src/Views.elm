@@ -67,7 +67,7 @@ viewCardListItem navigate language values card =
         name =
             I18n.getName language card values
 
-        urlPath =
+        path =
             Urls.pathForCard card
 
         cardType =
@@ -86,7 +86,7 @@ viewCardListItem navigate language values card =
                         OrganizationCard ->
                             "orga"
                 )
-            , onClick (navigate urlPath)
+            , onClick (navigate path)
             ]
             [ div [ class "visual" ]
                 [ case Urls.imageFullUrl language "300" card values of
@@ -113,7 +113,7 @@ viewCardListItem navigate language values card =
                     [ aForPath
                         navigate
                         language
-                        urlPath
+                        path
                         []
                         [ text name ]
                     , small []
@@ -143,7 +143,7 @@ viewCardThumbnail language navigate extraClass values card =
         name =
             I18n.getName language card values
 
-        urlPath =
+        path =
             Urls.pathForCard card
 
         cardType =
@@ -153,7 +153,7 @@ viewCardThumbnail language navigate extraClass values card =
             [ aForPath
                 navigate
                 language
-                urlPath
+                path
                 [ class ("thumbnail " ++ extraClass) ]
                 [ div [ class "visual" ]
                     [ case Urls.imageFullUrl language "500" card values of
@@ -229,13 +229,13 @@ viewTagsWithCallToAction navigate language values card =
                     |> List.map
                         (\{ tag, tagId } ->
                             let
-                                urlPath =
+                                path =
                                     Urls.basePathForCard card ++ "?tagIds=" ++ tagId
                             in
                                 aForPath
                                     navigate
                                     language
-                                    urlPath
+                                    path
                                     [ class "label label-default label-tool" ]
                                     [ text tag ]
                         )

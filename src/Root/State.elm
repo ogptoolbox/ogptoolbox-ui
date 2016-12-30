@@ -62,9 +62,9 @@ init flags location =
 
 
 navigate : String -> String -> Cmd msg
-navigate currentUrlPath urlPath =
-    if currentUrlPath /= urlPath then
-        Navigation.newUrl urlPath
+navigate currentPath path =
+    if currentPath /= path then
+        Navigation.newUrl path
     else
         Cmd.none
 
@@ -188,9 +188,9 @@ update msg model =
                 , Cmd.none
                 )
 
-            CloseAuthenticatorModalAndNavigate urlPath ->
+            CloseAuthenticatorModalAndNavigate path ->
                 ( { model | authenticatorRoute = Nothing }
-                , navigate model.location.href urlPath
+                , navigate model.location.href path
                 )
 
             CollectionMsg childMsg ->
@@ -219,8 +219,8 @@ update msg model =
             LocationChanged location ->
                 urlUpdate location model
 
-            Navigate urlPath ->
-                ( model, navigate model.location.href urlPath )
+            Navigate path ->
+                ( model, navigate model.location.href path )
 
             NavigateBack ->
                 ( model, Navigation.back 1 )
@@ -240,7 +240,7 @@ update msg model =
                                         [ ( "tagIds", tagIds ) ]
                                )
 
-                    urlPath =
+                    path =
                         "/tools?"
                             ++ (keptParams
                                     |> List.map (\( k, v ) -> k ++ "=" ++ v)
@@ -248,7 +248,7 @@ update msg model =
                                )
 
                     cmd =
-                        navigate model.location.href urlPath
+                        navigate model.location.href path
                 in
                     ( model, cmd )
 
@@ -656,14 +656,14 @@ urlUpdate location model =
                     in
                         ( { localizedModel | route = route }, localizedCmd )
 
-                Just ((I18nRouteWithoutLanguage urlPath) as route) ->
+                Just ((I18nRouteWithoutLanguage path) as route) ->
                     let
                         language =
                             model.navigatorLanguage |> Maybe.withDefault I18n.English
 
                         command =
                             Urls.languagePath language
-                                (urlPath ++ (Urls.queryStringForParams [ "q", "tagIds" ] location))
+                                (path ++ (Urls.queryStringForParams [ "q", "tagIds" ] location))
                                 |> Navigation.modifyUrl
                     in
                         ( { model | route = route }, command )

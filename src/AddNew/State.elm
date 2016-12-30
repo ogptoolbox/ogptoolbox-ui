@@ -42,12 +42,12 @@ update msg model authentication language =
 
                 Result.Ok body ->
                     let
-                        urlPath =
+                        path =
                             getCard body.data.cards body.data.id
                                 |> Urls.pathForCard
 
                         cmd =
-                            Urls.languagePath language urlPath
+                            Urls.languagePath language path
                                 |> Navigation.newUrl
                     in
                         ( model, cmd )
@@ -98,12 +98,12 @@ update msg model authentication language =
             in
                 ( newModel, Cmd.none )
 
-        ImageUploaded (Result.Ok urlPath) ->
+        ImageUploaded (Result.Ok path) ->
             let
                 newModel =
                     { model
-                        | fields = Dict.insert "Logo" urlPath model.fields
-                        , imageUploadStatus = Uploaded urlPath
+                        | fields = Dict.insert "Logo" path model.fields
+                        , imageUploadStatus = Uploaded path
                     }
             in
                 ( newModel, Cmd.none )

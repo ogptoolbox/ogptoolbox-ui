@@ -378,13 +378,13 @@ viewFooter model language =
                                         ]
                                     , ul [ attribute "aria-labelledby" "dropdownMenu1", class "dropdown-menu" ]
                                         (let
-                                            aForPath urlPath children =
+                                            aForPath path children =
                                                 a
-                                                    [ href urlPath
+                                                    [ href path
                                                     , onWithOptions
                                                         "click"
                                                         { stopPropagation = False, preventDefault = True }
-                                                        (Json.Decode.succeed (Navigate urlPath))
+                                                        (Json.Decode.succeed (Navigate path))
                                                     ]
                                                     children
                                          in

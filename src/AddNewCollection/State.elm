@@ -51,11 +51,11 @@ update msg ({ fields } as model) authentication language =
                         newModel =
                             { model | webData = Data (Loaded body) }
 
-                        urlPath =
+                        path =
                             "/collections/" ++ body.data.id
 
                         cmd =
-                            Urls.languagePath language urlPath
+                            Urls.languagePath language path
                                 |> Navigation.newUrl
                     in
                         ( newModel, cmd )
@@ -97,8 +97,8 @@ update msg ({ fields } as model) authentication language =
                                         Nothing ->
                                             NotUploaded
 
-                                        Just urlPath ->
-                                            Uploaded urlPath
+                                        Just path ->
+                                            Uploaded path
                                 , webData = Data (Loaded body)
                             }
 
@@ -157,10 +157,10 @@ update msg ({ fields } as model) authentication language =
             in
                 ( newModel, Cmd.none )
 
-        ImageUploaded (Result.Ok urlPath) ->
+        ImageUploaded (Result.Ok path) ->
             let
                 newModel =
-                    { model | imageUploadStatus = Uploaded urlPath }
+                    { model | imageUploadStatus = Uploaded path }
             in
                 ( newModel, Cmd.none )
 
@@ -183,7 +183,7 @@ update msg ({ fields } as model) authentication language =
                 newModel =
                     { model | webData = Data (Loading Nothing) }
 
-                imageUrlPath =
+                imagePath =
                     case model.imageUploadStatus of
                         NotUploaded ->
                             ""
@@ -194,8 +194,8 @@ update msg ({ fields } as model) authentication language =
                         Read _ ->
                             ""
 
-                        Uploaded urlPath ->
-                            urlPath
+                        Uploaded path ->
+                            path
 
                         UploadError _ ->
                             ""
@@ -205,7 +205,7 @@ update msg ({ fields } as model) authentication language =
                         authentication
                         model.editedCollectionId
                         model.fields
-                        imageUrlPath
+                        imagePath
                         |> Http.send (ForSelf << CollectionPosted)
             in
                 ( newModel, cmd )

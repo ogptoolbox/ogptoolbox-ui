@@ -21,17 +21,17 @@ aExternal attributes children =
 
 
 aForPath : (String -> msg) -> I18n.Language -> String -> List (Attribute msg) -> List (Html msg) -> Html msg
-aForPath navigate language urlPath attributes children =
+aForPath navigate language path attributes children =
     let
-        urlPathWithLanguage =
-            Urls.languagePath language urlPath
+        pathWithLanguage =
+            Urls.languagePath language path
     in
         a
-            ([ href urlPathWithLanguage
+            ([ href pathWithLanguage
              , onWithOptions
                 "click"
                 { stopPropagation = True, preventDefault = True }
-                (Json.Decode.succeed (navigate urlPathWithLanguage))
+                (Json.Decode.succeed (navigate pathWithLanguage))
              ]
                 ++ attributes
             )

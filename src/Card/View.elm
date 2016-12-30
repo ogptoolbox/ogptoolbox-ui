@@ -197,13 +197,13 @@ viewCardContent language card cards values =
                             List.map
                                 (\{ tag, tagId } ->
                                     let
-                                        urlPath =
+                                        path =
                                             Urls.basePathForCard card ++ "?tagIds=" ++ tagId
                                     in
                                         aForPath
                                             navigate
                                             language
-                                            urlPath
+                                            path
                                             [ class "label label-default label-tag label-maintag" ]
                                             [ text tag ]
                                 )
@@ -1123,13 +1123,13 @@ viewSidebar language card values =
                                     (List.map
                                         (\{ tag, tagId } ->
                                             let
-                                                urlPath =
+                                                path =
                                                     Urls.basePathForCard card ++ "?tagIds=" ++ tagId
                                             in
                                                 aForPath
                                                     navigate
                                                     language
-                                                    urlPath
+                                                    path
                                                     [ class "label label-default label-tag" ]
                                                     [ text tag ]
                                         )
@@ -1152,7 +1152,7 @@ viewSidebar language card values =
                                 I18n.getName language card values
 
                             imageUrl =
-                                I18n.getOneString language imageUrlPathKeys card values
+                                I18n.getOneString language imagePathKeys card values
                                     |> Maybe.withDefault Urls.appLogoFullUrl
 
                             url =
@@ -1248,10 +1248,10 @@ viewValueType language cards values showLanguage value =
                                 Just name ->
                                     name
 
-                        urlPath =
+                        path =
                             Urls.pathForCard card
                     in
-                        aForPath navigate language urlPath [] [ text linkText ]
+                        aForPath navigate language path [] [ text linkText ]
     in
         case value of
             StringValue str ->

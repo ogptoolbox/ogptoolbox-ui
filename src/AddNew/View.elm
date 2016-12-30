@@ -57,9 +57,9 @@ viewImageUploadStatus imageUploadStatus =
                     , p [] [ text ("Upload in progress for \"" ++ filename ++ "\"") ]
                     ]
 
-            Uploaded urlPath ->
+            Uploaded path ->
                 img
-                    [ src (Urls.fullApiUrl urlPath)
+                    [ src (Urls.fullApiUrl path)
                     , style [ ( "max-width", "100%" ) ]
                     ]
                     []
