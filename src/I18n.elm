@@ -1395,6 +1395,14 @@ type GrammaticalNumber
     | Plural
 
 
+languages : List Language
+languages =
+    [ English
+    , French
+    , Spanish
+    ]
+
+
 s : a -> Maybe a
 s =
     Just

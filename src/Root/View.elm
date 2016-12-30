@@ -388,22 +388,17 @@ viewFooter model language =
                                                     ]
                                                     children
                                          in
-                                            [ li []
-                                                [ aForPath
-                                                    (Urls.replaceLanguageInLocation I18n.English model.location)
-                                                    [ text (I18n.translate I18n.English (I18n.Language I18n.English)) ]
-                                                ]
-                                            , li []
-                                                [ aForPath
-                                                    (Urls.replaceLanguageInLocation I18n.French model.location)
-                                                    [ text (I18n.translate I18n.French (I18n.Language I18n.French)) ]
-                                                ]
-                                            , li []
-                                                [ aForPath
-                                                    (Urls.replaceLanguageInLocation I18n.Spanish model.location)
-                                                    [ text (I18n.translate I18n.Spanish (I18n.Language I18n.Spanish)) ]
-                                                ]
-                                            ]
+                                            I18n.languages
+                                                |> List.map
+                                                    (\language ->
+                                                        li []
+                                                            [ aForPath
+                                                                (Urls.replaceLanguageInLocation language model.location)
+                                                                [ text
+                                                                    (I18n.translate language (I18n.Language language))
+                                                                ]
+                                                            ]
+                                                    )
                                         )
                                     ]
                                 ]
