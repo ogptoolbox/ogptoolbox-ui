@@ -1,17 +1,10 @@
 module AddNewCollection.Types exposing (..)
 
 import Http
+import Image.Types exposing (..)
 import Ports
 import Types exposing (..)
 import WebData exposing (..)
-
-
-type UploadStatus
-    = NotUploaded
-    | Selected
-    | Read Ports.ImagePortData
-    | Uploaded String
-    | UploadError Http.Error
 
 
 type alias AddNewCollectionFields =
@@ -24,7 +17,7 @@ type alias AddNewCollectionFields =
 type alias Model =
     { editedCollectionId : Maybe String
     , fields : AddNewCollectionFields
-    , imageUploadStatus : UploadStatus
+    , imageUploadStatus : ImageUploadStatus
     , webData : WebData DataIdBody
     }
 

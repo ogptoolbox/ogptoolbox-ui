@@ -117,6 +117,9 @@ type TranslationId
     | Home
     | HomeDescription
     | HomeTitle
+    | Image
+    | ImageAlt
+    | ImageUploadError String
     | ImproveExistingContent
     | Language Language
     | LanguageWord
@@ -139,6 +142,7 @@ type TranslationId
     | PublishOrganization
     | PublishTool
     | PublishUseCase
+    | ReadingSelectedImage
     | ReadMore
     | Register
     | RegisterNow
@@ -168,6 +172,8 @@ type TranslationId
     | Type
     | UnknownUser
     | UntitledCard
+    | UploadImage
+    | UploadingImage String
     | UseCase GrammaticalNumber
     | UseCases
     | UseCasesDescription
@@ -916,6 +922,24 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        Image ->
+            { english = s "Image"
+            , french = s "Image"
+            , spanish = todo
+            }
+
+        ImageAlt ->
+            { english = s "The uploaded image"
+            , french = s "L'image téléversée"
+            , spanish = todo
+            }
+
+        ImageUploadError message ->
+            { english = s ("Image upload error: " ++ message)
+            , french = s ("Échec du téléversement de l'image :" ++ message)
+            , spanish = todo
+            }
+
         ImproveExistingContent ->
             { english = s "Improve existing content"
             , french = s "Améliorez le contenu existant"
@@ -1081,6 +1105,12 @@ to strengthen governance.
         PublishTool ->
             { english = s "Publish tool"
             , french = s "Publier cet outil"
+            , spanish = todo
+            }
+
+        ReadingSelectedImage ->
+            { english = s "Reading selected image..."
+            , french = s "Lecture de l'image sélectionnée..."
             , spanish = todo
             }
 
@@ -1274,6 +1304,18 @@ to strengthen governance.
             { english = s "Untitled Card"
             , french = s "Fiche sans titre"
             , spanish = s "Tipo"
+            }
+
+        UploadImage ->
+            { english = s "Upload image"
+            , french = s "Téléverser une image"
+            , spanish = todo
+            }
+
+        UploadingImage filename ->
+            { english = s ("Uploading image \"" ++ filename ++ "\"...")
+            , french = s ("Téléversement de l'image \"" ++ filename ++ "\"...")
+            , spanish = todo
             }
 
         UseCase number ->

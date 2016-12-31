@@ -2,22 +2,15 @@ module AddNew.Types exposing (..)
 
 import Dict exposing (Dict)
 import Http
+import Image.Types exposing (..)
 import Ports
 import Types exposing (..)
-
-
-type UploadStatus
-    = NotUploaded
-    | Selected
-    | Read Ports.ImagePortData
-    | Uploaded String
-    | UploadError Http.Error
 
 
 type alias Model =
     { error : Maybe Http.Error
     , fields : Dict String String
-    , imageUploadStatus : UploadStatus
+    , imageUploadStatus : ImageUploadStatus
     }
 
 

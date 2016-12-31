@@ -5,70 +5,8 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (on, onClick, onInput, onSubmit, targetValue)
 import I18n
+import Image.View exposing (..)
 import Json.Decode as Decode
-import Urls
-
-
-publishedDisabled : UploadStatus -> Bool
-publishedDisabled imageUploadStatus =
-    case imageUploadStatus of
-        NotUploaded ->
-            False
-
-        Selected ->
-            False
-
-        Read _ ->
-            True
-
-        Uploaded _ ->
-            False
-
-        UploadError _ ->
-            False
-
-
-viewImageUploadStatus : UploadStatus -> Html msg
-viewImageUploadStatus imageUploadStatus =
-    let
-        cameraSpan =
-            span
-                [ attribute "aria-hidden" "true"
-                , class "glyphicon glyphicon-camera"
-                ]
-                []
-    in
-        case imageUploadStatus of
-            NotUploaded ->
-                div []
-                    [ cameraSpan
-                    , text "Upload image"
-                    ]
-
-            Selected ->
-                div []
-                    [ cameraSpan
-                    , text "Reading selected image"
-                    ]
-
-            Read { contents, filename } ->
-                div []
-                    [ cameraSpan
-                    , p [] [ text ("Upload in progress for \"" ++ filename ++ "\"") ]
-                    ]
-
-            Uploaded path ->
-                img
-                    [ src (Urls.fullApiUrl path)
-                    , style [ ( "max-width", "100%" ) ]
-                    ]
-                    []
-
-            UploadError err ->
-                div []
-                    [ cameraSpan
-                    , text ("Error: " ++ (toString err))
-                    ]
 
 
 viewOrganization : Model -> I18n.Language -> Html Msg
@@ -375,7 +313,7 @@ viewTool model language =
                                             [ label [ for "logoField" ]
                                                 [ text "Logo" ]
                                             , div [ class "upload-zone" ]
-                                                [ viewImageUploadStatus model.imageUploadStatus ]
+                                                [ viewImageUploadStatus language model.imageUploadStatus ]
                                             , input
                                                 [ id "logoField"
                                                 , on "change" (Decode.succeed (ForSelf ImageSelected))
@@ -507,7 +445,7 @@ viewUseCase model language =
                                             [ label [ for "logoField" ]
                                                 [ text "Logo" ]
                                             , div [ class "upload-zone" ]
-                                                [ viewImageUploadStatus model.imageUploadStatus ]
+                                                [ viewImageUploadStatus language model.imageUploadStatus ]
                                             , input
                                                 [ id "logoField"
                                                 , on "change" (Decode.succeed (ForSelf ImageSelected))

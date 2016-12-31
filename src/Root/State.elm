@@ -83,7 +83,8 @@ requireSignIn signOutMsg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    -- TODO Fix duplicate messages with port "fileContentRead", that was worked around by a "Selected" constructor.
+    -- TODO Fix duplicate messages with port "fileContentRead", that was worked around by a "ImageSelectedStatus"
+    -- constructor.
     Sub.batch
         [ Sub.map AddNewMsg (AddNew.State.subscriptions model.addNewModel)
         , Sub.map AddNewCollectionMsg (AddNewCollection.State.subscriptions model.addNewCollectionModel)

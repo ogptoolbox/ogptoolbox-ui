@@ -5,6 +5,7 @@ import Authenticator.Types
 import Dict
 import Http
 import I18n
+import Image.Types exposing (..)
 import Navigation
 import Ports
 import Requests
@@ -16,7 +17,7 @@ init : Model
 init =
     { error = Nothing
     , fields = Dict.empty
-    , imageUploadStatus = NotUploaded
+    , imageUploadStatus = ImageNotUploadedStatus
     }
 
 
@@ -58,32 +59,32 @@ update msg model authentication language =
                     Ports.fileSelected "logoField"
 
                 newModel =
-                    { model | imageUploadStatus = Selected }
+                    { model | imageUploadStatus = ImageSelectedStatus }
             in
                 ( newModel, cmd )
 
         ImageRead data ->
             let
                 newModel =
-                    { model | imageUploadStatus = Read data }
+                    { model | imageUploadStatus = ImageReadStatus data }
 
                 cmd =
                     case model.imageUploadStatus of
-                        NotUploaded ->
+                        ImageNotUploadedStatus ->
                             Cmd.none
 
-                        Selected ->
+                        ImageSelectedStatus ->
                             Requests.postUploadImage authentication data.contents
                                 |> Http.send ImageUploaded
                                 |> Cmd.map ForSelf
 
-                        Read _ ->
+                        ImageReadStatus _ ->
                             Cmd.none
 
-                        Uploaded _ ->
+                        ImageUploadedStatus _ ->
                             Cmd.none
 
-                        UploadError _ ->
+                        ImageUploadErrorStatus _ ->
                             Cmd.none
             in
                 ( newModel, cmd )
@@ -94,7 +95,7 @@ update msg model authentication language =
                     Debug.log "AddNew.State ImageUploaded Error" err
 
                 newModel =
-                    { model | imageUploadStatus = UploadError err }
+                    { model | imageUploadStatus = ImageUploadErrorStatus err }
             in
                 ( newModel, Cmd.none )
 
@@ -103,7 +104,7 @@ update msg model authentication language =
                 newModel =
                     { model
                         | fields = Dict.insert "Logo" path model.fields
-                        , imageUploadStatus = Uploaded path
+                        , imageUploadStatus = ImageUploadedStatus path
                     }
             in
                 ( newModel, Cmd.none )
