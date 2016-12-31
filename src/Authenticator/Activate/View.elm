@@ -5,8 +5,8 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Attributes.Aria exposing (..)
 import Http exposing (Error(BadStatus))
+import Http.Error
 import I18n
-import Views exposing (getHttpErrorAsString)
 import WebData exposing (..)
 
 
@@ -40,10 +40,10 @@ view language model =
                                     else if response.status.code == 404 then
                                         I18n.translate language I18n.UnknownUser
                                     else
-                                        getHttpErrorAsString language httpError
+                                        Http.Error.toString language httpError
 
                                 _ ->
-                                    getHttpErrorAsString language httpError
+                                    Http.Error.toString language httpError
                             )
                         ]
 
@@ -69,7 +69,6 @@ view language model =
                     [ div [ class "intro-text" ]
                         [ div [ class "intro-heading" ]
                             [ text (I18n.translate language I18n.ActivationTitle) ]
-
                         ]
                     ]
                 ]

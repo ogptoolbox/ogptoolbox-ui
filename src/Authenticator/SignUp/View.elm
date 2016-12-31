@@ -9,8 +9,8 @@ import Html.Attributes.Aria exposing (..)
 import Html.Events exposing (..)
 import Html.Helpers exposing (aForPath)
 import Http exposing (Error(BadStatus))
+import Http.Error
 import I18n
-import Views exposing (getHttpErrorAsString)
 
 
 view : I18n.Language -> Model -> Html Msg
@@ -37,10 +37,10 @@ view language model =
                                     if response.status.code == 400 then
                                         I18n.translate language I18n.UsernameOrEmailAlreadyExist
                                     else
-                                        getHttpErrorAsString language httpError
+                                        Http.Error.toString language httpError
 
                                 _ ->
-                                    getHttpErrorAsString language httpError
+                                    Http.Error.toString language httpError
                             )
                         ]
     in
