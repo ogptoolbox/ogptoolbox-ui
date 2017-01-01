@@ -183,15 +183,15 @@ type alias UserBody =
 
 
 type ValueType
-    = StringValue String
+    = BijectiveCardReferenceValue BijectiveCardReference
+    | BooleanValue Bool
+    | CardIdArrayValue (List String)
+    | CardIdValue String
     | LocalizedStringValue (Dict String String)
     | NumberValue Float
-    | BooleanValue Bool
-    | BijectiveCardReferenceValue BijectiveCardReference
-    | CardIdValue String
-    | CardIdArrayValue (List String)
-    | ValueIdValue String
+    | StringValue String
     | ValueIdArrayValue (List String)
+    | ValueIdValue String
     | WrongValue String String
 
 
