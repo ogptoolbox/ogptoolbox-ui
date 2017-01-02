@@ -183,6 +183,12 @@ type ValueType
     | WrongValue String String
 
 
+cardSubTypeIdsIntersect : List String -> List String -> Bool
+cardSubTypeIdsIntersect cardSubTypeIds1 cardSubTypeIds2 =
+    List.any (\subTypeId -> List.member subTypeId cardSubTypeIds2)
+        cardSubTypeIds1
+
+
 getCard : Dict String Card -> String -> Card
 getCard cards id =
     case Dict.get id cards of
@@ -209,12 +215,6 @@ getCardType card =
                 ToolCard
             else
                 Debug.crash "getCardType: unhandled case"
-
-
-cardSubTypeIdsIntersect : List String -> List String -> Bool
-cardSubTypeIdsIntersect cardSubTypeIds1 cardSubTypeIds2 =
-    List.any (\subTypeId -> List.member subTypeId cardSubTypeIds2)
-        cardSubTypeIds1
 
 
 getOrderedCards : DataIds -> List Card
