@@ -1,12 +1,17 @@
 module Collection.Types exposing (..)
 
+import Authenticator.Types exposing (Authentication, canEditUserResource)
 import Http
+import I18n
 import Types exposing (..)
 import WebData exposing (..)
 
 
 type alias Model =
-    { collection : WebData DataIdBody }
+    { authentication : Maybe Authentication
+    , collection : WebData DataIdBody
+    , language : I18n.Language
+    }
 
 
 type ExternalMsg

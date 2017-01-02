@@ -9,7 +9,6 @@ import Authenticator.Types
 import Card.State
 import Card.Types
 import Collection.State
-import Collection.Types
 import Collections.State
 import Collections.Types
 import Decoders
@@ -197,7 +196,7 @@ update msg model =
             CollectionMsg childMsg ->
                 let
                     ( collectionModel, childCmd ) =
-                        Collection.State.update childMsg model.collectionModel model.authentication language
+                        Collection.State.update childMsg model.collectionModel
                 in
                     ( { model | collectionModel = collectionModel }
                     , Cmd.map translateCollectionMsg childCmd
@@ -419,11 +418,11 @@ urlUpdate location model =
                                         CollectionRoute collectionId ->
                                             let
                                                 ( collectionModel, childCmd ) =
-                                                    Collection.State.update
-                                                        (Collection.Types.LoadCollection collectionId)
-                                                        model.collectionModel
+                                                    Collection.State.urlUpdate
                                                         model.authentication
                                                         language
+                                                        collectionId
+                                                        model.collectionModel
                                             in
                                                 ( { model
                                                     | collectionModel = collectionModel

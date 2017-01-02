@@ -80,7 +80,7 @@ view model =
                     CollectionsRoute childRoute ->
                         case childRoute of
                             CollectionRoute _ ->
-                                Collection.View.view model.collectionModel language
+                                Collection.View.view model.collectionModel
                                     |> Html.map translateCollectionMsg
                                     |> standardLayout language
 

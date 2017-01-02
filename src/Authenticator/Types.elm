@@ -56,6 +56,19 @@ type alias MsgTranslator parentMsg =
     Msg -> parentMsg
 
 
+canEditUserResource : Maybe Authentication -> String -> Bool
+canEditUserResource authentication ownerId =
+    case authentication of
+        Just authentication ->
+            if authentication.isAdmin then
+                True
+            else
+                authentication.id == ownerId
+
+        Nothing ->
+            False
+
+
 sendActivationMsg : Authentication -> InternalMsg
 sendActivationMsg authentication =
     ActivateMsg <| Authenticator.Activate.Types.SendActivation authentication

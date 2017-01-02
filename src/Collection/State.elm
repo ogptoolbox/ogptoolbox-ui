@@ -1,6 +1,6 @@
 module Collection.State exposing (..)
 
-import Authenticator.Types
+import Authenticator.Types exposing (Authentication)
 import Collection.Types exposing (..)
 import Dict exposing (Dict)
 import Http
@@ -13,11 +13,14 @@ import WebData exposing (..)
 
 init : Model
 init =
-    { collection = NotAsked }
+    { authentication = Nothing
+    , language = I18n.English
+    , collection = NotAsked
+    }
 
 
-update : InternalMsg -> Model -> Maybe Authenticator.Types.Authentication -> I18n.Language -> ( Model, Cmd Msg )
-update msg model authentication language =
+update : InternalMsg -> Model -> ( Model, Cmd Msg )
+update msg model =
     case msg of
         GotCollection response ->
             case response of
@@ -60,7 +63,7 @@ update msg model authentication language =
                     { model | collection = Data (Loading Nothing) }
 
                 cmd =
-                    Requests.getCollection authentication collectionId
+                    Requests.getCollection model.authentication collectionId
                         |> Http.send (ForSelf << GotCollection)
             in
                 ( newModel, cmd )
@@ -76,3 +79,13 @@ update msg model authentication language =
 
         ShareOnTwitter url ->
             ( model, Ports.shareOnTwitter url )
+
+
+urlUpdate : Maybe Authentication -> I18n.Language -> String -> Model -> ( Model, Cmd Msg )
+urlUpdate authentication language collectionId model =
+    update
+        (LoadCollection collectionId)
+        { model
+            | authentication = authentication
+            , language = language
+        }

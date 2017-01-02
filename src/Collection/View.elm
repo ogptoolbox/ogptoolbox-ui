@@ -1,5 +1,6 @@
 module Collection.View exposing (..)
 
+import Authenticator.Types exposing (Authentication, canEditUserResource)
 import Collection.Types exposing (..)
 import Dict exposing (Dict)
 import Html exposing (..)
@@ -14,15 +15,15 @@ import Views exposing (viewCardThumbnail, viewLoading, viewWebData)
 import WebData exposing (..)
 
 
-view : Model -> I18n.Language -> Html Msg
-view model language =
+view : Model -> Html Msg
+view model =
     viewWebData
-        language
+        model.language
         (\loadingStatus ->
             case loadingStatus of
                 Loading _ ->
                     div [ class "text-center" ]
-                        [ viewLoading language ]
+                        [ viewLoading model.language ]
 
                 Loaded body ->
                     let
@@ -43,15 +44,15 @@ view model language =
                                     user
                     in
                         div []
-                            [ viewBanner language user collection
-                            , viewCollectionContent language user collection body.data.cards body.data.values
+                            [ viewBanner model.authentication model.language user collection
+                            , viewCollectionContent model.language user collection body.data.cards body.data.values
                             ]
         )
         model.collection
 
 
-viewBanner : I18n.Language -> User -> Collection -> Html Msg
-viewBanner language user collection =
+viewBanner : Maybe Authentication -> I18n.Language -> User -> Collection -> Html Msg
+viewBanner authentication language user collection =
     div [ class "banner collection-header" ]
         [ div [ class "row full-bg" ]
             ((case collection.logo of
@@ -79,20 +80,23 @@ viewBanner language user collection =
                               --         [ text "Outils de consultation" ]
                               --     ]
                               -- ]
-                              div [ class "col-xs-4" ]
-                                [ div [ class "pull-right banner-button" ]
-                                    [ button
-                                        [ class "btn btn-default btn-xs btn-action-negative"
-                                        , attribute "data-target" "#edit-content"
-                                        , attribute "data-toggle" "modal"
-                                        , onClick (navigate ("/collections/" ++ collection.id ++ "/edit"))
-                                        , type_ "button"
-                                        ]
-                                        [ text "Edit collection"
-                                          -- TODO i18n
+                              if canEditUserResource authentication collection.authorId then
+                                div [ class "col-xs-4" ]
+                                    [ div [ class "pull-right banner-button" ]
+                                        [ button
+                                            [ class "btn btn-default btn-xs btn-action-negative"
+                                            , attribute "data-target" "#edit-content"
+                                            , attribute "data-toggle" "modal"
+                                            , onClick (navigate ("/collections/" ++ collection.id ++ "/edit"))
+                                            , type_ "button"
+                                            ]
+                                            [ text "Edit collection"
+                                              -- TODO i18n
+                                            ]
                                         ]
                                     ]
-                                ]
+                              else
+                                text ""
                             ]
                         , div [ class "row " ]
                             [ div [ class "col-md-12 text-center" ]
