@@ -1,34 +1,14 @@
 port module Ports exposing (..)
 
 import Configuration
-import Types exposing (DocumentMetadata, PopularTag, User, UserForPort)
+import Types exposing (DocumentMetadata, PopularTag, User)
 import Urls
 
 
 -- AUTHENTICATION
 
 
-port storeAuthentication : Maybe UserForPort -> Cmd msg
-
-
-userToUserForPort : Maybe User -> Maybe UserForPort
-userToUserForPort user =
-    case user of
-        Just user ->
-            Just
-                { activated =
-                    if user.activated then
-                        "true"
-                    else
-                        ""
-                , apiKey = user.apiKey
-                , email = user.email
-                , name = user.name
-                , urlName = user.urlName
-                }
-
-        Nothing ->
-            Nothing
+port storeAuthentication : Maybe User -> Cmd msg
 
 
 

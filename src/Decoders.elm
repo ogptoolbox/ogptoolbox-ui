@@ -170,23 +170,8 @@ userDecoder =
         |: (field "activated" bool)
         |: oneOf [ (field "apiKey" string), succeed "" ]
         |: oneOf [ (field "email" string), succeed "" ]
-        |: (field "name" string)
-        |: (field "urlName" string)
-
-
-userForPortDecoder : Decoder User
-userForPortDecoder =
-    succeed User
-        -- Workaround a bug in ports that removes boolean values.
-        |:
-            ((field "activated" string)
-                |> andThen
-                    (\activated ->
-                        succeed (not (String.isEmpty activated))
-                    )
-            )
-        |: (field "apiKey" string)
-        |: (field "email" string)
+        |: (field "id" string)
+        |: (field "isAdmin" bool)
         |: (field "name" string)
         |: (field "urlName" string)
 

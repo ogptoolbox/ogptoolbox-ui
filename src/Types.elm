@@ -156,22 +156,10 @@ type alias TypedValue =
 
 type alias User =
     { activated : Bool
-    , apiKey :
-        String
-        -- TODO Use Maybe
-    , email :
-        String
-        -- TODO Use Maybe
-    , name : String
-    , urlName : String
-    }
-
-
-type alias UserForPort =
-    -- Workaround for ports removing booleans
-    { activated : String
     , apiKey : String
     , email : String
+    , id : String
+    , isAdmin : Bool
     , name : String
     , urlName : String
     }

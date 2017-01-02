@@ -36,7 +36,7 @@ init flags location =
     { addNewModel = AddNew.State.init
     , addNewCollectionModel = AddNewCollection.State.init
     , authentication =
-        Json.Decode.decodeValue Decoders.userForPortDecoder flags.authentication
+        Json.Decode.decodeValue Decoders.userDecoder flags.authentication
             |> Result.toMaybe
     , authenticatorCancelMsg = Nothing
     , authenticatorCompletionMsg = Nothing
@@ -158,7 +158,7 @@ update msg model =
                             , authenticatorCompletionMsg = Nothing
                             , authenticatorRoute = Nothing
                         }
-                            ! [ Ports.storeAuthentication (Ports.userToUserForPort authentication)
+                            ! [ Ports.storeAuthentication authentication
                               , case model.authenticatorCompletionMsg of
                                     Just completionMsg ->
                                         Task.perform (\_ -> completionMsg) (Task.succeed ())
