@@ -139,6 +139,9 @@ type TranslationId
     | PasswordChangeFailed
     | PasswordLost
     | PasswordPlaceholder
+    | Press
+    | PressDescription
+    | PressLead
     | PublishOrganization
     | PublishTool
     | PublishUseCase
@@ -1090,15 +1093,30 @@ to strengthen governance.
             , spanish = todo
             }
 
-        PublishUseCase ->
-            { english = s "Publish use case"
-            , french = s "Poublier ce cas d'usage"
+        Press ->
+            { english = s "Press"
+            , french = s "Presse"
+            , spanish = todo
+            }
+
+        PressDescription ->
+            getTranslationSet PressLead
+
+        PressLead ->
+            { english = s "What the press says of the OGP Toolbox"
+            , french = s "La presse parle de la boite à outils de l'OGP"
             , spanish = todo
             }
 
         PublishOrganization ->
             { english = s "Publish organization"
             , french = s "Publier cette organisation"
+            , spanish = todo
+            }
+
+        PublishUseCase ->
+            { english = s "Publish use case"
+            , french = s "Poublier ce cas d'usage"
             , spanish = todo
             }
 

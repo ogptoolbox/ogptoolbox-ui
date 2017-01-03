@@ -18,6 +18,7 @@ import Html.Events exposing (onClick, onInput, onSubmit, onWithOptions)
 import Html.Helpers exposing (aForPath)
 import I18n
 import Json.Decode
+import Press
 import Root.Types exposing (..)
 import Routes exposing (..)
 import Search.View
@@ -131,6 +132,10 @@ view model =
                                 AddNew.View.viewOrganization model.addNewModel language
                                     |> Html.map translateAddNewMsg
                                     |> standardLayout language
+
+                    PressRoute ->
+                        Press.view language
+                            |> standardLayout language
 
                     ToolsRoute childRoute ->
                         case childRoute of

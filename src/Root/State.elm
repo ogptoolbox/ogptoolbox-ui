@@ -539,6 +539,15 @@ urlUpdate location model =
                                                             }
                                                       ]
 
+                                PressRoute ->
+                                    ( { model | signOutMsg = Nothing }
+                                    , Ports.setDocumentMetadata
+                                        { description = I18n.translate language I18n.PressDescription
+                                        , imageUrl = Urls.appLogoFullUrl
+                                        , title = I18n.translate language I18n.Press
+                                        }
+                                    )
+
                                 ToolsRoute childRoute ->
                                     case childRoute of
                                         ToolRoute cardId ->

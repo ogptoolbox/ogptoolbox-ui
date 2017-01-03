@@ -21,6 +21,7 @@ type LocalizedRoute
     | HomeRoute
     | NotFoundRoute (List String)
     | OrganizationsRoute OrganizationsRoute
+    | PressRoute
     | ToolsRoute ToolsRoute
     | UseCasesRoute UseCasesRoute
     | UserProfileRoute
@@ -72,6 +73,7 @@ localizedRouteParser =
         , map CollectionsRoute (s "collections" </> collectionsRouteParser)
         , map FaqRoute (s "faq")
         , map OrganizationsRoute (s "organizations" </> organizationsRouteParser)
+        , map PressRoute (s "press")
         , map UserProfileRoute (s "profile")
         , map ToolsRoute (s "tools" </> toolsRouteParser)
         , map UseCasesRoute (s "use-cases" </> useCasesRouteParser)
