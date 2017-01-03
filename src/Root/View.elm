@@ -363,8 +363,18 @@ viewFooter model language =
                     [ div [ class "col-xs-12 col-md-6" ]
                         [ div [ class "row" ]
                             [ div [ class "col-xs-6" ]
-                                [ img [ alt "OGP logo", class "footer-logo", src "/img/ogp-logo.png" ]
-                                    []
+                                [ a
+                                    [ href "http://www.opengovpartnership.org"
+                                    , target "_blank"
+                                    , title (I18n.translate language I18n.OpenGovernmentPartnership)
+                                    ]
+                                    [ img
+                                        [ alt (I18n.translate language I18n.OpenGovernmentPartnershipLogo)
+                                        , class "footer-logo"
+                                        , src "/img/ogp-logo.png"
+                                        ]
+                                        []
+                                    ]
                                 ]
                             , div [ class "col-xs-6" ]
                                 [ h4 []
@@ -410,8 +420,13 @@ viewFooter model language =
                             ]
                         , p [ class "info-box" ]
                             [ text (I18n.translate language I18n.OpenGovParagraph) ]
-                        , a [ href "https://www.etalab.gouv.fr", target "_blank", class "etalab-logo" ]
-                            [ img [ alt "Etalab logo", src "/img/etalab-logo.png" ]
+                        , a
+                            [ class "etalab-logo"
+                            , href "https://www.etalab.gouv.fr"
+                            , target "_blank"
+                            , title "Etalab"
+                            ]
+                            [ img [ alt (I18n.translate language I18n.EtalabLogo), src "/img/etalab-logo.png" ]
                                 []
                             ]
                         ]
@@ -474,12 +489,12 @@ viewFooter model language =
                                     [ text (I18n.translate language I18n.Faq) ]
                                 ]
                             , li []
-                                [ a [ href "http://www.opengovpartnership.org", target "_blank" ]
-                                    [ text "Open Government Parntenrship" ]
-                                ]
-                            , li []
-                                [ a [ href "https://www.etalab.gouv.fr", target "_blank" ]
-                                    [ text "Etalab" ]
+                                [ aForPath
+                                    Navigate
+                                    language
+                                    "/press"
+                                    []
+                                    [ text (I18n.translate language I18n.Press) ]
                                 ]
                             ]
                         ]

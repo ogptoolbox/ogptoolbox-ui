@@ -72,6 +72,7 @@ type TranslationId
     | EnterEmail
     | EnterPassword
     | EnterUsername
+    | EtalabLogo
     | Faq
     | FaqAccess
     | FaqAccessContent
@@ -127,6 +128,8 @@ type TranslationId
     | MissingDescription
     | NetworkErrorExplanation
     | OGPsummitLink
+    | OpenGovernmentPartnership
+    | OpenGovernmentPartnershipLogo
     | OpenGovParagraph
     | Organization GrammaticalNumber
     | OrganizationsDescription
@@ -655,6 +658,12 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        EtalabLogo ->
+            { english = s "Etalab logo"
+            , french = s "Logo d'Etalab"
+            , spanish = todo
+            }
+
         Faq ->
             { english = s "FAQ"
             , french = s "FAQ"
@@ -996,6 +1005,18 @@ getTranslationSet translationId =
         OGPsummitLink ->
             { english = s "https://en.ogpsummit.org/osem/conference/ogp-summit"
             , french = s "https://fr.ogpsummit.org/osem/conference/ogp-summit"
+            , spanish = todo
+            }
+
+        OpenGovernmentPartnership ->
+            { english = s "Open Government Partnership"
+            , french = s "Partenariat pour un gouvernement ouvert"
+            , spanish = todo
+            }
+
+        OpenGovernmentPartnershipLogo ->
+            { english = s "Open Government Partnership logo"
+            , french = s "logo du Partenariat pour un gouvernement ouvert"
             , spanish = todo
             }
 
