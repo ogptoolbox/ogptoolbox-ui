@@ -66,7 +66,7 @@ getCard authentication cardId =
     Http.request
         { method = "GET"
         , headers = authenticationHeaders authentication
-        , url = apiUrl ++ "objects/" ++ cardId ++ "?show=references&show=values&depth=2"
+        , url = apiUrl ++ "objects/" ++ cardId ++ "?depth=3&show=references&show=values"
         , body = Http.emptyBody
         , expect = Http.expectJson dataIdBodyDecoder
         , timeout = Nothing

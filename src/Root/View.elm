@@ -255,9 +255,25 @@ viewAddNewModal model language =
                                 , aForPath
                                     Navigate
                                     language
+                                    "/organizations/new"
+                                    [ class "media action"
+                                    , onClick (DisplayAddNewModal False)
+                                    ]
+                                    [ div [ class "media-left icon" ]
+                                        [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-home" ]
+                                            []
+                                        ]
+                                    , div [ class "media-body" ]
+                                        [ h4 [ class "media-heading" ]
+                                            [ text (I18n.translate language (I18n.Organization I18n.Singular)) ]
+                                        , text (I18n.translate language I18n.AddNewOrganizationCatchPhrase)
+                                        ]
+                                    ]
+                                , aForPath
+                                    Navigate
+                                    language
                                     "/collections/new"
                                     [ class "media action"
-                                      -- TODO trigger a login if not signed in
                                     , onClick (DisplayAddNewModal False)
                                     ]
                                     [ div [ class "media-left icon" ]
@@ -633,14 +649,14 @@ viewHeader model language containerClass =
                                     []
                                     [ text (I18n.translate language (I18n.UseCase I18n.Plural)) ]
                                 ]
-                              --   , li []
-                              --       [ aForPath
-                              --           Navigate
-                              --           language
-                              --           "/organizations"
-                              --           []
-                              --           [ text (I18n.translate language (I18n.Organization I18n.Plural)) ]
-                              --       ]
+                            , li []
+                                [ aForPath
+                                    Navigate
+                                    language
+                                    "/organizations"
+                                    []
+                                    [ text (I18n.translate language (I18n.Organization I18n.Plural)) ]
+                                ]
                             , li []
                                 [ aForPath
                                     Navigate
