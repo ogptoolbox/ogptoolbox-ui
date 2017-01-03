@@ -74,18 +74,22 @@ type TranslationId
     | EnterUsername
     | EtalabLogo
     | Faq
-    | FaqAccess
-    | FaqAccessContent
+    | FaqBug
+    | FaqBugContent
     | FaqCategories
     | FaqCategoriesContent1
     | FaqCategoriesContent2
     | FaqCategoriesContentLink
+    | FaqCategoriesContentLinkText
     | FaqContribution
     | FaqContributionContent
+    | FaqCode
     | FaqData
-    | FaqDataContent0
-    | FaqDataContent1
-    | FaqDataContent2
+    | FaqCodeData
+    | FaqDataHarvest
+    | FaqDataHarvestContent0
+    | FaqDataHarvestContent1
+    | FaqDataHarvestContent2
     | FaqDescription
     | FaqDev
     | FaqDevContent
@@ -102,8 +106,6 @@ type TranslationId
     | FaqTypesContentCollection
     | FaqTypesContentTool
     | FaqTypesContentUseCase
-    | FaqSourceCode
-    | FaqSourceCodeContent
     | FaqWhat
     | FaqWhatContent1
     | FaqWhatContent2
@@ -359,7 +361,7 @@ getTranslationSet translationId =
 
         AddNewOrganizationDescription ->
             { english = s "Creating a new organization by giving a few generic informations"
-            , french = s "Création d'une nouvelle organisation en fournissant quelques informqtions générales"
+            , french = s "Création d'une nouvelle organisation en fournissant quelques informations générales"
             , spanish = todo
             }
 
@@ -376,14 +378,14 @@ getTranslationSet translationId =
             }
 
         AddNewToolDescription ->
-            { english = s "Creating a new tool by giving a few generic informations"
-            , french = s "Création d'un nouvel outil en fournissant quelques informqtions générales"
+            { english = s "Creating a new tool by giving a few generic informations."
+            , french = s "Création d'un nouvel outil en fournissant quelques informations générales"
             , spanish = todo
             }
 
         AddNewToolCatchPhrase ->
-            { english = s "A software or service, available on the web or through a mobile application."
-            , french = s "Un programme informatique ou service, disponible sur le web ou par une application mobile."
+            { english = s "A software or a website."
+            , french = s "Un logiciel ou un site Internet."
             , spanish = todo
             }
 
@@ -395,7 +397,7 @@ getTranslationSet translationId =
 
         AddNewUseCaseDescription ->
             { english = s "Creating a new use case by giving a few generic informations"
-            , french = s "Création d'un nouveau cas d'usage en fournissant quelques informqtions générales"
+            , french = s "Création d'un nouveau cas d'usage en fournissant quelques informations générales"
             , spanish = todo
             }
 
@@ -670,15 +672,15 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
-        FaqAccess ->
-            { english = s "How can I access OGP Toolbox Data?"
-            , french = s "Comment puis-je accéder aux données de l'OGP Toolbox ?"
+        FaqBug ->
+            { english = s "How can I report a bug or suggest a new feature?"
+            , french = s "Comment puis-je signaliser un bug ou suggérer une nouvelle fonctionnalité ?"
             , spanish = todo
             }
 
-        FaqAccessContent ->
-            { english = s "Harvested data are available on a Framagit repository and accessible under a CC0 license:"
-            , french = s "Les données moissonnées sont stockées sur un dépôt Framagit et disponible sous licence CC0 :"
+        FaqBugContent ->
+            { english = s "If you can't contribute directly to the code of the OGP Toolbox (cf. previous question), you can still help us by telling us about the problems you've encountered on the platform or about your ideas to improve it. Please file a new issue on this page:"
+            , french = s "Si vous ne pouvez pas contribuer directement au code de l'OGP Toolbox (cf. question précédente), vous pouvez apporter une aide en nous indiquant les problèmes que vous avez rencontré en utilisant la plateforme ou vos idées pour l'améliorer. Il vous suffit de saisir une nouvelle entrée ('New Issue') sur cette page :"
             , spanish = todo
             }
 
@@ -689,20 +691,26 @@ getTranslationSet translationId =
             }
 
         FaqCategoriesContent1 ->
-            { english = s "Rather than classify each tool (and their use cases) in monolithic and exclusive categories (i.e. “a tool cannot be in more than one category”), the platform is based on tags, allowing to qualify each tool and each usage with as many key words as necessary. This is called social tagging or “folksonomy”"
-            , french = s "Plutôt que de classer les outils (et leurs usages) dans de grandes catégories monolithiques et exclusives (i.e. \"un outil ne peut pas être dans plus d'une catégorie à la fois\"), la plateforme repose sur un système de \"tags\" (labels), permettant de qualifier chaque outil et chaque usage avec autant de mots clés que vous jugerez nécessaire. C'est ce qu'on appelle \"tagging\" social ou \"folksonomie\""
-            , spanish = todo
-            }
-
-        FaqCategoriesContent2 ->
-            { english = s "These tags are represented by bubbles. By cliking in different bubbles, you're simply searching in the Toolbox the tools and use cases matching those key words. Results are updated in real-time on the page."
-            , french = s "Ces tags sont représentés sous forme de bulles. En cliquant sur différentes bulles, vous cherchez tout simplement dans la Toolbox les outils et cas d'usage qui correspondent à ces mots clés. Les résultats s'affichent en temps réel sur la page."
+            { english = s "Rather than classify each tool (and their use cases) in monolithic and exclusive categories (i.e. “a tool cannot be in more than one category”), the platform is based on tags, allowing to qualify each tool and each usage with as many key words as necessary. This is called social tagging or "
+            , french = s "Plutôt que de classer les outils (et leurs usages) dans de grandes catégories monolithiques et exclusives (i.e. \"un outil ne peut pas être dans plus d'une catégorie à la fois\"), la plateforme repose sur un système de \"tags\" (labels), permettant de qualifier chaque outil et chaque usage avec autant de mots clés que vous jugerez nécessaire. C'est ce qu'on appelle \"tagging\" social ou "
             , spanish = todo
             }
 
         FaqCategoriesContentLink ->
             { english = s "https://en.wikipedia.org/wiki/Folksonomy"
             , french = s "https://fr.wikipedia.org/wiki/Folksonomie"
+            , spanish = todo
+            }
+
+        FaqCategoriesContentLinkText ->
+            { english = s "folksonomy"
+            , french = s "folksonomie"
+            , spanish = todo
+            }
+
+        FaqCategoriesContent2 ->
+            { english = s "These tags are represented by bubbles. By cliking in different bubbles, you're simply searching in the Toolbox the tools and use cases matching those key words. Results are updated in real-time on the page."
+            , french = s "Ces tags sont représentés sous forme de bulles. En cliquant sur différentes bulles, vous cherchez tout simplement dans la Toolbox les outils et cas d'usage qui correspondent à ces mots clés. Les résultats s'affichent en temps réel sur la page."
             , spanish = todo
             }
 
@@ -718,25 +726,43 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        FaqCode ->
+            { english = s "Where can I find the source code of the OGP Toolbox?"
+            , french = s "Où puis-je trouver le code source de l'OGP Toolbox ?"
+            , spanish = todo
+            }
+
         FaqData ->
+            { english = s "How can I access the data?"
+            , french = s "Comment puis-je accéder aux données ?"
+            , spanish = todo
+            }
+
+        FaqCodeData ->
+            { english = s "The OGP Toolbox is an open source (AGPL License) and open data project (CC0 License), that's why we publish its source code as well as all harvested data. You'll find all informations and resources on this page:"
+            , french = s "L'OGP Toolbox est un projet open source (Licence AGPL) et open data (Licence CC0), nous donnons donc accès à son code source ainsi qu'à toutes les données moissonnées. Vous trouverez toutes les informations et les ressources sur cette page :"
+            , spanish = todo
+            }
+
+        FaqDataHarvest ->
             { english = s "What is the source of the data?"
             , french = s "D'où proviennent les données ?"
             , spanish = todo
             }
 
-        FaqDataContent0 ->
+        FaqDataHarvestContent0 ->
             { english = s "The OGP Toolbox data comes from multiple sources:"
             , french = s "Les données de l'OGP Toolbox proviennent de sources multiples :"
             , spanish = todo
             }
 
-        FaqDataContent1 ->
+        FaqDataHarvestContent1 ->
             { english = s "Existing catalogs are regularly harvested to feed and update the data base:"
             , french = s "Des catalogues existants sont moissonnés régulièrement pour alimenter et mettre à jour la base de données :"
             , spanish = todo
             }
 
-        FaqDataContent2 ->
+        FaqDataHarvestContent2 ->
             { english = s "OGP Toolbox users can create new tools, use cases and organizations, or edit existing ones."
             , french = s "Les utilisateurs de l'OGP Toolbox peuvent créer de nouvelles fiches d'outil, de cas d'usage et d'organisation, ou éditer des fiches existantes."
             , spanish = todo
@@ -815,13 +841,13 @@ getTranslationSet translationId =
             }
 
         FaqTypesContentTool ->
-            { english = s "A digital tool is either a computer program (software), or an online service (platform) available on the web or through a mobile application."
-            , french = s "Un outil numérique est un programme informatique ou un service, disponible sur le web ou par une applications mobile."
+            { english = s "A digital tool is either a computer program (software, application) or an online service (website, platform, resource)."
+            , french = s "Un outil numérique est un programme informatique (logiciel, application) ou un service en ligne (site Internet, plateforme, ressource)."
             , spanish = todo
             }
 
         FaqTypesContentActor ->
-            { english = s "An actor is either the user or the developer of a tool, part of the public sector (government, administration, parliament, subnational entity), the private sector (company, startup) or the civil society (non-profit organization, movement, engaged citizen)."
+          { english = s "An actor is either the user or the developer of a tool, part of the public sector (government, administration, parliament, subnational entity), the private sector (company, startup) or the civil society (non-profit organization, movement, engaged citizen)."
             , french = s "Un acteur est un utilisateur ou un développeur d'outil, faisant partie de la sphère publique (gouvernement, administration, parlement, collectivité locale), du secteur privé (entreprise, startup) ou de la société civile (association, mouvement, citoyen engagé)."
             , spanish = todo
             }
@@ -835,18 +861,6 @@ getTranslationSet translationId =
         FaqTypesContentUseCase ->
             { english = s "A use case is a concrete example showing how one or multiple tools were used by an organization."
             , french = s "Un cas d'usage est un exemple concret d'utilisation d'un ou plusieurs outils par un acteur."
-            , spanish = todo
-            }
-
-        FaqSourceCode ->
-            { english = s "How can I access the code of the OGP Toolbox?"
-            , french = s "Comment puis-je accéder au code de l'OGP Toolbox ?"
-            , spanish = todo
-            }
-
-        FaqSourceCodeContent ->
-            { english = s "The code is composed of the three following components:"
-            , french = s "Le code est composé des trois composants suivants :"
             , spanish = todo
             }
 
