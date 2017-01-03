@@ -454,7 +454,6 @@ urlUpdate location model =
                                                         (Navigate (Urls.parentUrl location.href))
                                                         model
 
-                                                -- TODO: Only the owner of the collection and an admin can edit it.
                                                 ( addNewCollectionModel, childCmd ) =
                                                     AddNewCollection.State.update
                                                         (AddNewCollection.Types.LoadCollection collectionId)

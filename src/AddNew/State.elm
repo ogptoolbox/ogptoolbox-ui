@@ -32,14 +32,7 @@ update msg model authentication language =
         CardPosted response ->
             case response of
                 Result.Err err ->
-                    let
-                        _ =
-                            Debug.log "AddNew.State GotOrganizations CardPosted" err
-
-                        newModel =
-                            { model | error = Just err }
-                    in
-                        ( newModel, Cmd.none )
+                    ( { model | error = Just err }, Cmd.none )
 
                 Result.Ok body ->
                     let

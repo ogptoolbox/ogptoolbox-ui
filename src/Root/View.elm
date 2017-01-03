@@ -223,7 +223,6 @@ viewAddNewModal model language =
                                     language
                                     "/tools/new"
                                     [ class "media action"
-                                      -- TODO trigger a login if not signed in
                                     , onClick (DisplayAddNewModal False)
                                     ]
                                     [ div [ class "media-left icon" ]
@@ -241,7 +240,6 @@ viewAddNewModal model language =
                                     language
                                     "/use-cases/new"
                                     [ class "media action"
-                                      -- TODO trigger a login if not signed in
                                     , onClick (DisplayAddNewModal False)
                                     ]
                                     [ div [ class "media-left icon" ]

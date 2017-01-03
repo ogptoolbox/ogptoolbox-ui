@@ -341,15 +341,15 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
-        AddNewItemBox ->
-            { english = s "Add a new item"
-            , french = s "Ajouter un nouvel élément"
-            , spanish = todo
-            }
-
         AddNewCollectionCatchPhrase ->
             { english = s "A simple way to recommend your favorite tools."
             , french = s "Une façon simple de recommander vos outils favoris."
+            , spanish = todo
+            }
+
+        AddNewItemBox ->
+            { english = s "Add a new item"
+            , french = s "Ajouter un nouvel élément"
             , spanish = todo
             }
 
@@ -359,15 +359,15 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
-        AddNewOrganizationDescription ->
-            { english = s "Creating a new organization by giving a few generic informations"
-            , french = s "Création d'une nouvelle organisation en fournissant quelques informations générales"
-            , spanish = todo
-            }
-
         AddNewOrganizationCatchPhrase ->
             { english = todo
             , french = todo
+            , spanish = todo
+            }
+
+        AddNewOrganizationDescription ->
+            { english = s "Creating a new organization by giving a few generic informations"
+            , french = s "Création d'une nouvelle organisation en fournissant quelques informations générales"
             , spanish = todo
             }
 
@@ -377,15 +377,15 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
-        AddNewToolDescription ->
-            { english = s "Creating a new tool by giving a few generic informations."
-            , french = s "Création d'un nouvel outil en fournissant quelques informations générales"
-            , spanish = todo
-            }
-
         AddNewToolCatchPhrase ->
             { english = s "A software or a website."
             , french = s "Un logiciel ou un site Internet."
+            , spanish = todo
+            }
+
+        AddNewToolDescription ->
+            { english = s "Creating a new tool by giving a few generic informations."
+            , french = s "Création d'un nouvel outil en fournissant quelques informations générales"
             , spanish = todo
             }
 
@@ -395,15 +395,15 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
-        AddNewUseCaseDescription ->
-            { english = s "Creating a new use case by giving a few generic informations"
-            , french = s "Création d'un nouveau cas d'usage en fournissant quelques informations générales"
-            , spanish = todo
-            }
-
         AddNewUseCaseCatchPhrase ->
             { english = s "A concrete example showing how a tool was used."
             , french = s "Un exemple concret d'utilisation d'un ou plusieurs outils."
+            , spanish = todo
+            }
+
+        AddNewUseCaseDescription ->
+            { english = s "Creating a new use case by giving a few generic informations"
+            , french = s "Création d'un nouveau cas d'usage en fournissant quelques informations générales"
             , spanish = todo
             }
 
@@ -847,7 +847,7 @@ getTranslationSet translationId =
             }
 
         FaqTypesContentActor ->
-          { english = s "An actor is either the user or the developer of a tool, part of the public sector (government, administration, parliament, subnational entity), the private sector (company, startup) or the civil society (non-profit organization, movement, engaged citizen)."
+            { english = s "An actor is either the user or the developer of a tool, part of the public sector (government, administration, parliament, subnational entity), the private sector (company, startup) or the civil society (non-profit organization, movement, engaged citizen)."
             , french = s "Un acteur est un utilisateur ou un développeur d'outil, faisant partie de la sphère publique (gouvernement, administration, parlement, collectivité locale), du secteur privé (entreprise, startup) ou de la société civile (association, mouvement, citoyen engagé)."
             , spanish = todo
             }
