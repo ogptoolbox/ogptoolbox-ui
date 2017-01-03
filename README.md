@@ -1,32 +1,40 @@
 # OGPToolbox-UI
 
-Web user interface for the OGP toolbox
+Web user interface for the OGP toolbox.  
+![OGP Toolbox Logo](https://fr.ogpsummit.org/app/uploads/2016/06/Picto-toolbox.png)  
 
-See it in action: https://ogptoolbox.org/
+### **[The OGP Toolbox](https://ogptoolbox.org/) is a collaborative platform to find and share digital tools used throughout the world for open government initiatives.**
 
-## Install
+
+It's an open source and open data project with complementary resources published here:
+
+* https://github.com/retruco/retruco-api
+* https://git.framasoft.org/codegouv/merge-open-software-base-yaml
+
+---
+
+## Installation
 
     git clone https://github.com/ogptoolbox/ogptoolbox-ui
     cd ogptoolbox-ui
 
-## Install dependencies
+### Install dependencies
 
     npm install
 
 This will install npm dependencies in `node_modules` and Elm dependencies in `elm-stuff`.
 
-## Development
+### Development
 
 Start the hot-reloading webpack dev server:
 
     npm start
 
-Navigate to <http://localhost:3011>.
-
+Navigate to <http://localhost:3011>.  
 Any changes you make to your files (.elm, .js, .css, etc.) will trigger
 a hot reload.
 
-## Production
+### Production
 
 When you're ready to deploy:
 
@@ -36,9 +44,9 @@ This will create a `dist` folder (after removing the old one if present):
 
     .
     ├── dist
-    │   ├── index.html
-    │   ├── 5df766af1ced8ff1fe0a.css
-    │   └── 5df766af1ced8ff1fe0a.js
+    │   ├── index.html
+    │   ├── 5df766af1ced8ff1fe0a.css
+    │   └── 5df766af1ced8ff1fe0a.js
 
 To test the production build locally:
 
@@ -50,3 +58,8 @@ To test the production build locally:
     serving as a single page app (all non-file requests redirect to index.html)
 
 Navigate to <http://localhost:3012>.
+
+## License
+
+[AGPL v3](https://framagit.org/ogptoolbox/ogptoolbox-ui/blob/master/LICENSE.md)  
+Copyright (C) 2016 Etalab & contributors
