@@ -18,13 +18,12 @@ view model language =
                     [ div [ class "col-xs-12" ]
                         [ div [ class "form-group" ]
                             [ label [ for "nameField" ]
-                                [ text "Name" ]
+                                [ text (I18n.translate language (I18n.CollectionsNameTitle)) ]
                             , input
                                 [ class "form-control"
                                 , id "nameField"
                                 , onInput (ForSelf << SetName)
-                                , placeholder "What's the official name of the collection?"
-                                  -- TODO i18n
+                                , placeholder (I18n.translate language (I18n.CollectionsNameDescription))
                                 , required True
                                 , type_ "text"
                                 , value model.fields.name
@@ -38,6 +37,7 @@ view model language =
                                 [ class "form-control"
                                 , id "aboutField"
                                 , onInput (ForSelf << SetDescription)
+                                , placeholder (I18n.translate language (I18n.CollectionsNameDescription))
                                 , value model.fields.description
                                 ]
                                 []
@@ -69,15 +69,13 @@ view model language =
                             [ div [ class "row" ]
                                 [ div [ class "col-xs-12" ]
                                     [ h1 []
-                                        -- [ text (I18n.translate language I18n.AddNewCollection) ]
-                                        -- TODO i18n
                                         [ text
                                             (case model.editedCollectionId of
                                                 Nothing ->
-                                                    "Add Collection"
+                                                    (I18n.translate language (I18n.CollectionAddTitle))
 
                                                 Just _ ->
-                                                    "Edit Collection"
+                                                    (I18n.translate language (I18n.CollectionEditTitle))
                                             )
                                         ]
                                     ]
@@ -126,9 +124,7 @@ view model language =
                             , disabled (publishedDisabled model.imageUploadStatus)
                             , type_ "submit"
                             ]
-                            [ text "Publish"
-                              -- TODO i18n
-                            ]
+                            [ text (I18n.translate language (I18n.PublishCollection)) ]
                         ]
                     ]
                 ]

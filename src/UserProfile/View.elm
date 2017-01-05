@@ -49,9 +49,7 @@ view model language user =
                 , div [ class "row section" ]
                     [ div [ class "container" ]
                         [ h3 [ class "zone-label" ]
-                            [ text "My Collections"
-                              -- TODO i18n
-                            ]
+                            [ text (I18n.translate language (I18n.ProfileMyCollections)) ]
                         , div [ class "row" ]
                             ((List.map (viewCollectionThumbnail language user) collections)
                                 ++ [ div [ class "col-sm-12 text-center" ]
@@ -62,9 +60,7 @@ view model language user =
                                             [ class "show-more" ]
                                             [ span [ class "glyphicon glyphicon-plus" ]
                                                 []
-                                            , text "Ajouter une collection"
-                                              -- TODO i18n
-                                            ]
+                                            , text (I18n.translate language (I18n.CollectionAdd)) ]
                                         ]
                                    ]
                             )

@@ -55,9 +55,15 @@ type TranslationId
     | ChangePasswordExplanation
     | Close
     | Collection GrammaticalNumber
+    | CollectionAdd
+    | CollectionAddDescription
+    | CollectionAddTitle
     | CollectionEditDescription
     | CollectionEditTitle
     | CollectionsDescription
+    | CollectionsNameTitle
+    | CollectionsNameDescription
+    | CollectionsRecommendedBy
     | CollectionsTitle
     | Colon
     | Copyright
@@ -146,6 +152,8 @@ type TranslationId
     | Press
     | PressDescription
     | PressLead
+    | ProfileMyCollections
+    | PublishCollection
     | PublishOrganization
     | PublishTool
     | PublishUseCase
@@ -164,6 +172,7 @@ type TranslationId
     | SendEmailAgain
     | Share
     | ShowAll Int
+    | ShowMore
     | SignIn
     | SignInToContribute
     | SignOut
@@ -511,21 +520,57 @@ getTranslationSet translationId =
                         s "Colecciones"
             }
 
+        CollectionAdd ->
+            { english = s "Add a new collection"
+            , french = s "Ajouter une nouvelle collection"
+            , spanish = todo
+            }
+
+        CollectionAddDescription ->
+            { english = s "Creation of a new collection."
+            , french = s "Création d'une nouvelle collection."
+            , spanish = todo
+            }
+
+        CollectionAddTitle ->
+            { english = s "Add your collection"
+            , french = s "Ajouter votre collection"
+            , spanish = todo
+            }
+
         CollectionEditDescription ->
-            { english = s "Creating a new collection or editing an existing one."
-            , french = s "Création d'une nouvelle collection ou édition d'une collection existante."
+            { english = s "Edition of a collection."
+            , french = s "Édition d'une collection."
             , spanish = todo
             }
 
         CollectionEditTitle ->
-            { english = s "Edit Collection"
-            , french = s "Édition d'une collection"
+            { english = s "Edition of your collection"
+            , french = s "Édition de votre collection"
             , spanish = todo
             }
 
         CollectionsDescription ->
             { english = s "List of tools and use cases collected by a user"
             , french = s "List d'outils et de cas d'usages collectés par un utilisateur"
+            , spanish = todo
+            }
+
+        CollectionsNameTitle ->
+            { english = s "Name"
+            , french = s "Nom"
+            , spanish = todo
+            }
+
+        CollectionsNameDescription ->
+            { english = s "What name do you want to give your collection?"
+            , french = s "Quel nom voulez-vous donner à votre collection ?"
+            , spanish = todo
+            }
+
+        CollectionsRecommendedBy ->
+            { english = s "Recommended by "
+            , french = s "Recommandé par"
             , spanish = todo
             }
 
@@ -1118,6 +1163,18 @@ to strengthen governance.
             , spanish = todo
             }
 
+        ProfileMyCollections ->
+            { english = s "My collections"
+            , french = s "Mes collections"
+            , spanish = todo
+            }
+
+        PublishCollection ->
+            { english = s "Publish your collection"
+            , french = s "Publier votre collection"
+            , spanish = todo
+            }
+
         PublishOrganization ->
             { english = s "Publish organization"
             , french = s "Publier cette organisation"
@@ -1226,6 +1283,11 @@ to strengthen governance.
             , spanish = s ("Ver todo (" ++ (toString count) ++ ")")
             }
 
+        ShowMore ->
+            { english = s "Show more"
+            , french = s "Voir plus"
+            , spanish = todo
+            }
         SignIn ->
             { english = s "Sign In"
             , french = s "Identification"
