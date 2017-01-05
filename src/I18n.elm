@@ -24,7 +24,6 @@ type TranslationId
     | ActivationNotRequested
     | ActivationSucceeded
     | ActivationTitle
-    | Actor GrammaticalNumber
     | AddNew
     | AddNewItemBox
     | AddNewCollectionCatchPhrase
@@ -102,8 +101,8 @@ type TranslationId
     | FaqTargetContent
     | FaqTypes
     | FaqTypesContent
-    | FaqTypesContentActor
     | FaqTypesContentCollection
+    | FaqTypesContentOrganization
     | FaqTypesContentTool
     | FaqTypesContentUseCase
     | FaqWhat
@@ -281,30 +280,6 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
-        Actor number ->
-            { english =
-                case number of
-                    Singular ->
-                        s "Actor"
-
-                    Plural ->
-                        s "Actors"
-            , french =
-                case number of
-                    Singular ->
-                        s "Acteur"
-
-                    Plural ->
-                        s "Acteurs"
-            , spanish =
-                case number of
-                    Singular ->
-                        todo
-
-                    Plural ->
-                        todo
-            }
-
         AdditionalInformations ->
             { english = s "Additional informations"
             , french = s "Informations supplémentaires"
@@ -360,8 +335,8 @@ getTranslationSet translationId =
             }
 
         AddNewOrganizationCatchPhrase ->
-            { english = todo
-            , french = todo
+            { english = s "A developer or user of tools."
+            , french = s "Un développeur ou utilisateur d'outil."
             , spanish = todo
             }
 
@@ -823,7 +798,7 @@ getTranslationSet translationId =
             }
 
         FaqTargetContent ->
-            { english = s "The OGP is intended to all public sector, private sector and civil society actors that develop projects to promote democracy and promote transparency, participation and collaboration. Any engaged citizen willing to be introduced to new tools and to discover particular use cases will be able to access relevant information, and to get in touch with the users’ community."
+            { english = s "The OGP is intended to all public sector, private sector and civil society organizations that develop projects to promote democracy and promote transparency, participation and collaboration. Any engaged citizen willing to be introduced to new tools and to discover particular use cases will be able to access relevant information, and to get in touch with the users’ community."
             , french = s "L'OGP Toolbox est destinée à tous les acteurs publics, privés et de la société civile portant des projets pour renforcer la démocratie et promouvoir la transparence, la participation et la collaboration dans l'action publique. Tout citoyen engagé voulant s'initier à de nouveaux outils et en découvrir les cas d'usages pourra accéder facilement aux informations pertinentes."
             , spanish = todo
             }
@@ -840,21 +815,21 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        FaqTypesContentCollection ->
+            { english = s "A collection is a list of tools recommended by a contributor. The same as bookmarks or favorites, but for tools!"
+            , french = s "Une collection est une liste d'outils recommandés par un contributeur. Similaire à un marque-page ou un favori, mais pour des outils !"
+            , spanish = todo
+            }
+
+        FaqTypesContentOrganization ->
+            { english = s "An organization is either the user or the developer of a tool, and is part of the public sector (government, administration, parliament, subnational entity), the private sector (company, startup) or the civil society (non-profit organization, movement)."
+            , french = s "Une organisation utilise ou développe des outils, et fait partie de la sphère publique (gouvernement, administration, parlement, collectivité locale), du secteur privé (entreprise, startup) ou de la société civile (association, mouvement)."
+            , spanish = todo
+            }
+
         FaqTypesContentTool ->
             { english = s "A digital tool is either a computer program (software, application) or an online service (website, platform, resource)."
             , french = s "Un outil numérique est un programme informatique (logiciel, application) ou un service en ligne (site Internet, plateforme, ressource)."
-            , spanish = todo
-            }
-
-        FaqTypesContentActor ->
-            { english = s "An actor is either the user or the developer of a tool, part of the public sector (government, administration, parliament, subnational entity), the private sector (company, startup) or the civil society (non-profit organization, movement, engaged citizen)."
-            , french = s "Un acteur est un utilisateur ou un développeur d'outil, faisant partie de la sphère publique (gouvernement, administration, parlement, collectivité locale), du secteur privé (entreprise, startup) ou de la société civile (association, mouvement, citoyen engagé)."
-            , spanish = todo
-            }
-
-        FaqTypesContentCollection ->
-            { english = s "A collection is a list of tools recommended by an actor. The same as bookmarks or favorites, but for tools!"
-            , french = s "Une collection est une liste d'outils recommandés par un acteur. Similaire à un marque-page ou un favori, mais pour des outils !"
             , spanish = todo
             }
 
@@ -871,8 +846,8 @@ getTranslationSet translationId =
             }
 
         FaqWhatContent1 ->
-            { english = s "The OGP Toolbox is a collaborative platform that gathers digital tools (software and online services) used throughout the world to improve democracy and promote transparency, participation and collaboration. In this crowdsourced catalog you will find tools developed and used by actors from the public sector (governments, administrations, parliaments, subnational entities), actors from the private sector (companies, startups) and actors from the civil society (non-profit organizations, movements, engaged citizens)."
-            , french = s "L'OGP Toolbox est une plateforme collaborative qui recense les outils numériques (logiciels et services en ligne) utilisés dans le monde entier pour renforcer la démocratie et promouvoir la transparence, la participation et la collaboration dans l'action publique. Ce catalogue crowdsourcé rassemble des outils développés et utilisés par des acteurs publics (gouvernements, administrations, parlements, collectivités locales), comme des acteurs du secteur privé (entreprises, startups) ou des acteurs de la société civile (associations, mouvements, citoyens engagés)."
+            { english = s "The OGP Toolbox is a collaborative platform that gathers digital tools developed and used throughout the world by organizations to improve democracy and promote transparency, participation and collaboration."
+            , french = s "L'OGP Toolbox est une plateforme collaborative qui recense les outils numériques développés et utilisés dans le monde entier par des organisations pour renforcer la démocratie et promouvoir la transparence, la participation et la collaboration dans l'action publique."
             , spanish = todo
             }
 
@@ -889,7 +864,7 @@ getTranslationSet translationId =
             }
 
         FaqWhyContent1 ->
-            { english = s "The OGP Toolbox aims at empowering public sector, private sector and civil society actors by sharing resources and experiences. The objective is to facilitate cooperation and the implementation of concrete engagements related to the open government through the appropriation of digital tools."
+            { english = s "The OGP Toolbox aims at empowering organizations by sharing resources and experiences. The objective is to facilitate cooperation and the implementation of concrete engagements related to the open government through the appropriation of digital tools."
             , french = s "L'OGP Toolbox vise à renforcer le pouvoir d'agir des acteurs publics, privés et de la société civile à travers le partage de ressources et d'expériences. L'objectif est de faciliter la mise en oeuvre concrète d'engagements et de coopérations liées au gouvernement ouvert grâce à la maîtrise des outils numériques."
             , spanish = todo
             }
