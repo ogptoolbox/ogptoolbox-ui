@@ -136,7 +136,7 @@ viewAutocomplete language parentId controlLabelI18n controlPlaceholderI18n error
                             [ (case model.autocompleteMenuState of
                                 AutocompleteMenuHidden ->
                                     button
-                                        [ class "btn btn-secondary"
+                                        [ class "btn btn-todo-style"
                                         , onWithOptions "click"
                                             { preventDefault = True, stopPropagation = False }
                                             (Json.Decode.succeed (ForSelf MouseOpen))
@@ -145,7 +145,7 @@ viewAutocomplete language parentId controlLabelI18n controlPlaceholderI18n error
                                             Just selected ->
                                                 [ span
                                                     [ ariaHidden True
-                                                    , class "text-success fa fa-check fa-fw"
+                                                    , class "fa fa-caret-down fa-fw"
                                                     ]
                                                     []
                                                 , span
@@ -167,7 +167,7 @@ viewAutocomplete language parentId controlLabelI18n controlPlaceholderI18n error
 
                                 AutocompleteMenuVisible ->
                                     button
-                                        [ class "active btn btn-secondary"
+                                        [ class "active btn btn-todo-style"
                                         , onWithOptions "click"
                                             { preventDefault = True, stopPropagation = False }
                                             (Json.Decode.succeed (ForSelf MouseClose))
@@ -184,7 +184,7 @@ viewAutocomplete language parentId controlLabelI18n controlPlaceholderI18n error
 
                                 _ ->
                                     button
-                                        [ class "btn btn-secondary"
+                                        [ class "btn btn-todo-style"
                                         , disabled True
                                         , onWithOptions "click"
                                             { preventDefault = True, stopPropagation = False }
@@ -195,11 +195,11 @@ viewAutocomplete language parentId controlLabelI18n controlPlaceholderI18n error
                                         ]
                               )
                             ]
-                        , span [ class "input-group-btn" ]
-                            [ case model.selected of
-                                Just selected ->
-                                    button
-                                        [ class "btn btn-primary"
+                        , case model.selected of
+                            Just selected ->
+                                span [ class "input-group-btn" ]
+                                    [ button
+                                        [ class "btn btn-success"
                                         , onWithOptions "click"
                                             { preventDefault = True, stopPropagation = False }
                                             (Json.Decode.succeed
@@ -207,18 +207,23 @@ viewAutocomplete language parentId controlLabelI18n controlPlaceholderI18n error
                                             )
                                         ]
                                         [ text <| I18n.translate language I18n.Add ]
+                                    ]
 
-                                Nothing ->
-                                    button
-                                        [ class "btn btn-secondary"
-                                        , onWithOptions "click"
-                                            { preventDefault = True, stopPropagation = False }
-                                            (Json.Decode.succeed
-                                                (ForParent (Create model.cardTypes model.autocomplete))
-                                            )
+                            Nothing ->
+                                if String.isEmpty (String.trim model.autocomplete) then
+                                    text ""
+                                else
+                                    span [ class "input-group-btn" ]
+                                        [ button
+                                            [ class "btn btn-warning"
+                                            , onWithOptions "click"
+                                                { preventDefault = True, stopPropagation = False }
+                                                (Json.Decode.succeed
+                                                    (ForParent (Create model.cardTypes model.autocomplete))
+                                                )
+                                            ]
+                                            [ text <| I18n.translate language I18n.Create ]
                                         ]
-                                        [ text <| I18n.translate language I18n.Create ]
-                            ]
                         ]
                   , span [ class "sr-only" ] [ text <| I18n.translate language I18n.LoadingMenu ]
                   ]
