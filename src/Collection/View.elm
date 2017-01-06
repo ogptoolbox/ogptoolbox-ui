@@ -90,9 +90,7 @@ viewBanner authentication language user collection =
                                             , onClick (navigate ("/collections/" ++ collection.id ++ "/edit"))
                                             , type_ "button"
                                             ]
-                                            [ text "Edit collection"
-                                              -- TODO i18n
-                                            ]
+                                            [ text (I18n.translate language (I18n.CollectionEditTitle)) ]
                                         ]
                                     ]
                               else
@@ -107,14 +105,11 @@ viewBanner authentication language user collection =
                                       --     []
                                       -- ]
                                       h4 []
-                                        [ text "Collection"
-                                          -- TODO i18n
-                                        ]
+                                        [ text (I18n.translate language (I18n.Collection I18n.Singular)) ]
                                     , h2 []
                                         [ text collection.name ]
                                     , h3 []
-                                        [ text "Recommandé par "
-                                          -- TODO i18n
+                                        [ text (I18n.translate language (I18n.CollectionsRecommendedBy))
                                         , span []
                                             [ text user.name ]
                                         ]
@@ -225,9 +220,7 @@ viewCollectionContent language user collection cards values =
                                 [ div [ class "row" ]
                                     [ div [ class "col-xs-8 text-left" ]
                                         [ h3 [ class "panel-title" ]
-                                            [ text "About"
-                                              -- TODO i18n
-                                            ]
+                                            [ text (I18n.translate language (I18n.About )) ]
                                         ]
                                     , div [ class "col-xs-4 text-right" ]
                                         []
@@ -241,9 +234,7 @@ viewCollectionContent language user collection cards values =
                                 [ div [ class "row" ]
                                     [ div [ class "col-xs-8 text-left" ]
                                         [ h4 [ class "zone-label" ]
-                                            [ text "Outils"
-                                              -- TODO i18n
-                                            ]
+                                            [ text (I18n.translate language (I18n.Tool I18n.Plural)) ]
                                         ]
                                       -- , div [ class "col-xs-4 text-right up7" ]
                                       --     [ a [ class "btn btn-default btn-xs btn-action", href "compare.html", type' "button" ]
@@ -283,9 +274,7 @@ viewCollectionContent language user collection cards values =
             [ div [ class "container" ]
                 [ div [ class "col-xs-12" ]
                     [ h4 [ class "zone-label" ]
-                        [ text "Utilisations"
-                          -- TODO i18n
-                        ]
+                        [ text (I18n.translate language (I18n.UseCase I18n.Plural)) ]
                     , div [ class "row" ]
                         (let
                             useCaseCards =

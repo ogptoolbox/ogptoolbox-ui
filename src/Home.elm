@@ -354,9 +354,7 @@ viewCollections collectionsWebData language =
                             [ div [ class "row section" ]
                                 [ div [ class "container" ]
                                     [ h3 [ class "zone-label" ]
-                                        [ text "Collections"
-                                          -- TODO i18n
-                                        ]
+                                        [ text (I18n.translate language (I18n.Collection I18n.Plural)) ]
                                     , div [ class "row" ]
                                         ((List.map
                                             (\collection ->
@@ -380,8 +378,7 @@ viewCollections collectionsWebData language =
                                                         "/collections"
                                                         [ class "show-more" ]
                                                         [ span [ class "glyphicon glyphicon-menu-down" ] []
-                                                        , text "Show more"
-                                                          -- TODO i18n
+                                                        , text (I18n.translate language (I18n.ShowMore))
                                                         ]
                                                     ]
                                                ]
