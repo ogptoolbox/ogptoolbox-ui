@@ -36,6 +36,18 @@ type alias Card =
     }
 
 
+type alias CardAutocompletion =
+    { autocomplete : String
+    , card : Card
+    , distance : Float
+    }
+
+
+type alias CardsAutocompletionBody =
+    { data : List CardAutocompletion
+    }
+
+
 type CardType
     = OrganizationCard
     | ToolCard
@@ -84,6 +96,17 @@ type alias DataIdsBody =
     , data : DataIds
     , limit : Int
     , offset : Int
+    }
+
+
+type alias DataProxy a =
+    { a
+        | ballots : Dict String Ballot
+        , cards : Dict String Card
+        , collections : Dict String Collection
+        , properties : Dict String Property
+        , users : Dict String User
+        , values : Dict String TypedValue
     }
 
 
@@ -245,6 +268,57 @@ getValue values id =
 
         Just value ->
             value
+
+
+initDataId : DataId
+initDataId =
+    { ballots = Dict.empty
+    , cards = Dict.empty
+    , collections = Dict.empty
+    , id = ""
+    , properties = Dict.empty
+    , users = Dict.empty
+    , values = Dict.empty
+    }
+
+
+initDataIds : DataIds
+initDataIds =
+    { ballots = Dict.empty
+    , cards = Dict.empty
+    , collections = Dict.empty
+    , ids = []
+    , properties = Dict.empty
+    , users = Dict.empty
+    , values = Dict.empty
+    }
+
+
+mergeData : DataProxy a -> DataProxy b -> DataProxy b
+mergeData new old =
+    { old
+        | ballots = Dict.union new.ballots old.ballots
+        , cards = Dict.union new.cards old.cards
+        , collections = Dict.union new.collections old.collections
+        , properties = Dict.union new.properties old.properties
+        , users = Dict.union new.users old.users
+        , values = Dict.union new.values old.values
+    }
+
+
+mergeDataId : DataId -> DataId -> DataId
+mergeDataId new old =
+    let
+        mergedData =
+            mergeData new old
+    in
+        { mergedData
+            | id =
+                if String.isEmpty new.id then
+                    old.id
+                else
+                    new.id
+        }
 
 
 

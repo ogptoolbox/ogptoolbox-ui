@@ -1,0 +1,367 @@
+module CollectionEdit.State exposing (..)
+
+import Authenticator.Types exposing (Authentication)
+import CardsAutocomplete.State
+import CollectionEdit.Types exposing (..)
+import Dict exposing (Dict)
+import Http
+import Http.Error
+import I18n
+import Json.Encode as Encode
+import Image.Types exposing (..)
+import Navigation
+import Ports
+import Requests
+import String
+import Types exposing (..)
+import Urls
+import WebData exposing (..)
+
+
+convertControls : Model -> Model
+convertControls model =
+    let
+        language =
+            model.language
+
+        conversion : List ( String, Maybe Encode.Value, Maybe I18n.TranslationId )
+        conversion =
+            [ ( "cardIds"
+              , if List.isEmpty model.cardIds then
+                    Nothing
+                else
+                    Just (Encode.list (List.map Encode.string model.cardIds))
+              , Nothing
+              )
+            , let
+                description =
+                    String.trim model.description
+              in
+                if String.isEmpty description then
+                    ( "description"
+                    , Nothing
+                    , Just I18n.MissingValue
+                    )
+                else
+                    ( "description"
+                    , Just (Encode.string description)
+                    , Nothing
+                    )
+            , case model.imageUploadStatus of
+                ImageNotUploadedStatus ->
+                    ( "logo"
+                    , Nothing
+                    , Nothing
+                      -- Image is not required.
+                    )
+
+                ImageSelectedStatus ->
+                    ( "logo"
+                    , Nothing
+                    , Just I18n.ReadingSelectedImage
+                    )
+
+                ImageReadStatus { contents, filename } ->
+                    ( "logo"
+                    , Nothing
+                    , Just (I18n.UploadingImage filename)
+                    )
+
+                ImageUploadedStatus path ->
+                    ( "logo"
+                    , Just (Encode.string path)
+                    , Nothing
+                    )
+
+                ImageUploadErrorStatus httpError ->
+                    ( "logo"
+                    , Nothing
+                    , Just (I18n.ImageUploadError (Http.Error.toString language httpError))
+                    )
+            , let
+                name =
+                    String.trim model.name
+              in
+                if String.isEmpty name then
+                    ( "name"
+                    , Nothing
+                    , Just I18n.MissingValue
+                    )
+                else
+                    ( "name"
+                    , Just (Encode.string name)
+                    , Nothing
+                    )
+            ]
+
+        errors =
+            Dict.fromList <|
+                List.filterMap
+                    (\( key, _, error ) ->
+                        case error of
+                            Just error ->
+                                Just ( key, error )
+
+                            Nothing ->
+                                Nothing
+                    )
+                    conversion
+
+        collectionJson =
+            if Dict.isEmpty errors then
+                Just <|
+                    Encode.object <|
+                        List.filterMap
+                            (\( key, valueJson, _ ) ->
+                                case valueJson of
+                                    Just valueJson ->
+                                        Just ( key, valueJson )
+
+                                    Nothing ->
+                                        Nothing
+                            )
+                            conversion
+            else
+                Nothing
+    in
+        { model
+            | collectionJson = collectionJson
+            , errors = errors
+        }
+
+
+init : Model
+init =
+    { authentication = Nothing
+    , cardsAutocompleteModel = CardsAutocomplete.State.init
+    , cardIds = []
+    , collectionJson = Nothing
+    , data = initDataId
+    , description = ""
+    , editedCollectionId = Nothing
+    , errors = Dict.empty
+    , imageUploadStatus = ImageNotUploadedStatus
+    , language = I18n.English
+    , name = ""
+    , webData = NotAsked
+    }
+
+
+subscriptions : Model -> Sub InternalMsg
+subscriptions model =
+    Sub.batch
+        [ Sub.map CardsAutocompleteMsg (CardsAutocomplete.State.subscriptions model.cardsAutocompleteModel)
+        , Ports.fileContentRead ImageRead
+        ]
+
+
+update : InternalMsg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        AddCard card ->
+            ( model
+            , Requests.getCard model.authentication card.id
+                |> Http.send (ForSelf << GotAddedCard)
+            )
+
+        CardsAutocompleteMsg childMsg ->
+            let
+                ( cardsAutocompleteModel, childCmd ) =
+                    CardsAutocomplete.State.update childMsg
+                        model.language
+                        "cardId"
+                        model.cardsAutocompleteModel
+            in
+                ( convertControls { model | cardsAutocompleteModel = cardsAutocompleteModel }
+                , Cmd.map translateCardsAutocompleteMsg childCmd
+                )
+
+        CollectionPosted (Err httpError) ->
+            ( { model | webData = Failure httpError }, Cmd.none )
+
+        CollectionPosted (Ok body) ->
+            let
+                newModel =
+                    { model
+                        | data = mergeDataId body.data model.data
+                        , webData = Data (Loaded body)
+                    }
+
+                path =
+                    "/collections/" ++ body.data.id
+
+                cmd =
+                    Urls.languagePath model.language path
+                        |> Navigation.newUrl
+            in
+                ( newModel, cmd )
+
+        CreateCard cardName ->
+            let
+                _ =
+                    Debug.log "CreateCard TODO" cardName
+            in
+                ( model, Cmd.none )
+
+        GotAddedCard (Err httpError) ->
+            let
+                _ =
+                    Debug.log "CollectionEdit.State GotCard Err" httpError
+            in
+                ( model, Cmd.none )
+
+        GotAddedCard (Ok { data }) ->
+            ( convertControls
+                { model
+                    | cardIds = List.append model.cardIds [ data.id ]
+                    , data = mergeData data model.data
+                }
+            , Cmd.none
+            )
+
+        GotCollection (Err httpError) ->
+            ( { model | webData = Failure httpError }, Cmd.none )
+
+        GotCollection (Ok body) ->
+            let
+                collection =
+                    case Dict.get body.data.id body.data.collections of
+                        Nothing ->
+                            Debug.crash ("Collection not found id=" ++ body.data.id)
+
+                        Just collection ->
+                            collection
+
+                newModel =
+                    convertControls
+                        { model
+                            | cardIds = collection.cardIds
+                            , data = mergeDataId body.data model.data
+                            , description = collection.description
+                            , imageUploadStatus =
+                                case collection.logo of
+                                    Nothing ->
+                                        ImageNotUploadedStatus
+
+                                    Just path ->
+                                        ImageUploadedStatus path
+                            , name = collection.name
+                            , webData = Data (Loaded body)
+                        }
+
+                cmd =
+                    Ports.setDocumentMetadata
+                        { description = I18n.translate model.language I18n.CollectionEditDescription
+                        , imageUrl = Urls.appLogoFullUrl
+                        , title = I18n.translate model.language I18n.CollectionEditTitle
+                        }
+            in
+                ( newModel, cmd )
+
+        ImageRead data ->
+            let
+                newModel =
+                    convertControls { model | imageUploadStatus = ImageReadStatus data }
+
+                cmd =
+                    case model.imageUploadStatus of
+                        ImageNotUploadedStatus ->
+                            Cmd.none
+
+                        ImageSelectedStatus ->
+                            Requests.postUploadImage model.authentication data.contents
+                                |> Http.send ImageUploaded
+                                |> Cmd.map ForSelf
+
+                        ImageReadStatus _ ->
+                            Cmd.none
+
+                        ImageUploadedStatus _ ->
+                            Cmd.none
+
+                        ImageUploadErrorStatus _ ->
+                            Cmd.none
+            in
+                ( newModel, cmd )
+
+        ImageSelected ->
+            let
+                cmd =
+                    Ports.fileSelected "logoField"
+
+                newModel =
+                    convertControls { model | imageUploadStatus = ImageSelectedStatus }
+            in
+                ( newModel, cmd )
+
+        ImageUploaded (Result.Err err) ->
+            let
+                newModel =
+                    convertControls { model | imageUploadStatus = ImageUploadErrorStatus err }
+            in
+                ( newModel, Cmd.none )
+
+        ImageUploaded (Result.Ok path) ->
+            let
+                newModel =
+                    convertControls { model | imageUploadStatus = ImageUploadedStatus path }
+            in
+                ( newModel, Cmd.none )
+
+        LoadCollection collectionId ->
+            let
+                newModel =
+                    { model
+                        | editedCollectionId = Just collectionId
+                        , webData = Data (Loading Nothing)
+                    }
+
+                cmd =
+                    Requests.getCollection model.authentication collectionId
+                        |> Http.send (ForSelf << GotCollection)
+            in
+                ( newModel, cmd )
+
+        PostCollection ->
+            let
+                newModel =
+                    convertControls { model | webData = Data (Loading Nothing) }
+
+                cmd =
+                    case newModel.collectionJson of
+                        Just collectionJson ->
+                            Requests.postCollection
+                                newModel.authentication
+                                newModel.editedCollectionId
+                                collectionJson
+                                |> Http.send (ForSelf << CollectionPosted)
+
+                        Nothing ->
+                            Cmd.none
+            in
+                ( newModel, cmd )
+
+        -- SetCardIds cardIds ->
+        --     ( convertControls { model | cardIds = cardIds }, Cmd.none )
+        SetDescription description ->
+            ( convertControls { model | description = description }, Cmd.none )
+
+        SetName name ->
+            ( convertControls { model | name = name }, Cmd.none )
+
+
+urlUpdate : Maybe Authentication -> I18n.Language -> Maybe String -> Model -> ( Model, Cmd Msg )
+urlUpdate authentication language collectionId model =
+    let
+        newModel =
+            { model
+                | authentication = authentication
+                , language = language
+            }
+    in
+        case collectionId of
+            Just collectionId ->
+                update (LoadCollection collectionId) newModel
+
+            Nothing ->
+                ( newModel, Cmd.none )

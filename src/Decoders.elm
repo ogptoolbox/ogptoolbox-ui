@@ -59,6 +59,20 @@ cardDecoder =
         |: oneOf [ (field "usageIds" (list string)), succeed [] ]
 
 
+cardsAutocompletionBodyDecoder : Decoder CardsAutocompletionBody
+cardsAutocompletionBodyDecoder =
+    succeed CardsAutocompletionBody
+        |: (field "data" (list cardsAutocompletionDecoder))
+
+
+cardsAutocompletionDecoder : Decoder CardAutocompletion
+cardsAutocompletionDecoder =
+    succeed CardAutocompletion
+        |: (field "autocomplete" string)
+        |: (field "card" cardDecoder)
+        |: (field "distance" float)
+
+
 collectionDecoder : Decoder Collection
 collectionDecoder =
     succeed Collection

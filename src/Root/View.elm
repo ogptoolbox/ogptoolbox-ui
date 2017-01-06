@@ -2,18 +2,18 @@ module Root.View exposing (..)
 
 import About
 import AddNew.View
-import AddNewCollection.View
 import Authenticator.Routes
 import Authenticator.Types
 import Authenticator.View
 import Card.View
 import Collection.View
+import CollectionEdit.View
 import Collections.View
 import Faq
 import Home
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Attributes.Aria exposing (ariaHidden, ariaLabelledby)
+import Html.Attributes.Aria exposing (ariaHidden, ariaLabelledby, role)
 import Html.Events exposing (onClick, onInput, onSubmit, onWithOptions)
 import Html.Helpers exposing (aForPath)
 import I18n
@@ -80,6 +80,11 @@ view model =
 
                     CollectionsRoute childRoute ->
                         case childRoute of
+                            CollectionEditRoute _ ->
+                                CollectionEdit.View.view model.collectionEditModel
+                                    |> Html.map translateCollectionEditMsg
+                                    |> standardLayout language
+
                             CollectionRoute _ ->
                                 Collection.View.view model.collectionModel
                                     |> Html.map translateCollectionMsg
@@ -88,16 +93,6 @@ view model =
                             CollectionsIndexRoute ->
                                 Collections.View.view model.collectionsModel language
                                     |> Html.map translateCollectionsMsg
-                                    |> standardLayout language
-
-                            EditCollectionRoute _ ->
-                                AddNewCollection.View.view model.addNewCollectionModel language
-                                    |> Html.map translateAddNewCollectionMsg
-                                    |> standardLayout language
-
-                            NewCollectionRoute ->
-                                AddNewCollection.View.view model.addNewCollectionModel language
-                                    |> Html.map translateAddNewCollectionMsg
                                     |> standardLayout language
 
                     FaqRoute ->
@@ -193,10 +188,10 @@ viewAddNewModal model language =
     if model.displayAddNewModal then
         div
             [ ariaLabelledby "myModalLabel"
-            , attribute "role" "dialog"
-            , attribute "tabindex" "-1"
             , class "modal fade in"
+            , role "dialog"
             , style [ ( "display", "block" ) ]
+            , attribute "tabindex" "-1"
             ]
             [ div [ class "modal-dialog", id "login-overlay" ]
                 [ div [ class "modal-content" ]
@@ -283,7 +278,7 @@ viewAddNewModal model language =
                                     , div [ class "media-body" ]
                                         [ h4 [ class "media-heading" ]
                                             [ text (I18n.translate language (I18n.Collection I18n.Singular)) ]
-                                        , text (I18n.translate language I18n.AddNewCollectionCatchPhrase)
+                                        , text (I18n.translate language I18n.CollectionEditCatchPhrase)
                                         ]
                                     ]
                                 ]
@@ -306,12 +301,8 @@ viewAlert model language =
             if authentication.activated then
                 text ""
             else
-                div [ class "alert alert-success alert-dismissible", attribute "role" "alert" ]
+                div [ class "alert alert-success", role "alert" ]
                     [ div [ class "container" ]
-                        -- [ button [ attribute "aria-label" "Close", class "close", attribute "data-dismiss" "alert", type_ "button" ]
-                        --     [ span [ attribute "aria-hidden" "true" ]
-                        --         [ text "×" ]
-                        --     ]
                         [ text (I18n.translate language (I18n.EmailSentForAccountActivation authentication.email))
                         , text " "
                         , button
@@ -330,7 +321,7 @@ viewAuthenticatorModal model language =
         Just authenticatorRoute ->
             div
                 [ ariaLabelledby "modal-title"
-                , attribute "role" "dialog"
+                , role "dialog"
                 , attribute "tabindex" "-1"
                 , class "modal fade in"
                 , style [ ( "display", "block" ) ]
@@ -569,7 +560,7 @@ viewHeader model language containerClass =
                         ]
     in
         header []
-            [ nav [ class "navbar navbar-default navbar-fixed-top", attribute "role" "navigation" ]
+            [ nav [ class "navbar navbar-default navbar-fixed-top", role "navigation" ]
                 [ div [ class containerClass ]
                     [ div [ class "navbar-header" ]
                         [ button

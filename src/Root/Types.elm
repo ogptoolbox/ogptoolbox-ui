@@ -1,11 +1,11 @@
 module Root.Types exposing (..)
 
 import AddNew.Types
-import AddNewCollection.Types
 import Authenticator.Routes
 import Authenticator.Types exposing (Authentication)
 import Card.Types
 import Collection.Types
+import CollectionEdit.Types
 import Collections.Types
 import I18n
 import Navigation
@@ -16,13 +16,13 @@ import UserProfile.Types
 
 type alias Model =
     { addNewModel : AddNew.Types.Model
-    , addNewCollectionModel : AddNewCollection.Types.Model
     , authentication : Maybe Authentication
     , authenticatorCancelMsg : Maybe Msg
     , authenticatorCompletionMsg : Maybe Msg
     , authenticatorModel : Authenticator.Types.Model
     , authenticatorRoute : Maybe Authenticator.Routes.Route
     , cardModel : Card.Types.Model
+    , collectionEditModel : CollectionEdit.Types.Model
     , collectionModel : Collection.Types.Model
     , collectionsModel : Collections.Types.Model
     , displayAddNewModal : Bool
@@ -38,12 +38,12 @@ type alias Model =
 
 type Msg
     = AddNewMsg AddNew.Types.InternalMsg
-    | AddNewCollectionMsg AddNewCollection.Types.InternalMsg
     | AuthenticatorMsg Authenticator.Types.InternalMsg
     | AuthenticatorTerminated Authenticator.Routes.Route (Result () (Maybe Authentication))
     | CardMsg Card.Types.InternalMsg
     | ChangeAuthenticatorRoute Authenticator.Routes.Route
     | CloseAuthenticatorModalAndNavigate String
+    | CollectionEditMsg CollectionEdit.Types.InternalMsg
     | CollectionMsg Collection.Types.InternalMsg
     | CollectionsMsg Collections.Types.InternalMsg
     | DisplayAddNewModal Bool
@@ -67,14 +67,6 @@ translateAddNewMsg =
         }
 
 
-translateAddNewCollectionMsg : AddNewCollection.Types.MsgTranslator Msg
-translateAddNewCollectionMsg =
-    AddNewCollection.Types.translateMsg
-        { onInternalMsg = AddNewCollectionMsg
-        , onNavigate = Navigate
-        }
-
-
 translateAuthenticatorMsg : Authenticator.Types.MsgTranslator Msg
 translateAuthenticatorMsg =
     Authenticator.Types.translateMsg
@@ -89,6 +81,14 @@ translateCardMsg : Card.Types.MsgTranslator Msg
 translateCardMsg =
     Card.Types.translateMsg
         { onInternalMsg = CardMsg
+        , onNavigate = Navigate
+        }
+
+
+translateCollectionEditMsg : CollectionEdit.Types.MsgTranslator Msg
+translateCollectionEditMsg =
+    CollectionEdit.Types.translateMsg
+        { onInternalMsg = CollectionEditMsg
         , onNavigate = Navigate
         }
 

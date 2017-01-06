@@ -1,14 +1,13 @@
 module Root.State exposing (..)
 
 import AddNew.State
-import AddNewCollection.State
-import AddNewCollection.Types
 import Authenticator.Routes exposing (..)
 import Authenticator.State
 import Authenticator.Types
 import Card.State
 import Card.Types
 import Collection.State
+import CollectionEdit.State
 import Collections.State
 import Collections.Types
 import Decoders
@@ -33,7 +32,6 @@ import Urls
 init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
 init flags location =
     { addNewModel = AddNew.State.init
-    , addNewCollectionModel = AddNewCollection.State.init
     , authentication =
         Json.Decode.decodeValue Decoders.userDecoder flags.authentication
             |> Result.toMaybe
@@ -42,6 +40,7 @@ init flags location =
     , authenticatorModel = Authenticator.State.init
     , authenticatorRoute = Nothing
     , cardModel = Card.State.init
+    , collectionEditModel = CollectionEdit.State.init
     , collectionModel = Collection.State.init
     , collectionsModel = Collections.State.init
     , displayAddNewModal = False
@@ -86,7 +85,7 @@ subscriptions model =
     -- constructor.
     Sub.batch
         [ Sub.map AddNewMsg (AddNew.State.subscriptions model.addNewModel)
-        , Sub.map AddNewCollectionMsg (AddNewCollection.State.subscriptions model.addNewCollectionModel)
+        , Sub.map CollectionEditMsg (CollectionEdit.State.subscriptions model.collectionEditModel)
         , Sub.map SearchMsg (Search.State.subscriptions model.searchModel)
         ]
 
@@ -110,19 +109,6 @@ update msg model =
                 in
                     ( { model | addNewModel = addNewModel }
                     , Cmd.map translateAddNewMsg childCmd
-                    )
-
-            AddNewCollectionMsg childMsg ->
-                let
-                    ( addNewCollectionModel, childCmd ) =
-                        AddNewCollection.State.update
-                            childMsg
-                            model.addNewCollectionModel
-                            model.authentication
-                            language
-                in
-                    ( { model | addNewCollectionModel = addNewCollectionModel }
-                    , Cmd.map translateAddNewCollectionMsg childCmd
                     )
 
             AuthenticatorMsg childMsg ->
@@ -192,6 +178,15 @@ update msg model =
                 ( { model | authenticatorRoute = Nothing }
                 , navigate model.location.href path
                 )
+
+            CollectionEditMsg childMsg ->
+                let
+                    ( collectionEditModel, childCmd ) =
+                        CollectionEdit.State.update childMsg model.collectionEditModel
+                in
+                    ( { model | collectionEditModel = collectionEditModel }
+                    , Cmd.map translateCollectionEditMsg childCmd
+                    )
 
             CollectionMsg childMsg ->
                 let
@@ -415,6 +410,23 @@ urlUpdate location model =
 
                                 CollectionsRoute childRoute ->
                                     case childRoute of
+                                        CollectionEditRoute collectionId ->
+                                            let
+                                                ( model1, cmd1 ) =
+                                                    requireSignIn (Navigate (Urls.parentUrl location.href)) model
+
+                                                ( collectionEditModel, childCmd ) =
+                                                    CollectionEdit.State.urlUpdate
+                                                        model1.authentication
+                                                        language
+                                                        collectionId
+                                                        model1.collectionEditModel
+                                            in
+                                                { model1 | collectionEditModel = collectionEditModel }
+                                                    ! [ cmd1
+                                                      , Cmd.map translateCollectionEditMsg childCmd
+                                                      ]
+
                                         CollectionRoute collectionId ->
                                             let
                                                 ( collectionModel, childCmd ) =
@@ -446,30 +458,6 @@ urlUpdate location model =
                                                   }
                                                 , Cmd.map translateCollectionsMsg childCmd
                                                 )
-
-                                        EditCollectionRoute collectionId ->
-                                            let
-                                                ( model1, cmd1 ) =
-                                                    requireSignIn
-                                                        (Navigate (Urls.parentUrl location.href))
-                                                        model
-
-                                                ( addNewCollectionModel, childCmd ) =
-                                                    AddNewCollection.State.update
-                                                        (AddNewCollection.Types.LoadCollection collectionId)
-                                                        model1.addNewCollectionModel
-                                                        model1.authentication
-                                                        language
-                                            in
-                                                { model1
-                                                    | addNewCollectionModel = addNewCollectionModel
-                                                }
-                                                    ! [ cmd1
-                                                      , Cmd.map translateAddNewCollectionMsg childCmd
-                                                      ]
-
-                                        NewCollectionRoute ->
-                                            requireSignIn (Navigate (Urls.parentUrl location.href)) model
 
                                 FaqRoute ->
                                     ( model

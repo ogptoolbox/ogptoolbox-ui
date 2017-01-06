@@ -24,6 +24,8 @@ type TranslationId
     | ActivationNotRequested
     | ActivationSucceeded
     | ActivationTitle
+    | Add
+    | AddCollection
     | AddNew
     | AddNewItemBox
     | AddNewCollectionCatchPhrase
@@ -51,6 +53,8 @@ type TranslationId
     | BestOf Int
     | CallToActionForCategory
     | CallToActionForDescription CardType
+    | Card
+    | CardPlaceholder
     | ChangePassword
     | ChangePasswordExplanation
     | Close
@@ -58,23 +62,33 @@ type TranslationId
     | CollectionAdd
     | CollectionAddDescription
     | CollectionAddTitle
+    | CollectionDescriptionPlaceholder
+    | CollectionEditCatchPhrase
     | CollectionEditDescription
     | CollectionEditTitle
+    | CollectionNamePlaceholder
     | CollectionsDescription
     | CollectionsNameTitle
     | CollectionsNameDescription
     | CollectionsRecommendedBy
+    | CollectionSubmissionFailed
     | CollectionsTitle
     | Colon
+    | Compare
     | Copyright
     | CountVersionsAvailable Int
+    | Create
     | CreateAccountNow
     | CreateOrganizationPage
     | CreateYourAccount
+    | EditCollection
     | Email
     | EmailPlaceholder
     | EmailSentForAccountActivation String
+    | EnterCard
+    | EnterDescription
     | EnterEmail
+    | EnterName
     | EnterPassword
     | EnterUsername
     | EtalabLogo
@@ -117,6 +131,8 @@ type TranslationId
     | FaqWhy
     | FaqWhyContent1
     | FaqWhyContent2
+    | FindAnotherCard
+    | FindCard
     | FooterAbout
     | FooterDiscover
     | GenericError
@@ -132,8 +148,12 @@ type TranslationId
     | Language Language
     | LanguageWord
     | License
+    | LoadingMenu
     | MissingDescription
+    | MissingValue
+    | Name
     | NetworkErrorExplanation
+    | New
     | OGPsummitLink
     | OpenGovernmentPartnership
     | OpenGovernmentPartnershipLogo
@@ -168,6 +188,7 @@ type TranslationId
     | Score
     | SearchInputPlaceholder
     | SeeAllAndCompare
+    | SelectCardOrTypeMoreCharacters
     | Send
     | SendEmailAgain
     | Share
@@ -316,6 +337,18 @@ getTranslationSet translationId =
         AuthenticationRequiredExplanation ->
             { english = s "You must sign in to display this page."
             , french = todo
+            , spanish = todo
+            }
+
+        Add ->
+            { english = s "Add"
+            , french = s "Ajouter"
+            , spanish = todo
+            }
+
+        AddCollection ->
+            { english = s "Add Collection"
+            , french = s "Ajouter une collection"
             , spanish = todo
             }
 
@@ -478,6 +511,18 @@ getTranslationSet translationId =
                         todo
             }
 
+        Card ->
+            { english = s "Card"
+            , french = s "Fiche"
+            , spanish = todo
+            }
+
+        CardPlaceholder ->
+            { english = s "Name or ID of a card"
+            , french = s "Nom ou identifiant d'une fiche"
+            , spanish = todo
+            }
+
         ChangePassword ->
             { english = s "Change your password"
             , french = s "Changez votre mot de passe"
@@ -538,6 +583,12 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        CollectionEditCatchPhrase ->
+            { english = s "A simple way to recommend your favorite tools."
+            , french = s "Une façon simple de recommander vos outils favoris."
+            , spanish = todo
+            }
+
         CollectionEditDescription ->
             { english = s "Edition of a collection."
             , french = s "Édition d'une collection."
@@ -550,9 +601,21 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        CollectionDescriptionPlaceholder ->
+            { english = s "Describe the collection"
+            , french = s "Décrivez la collection"
+            , spanish = todo
+            }
+
         CollectionsDescription ->
             { english = s "List of tools and use cases collected by a user"
             , french = s "List d'outils et de cas d'usages collectés par un utilisateur"
+            , spanish = todo
+            }
+
+        CollectionNamePlaceholder ->
+            { english = s "What's the official name of the collection?"
+            , french = s "Quel est le nom de la collection ?"
             , spanish = todo
             }
 
@@ -574,6 +637,12 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        CollectionSubmissionFailed ->
+            { english = s "Collection submission failed"
+            , french = s "Échec de l'envoi de la collection"
+            , spanish = todo
+            }
+
         CollectionsTitle ->
             { english = s "Collections"
             , french = s "Collections"
@@ -584,6 +653,12 @@ getTranslationSet translationId =
             { english = s ": "
             , french = s " : "
             , spanish = s ": "
+            }
+
+        Compare ->
+            { english = s "Compare"
+            , french = s "Comparer"
+            , spanish = todo
             }
 
         Copyright ->
@@ -616,6 +691,12 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        Create ->
+            { english = s "Create"
+            , french = s "Créer"
+            , spanish = todo
+            }
+
         CreateAccountNow ->
             { english = s "Create your account now"
             , french = s "Créez votre compte maintenant"
@@ -631,6 +712,12 @@ getTranslationSet translationId =
         CreateYourAccount ->
             { english = s "Create your account"
             , french = s "Créez votre compte"
+            , spanish = todo
+            }
+
+        EditCollection ->
+            { english = s "Edit Collection"
+            , french = s "Éditer une collection"
             , spanish = todo
             }
 
@@ -662,9 +749,27 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        EnterCard ->
+            { english = s "Please enter the name or the ID of a card"
+            , french = s "Veuillez entrer le nom ou l'identifiant d'une fiche"
+            , spanish = todo
+            }
+
+        EnterDescription ->
+            { english = s "Please enter a description"
+            , french = s "Veuillez entrer une description"
+            , spanish = todo
+            }
+
         EnterEmail ->
             { english = s "Please enter your email"
             , french = s "Veuillez entrer votre courriel"
+            , spanish = todo
+            }
+
+        EnterName ->
+            { english = s "Please enter a name"
+            , french = s "Veuillez entrer un nom"
             , spanish = todo
             }
 
@@ -920,6 +1025,18 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        FindAnotherCard ->
+            { english = s "Find another card"
+            , french = s "Rechercher une autre fiche"
+            , spanish = todo
+            }
+
+        FindCard ->
+            { english = s "Find a card"
+            , french = s "Rechercher fiche"
+            , spanish = todo
+            }
+
         FooterAbout ->
             { english = s "About"
             , french = s "A propos"
@@ -1024,15 +1141,39 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        LoadingMenu ->
+            { english = s "Loading menu..."
+            , french = s "Chargement du menu..."
+            , spanish = todo
+            }
+
         MissingDescription ->
             { english = s "Missing description"
             , french = s "Description manquante"
             , spanish = todo
             }
 
+        MissingValue ->
+            { english = s "Missing value"
+            , french = s "Valeur manquante"
+            , spanish = todo
+            }
+
+        Name ->
+            { english = s "Name"
+            , french = s "Nom"
+            , spanish = todo
+            }
+
         NetworkErrorExplanation ->
             { english = s "There was a network error."
             , french = todo
+            , spanish = todo
+            }
+
+        New ->
+            { english = s "New"
+            , french = s "Nouveau"
             , spanish = todo
             }
 
@@ -1241,6 +1382,12 @@ to strengthen governance.
             , spanish = todo
             }
 
+        SelectCardOrTypeMoreCharacters ->
+            { english = s "Select a card or type more characters"
+            , french = s "Sélectionner une fiche ou tapez plus de caractères"
+            , spanish = todo
+            }
+
         Score ->
             { english = s "Score"
             , french = s "Score"
@@ -1288,6 +1435,7 @@ to strengthen governance.
             , french = s "Voir plus"
             , spanish = todo
             }
+
         SignIn ->
             { english = s "Sign In"
             , french = s "Identification"

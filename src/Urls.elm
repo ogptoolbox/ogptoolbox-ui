@@ -7,12 +7,18 @@ import Http
 import I18n
 import List.Extra
 import Navigation
+import Regex
 import Types exposing (..)
 
 
 appLogoFullUrl : String
 appLogoFullUrl =
     Configuration.appUrl ++ "img/ogptoolbox-logo.png"
+
+
+idRegex : Regex.Regex
+idRegex =
+    Regex.regex "(^|/)(\\d+)(\\?|$)"
 
 
 basePathForCardType : CardType -> String
@@ -110,6 +116,28 @@ logoFullUrl language dim card values =
             (\path -> fullApiUrl path ++ "?dim=" ++ dim)
 
 
+paramsToQuery : List ( String, Maybe String ) -> String
+paramsToQuery params =
+    let
+        query =
+            params
+                |> List.filterMap
+                    (\( key, value ) ->
+                        case value of
+                            Just value ->
+                                Just <| Http.encodeUri key ++ "=" ++ Http.encodeUri value
+
+                            Nothing ->
+                                Nothing
+                    )
+                |> String.join "&"
+    in
+        if String.isEmpty query then
+            ""
+        else
+            "?" ++ query
+
+
 parentUrl : String -> String
 parentUrl url =
     let
@@ -183,3 +211,19 @@ screenshotFullUrl language dim card values =
     I18n.getOneString language imageScreenshotPathKeys card values
         |> Maybe.map
             (\path -> fullApiUrl path ++ "?dim=" ++ dim)
+
+
+urlToId : String -> Maybe String
+urlToId url =
+    (Regex.find Regex.All idRegex url
+        |> List.head
+    )
+        |> Maybe.andThen
+            (\match ->
+                case match.submatches |> List.drop 1 |> List.head of
+                    Nothing ->
+                        Nothing
+
+                    Just maybe ->
+                        maybe
+            )

@@ -7,10 +7,9 @@ import UrlParser exposing ((</>), map, oneOf, parsePath, Parser, remaining, s, s
 
 
 type CollectionsRoute
-    = CollectionRoute String
+    = CollectionEditRoute (Maybe String)
+    | CollectionRoute String
     | CollectionsIndexRoute
-    | NewCollectionRoute
-    | EditCollectionRoute String
 
 
 type LocalizedRoute
@@ -54,9 +53,9 @@ collectionsRouteParser : Parser (CollectionsRoute -> a) a
 collectionsRouteParser =
     oneOf
         [ map CollectionsIndexRoute top
-        , map NewCollectionRoute (s "new")
+        , map (CollectionEditRoute Nothing) (s "new")
         , map CollectionRoute idParser
-        , map EditCollectionRoute (idParser </> s "edit")
+        , map (CollectionEditRoute << Just) (idParser </> s "edit")
         ]
 
 

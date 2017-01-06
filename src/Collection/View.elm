@@ -1,6 +1,7 @@
 module Collection.View exposing (..)
 
 import Authenticator.Types exposing (Authentication, canEditUserResource)
+import Cards.ViewsParts exposing (..)
 import Collection.Types exposing (..)
 import Dict exposing (Dict)
 import Html exposing (..)
@@ -11,7 +12,7 @@ import I18n
 import Json.Decode as Decode
 import Types exposing (..)
 import Urls
-import Views exposing (viewCardThumbnail, viewLoading, viewWebData)
+import Views exposing (viewLoading, viewWebData)
 import WebData exposing (..)
 
 
@@ -45,7 +46,7 @@ view model =
                     in
                         div []
                             [ viewBanner model.authentication model.language user collection
-                            , viewCollectionContent model.language user collection body.data.cards body.data.values
+                            , viewCollectionContent model.language user body.data collection
                             ]
         )
         model.collection
@@ -122,8 +123,8 @@ viewBanner authentication language user collection =
         ]
 
 
-viewCollectionContent : I18n.Language -> User -> Collection -> Dict String Card -> Dict String TypedValue -> Html Msg
-viewCollectionContent language user collection cards values =
+viewCollectionContent : I18n.Language -> User -> DataProxy a -> Collection -> Html Msg
+viewCollectionContent language user data collection =
     div [ class "row" ]
         [ div [ class "container" ]
             [ div
@@ -220,7 +221,7 @@ viewCollectionContent language user collection cards values =
                                 [ div [ class "row" ]
                                     [ div [ class "col-xs-8 text-left" ]
                                         [ h3 [ class "panel-title" ]
-                                            [ text (I18n.translate language (I18n.About )) ]
+                                            [ text (I18n.translate language I18n.About) ]
                                         ]
                                     , div [ class "col-xs-4 text-right" ]
                                         []
@@ -238,8 +239,7 @@ viewCollectionContent language user collection cards values =
                                         ]
                                       -- , div [ class "col-xs-4 text-right up7" ]
                                       --     [ a [ class "btn btn-default btn-xs btn-action", href "compare.html", type' "button" ]
-                                      --         [ text "Compare"-- TODO i18n
-                                      --          ]
+                                      --         [ text (I18n.translate language I18n.Compare) ]
                                       --     ]
                                     ]
                                 , div [ class "panel-body" ]
@@ -250,7 +250,7 @@ viewCollectionContent language user collection cards values =
                                                     (\cardId ->
                                                         let
                                                             card =
-                                                                getCard cards cardId
+                                                                getCard data.cards cardId
                                                         in
                                                             if cardSubTypeIdsIntersect card.subTypeIds cardTypesForTool then
                                                                 Just card
@@ -260,7 +260,7 @@ viewCollectionContent language user collection cards values =
                                                     collection.cardIds
                                          in
                                             List.map
-                                                (viewCardThumbnail language navigate "tool grey" values)
+                                                (viewCardThumbnail language navigate "tool grey" data)
                                                 toolCards
                                         )
                                     ]
@@ -282,7 +282,7 @@ viewCollectionContent language user collection cards values =
                                     (\cardId ->
                                         let
                                             card =
-                                                getCard cards cardId
+                                                getCard data.cards cardId
                                         in
                                             if
                                                 List.any
@@ -296,7 +296,7 @@ viewCollectionContent language user collection cards values =
                                     collection.cardIds
                          in
                             List.map
-                                (viewCardThumbnail language navigate "example" values)
+                                (viewCardThumbnail language navigate "example" data)
                                 useCaseCards
                         )
                     ]

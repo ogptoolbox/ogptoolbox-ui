@@ -1,5 +1,6 @@
 module Home exposing (..)
 
+import Cards.ViewsParts exposing (..)
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -9,7 +10,7 @@ import Navigation
 import Search.Types exposing (..)
 import Types exposing (..)
 import Urls
-import Views exposing (viewCardThumbnail, viewLoading, viewTagsWithCallToAction, viewWebData)
+import Views exposing (viewLoading, viewWebData)
 import WebData exposing (..)
 
 
@@ -522,7 +523,7 @@ viewThumbnails language location thumbnailExtraClasses loadingStatus =
                         body.data.cards |> Dict.values |> List.head
                 in
                     (List.map
-                        (viewCardThumbnail language navigate thumbnailExtraClasses body.data.values)
+                        (viewCardThumbnail language navigate thumbnailExtraClasses body.data)
                         (getOrderedCards body.data)
                     )
                         ++ (case firstCard of

@@ -1,6 +1,5 @@
 module Requests exposing (..)
 
-import AddNewCollection.Types exposing (..)
 import Authenticator.Types exposing (Authentication)
 import Configuration exposing (apiUrl)
 import Decoders exposing (..)
@@ -9,14 +8,9 @@ import Http
 import I18n
 import Json.Decode as Decode
 import Json.Encode as Encode
-import Regex
 import String
 import Types exposing (..)
-
-
-idRegex : Regex.Regex
-idRegex =
-    Regex.regex "(^|/)(\\d+)(\\?|$)"
+import Urls
 
 
 activateUser : String -> String -> Http.Request UserBody
@@ -45,20 +39,40 @@ authenticationHeaders authentication =
             []
 
 
-extractId : String -> Maybe String
-extractId url =
-    (Regex.find Regex.All idRegex url
-        |> List.head
-    )
-        |> Maybe.andThen
-            (\match ->
-                case match.submatches |> List.drop 1 |> List.head of
-                    Nothing ->
-                        Nothing
-
-                    Just maybe ->
-                        maybe
-            )
+autocompleteCards :
+    Maybe Authentication
+    -> I18n.Language
+    -> Maybe String
+    -> String
+    -> Int
+    -> Http.Request CardsAutocompletionBody
+autocompleteCards authentication language subType term limit =
+    Http.request
+        { method = "GET"
+        , headers = authenticationHeaders authentication
+        , url =
+            apiUrl
+                ++ "cards/autocomplete"
+                ++ Urls.paramsToQuery
+                    [ ( "language", Just (I18n.iso639_1FromLanguage language) )
+                    , ( "limit", Just (toString limit) )
+                    , ( "term"
+                      , let
+                            cleanTerm =
+                                String.trim term
+                        in
+                            if String.isEmpty cleanTerm then
+                                Nothing
+                            else
+                                Just cleanTerm
+                      )
+                    , ( "type", subType )
+                    ]
+        , body = Http.emptyBody
+        , expect = Http.expectJson cardsAutocompletionBodyDecoder
+        , timeout = Nothing
+        , withCredentials = False
+        }
 
 
 getCard : Maybe Authentication -> String -> Http.Request DataIdBody
@@ -242,37 +256,23 @@ postCard authentication fields language =
             }
 
 
-postCollection : Maybe Authentication -> Maybe String -> AddNewCollectionFields -> String -> Http.Request DataIdBody
-postCollection authentication editedCollectionId fields imagePath =
-    let
-        cardIds : List String
-        cardIds =
-            String.words fields.cardIds |> List.filterMap extractId
-
-        url =
-            case editedCollectionId of
+postCollection : Maybe Authentication -> Maybe String -> Encode.Value -> Http.Request DataIdBody
+postCollection authentication collectionId collectionJson =
+    Http.request
+        { method = "POST"
+        , headers = authenticationHeaders authentication
+        , url =
+            case collectionId of
                 Just collectionId ->
                     apiUrl ++ "collections/" ++ collectionId
 
                 Nothing ->
                     apiUrl ++ "collections"
-    in
-        Http.request
-            { method = "POST"
-            , headers = authenticationHeaders authentication
-            , url = url
-            , body =
-                Encode.object
-                    [ ( "cardIds", Encode.list (List.map Encode.string cardIds) )
-                    , ( "description", Encode.string fields.description )
-                    , ( "logo", Encode.string imagePath )
-                    , ( "name", Encode.string fields.name )
-                    ]
-                    |> Http.jsonBody
-            , expect = Http.expectJson dataIdBodyDecoder
-            , timeout = Nothing
-            , withCredentials = False
-            }
+        , body = Http.jsonBody collectionJson
+        , expect = Http.expectJson dataIdBodyDecoder
+        , timeout = Nothing
+        , withCredentials = False
+        }
 
 
 postProperty : Maybe Authentication -> String -> String -> String -> Http.Request DataIdBody
@@ -346,7 +346,7 @@ postValue authentication field =
                     ( "schema:uri", "widget:image", Encode.string string )
 
                 CardIdField string ->
-                    case extractId string of
+                    case Urls.urlToId string of
                         Just cardId ->
                             ( "schema:card-id", "widget:autocomplete", Encode.string cardId )
 
