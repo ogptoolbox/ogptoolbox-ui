@@ -163,7 +163,27 @@ update msg model =
         AddCard card ->
             ( model
             , Requests.getCard model.authentication card.id
-                |> Http.send (ForSelf << GotAddedCard)
+                |> Http.send (ForSelf << CardAdded)
+            )
+
+        CardAdded (Err httpError) ->
+            let
+                _ =
+                    Debug.log "CollectionEdit.State GotCard Err" httpError
+            in
+                ( model, Cmd.none )
+
+        CardAdded (Ok { data }) ->
+            ( convertControls
+                { model
+                    | cardIds =
+                        if List.member data.id model.cardIds then
+                            model.cardIds
+                        else
+                            List.append model.cardIds [ data.id ]
+                    , data = mergeData data model.data
+                }
+            , Cmd.none
             )
 
         CollectionPosted (Err httpError) ->
@@ -186,31 +206,17 @@ update msg model =
             in
                 ( newModel, cmd )
 
-        CreateCard cardName ->
-            let
-                _ =
-                    Debug.log "CreateCard TODO" cardName
-            in
-                ( model, Cmd.none )
-
-        GotAddedCard (Err httpError) ->
-            let
-                _ =
-                    Debug.log "CollectionEdit.State GotCard Err" httpError
-            in
-                ( model, Cmd.none )
-
-        GotAddedCard (Ok { data }) ->
-            ( convertControls
-                { model
-                    | cardIds =
-                        if List.member data.id model.cardIds then
-                            model.cardIds
-                        else
-                            List.append model.cardIds [ data.id ]
-                    , data = mergeData data model.data
-                }
-            , Cmd.none
+        CreateCard cardTypes cardName ->
+            ( model
+            , Requests.postCard
+                model.authentication
+                (Dict.fromList
+                    [ ( "Name", cardName )
+                    , ( "Types", Maybe.withDefault "software" (List.head cardTypes) )
+                    ]
+                )
+                model.language
+                |> Http.send (ForSelf << CardAdded)
             )
 
         GotCollection (Err httpError) ->

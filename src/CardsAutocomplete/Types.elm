@@ -14,7 +14,7 @@ type AutocompleteMenuState
 
 type ExternalMsg
     = Add Card
-    | Create String
+    | Create (List String) String
 
 
 type alias Model =
@@ -51,7 +51,7 @@ type Msg
 
 type alias MsgTranslation parentMsg =
     { onAdd : Card -> parentMsg
-    , onCreate : String -> parentMsg
+    , onCreate : List String -> String -> parentMsg
     , onInternalMsg : InternalMsg -> parentMsg
     }
 
@@ -71,8 +71,8 @@ translateMsg { onAdd, onCreate, onInternalMsg } msg =
         ForParent (Add card) ->
             onAdd card
 
-        ForParent (Create cardName) ->
-            onCreate cardName
+        ForParent (Create cardTypes cardName) ->
+            onCreate cardTypes cardName
 
         ForSelf internalMsg ->
             onInternalMsg internalMsg

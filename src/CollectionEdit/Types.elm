@@ -22,9 +22,9 @@ type alias FormErrors =
 
 type InternalMsg
     = AddCard Card
+    | CardAdded (Result Http.Error DataIdBody)
     | CollectionPosted (Result Http.Error DataIdBody)
-    | CreateCard String
-    | GotAddedCard (Result Http.Error DataIdBody)
+    | CreateCard (List String) String
     | GotCollection (Result Http.Error DataIdBody)
     | ImageSelected
     | ImageRead Ports.ImagePortData
@@ -89,7 +89,7 @@ translateToolsAutocompleteMsg : CardsAutocomplete.Types.MsgTranslator Msg
 translateToolsAutocompleteMsg =
     CardsAutocomplete.Types.translateMsg
         { onAdd = ForSelf << AddCard
-        , onCreate = ForSelf << CreateCard
+        , onCreate = \cardTypes cardName -> ForSelf <| CreateCard cardTypes cardName
         , onInternalMsg = ForSelf << ToolsAutocompleteMsg
         }
 
@@ -98,6 +98,6 @@ translateUseCasesAutocompleteMsg : CardsAutocomplete.Types.MsgTranslator Msg
 translateUseCasesAutocompleteMsg =
     CardsAutocomplete.Types.translateMsg
         { onAdd = ForSelf << AddCard
-        , onCreate = ForSelf << CreateCard
+        , onCreate = \cardTypes cardName -> ForSelf <| CreateCard cardTypes cardName
         , onInternalMsg = ForSelf << UseCasesAutocompleteMsg
         }

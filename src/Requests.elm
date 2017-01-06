@@ -249,7 +249,7 @@ postCard authentication fields language =
         Http.request
             { method = "POST"
             , headers = authenticationHeaders authentication
-            , url = apiUrl ++ "cards/easy"
+            , url = apiUrl ++ "cards/easy" ++ "?depth=3&show=references&show=values"
             , body = body
             , expect = Http.expectJson dataIdBodyDecoder
             , timeout = Nothing

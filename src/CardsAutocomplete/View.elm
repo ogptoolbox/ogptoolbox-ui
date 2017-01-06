@@ -196,30 +196,28 @@ viewAutocomplete language parentId controlLabelI18n controlPlaceholderI18n error
                               )
                             ]
                         , span [ class "input-group-btn" ]
-                            [ button
-                                [ class "btn btn-secondary"
-                                , onWithOptions "click"
-                                    { preventDefault = True, stopPropagation = False }
-                                    (Json.Decode.succeed
-                                        (ForParent
-                                            (case model.selected of
-                                                Just selected ->
-                                                    Add selected.card
-
-                                                Nothing ->
-                                                    Create model.autocomplete
+                            [ case model.selected of
+                                Just selected ->
+                                    button
+                                        [ class "btn btn-primary"
+                                        , onWithOptions "click"
+                                            { preventDefault = True, stopPropagation = False }
+                                            (Json.Decode.succeed
+                                                (ForParent (Add selected.card))
                                             )
-                                        )
-                                    )
-                                ]
-                                [ text <|
-                                    I18n.translate language
-                                        (if model.selected == Nothing then
-                                            I18n.Create
-                                         else
-                                            I18n.Add
-                                        )
-                                ]
+                                        ]
+                                        [ text <| I18n.translate language I18n.Add ]
+
+                                Nothing ->
+                                    button
+                                        [ class "btn btn-secondary"
+                                        , onWithOptions "click"
+                                            { preventDefault = True, stopPropagation = False }
+                                            (Json.Decode.succeed
+                                                (ForParent (Create model.cardTypes model.autocomplete))
+                                            )
+                                        ]
+                                        [ text <| I18n.translate language I18n.Create ]
                             ]
                         ]
                   , span [ class "sr-only" ] [ text <| I18n.translate language I18n.LoadingMenu ]
