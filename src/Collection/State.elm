@@ -85,7 +85,7 @@ urlUpdate : Maybe Authentication -> I18n.Language -> String -> Model -> ( Model,
 urlUpdate authentication language collectionId model =
     update
         (LoadCollection collectionId)
-        { model
+        { init
             | authentication = authentication
             , language = language
         }

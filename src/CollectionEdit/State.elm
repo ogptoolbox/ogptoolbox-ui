@@ -379,7 +379,7 @@ urlUpdate : Maybe Authentication -> I18n.Language -> Maybe String -> Model -> ( 
 urlUpdate authentication language collectionId model =
     let
         newModel =
-            { model
+            { init
                 | authentication = authentication
                 , language = language
             }
