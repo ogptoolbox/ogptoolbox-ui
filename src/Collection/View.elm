@@ -260,7 +260,7 @@ viewCollectionContent language user data collection =
                                                     collection.cardIds
                                          in
                                             List.map
-                                                (viewCardThumbnail language navigate "tool grey" data)
+                                                (viewCardThumbnail language navigate Nothing "tool grey" data)
                                                 toolCards
                                         )
                                     ]
@@ -296,7 +296,7 @@ viewCollectionContent language user data collection =
                                     collection.cardIds
                          in
                             List.map
-                                (viewCardThumbnail language navigate "example" data)
+                                (viewCardThumbnail language navigate Nothing "example" data)
                                 useCaseCards
                         )
                     ]

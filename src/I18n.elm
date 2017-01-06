@@ -25,6 +25,7 @@ type TranslationId
     | ActivationSucceeded
     | ActivationTitle
     | Add
+    | AddCard
     | AddCollection
     | AddNew
     | AddNewItemBox
@@ -39,7 +40,9 @@ type TranslationId
     | AddNewUseCaseCatchPhrase
     | AddNewUseCaseDescription
     | AdditionalInformations
+    | AddTool
     | AddToolOrUseCase
+    | AddUseCase
     | AuthenticationFailed
     | AuthenticationRequired
     | AuthenticationRequiredExplanation
@@ -181,6 +184,7 @@ type TranslationId
     | ReadMore
     | Register
     | RegisterNow
+    | Remove
     | ResetPassword
     | ResetPasswordExplanation
     | ResetPasswordLink
@@ -204,6 +208,7 @@ type TranslationId
     | Tags
     | TimeoutExplanation
     | Tool GrammaticalNumber
+    | ToolPlaceholder
     | ToolsDescription
     | TweetMessage String String
     | Type
@@ -212,6 +217,7 @@ type TranslationId
     | UploadImage
     | UploadingImage String
     | UseCase GrammaticalNumber
+    | UseCasePlaceholder
     | UseCases
     | UseCasesDescription
     | UsedBy
@@ -310,45 +316,27 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
-        AdditionalInformations ->
-            { english = s "Additional informations"
-            , french = s "Informations supplémentaires"
-            , spanish = todo
-            }
-
-        AddToolOrUseCase ->
-            { english = s "Add a new tool or use case"
-            , french = s "Ajoutez un nouvel outil ou cas d'usage"
-            , spanish = todo
-            }
-
-        AuthenticationFailed ->
-            { english = s "Authentication failed"
-            , french = s "L'authentification a échoué"
-            , spanish = todo
-            }
-
-        AuthenticationRequired ->
-            { english = s "Authentication required"
-            , french = todo
-            , spanish = todo
-            }
-
-        AuthenticationRequiredExplanation ->
-            { english = s "You must sign in to display this page."
-            , french = todo
-            , spanish = todo
-            }
-
         Add ->
             { english = s "Add"
             , french = s "Ajouter"
             , spanish = todo
             }
 
+        AddCard ->
+            { english = s "Add Card"
+            , french = s "Ajouter une fiche"
+            , spanish = todo
+            }
+
         AddCollection ->
             { english = s "Add Collection"
             , french = s "Ajouter une collection"
+            , spanish = todo
+            }
+
+        AdditionalInformations ->
+            { english = s "Additional informations"
+            , french = s "Informations supplémentaires"
             , spanish = todo
             }
 
@@ -421,6 +409,42 @@ getTranslationSet translationId =
         AddNewUseCaseDescription ->
             { english = s "Creating a new use case by giving a few generic informations"
             , french = s "Création d'un nouveau cas d'usage en fournissant quelques informations générales"
+            , spanish = todo
+            }
+
+        AddTool ->
+            { english = s "Add Tool"
+            , french = s "Ajouter un outil"
+            , spanish = todo
+            }
+
+        AddToolOrUseCase ->
+            { english = s "Add a new tool or use case"
+            , french = s "Ajoutez un nouvel outil ou cas d'usage"
+            , spanish = todo
+            }
+
+        AddUseCase ->
+            { english = s "Add Use Case"
+            , french = s "Ajouter un cas d'usage"
+            , spanish = todo
+            }
+
+        AuthenticationFailed ->
+            { english = s "Authentication failed"
+            , french = s "L'authentification a échoué"
+            , spanish = todo
+            }
+
+        AuthenticationRequired ->
+            { english = s "Authentication required"
+            , french = todo
+            , spanish = todo
+            }
+
+        AuthenticationRequiredExplanation ->
+            { english = s "You must sign in to display this page."
+            , french = todo
             , spanish = todo
             }
 
@@ -518,8 +542,8 @@ getTranslationSet translationId =
             }
 
         CardPlaceholder ->
-            { english = s "Name or ID of a card"
-            , french = s "Nom ou identifiant d'une fiche"
+            { english = s "Name of a card"
+            , french = s "Nom d'une fiche"
             , spanish = todo
             }
 
@@ -596,8 +620,8 @@ getTranslationSet translationId =
             }
 
         CollectionEditTitle ->
-            { english = s "Edition of your collection"
-            , french = s "Édition de votre collection"
+            { english = s "Edit your collection"
+            , french = s "Éditer votre collection"
             , spanish = todo
             }
 
@@ -1358,6 +1382,12 @@ to strengthen governance.
             , spanish = todo
             }
 
+        Remove ->
+            { english = s "Remove"
+            , french = s "Enlever"
+            , spanish = todo
+            }
+
         ResetPassword ->
             { english = s "Reset Password"
             , french = s "Changer de mot de passe"
@@ -1514,6 +1544,12 @@ to strengthen governance.
                         s "Herramientas"
             }
 
+        ToolPlaceholder ->
+            { english = s "Name of a tool"
+            , french = s "Nom d'un outil"
+            , spanish = todo
+            }
+
         ToolsDescription ->
             { english = s "List of tools"
             , french = s "Liste d'outils"
@@ -1578,6 +1614,12 @@ to strengthen governance.
 
                     Plural ->
                         s "Casos de uso"
+            }
+
+        UseCasePlaceholder ->
+            { english = s "Name of a use case"
+            , french = s "Nom d'un cas d'usage"
+            , spanish = todo
             }
 
         UseCases ->

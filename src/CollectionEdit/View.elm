@@ -85,32 +85,39 @@ view model =
                                                     , viewToolsThumbnailsPanel
                                                         language
                                                         (ForParent << Navigate)
+                                                        (Just (ForSelf << RemoveCard))
                                                         model.data
                                                         model.cardIds
-                                                      -- , div [ class "form-group" ]
-                                                      --     [ label [ for "cardIdsField" ]
-                                                      --         [ text "Card URLs"
-                                                      --           -- TODO i18n
-                                                      --         ]
-                                                      --     , textarea
-                                                      --         [ class "form-control"
-                                                      --         , style [ ( "height", "30em" ) ]
-                                                      --         , id "cardIdsField"
-                                                      --         , onInput (ForSelf << SetCardIds)
-                                                      --         , value model.cardIds
-                                                      --         ]
-                                                      --         []
-                                                      --     ]
                                                     , let
                                                         controlId =
-                                                            "cardsAutocomplete"
+                                                            "toolsAutocomplete"
                                                       in
                                                         CardsAutocomplete.View.viewAutocomplete
                                                             language
                                                             controlId
+                                                            I18n.AddTool
+                                                            I18n.ToolPlaceholder
                                                             (Dict.get controlId model.errors)
-                                                            model.cardsAutocompleteModel
-                                                            |> Html.map translateCardsAutocompleteMsg
+                                                            model.toolsAutocompleteModel
+                                                            |> Html.map translateToolsAutocompleteMsg
+                                                    , viewUseCasesThumbnailsPanel
+                                                        language
+                                                        (ForParent << Navigate)
+                                                        (Just (ForSelf << RemoveCard))
+                                                        model.data
+                                                        model.cardIds
+                                                    , let
+                                                        controlId =
+                                                            "useCasesAutocomplete"
+                                                      in
+                                                        CardsAutocomplete.View.viewAutocomplete
+                                                            language
+                                                            controlId
+                                                            I18n.AddUseCase
+                                                            I18n.UseCasePlaceholder
+                                                            (Dict.get controlId model.errors)
+                                                            model.useCasesAutocompleteModel
+                                                            |> Html.map translateUseCasesAutocompleteMsg
                                                     ]
                                                 ]
                                             ]

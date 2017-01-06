@@ -523,7 +523,7 @@ viewThumbnails language location thumbnailExtraClasses loadingStatus =
                         body.data.cards |> Dict.values |> List.head
                 in
                     (List.map
-                        (viewCardThumbnail language navigate thumbnailExtraClasses body.data)
+                        (viewCardThumbnail language navigate Nothing thumbnailExtraClasses body.data)
                         (getOrderedCards body.data)
                     )
                         ++ (case firstCard of

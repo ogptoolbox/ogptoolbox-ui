@@ -22,6 +22,7 @@ type alias Model =
     , autocompleteMenuState : AutocompleteMenuState
     , autocompleter : Autocomplete.State
     , autocompletions : List CardAutocompletion
+    , cardTypes : List String
     , selected : Maybe CardAutocompletion
     }
 

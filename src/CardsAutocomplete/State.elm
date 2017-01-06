@@ -30,12 +30,13 @@ idToAutocompletion id model =
         |> List.head
 
 
-init : Model
-init =
+init : List String -> Model
+init cardTypes =
     { autocomplete = ""
     , autocompleteMenuState = AutocompleteMenuHidden
     , autocompleter = Autocomplete.empty
     , autocompletions = []
+    , cardTypes = cardTypes
     , selected = Nothing
     }
 
@@ -153,7 +154,12 @@ update msg language fieldId model =
 
         LoadMenu ->
             ( { model | autocompleteMenuState = AutocompleteMenuLoading }
-            , Requests.autocompleteCards Nothing language Nothing model.autocomplete autocompleterSize
+            , Requests.autocompleteCards
+                Nothing
+                language
+                model.cardTypes
+                model.autocomplete
+                autocompleterSize
                 |> Http.send (ForSelf << MenuLoaded)
             )
 
@@ -165,7 +171,12 @@ update msg language fieldId model =
                 case model.autocompleteMenuState of
                     AutocompleteMenuSleeping ->
                         ( { model | autocompleteMenuState = AutocompleteMenuLoading }
-                        , Requests.autocompleteCards Nothing language Nothing model.autocomplete autocompleterSize
+                        , Requests.autocompleteCards
+                            Nothing
+                            language
+                            model.cardTypes
+                            model.autocomplete
+                            autocompleterSize
                             |> Http.send (ForSelf << MenuLoaded)
                         )
 

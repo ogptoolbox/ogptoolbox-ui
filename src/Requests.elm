@@ -42,11 +42,11 @@ authenticationHeaders authentication =
 autocompleteCards :
     Maybe Authentication
     -> I18n.Language
-    -> Maybe String
+    -> List String
     -> String
     -> Int
     -> Http.Request CardsAutocompletionBody
-autocompleteCards authentication language subType term limit =
+autocompleteCards authentication language cardTypes term limit =
     Http.request
         { method = "GET"
         , headers = authenticationHeaders authentication
@@ -54,20 +54,21 @@ autocompleteCards authentication language subType term limit =
             apiUrl
                 ++ "cards/autocomplete"
                 ++ Urls.paramsToQuery
-                    [ ( "language", Just (I18n.iso639_1FromLanguage language) )
-                    , ( "limit", Just (toString limit) )
-                    , ( "term"
-                      , let
+                    ([ ( "language", Just (I18n.iso639_1FromLanguage language) )
+                     , ( "limit", Just (toString limit) )
+                     , ( "term"
+                       , let
                             cleanTerm =
                                 String.trim term
-                        in
+                         in
                             if String.isEmpty cleanTerm then
                                 Nothing
                             else
                                 Just cleanTerm
-                      )
-                    , ( "type", subType )
-                    ]
+                       )
+                     ]
+                        ++ List.map (\cardType -> ( "type", Just cardType )) cardTypes
+                    )
         , body = Http.emptyBody
         , expect = Http.expectJson cardsAutocompletionBodyDecoder
         , timeout = Nothing

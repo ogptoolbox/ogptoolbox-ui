@@ -2,15 +2,25 @@ module Cards.ViewsParts exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Attributes.Aria exposing (..)
+import Html.Events exposing (..)
 import Html.Helpers exposing (aForPath)
 import I18n
+import Json.Decode
 import Tags.ViewsParts exposing (..)
 import Types exposing (..)
 import Urls
 
 
-viewCardThumbnail : I18n.Language -> (String -> msg) -> String -> DataProxy a -> Card -> Html msg
-viewCardThumbnail language navigate extraClass data card =
+viewCardThumbnail :
+    I18n.Language
+    -> (String -> msg)
+    -> Maybe (String -> msg)
+    -> String
+    -> DataProxy a
+    -> Card
+    -> Html msg
+viewCardThumbnail language navigate onRemoveCard extraClass data card =
     let
         name =
             I18n.getName language card data.values
@@ -22,50 +32,84 @@ viewCardThumbnail language navigate extraClass data card =
             getCardType card
     in
         div [ class "col-xs-12 col-sm-6 col-md-4 col-lg-3" ]
-            [ aForPath
-                navigate
-                language
-                path
-                [ class ("thumbnail " ++ extraClass) ]
-                [ div [ class "visual" ]
-                    [ case Urls.imageFullUrl language "500" card data.values of
-                        Just url ->
-                            img [ alt "logo", src url ] []
+            [ let
+                element =
+                    case onRemoveCard of
+                        Just onRemoveCard ->
+                            div
 
                         Nothing ->
-                            h1 [ class "dynamic" ]
-                                [ text
-                                    (case cardType of
-                                        OrganizationCard ->
-                                            String.left 1 name
+                            aForPath
+                                navigate
+                                language
+                                path
+              in
+                element
+                    [ class ("thumbnail " ++ extraClass) ]
+                    [ div [ class "visual" ]
+                        [ case Urls.imageFullUrl language "500" card data.values of
+                            Just url ->
+                                img [ alt "logo", src url ] []
 
-                                        ToolCard ->
-                                            String.left 2 name
+                            Nothing ->
+                                h1 [ class "dynamic" ]
+                                    [ text
+                                        (case cardType of
+                                            OrganizationCard ->
+                                                String.left 1 name
 
-                                        UseCaseCard ->
-                                            name
-                                    )
+                                            ToolCard ->
+                                                String.left 2 name
+
+                                            UseCaseCard ->
+                                                name
+                                        )
+                                    ]
+                        ]
+                    , div [ class "caption" ]
+                        [ h4 []
+                            [ text name ]
+                        , case I18n.getOneString language descriptionKeys card data.values of
+                            Just description ->
+                                p [] [ text description ]
+
+                            Nothing ->
+                                p
+                                    [ class "call" ]
+                                    [ text (I18n.translate language (I18n.CallToActionForDescription cardType)) ]
+                        ]
+                    , viewTagsWithCallToAction navigate language data.values card
+                    , case onRemoveCard of
+                        Just onRemoveCard ->
+                            div [ class "text-center" ]
+                                [ button
+                                    [ class "btn btn-danger btn-xs"
+                                    , onWithOptions "click"
+                                        { preventDefault = True, stopPropagation = False }
+                                        (Json.Decode.succeed (onRemoveCard card.id))
+                                    , type_ "button"
+                                    ]
+                                    [ span [ class "glyphicon glyphicon-remove", ariaHidden True ] []
+                                    , text " "
+                                    , text <| I18n.translate language I18n.Remove
+                                    ]
                                 ]
-                    ]
-                , div [ class "caption" ]
-                    [ h4 []
-                        [ text name ]
-                    , case I18n.getOneString language descriptionKeys card data.values of
-                        Just description ->
-                            p [] [ text description ]
 
                         Nothing ->
-                            p
-                                [ class "call" ]
-                                [ text (I18n.translate language (I18n.CallToActionForDescription cardType)) ]
+                            text ""
                     ]
-                , viewTagsWithCallToAction navigate language data.values card
-                ]
             ]
 
 
-viewCardsThumbnailsPanel : I18n.Language -> (String -> msg) -> I18n.TranslationId -> DataProxy a -> List Card -> Html msg
-viewCardsThumbnailsPanel language navigate titleI18n data cards =
+viewCardsThumbnailsPanel :
+    I18n.Language
+    -> (String -> msg)
+    -> Maybe (String -> msg)
+    -> I18n.TranslationId
+    -> DataProxy a
+    -> List Card
+    -> Html msg
+viewCardsThumbnailsPanel language navigate onRemoveCard titleI18n data cards =
     div [ class "panel panel-default" ]
         [ div [ class "row" ]
             [ div [ class "col-xs-8 text-left" ]
@@ -80,7 +124,7 @@ viewCardsThumbnailsPanel language navigate titleI18n data cards =
         , div [ class "panel-body" ]
             [ div [ class "row" ]
                 (List.map
-                    (viewCardThumbnail language navigate "tool grey" data)
+                    (viewCardThumbnail language navigate onRemoveCard "tool grey" data)
                     cards
                 )
             ]

@@ -22,7 +22,6 @@ type alias FormErrors =
 
 type InternalMsg
     = AddCard Card
-    | CardsAutocompleteMsg CardsAutocomplete.Types.InternalMsg
     | CollectionPosted (Result Http.Error DataIdBody)
     | CreateCard String
     | GotAddedCard (Result Http.Error DataIdBody)
@@ -32,14 +31,15 @@ type InternalMsg
     | ImageUploaded (Result Http.Error String)
     | LoadCollection String
     | PostCollection
-      -- | SetCardIds String
+    | RemoveCard String
     | SetDescription String
     | SetName String
+    | ToolsAutocompleteMsg CardsAutocomplete.Types.InternalMsg
+    | UseCasesAutocompleteMsg CardsAutocomplete.Types.InternalMsg
 
 
 type alias Model =
     { authentication : Maybe Authentication
-    , cardsAutocompleteModel : CardsAutocomplete.Types.Model
     , cardIds : List String
     , collectionJson : Maybe Json.Encode.Value
     , data : DataId
@@ -49,6 +49,8 @@ type alias Model =
     , imageUploadStatus : ImageUploadStatus
     , language : I18n.Language
     , name : String
+    , toolsAutocompleteModel : CardsAutocomplete.Types.Model
+    , useCasesAutocompleteModel : CardsAutocomplete.Types.Model
     , webData : WebData DataIdBody
     }
 
@@ -73,15 +75,6 @@ navigate path =
     ForParent (Navigate path)
 
 
-translateCardsAutocompleteMsg : CardsAutocomplete.Types.MsgTranslator Msg
-translateCardsAutocompleteMsg =
-    CardsAutocomplete.Types.translateMsg
-        { onAdd = ForSelf << AddCard
-        , onCreate = ForSelf << CreateCard
-        , onInternalMsg = ForSelf << CardsAutocompleteMsg
-        }
-
-
 translateMsg : MsgTranslation parentMsg -> MsgTranslator parentMsg
 translateMsg { onInternalMsg, onNavigate } msg =
     case msg of
@@ -90,3 +83,21 @@ translateMsg { onInternalMsg, onNavigate } msg =
 
         ForSelf internalMsg ->
             onInternalMsg internalMsg
+
+
+translateToolsAutocompleteMsg : CardsAutocomplete.Types.MsgTranslator Msg
+translateToolsAutocompleteMsg =
+    CardsAutocomplete.Types.translateMsg
+        { onAdd = ForSelf << AddCard
+        , onCreate = ForSelf << CreateCard
+        , onInternalMsg = ForSelf << ToolsAutocompleteMsg
+        }
+
+
+translateUseCasesAutocompleteMsg : CardsAutocomplete.Types.MsgTranslator Msg
+translateUseCasesAutocompleteMsg =
+    CardsAutocomplete.Types.translateMsg
+        { onAdd = ForSelf << AddCard
+        , onCreate = ForSelf << CreateCard
+        , onInternalMsg = ForSelf << UseCasesAutocompleteMsg
+        }

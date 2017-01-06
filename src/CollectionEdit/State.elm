@@ -133,7 +133,6 @@ convertControls model =
 init : Model
 init =
     { authentication = Nothing
-    , cardsAutocompleteModel = CardsAutocomplete.State.init
     , cardIds = []
     , collectionJson = Nothing
     , data = initDataId
@@ -143,6 +142,8 @@ init =
     , imageUploadStatus = ImageNotUploadedStatus
     , language = I18n.English
     , name = ""
+    , toolsAutocompleteModel = CardsAutocomplete.State.init cardTypesForTool
+    , useCasesAutocompleteModel = CardsAutocomplete.State.init cardTypesForUseCase
     , webData = NotAsked
     }
 
@@ -150,8 +151,9 @@ init =
 subscriptions : Model -> Sub InternalMsg
 subscriptions model =
     Sub.batch
-        [ Sub.map CardsAutocompleteMsg (CardsAutocomplete.State.subscriptions model.cardsAutocompleteModel)
-        , Ports.fileContentRead ImageRead
+        [ Ports.fileContentRead ImageRead
+        , Sub.map ToolsAutocompleteMsg (CardsAutocomplete.State.subscriptions model.toolsAutocompleteModel)
+        , Sub.map UseCasesAutocompleteMsg (CardsAutocomplete.State.subscriptions model.useCasesAutocompleteModel)
         ]
 
 
@@ -163,18 +165,6 @@ update msg model =
             , Requests.getCard model.authentication card.id
                 |> Http.send (ForSelf << GotAddedCard)
             )
-
-        CardsAutocompleteMsg childMsg ->
-            let
-                ( cardsAutocompleteModel, childCmd ) =
-                    CardsAutocomplete.State.update childMsg
-                        model.language
-                        "cardId"
-                        model.cardsAutocompleteModel
-            in
-                ( convertControls { model | cardsAutocompleteModel = cardsAutocompleteModel }
-                , Cmd.map translateCardsAutocompleteMsg childCmd
-                )
 
         CollectionPosted (Err httpError) ->
             ( { model | webData = Failure httpError }, Cmd.none )
@@ -213,7 +203,11 @@ update msg model =
         GotAddedCard (Ok { data }) ->
             ( convertControls
                 { model
-                    | cardIds = List.append model.cardIds [ data.id ]
+                    | cardIds =
+                        if List.member data.id model.cardIds then
+                            model.cardIds
+                        else
+                            List.append model.cardIds [ data.id ]
                     , data = mergeData data model.data
                 }
             , Cmd.none
@@ -341,13 +335,38 @@ update msg model =
             in
                 ( newModel, cmd )
 
-        -- SetCardIds cardIds ->
-        --     ( convertControls { model | cardIds = cardIds }, Cmd.none )
+        RemoveCard cardId ->
+            ( { model | cardIds = List.filter (\cardId1 -> cardId1 /= cardId) model.cardIds }, Cmd.none )
+
         SetDescription description ->
             ( convertControls { model | description = description }, Cmd.none )
 
         SetName name ->
             ( convertControls { model | name = name }, Cmd.none )
+
+        ToolsAutocompleteMsg childMsg ->
+            let
+                ( toolsAutocompleteModel, childCmd ) =
+                    CardsAutocomplete.State.update childMsg
+                        model.language
+                        "toolsAutocomplete"
+                        model.toolsAutocompleteModel
+            in
+                ( convertControls { model | toolsAutocompleteModel = toolsAutocompleteModel }
+                , Cmd.map translateToolsAutocompleteMsg childCmd
+                )
+
+        UseCasesAutocompleteMsg childMsg ->
+            let
+                ( useCasesAutocompleteModel, childCmd ) =
+                    CardsAutocomplete.State.update childMsg
+                        model.language
+                        "useCasesAutocomplete"
+                        model.useCasesAutocompleteModel
+            in
+                ( convertControls { model | useCasesAutocompleteModel = useCasesAutocompleteModel }
+                , Cmd.map translateUseCasesAutocompleteMsg childCmd
+                )
 
 
 urlUpdate : Maybe Authentication -> I18n.Language -> Maybe String -> Model -> ( Model, Cmd Msg )
