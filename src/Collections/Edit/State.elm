@@ -1,8 +1,8 @@
-module CollectionEdit.State exposing (..)
+module Collections.Edit.State exposing (..)
 
 import Authenticator.Types exposing (Authentication)
-import CardsAutocomplete.State
-import CollectionEdit.Types exposing (..)
+import Cards.Autocomplete.State
+import Collections.Edit.Types exposing (..)
 import Dict exposing (Dict)
 import Http
 import Http.Error
@@ -142,8 +142,8 @@ init =
     , imageUploadStatus = ImageNotUploadedStatus
     , language = I18n.English
     , name = ""
-    , toolsAutocompleteModel = CardsAutocomplete.State.init cardTypesForTool
-    , useCasesAutocompleteModel = CardsAutocomplete.State.init cardTypesForUseCase
+    , toolsAutocompleteModel = Cards.Autocomplete.State.init cardTypesForTool
+    , useCasesAutocompleteModel = Cards.Autocomplete.State.init cardTypesForUseCase
     , webData = NotAsked
     }
 
@@ -152,8 +152,8 @@ subscriptions : Model -> Sub InternalMsg
 subscriptions model =
     Sub.batch
         [ Ports.fileContentRead ImageRead
-        , Sub.map ToolsAutocompleteMsg (CardsAutocomplete.State.subscriptions model.toolsAutocompleteModel)
-        , Sub.map UseCasesAutocompleteMsg (CardsAutocomplete.State.subscriptions model.useCasesAutocompleteModel)
+        , Sub.map ToolsAutocompleteMsg (Cards.Autocomplete.State.subscriptions model.toolsAutocompleteModel)
+        , Sub.map UseCasesAutocompleteMsg (Cards.Autocomplete.State.subscriptions model.useCasesAutocompleteModel)
         ]
 
 
@@ -169,7 +169,7 @@ update msg model =
         CardAdded (Err httpError) ->
             let
                 _ =
-                    Debug.log "CollectionEdit.State GotCard Err" httpError
+                    Debug.log "Collections.Edit.State GotCard Err" httpError
             in
                 ( model, Cmd.none )
 
@@ -251,9 +251,9 @@ update msg model =
 
                 cmd =
                     Ports.setDocumentMetadata
-                        { description = I18n.translate model.language I18n.CollectionEditDescription
+                        { description = I18n.translate model.language I18n.EditCollectionDescription
                         , imageUrl = Urls.appLogoFullUrl
-                        , title = I18n.translate model.language I18n.CollectionEditTitle
+                        , title = I18n.translate model.language I18n.EditCollectionTitle
                         }
             in
                 ( newModel, cmd )
@@ -353,7 +353,7 @@ update msg model =
         ToolsAutocompleteMsg childMsg ->
             let
                 ( toolsAutocompleteModel, childCmd ) =
-                    CardsAutocomplete.State.update childMsg
+                    Cards.Autocomplete.State.update childMsg
                         model.language
                         "toolsAutocomplete"
                         model.toolsAutocompleteModel
@@ -365,7 +365,7 @@ update msg model =
         UseCasesAutocompleteMsg childMsg ->
             let
                 ( useCasesAutocompleteModel, childCmd ) =
-                    CardsAutocomplete.State.update childMsg
+                    Cards.Autocomplete.State.update childMsg
                         model.language
                         "useCasesAutocomplete"
                         model.useCasesAutocompleteModel

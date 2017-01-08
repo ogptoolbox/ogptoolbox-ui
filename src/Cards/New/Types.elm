@@ -1,4 +1,4 @@
-module AddNew.Types exposing (..)
+module Cards.New.Types exposing (..)
 
 import Dict exposing (Dict)
 import Http

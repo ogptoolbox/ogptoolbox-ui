@@ -27,18 +27,6 @@ type TranslationId
     | Add
     | AddCard
     | AddCollection
-    | AddNew
-    | AddNewItemBox
-    | AddNewCollectionCatchPhrase
-    | AddNewOrganization
-    | AddNewOrganizationDescription
-    | AddNewOrganizationCatchPhrase
-    | AddNewTool
-    | AddNewToolCatchPhrase
-    | AddNewToolDescription
-    | AddNewUseCase
-    | AddNewUseCaseCatchPhrase
-    | AddNewUseCaseDescription
     | AdditionalInformations
     | AddTool
     | AddToolOrUseCase
@@ -66,9 +54,6 @@ type TranslationId
     | CollectionAddDescription
     | CollectionAddTitle
     | CollectionDescriptionPlaceholder
-    | CollectionEditCatchPhrase
-    | CollectionEditDescription
-    | CollectionEditTitle
     | CollectionNamePlaceholder
     | CollectionsDescription
     | CollectionsNameTitle
@@ -85,6 +70,9 @@ type TranslationId
     | CreateOrganizationPage
     | CreateYourAccount
     | EditCollection
+    | EditCollectionCatchPhrase
+    | EditCollectionDescription
+    | EditCollectionTitle
     | Email
     | EmailPlaceholder
     | EmailSentForAccountActivation String
@@ -157,6 +145,18 @@ type TranslationId
     | Name
     | NetworkErrorExplanation
     | New
+    | NewCard
+    | NewCardItemBox
+    | NewCardCollectionCatchPhrase
+    | NewCardOrganization
+    | NewCardOrganizationDescription
+    | NewCardOrganizationCatchPhrase
+    | NewCardTool
+    | NewCardToolCatchPhrase
+    | NewCardToolDescription
+    | NewCardUseCase
+    | NewCardUseCaseCatchPhrase
+    | NewCardUseCaseDescription
     | OGPsummitLink
     | OpenGovernmentPartnership
     | OpenGovernmentPartnershipLogo
@@ -337,78 +337,6 @@ getTranslationSet translationId =
         AdditionalInformations ->
             { english = s "Additional informations"
             , french = s "Informations supplémentaires"
-            , spanish = todo
-            }
-
-        AddNew ->
-            { english = s "Add new"
-            , french = s "Ajouter"
-            , spanish = todo
-            }
-
-        AddNewCollectionCatchPhrase ->
-            { english = s "A simple way to recommend your favorite tools."
-            , french = s "Une façon simple de recommander vos outils favoris."
-            , spanish = todo
-            }
-
-        AddNewItemBox ->
-            { english = s "Add a new item"
-            , french = s "Ajouter un nouvel élément"
-            , spanish = todo
-            }
-
-        AddNewOrganization ->
-            { english = s "Add a new organization."
-            , french = s "Ajouter une nouvelle organisation."
-            , spanish = todo
-            }
-
-        AddNewOrganizationCatchPhrase ->
-            { english = s "A developer or user of tools."
-            , french = s "Un développeur ou utilisateur d'outil."
-            , spanish = todo
-            }
-
-        AddNewOrganizationDescription ->
-            { english = s "Creating a new organization by giving a few generic informations"
-            , french = s "Création d'une nouvelle organisation en fournissant quelques informations générales"
-            , spanish = todo
-            }
-
-        AddNewTool ->
-            { english = s "Add a new tool"
-            , french = s "Ajouter un nouvel outil"
-            , spanish = todo
-            }
-
-        AddNewToolCatchPhrase ->
-            { english = s "A software or a website."
-            , french = s "Un logiciel ou un site Internet."
-            , spanish = todo
-            }
-
-        AddNewToolDescription ->
-            { english = s "Creating a new tool by giving a few generic informations."
-            , french = s "Création d'un nouvel outil en fournissant quelques informations générales"
-            , spanish = todo
-            }
-
-        AddNewUseCase ->
-            { english = s "Add a new use case"
-            , french = s "Ajouter un nouveau cas d'usage"
-            , spanish = todo
-            }
-
-        AddNewUseCaseCatchPhrase ->
-            { english = s "A concrete example showing how a tool was used."
-            , french = s "Un exemple concret d'utilisation d'un ou plusieurs outils."
-            , spanish = todo
-            }
-
-        AddNewUseCaseDescription ->
-            { english = s "Creating a new use case by giving a few generic informations"
-            , french = s "Création d'un nouveau cas d'usage en fournissant quelques informations générales"
             , spanish = todo
             }
 
@@ -607,24 +535,6 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
-        CollectionEditCatchPhrase ->
-            { english = s "A simple way to recommend your favorite tools."
-            , french = s "Une façon simple de recommander vos outils favoris."
-            , spanish = todo
-            }
-
-        CollectionEditDescription ->
-            { english = s "Edition of a collection."
-            , french = s "Édition d'une collection."
-            , spanish = todo
-            }
-
-        CollectionEditTitle ->
-            { english = s "Edit your collection"
-            , french = s "Éditer votre collection"
-            , spanish = todo
-            }
-
         CollectionDescriptionPlaceholder ->
             { english = s "Describe the collection"
             , french = s "Décrivez la collection"
@@ -742,6 +652,24 @@ getTranslationSet translationId =
         EditCollection ->
             { english = s "Edit Collection"
             , french = s "Éditer une collection"
+            , spanish = todo
+            }
+
+        EditCollectionCatchPhrase ->
+            { english = s "A simple way to recommend your favorite tools."
+            , french = s "Une façon simple de recommander vos outils favoris."
+            , spanish = todo
+            }
+
+        EditCollectionDescription ->
+            { english = s "Edition of a collection."
+            , french = s "Édition d'une collection."
+            , spanish = todo
+            }
+
+        EditCollectionTitle ->
+            { english = s "Edit your collection"
+            , french = s "Éditer votre collection"
             , spanish = todo
             }
 
@@ -1198,6 +1126,78 @@ getTranslationSet translationId =
         New ->
             { english = s "New"
             , french = s "Nouveau"
+            , spanish = todo
+            }
+
+        NewCard ->
+            { english = s "Add new"
+            , french = s "Ajouter"
+            , spanish = todo
+            }
+
+        NewCardCollectionCatchPhrase ->
+            { english = s "A simple way to recommend your favorite tools."
+            , french = s "Une façon simple de recommander vos outils favoris."
+            , spanish = todo
+            }
+
+        NewCardItemBox ->
+            { english = s "Add a new item"
+            , french = s "Ajouter un nouvel élément"
+            , spanish = todo
+            }
+
+        NewCardOrganization ->
+            { english = s "Add a new organization."
+            , french = s "Ajouter une nouvelle organisation."
+            , spanish = todo
+            }
+
+        NewCardOrganizationCatchPhrase ->
+            { english = s "A developer or user of tools."
+            , french = s "Un développeur ou utilisateur d'outil."
+            , spanish = todo
+            }
+
+        NewCardOrganizationDescription ->
+            { english = s "Creating a new organization by giving a few generic informations"
+            , french = s "Création d'une nouvelle organisation en fournissant quelques informations générales"
+            , spanish = todo
+            }
+
+        NewCardTool ->
+            { english = s "Add a new tool"
+            , french = s "Ajouter un nouvel outil"
+            , spanish = todo
+            }
+
+        NewCardToolCatchPhrase ->
+            { english = s "A software or a website."
+            , french = s "Un logiciel ou un site Internet."
+            , spanish = todo
+            }
+
+        NewCardToolDescription ->
+            { english = s "Creating a new tool by giving a few generic informations."
+            , french = s "Création d'un nouvel outil en fournissant quelques informations générales"
+            , spanish = todo
+            }
+
+        NewCardUseCase ->
+            { english = s "Add a new use case"
+            , french = s "Ajouter un nouveau cas d'usage"
+            , spanish = todo
+            }
+
+        NewCardUseCaseCatchPhrase ->
+            { english = s "A concrete example showing how a tool was used."
+            , french = s "Un exemple concret d'utilisation d'un ou plusieurs outils."
+            , spanish = todo
+            }
+
+        NewCardUseCaseDescription ->
+            { english = s "Creating a new use case by giving a few generic informations"
+            , french = s "Création d'un nouveau cas d'usage en fournissant quelques informations générales"
             , spanish = todo
             }
 

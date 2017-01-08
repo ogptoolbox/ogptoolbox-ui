@@ -1,7 +1,7 @@
-module CardsAutocomplete.State exposing (..)
+module Cards.Autocomplete.State exposing (..)
 
 import Autocomplete
-import CardsAutocomplete.Types exposing (..)
+import Cards.Autocomplete.Types exposing (..)
 import Dom
 import Http
 import I18n
@@ -166,7 +166,7 @@ update msg language fieldId model =
         MenuLoaded (Err httpError) ->
             let
                 _ =
-                    Debug.log "CardsAutocomplete.State update MenuLoaded Err" httpError
+                    Debug.log "Cards.Autocomplete.State update MenuLoaded Err" httpError
             in
                 case model.autocompleteMenuState of
                     AutocompleteMenuSleeping ->

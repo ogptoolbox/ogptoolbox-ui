@@ -1,4 +1,4 @@
-module CardsAutocomplete.Types exposing (..)
+module Cards.Autocomplete.Types exposing (..)
 
 import Autocomplete
 import Http

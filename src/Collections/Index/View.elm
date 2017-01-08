@@ -1,6 +1,6 @@
-module Collections.View exposing (..)
+module Collections.Index.View exposing (..)
 
-import Collections.Types exposing (..)
+import Collections.Index.Types exposing (..)
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)

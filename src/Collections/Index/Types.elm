@@ -1,4 +1,4 @@
-module Collections.Types exposing (..)
+module Collections.Index.Types exposing (..)
 
 import Http
 import Types exposing (..)

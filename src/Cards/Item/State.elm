@@ -1,7 +1,7 @@
-module Card.State exposing (..)
+module Cards.Item.State exposing (..)
 
 import Authenticator.Types
-import Card.Types exposing (..)
+import Cards.Item.Types exposing (..)
 import Dict exposing (Dict)
 import Http
 import I18n
@@ -58,7 +58,7 @@ update msg ({ editedProperty } as model) authentication language =
                 Result.Err err ->
                     let
                         _ =
-                            Debug.log "Card.State GotCard Error" err
+                            Debug.log "Cards.Item.State GotCard Error" err
                     in
                         ( { model | webData = Failure err }, Cmd.none )
 
@@ -91,7 +91,7 @@ update msg ({ editedProperty } as model) authentication language =
                 Result.Err err ->
                     let
                         _ =
-                            Debug.log "Card.State GotProperties Error" err
+                            Debug.log "Cards.Item.State GotProperties Error" err
                     in
                         ( model, Cmd.none )
 
@@ -152,7 +152,7 @@ update msg ({ editedProperty } as model) authentication language =
         PropertyPosted (Result.Err err) ->
             let
                 _ =
-                    Debug.log "Card.State PropertyPosted Error" err
+                    Debug.log "Cards.Item.State PropertyPosted Error" err
             in
                 ( model, Cmd.none )
 
@@ -236,7 +236,7 @@ update msg ({ editedProperty } as model) authentication language =
         RatingPosted (Result.Err err) ->
             let
                 _ =
-                    Debug.log "Card.State RatingPosted Error" err
+                    Debug.log "Cards.Item.State RatingPosted Error" err
             in
                 ( model, Cmd.none )
 

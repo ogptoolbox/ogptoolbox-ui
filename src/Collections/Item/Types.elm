@@ -1,4 +1,4 @@
-module Collection.Types exposing (..)
+module Collections.Item.Types exposing (..)
 
 import Authenticator.Types exposing (Authentication, canEditUserResource)
 import Http

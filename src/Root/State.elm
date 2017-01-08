@@ -1,15 +1,15 @@
 module Root.State exposing (..)
 
-import AddNew.State
+import Cards.New.State
 import Authenticator.Routes exposing (..)
 import Authenticator.State
 import Authenticator.Types
-import Card.State
-import Card.Types
-import Collection.State
-import CollectionEdit.State
-import Collections.State
-import Collections.Types
+import Cards.Item.State
+import Cards.Item.Types
+import Collections.Item.State
+import Collections.Edit.State
+import Collections.Index.State
+import Collections.Index.Types
 import Decoders
 import Dict exposing (Dict)
 import Dom.Scroll
@@ -31,25 +31,25 @@ import Urls
 
 init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
 init flags location =
-    { addNewModel = AddNew.State.init
-    , authentication =
+    { authentication =
         Json.Decode.decodeValue Decoders.userDecoder flags.authentication
             |> Result.toMaybe
     , authenticatorCancelMsg = Nothing
     , authenticatorCompletionMsg = Nothing
     , authenticatorModel = Authenticator.State.init
     , authenticatorRoute = Nothing
-    , cardModel = Card.State.init
-    , collectionEditModel = CollectionEdit.State.init
-    , collectionModel = Collection.State.init
-    , collectionsModel = Collections.State.init
-    , displayAddNewModal = False
+    , cardModel = Cards.Item.State.init
+    , collectionEditModel = Collections.Edit.State.init
+    , collectionModel = Collections.Item.State.init
+    , collectionsModel = Collections.Index.State.init
+    , displayNewCardModal = False
     , location = location
     , navigatorLanguage =
         flags.language
             |> String.left 2
             |> String.toLower
             |> I18n.languageFromIso639_1
+    , newCardModel = Cards.New.State.init
     , route = I18nRouteWithoutLanguage ""
     , searchInputValue = ""
     , searchModel = Search.State.init
@@ -84,8 +84,8 @@ subscriptions model =
     -- TODO Fix duplicate messages with port "fileContentRead", that was worked around by a "ImageSelectedStatus"
     -- constructor.
     Sub.batch
-        [ Sub.map AddNewMsg (AddNew.State.subscriptions model.addNewModel)
-        , Sub.map CollectionEditMsg (CollectionEdit.State.subscriptions model.collectionEditModel)
+        [ Sub.map NewCardMsg (Cards.New.State.subscriptions model.newCardModel)
+        , Sub.map EditCollectionMsg (Collections.Edit.State.subscriptions model.collectionEditModel)
         , Sub.map SearchMsg (Search.State.subscriptions model.searchModel)
         ]
 
@@ -102,13 +102,13 @@ update msg model =
                     I18n.English
     in
         case msg of
-            AddNewMsg childMsg ->
+            NewCardMsg childMsg ->
                 let
-                    ( addNewModel, childCmd ) =
-                        AddNew.State.update childMsg model.addNewModel model.authentication language
+                    ( newCardModel, childCmd ) =
+                        Cards.New.State.update childMsg model.newCardModel model.authentication language
                 in
-                    ( { model | addNewModel = addNewModel }
-                    , Cmd.map translateAddNewMsg childCmd
+                    ( { model | newCardModel = newCardModel }
+                    , Cmd.map translateNewCardMsg childCmd
                     )
 
             AuthenticatorMsg childMsg ->
@@ -163,7 +163,7 @@ update msg model =
             CardMsg childMsg ->
                 let
                     ( cardModel, childCmd ) =
-                        Card.State.update childMsg model.cardModel model.authentication language
+                        Cards.Item.State.update childMsg model.cardModel model.authentication language
                 in
                     ( { model | cardModel = cardModel }
                     , Cmd.map translateCardMsg childCmd
@@ -179,19 +179,19 @@ update msg model =
                 , navigate model.location.href path
                 )
 
-            CollectionEditMsg childMsg ->
+            EditCollectionMsg childMsg ->
                 let
                     ( collectionEditModel, childCmd ) =
-                        CollectionEdit.State.update childMsg model.collectionEditModel
+                        Collections.Edit.State.update childMsg model.collectionEditModel
                 in
                     ( { model | collectionEditModel = collectionEditModel }
-                    , Cmd.map translateCollectionEditMsg childCmd
+                    , Cmd.map translateEditCollectionMsg childCmd
                     )
 
             CollectionMsg childMsg ->
                 let
                     ( collectionModel, childCmd ) =
-                        Collection.State.update childMsg model.collectionModel
+                        Collections.Item.State.update childMsg model.collectionModel
                 in
                     ( { model | collectionModel = collectionModel }
                     , Cmd.map translateCollectionMsg childCmd
@@ -200,14 +200,14 @@ update msg model =
             CollectionsMsg childMsg ->
                 let
                     ( collectionsModel, childCmd ) =
-                        Collections.State.update childMsg model.collectionsModel model.authentication language
+                        Collections.Index.State.update childMsg model.collectionsModel model.authentication language
                 in
                     ( { model | collectionsModel = collectionsModel }
                     , Cmd.map translateCollectionsMsg childCmd
                     )
 
-            DisplayAddNewModal displayAddNewModal ->
-                ( { model | displayAddNewModal = displayAddNewModal }
+            DisplayNewCardModal displayNewCardModal ->
+                ( { model | displayNewCardModal = displayNewCardModal }
                 , Cmd.none
                 )
 
@@ -416,7 +416,7 @@ urlUpdate location model =
                                                     requireSignIn (Navigate (Urls.parentUrl location.href)) model
 
                                                 ( collectionEditModel, childCmd ) =
-                                                    CollectionEdit.State.urlUpdate
+                                                    Collections.Edit.State.urlUpdate
                                                         model1.authentication
                                                         language
                                                         collectionId
@@ -424,13 +424,13 @@ urlUpdate location model =
                                             in
                                                 { model1 | collectionEditModel = collectionEditModel }
                                                     ! [ cmd1
-                                                      , Cmd.map translateCollectionEditMsg childCmd
+                                                      , Cmd.map translateEditCollectionMsg childCmd
                                                       ]
 
                                         CollectionRoute collectionId ->
                                             let
                                                 ( collectionModel, childCmd ) =
-                                                    Collection.State.urlUpdate
+                                                    Collections.Item.State.urlUpdate
                                                         model.authentication
                                                         language
                                                         collectionId
@@ -446,8 +446,8 @@ urlUpdate location model =
                                         CollectionsIndexRoute ->
                                             let
                                                 ( collectionsModel, childCmd ) =
-                                                    Collections.State.update
-                                                        Collections.Types.LoadCollections
+                                                    Collections.Index.State.update
+                                                        Collections.Index.Types.LoadCollections
                                                         model.collectionsModel
                                                         model.authentication
                                                         language
@@ -485,8 +485,8 @@ urlUpdate location model =
                                         OrganizationRoute cardId ->
                                             let
                                                 ( cardModel, childCmd ) =
-                                                    Card.State.update
-                                                        (Card.Types.LoadCard cardId)
+                                                    Cards.Item.State.update
+                                                        (Cards.Item.Types.LoadCard cardId)
                                                         model.cardModel
                                                         model.authentication
                                                         language
@@ -506,23 +506,23 @@ urlUpdate location model =
                                                         (Navigate (Urls.parentUrl location.href))
                                                         model
 
-                                                addNewModel =
-                                                    model1.addNewModel
+                                                newCardModel =
+                                                    model1.newCardModel
 
-                                                newAddNewModel =
-                                                    { addNewModel
+                                                newNewCardModel =
+                                                    { newCardModel
                                                         | fields = Dict.fromList [ ( "Types", "organization" ) ]
                                                     }
                                             in
-                                                { model1 | addNewModel = newAddNewModel }
+                                                { model1 | newCardModel = newNewCardModel }
                                                     ! [ cmd1
                                                       , Ports.setDocumentMetadata
                                                             { description =
                                                                 I18n.translate
                                                                     language
-                                                                    I18n.AddNewOrganizationDescription
+                                                                    I18n.NewCardOrganizationDescription
                                                             , imageUrl = Urls.appLogoFullUrl
-                                                            , title = I18n.translate language I18n.AddNewOrganization
+                                                            , title = I18n.translate language I18n.NewCardOrganization
                                                             }
                                                       ]
 
@@ -540,8 +540,8 @@ urlUpdate location model =
                                         ToolRoute cardId ->
                                             let
                                                 ( cardModel, childCmd ) =
-                                                    Card.State.update
-                                                        (Card.Types.LoadCard cardId)
+                                                    Cards.Item.State.update
+                                                        (Cards.Item.Types.LoadCard cardId)
                                                         model.cardModel
                                                         model.authentication
                                                         language
@@ -561,21 +561,21 @@ urlUpdate location model =
                                                         (Navigate (Urls.parentUrl location.href))
                                                         model
 
-                                                addNewModel =
-                                                    model1.addNewModel
+                                                newCardModel =
+                                                    model1.newCardModel
 
-                                                newAddNewModel =
-                                                    { addNewModel
+                                                newNewCardModel =
+                                                    { newCardModel
                                                         | fields = Dict.fromList [ ( "Types", "software" ) ]
                                                     }
                                             in
-                                                { model1 | addNewModel = newAddNewModel }
+                                                { model1 | newCardModel = newNewCardModel }
                                                     ! [ cmd1
                                                       , Ports.setDocumentMetadata
                                                             { description =
-                                                                I18n.translate language I18n.AddNewToolDescription
+                                                                I18n.translate language I18n.NewCardToolDescription
                                                             , imageUrl = Urls.appLogoFullUrl
-                                                            , title = I18n.translate language I18n.AddNewTool
+                                                            , title = I18n.translate language I18n.NewCardTool
                                                             }
                                                       ]
 
@@ -584,8 +584,8 @@ urlUpdate location model =
                                         UseCaseRoute cardId ->
                                             let
                                                 ( cardModel, childCmd ) =
-                                                    Card.State.update
-                                                        (Card.Types.LoadCard cardId)
+                                                    Cards.Item.State.update
+                                                        (Cards.Item.Types.LoadCard cardId)
                                                         model.cardModel
                                                         model.authentication
                                                         language
@@ -605,20 +605,20 @@ urlUpdate location model =
                                                         (Navigate (Urls.parentUrl location.href))
                                                         model
 
-                                                addNewModel =
-                                                    model1.addNewModel
+                                                newCardModel =
+                                                    model1.newCardModel
 
-                                                newAddNewModel =
-                                                    { addNewModel
+                                                newNewCardModel =
+                                                    { newCardModel
                                                         | fields = Dict.fromList [ ( "Types", "use-case" ) ]
                                                     }
                                             in
-                                                { model1 | addNewModel = newAddNewModel }
+                                                { model1 | newCardModel = newNewCardModel }
                                                     ! [ cmd1
                                                       , Ports.setDocumentMetadata
                                                             { description =
-                                                                I18n.translate language I18n.AddNewUseCaseDescription
-                                                            , title = I18n.translate language I18n.AddNewUseCase
+                                                                I18n.translate language I18n.NewCardUseCaseDescription
+                                                            , title = I18n.translate language I18n.NewCardUseCase
                                                             , imageUrl = Urls.appLogoFullUrl
                                                             }
                                                       ]

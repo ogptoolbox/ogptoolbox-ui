@@ -1,6 +1,6 @@
-module Card.View exposing (..)
+module Cards.Item.View exposing (..)
 
-import Card.Types exposing (..)
+import Cards.Item.Types exposing (..)
 import Configuration
 import Dict exposing (Dict)
 import Html exposing (..)

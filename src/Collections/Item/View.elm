@@ -1,8 +1,8 @@
-module Collection.View exposing (..)
+module Collections.Item.View exposing (..)
 
 import Authenticator.Types exposing (Authentication, canEditUserResource)
 import Cards.ViewsParts exposing (..)
-import Collection.Types exposing (..)
+import Collections.Item.Types exposing (..)
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -91,7 +91,7 @@ viewBanner authentication language user collection =
                                             , onClick (navigate ("/collections/" ++ collection.id ++ "/edit"))
                                             , type_ "button"
                                             ]
-                                            [ text (I18n.translate language (I18n.CollectionEditTitle)) ]
+                                            [ text (I18n.translate language (I18n.EditCollectionTitle)) ]
                                         ]
                                     ]
                               else

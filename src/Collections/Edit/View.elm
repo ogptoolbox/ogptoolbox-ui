@@ -1,7 +1,7 @@
-module CollectionEdit.View exposing (..)
+module Collections.Edit.View exposing (..)
 
-import CardsAutocomplete.View
-import CollectionEdit.Types exposing (..)
+import Cards.Autocomplete.View
+import Collections.Edit.Types exposing (..)
 import Collections.ViewsParts exposing (..)
 import Dict exposing (Dict)
 import Json.Decode as Decode
@@ -92,7 +92,7 @@ view model =
                                                         controlId =
                                                             "toolsAutocomplete"
                                                       in
-                                                        CardsAutocomplete.View.viewAutocomplete
+                                                        Cards.Autocomplete.View.viewAutocomplete
                                                             language
                                                             controlId
                                                             I18n.AddTool
@@ -110,7 +110,7 @@ view model =
                                                         controlId =
                                                             "useCasesAutocomplete"
                                                       in
-                                                        CardsAutocomplete.View.viewAutocomplete
+                                                        Cards.Autocomplete.View.viewAutocomplete
                                                             language
                                                             controlId
                                                             I18n.AddUseCase

@@ -1,14 +1,14 @@
 module Root.View exposing (..)
 
 import About
-import AddNew.View
+import Cards.New.View
 import Authenticator.Routes
 import Authenticator.Types
 import Authenticator.View
-import Card.View
-import Collection.View
-import CollectionEdit.View
-import Collections.View
+import Cards.Item.View
+import Collections.Item.View
+import Collections.Edit.View
+import Collections.Index.View
 import Faq
 import Home
 import Html exposing (..)
@@ -39,7 +39,7 @@ view model =
                     ++ [ content
                        , viewFooter model language
                        , viewAuthenticatorModal model language
-                       , viewAddNewModal model language
+                       , viewNewCardModal model language
                        , viewBackdrop model
                        ]
                 )
@@ -55,7 +55,7 @@ view model =
                        , div [ class "fixed-footer" ]
                             [ text (I18n.translate language I18n.Copyright) ]
                        , viewAuthenticatorModal model language
-                       , viewAddNewModal model language
+                       , viewNewCardModal model language
                        , viewBackdrop model
                        ]
                 )
@@ -81,17 +81,17 @@ view model =
                     CollectionsRoute childRoute ->
                         case childRoute of
                             CollectionEditRoute _ ->
-                                CollectionEdit.View.view model.collectionEditModel
-                                    |> Html.map translateCollectionEditMsg
+                                Collections.Edit.View.view model.collectionEditModel
+                                    |> Html.map translateEditCollectionMsg
                                     |> standardLayout language
 
                             CollectionRoute _ ->
-                                Collection.View.view model.collectionModel
+                                Collections.Item.View.view model.collectionModel
                                     |> Html.map translateCollectionMsg
                                     |> standardLayout language
 
                             CollectionsIndexRoute ->
-                                Collections.View.view model.collectionsModel language
+                                Collections.Index.View.view model.collectionsModel language
                                     |> Html.map translateCollectionsMsg
                                     |> standardLayout language
 
@@ -114,7 +114,7 @@ view model =
                     OrganizationsRoute childRoute ->
                         case childRoute of
                             OrganizationRoute _ ->
-                                Card.View.view model.cardModel language
+                                Cards.Item.View.view model.cardModel language
                                     |> Html.map translateCardMsg
                                     |> standardLayout language
 
@@ -124,8 +124,8 @@ view model =
                                     |> fullscreenLayout language
 
                             NewOrganizationRoute ->
-                                AddNew.View.viewOrganization model.addNewModel language
-                                    |> Html.map translateAddNewMsg
+                                Cards.New.View.viewOrganization model.newCardModel language
+                                    |> Html.map translateNewCardMsg
                                     |> standardLayout language
 
                     PressRoute ->
@@ -135,7 +135,7 @@ view model =
                     ToolsRoute childRoute ->
                         case childRoute of
                             ToolRoute _ ->
-                                Card.View.view model.cardModel language
+                                Cards.Item.View.view model.cardModel language
                                     |> Html.map translateCardMsg
                                     |> standardLayout language
 
@@ -145,14 +145,14 @@ view model =
                                     |> fullscreenLayout language
 
                             NewToolRoute ->
-                                AddNew.View.viewTool model.addNewModel language
-                                    |> Html.map translateAddNewMsg
+                                Cards.New.View.viewTool model.newCardModel language
+                                    |> Html.map translateNewCardMsg
                                     |> standardLayout language
 
                     UseCasesRoute childRoute ->
                         case childRoute of
                             UseCaseRoute _ ->
-                                Card.View.view model.cardModel language
+                                Cards.Item.View.view model.cardModel language
                                     |> Html.map translateCardMsg
                                     |> standardLayout language
 
@@ -162,8 +162,8 @@ view model =
                                     |> fullscreenLayout language
 
                             NewUseCaseRoute ->
-                                AddNew.View.viewUseCase model.addNewModel language
-                                    |> Html.map translateAddNewMsg
+                                Cards.New.View.viewUseCase model.newCardModel language
+                                    |> Html.map translateNewCardMsg
                                     |> standardLayout language
 
                     UserProfileRoute ->
@@ -183,9 +183,9 @@ view model =
                     |> standardLayout I18n.English
 
 
-viewAddNewModal : Model -> I18n.Language -> Html Msg
-viewAddNewModal model language =
-    if model.displayAddNewModal then
+viewNewCardModal : Model -> I18n.Language -> Html Msg
+viewNewCardModal model language =
+    if model.displayNewCardModal then
         div
             [ ariaLabelledby "myModalLabel"
             , class "modal fade in"
@@ -199,7 +199,7 @@ viewAddNewModal model language =
                         [ button
                             [ class "close"
                             , attribute "data-dismiss" "modal"
-                            , onClick (DisplayAddNewModal False)
+                            , onClick (DisplayNewCardModal False)
                             , type_ "button"
                             ]
                             [ span [ attribute "aria-hidden" "true" ]
@@ -208,7 +208,7 @@ viewAddNewModal model language =
                                 [ text "Close" ]
                             ]
                         , h4 [ class "modal-title", id "myModalLabel" ]
-                            [ text (I18n.translate language (I18n.AddNewItemBox)) ]
+                            [ text (I18n.translate language (I18n.NewCardItemBox)) ]
                         ]
                     , div [ class "modal-body" ]
                         [ div [ class "row" ]
@@ -218,7 +218,7 @@ viewAddNewModal model language =
                                     language
                                     "/tools/new"
                                     [ class "media action"
-                                    , onClick (DisplayAddNewModal False)
+                                    , onClick (DisplayNewCardModal False)
                                     ]
                                     [ div [ class "media-left icon" ]
                                         [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-wrench" ]
@@ -227,7 +227,7 @@ viewAddNewModal model language =
                                     , div [ class "media-body" ]
                                         [ h4 [ class "media-heading" ]
                                             [ text (I18n.translate language (I18n.Tool I18n.Singular)) ]
-                                        , text (I18n.translate language I18n.AddNewToolCatchPhrase)
+                                        , text (I18n.translate language I18n.NewCardToolCatchPhrase)
                                         ]
                                     ]
                                 , aForPath
@@ -235,7 +235,7 @@ viewAddNewModal model language =
                                     language
                                     "/use-cases/new"
                                     [ class "media action"
-                                    , onClick (DisplayAddNewModal False)
+                                    , onClick (DisplayNewCardModal False)
                                     ]
                                     [ div [ class "media-left icon" ]
                                         [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-bookmark" ]
@@ -244,7 +244,7 @@ viewAddNewModal model language =
                                     , div [ class "media-body" ]
                                         [ h4 [ class "media-heading" ]
                                             [ text (I18n.translate language (I18n.UseCase I18n.Singular)) ]
-                                        , text (I18n.translate language I18n.AddNewUseCaseCatchPhrase)
+                                        , text (I18n.translate language I18n.NewCardUseCaseCatchPhrase)
                                         ]
                                     ]
                                 , aForPath
@@ -252,7 +252,7 @@ viewAddNewModal model language =
                                     language
                                     "/organizations/new"
                                     [ class "media action"
-                                    , onClick (DisplayAddNewModal False)
+                                    , onClick (DisplayNewCardModal False)
                                     ]
                                     [ div [ class "media-left icon" ]
                                         [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-home" ]
@@ -261,7 +261,7 @@ viewAddNewModal model language =
                                     , div [ class "media-body" ]
                                         [ h4 [ class "media-heading" ]
                                             [ text (I18n.translate language (I18n.Organization I18n.Singular)) ]
-                                        , text (I18n.translate language I18n.AddNewOrganizationCatchPhrase)
+                                        , text (I18n.translate language I18n.NewCardOrganizationCatchPhrase)
                                         ]
                                     ]
                                 , aForPath
@@ -269,7 +269,7 @@ viewAddNewModal model language =
                                     language
                                     "/collections/new"
                                     [ class "media action"
-                                    , onClick (DisplayAddNewModal False)
+                                    , onClick (DisplayNewCardModal False)
                                     ]
                                     [ div [ class "media-left icon" ]
                                         [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-heart" ]
@@ -278,7 +278,7 @@ viewAddNewModal model language =
                                     , div [ class "media-body" ]
                                         [ h4 [ class "media-heading" ]
                                             [ text (I18n.translate language (I18n.Collection I18n.Singular)) ]
-                                        , text (I18n.translate language I18n.CollectionEditCatchPhrase)
+                                        , text (I18n.translate language I18n.EditCollectionCatchPhrase)
                                         ]
                                     ]
                                 ]
@@ -355,7 +355,7 @@ viewAuthenticatorModal model language =
 
 viewBackdrop : Model -> Html Msg
 viewBackdrop model =
-    div [ classList [ ( "modal-backdrop in", model.authenticatorRoute /= Nothing || model.displayAddNewModal ) ] ]
+    div [ classList [ ( "modal-backdrop in", model.authenticatorRoute /= Nothing || model.displayNewCardModal ) ] ]
         []
 
 
@@ -595,10 +595,10 @@ viewHeader model language containerClass =
                         , li []
                             [ button
                                 [ class "btn btn-default btn-action"
-                                , onClick (DisplayAddNewModal True)
+                                , onClick (DisplayNewCardModal True)
                                 , type_ "button"
                                 ]
-                                [ text (I18n.translate language I18n.AddNew) ]
+                                [ text (I18n.translate language I18n.NewCard) ]
                             ]
                         ]
                     ]
@@ -687,10 +687,10 @@ viewHeader model language containerClass =
                         [ ul [ class "nav navbar-nav navbar-inverse" ]
                             [ button
                                 [ class "btn btn-default btn-action"
-                                , onClick (DisplayAddNewModal True)
+                                , onClick (DisplayNewCardModal True)
                                 , type_ "button"
                                 ]
-                                [ text (I18n.translate language I18n.AddNew) ]
+                                [ text (I18n.translate language I18n.NewCard) ]
                             , li []
                                 [ aForPath
                                     Navigate

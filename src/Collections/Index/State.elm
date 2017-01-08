@@ -1,7 +1,7 @@
-module Collections.State exposing (..)
+module Collections.Index.State exposing (..)
 
 import Authenticator.Types
-import Collections.Types exposing (..)
+import Collections.Index.Types exposing (..)
 import Http
 import I18n
 import Ports
@@ -23,7 +23,7 @@ update msg model authentication language =
                 Result.Err err ->
                     let
                         _ =
-                            Debug.log "Collections.State GotCollections Error" err
+                            Debug.log "Collections.Index.State GotCollections Error" err
 
                         newModel =
                             { model | collections = Failure err }

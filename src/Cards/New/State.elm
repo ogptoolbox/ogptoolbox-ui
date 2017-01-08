@@ -1,6 +1,6 @@
-module AddNew.State exposing (..)
+module Cards.New.State exposing (..)
 
-import AddNew.Types exposing (..)
+import Cards.New.Types exposing (..)
 import Authenticator.Types
 import Dict
 import Http
@@ -85,7 +85,7 @@ update msg model authentication language =
         ImageUploaded (Result.Err err) ->
             let
                 _ =
-                    Debug.log "AddNew.State ImageUploaded Error" err
+                    Debug.log "Cards.New.State ImageUploaded Error" err
 
                 newModel =
                     { model | imageUploadStatus = ImageUploadErrorStatus err }

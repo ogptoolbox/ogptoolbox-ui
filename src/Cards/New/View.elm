@@ -1,6 +1,6 @@
-module AddNew.View exposing (..)
+module Cards.New.View exposing (..)
 
-import AddNew.Types exposing (..)
+import Cards.New.Types exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (on, onClick, onInput, onSubmit, targetValue)
@@ -87,7 +87,7 @@ viewOrganization model language =
                             [ div [ class "row" ]
                                 [ div [ class "col-xs-12" ]
                                     [ h1 []
-                                        [ text (I18n.translate language I18n.AddNewOrganization) ]
+                                        [ text (I18n.translate language I18n.NewCardOrganization) ]
                                     ]
                                 ]
                             ]
@@ -295,7 +295,7 @@ viewTool model language =
                             [ div [ class "row" ]
                                 [ div [ class "col-xs-12" ]
                                     [ h1 []
-                                        [ text (I18n.translate language I18n.AddNewTool) ]
+                                        [ text (I18n.translate language I18n.NewCardTool) ]
                                     ]
                                 ]
                             ]
@@ -427,7 +427,7 @@ viewUseCase model language =
                             [ div [ class "row" ]
                                 [ div [ class "col-xs-12" ]
                                     [ h1 []
-                                        [ text (I18n.translate language I18n.AddNewUseCase) ]
+                                        [ text (I18n.translate language I18n.NewCardUseCase) ]
                                     ]
                                 ]
                             ]

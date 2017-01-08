@@ -1,7 +1,7 @@
-module Collection.State exposing (..)
+module Collections.Item.State exposing (..)
 
 import Authenticator.Types exposing (Authentication)
-import Collection.Types exposing (..)
+import Collections.Item.Types exposing (..)
 import Dict exposing (Dict)
 import Http
 import I18n
@@ -27,7 +27,7 @@ update msg model =
                 Result.Err err ->
                     let
                         _ =
-                            Debug.log "Collection.State GotCollection Error" err
+                            Debug.log "Collections.Item.State GotCollection Error" err
 
                         newModel =
                             { model | collection = Failure err }

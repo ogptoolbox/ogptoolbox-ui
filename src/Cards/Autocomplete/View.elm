@@ -1,7 +1,7 @@
-module CardsAutocomplete.View exposing (..)
+module Cards.Autocomplete.View exposing (..)
 
 import Autocomplete
-import CardsAutocomplete.Types exposing (..)
+import Cards.Autocomplete.Types exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Attributes.Aria exposing (..)

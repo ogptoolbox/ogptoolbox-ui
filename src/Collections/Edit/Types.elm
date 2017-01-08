@@ -1,7 +1,7 @@
-module CollectionEdit.Types exposing (..)
+module Collections.Edit.Types exposing (..)
 
 import Authenticator.Types exposing (Authentication)
-import CardsAutocomplete.Types
+import Cards.Autocomplete.Types
 import Dict exposing (Dict)
 import Http
 import I18n
@@ -34,8 +34,8 @@ type InternalMsg
     | RemoveCard String
     | SetDescription String
     | SetName String
-    | ToolsAutocompleteMsg CardsAutocomplete.Types.InternalMsg
-    | UseCasesAutocompleteMsg CardsAutocomplete.Types.InternalMsg
+    | ToolsAutocompleteMsg Cards.Autocomplete.Types.InternalMsg
+    | UseCasesAutocompleteMsg Cards.Autocomplete.Types.InternalMsg
 
 
 type alias Model =
@@ -49,8 +49,8 @@ type alias Model =
     , imageUploadStatus : ImageUploadStatus
     , language : I18n.Language
     , name : String
-    , toolsAutocompleteModel : CardsAutocomplete.Types.Model
-    , useCasesAutocompleteModel : CardsAutocomplete.Types.Model
+    , toolsAutocompleteModel : Cards.Autocomplete.Types.Model
+    , useCasesAutocompleteModel : Cards.Autocomplete.Types.Model
     , webData : WebData DataIdBody
     }
 
@@ -85,18 +85,18 @@ translateMsg { onInternalMsg, onNavigate } msg =
             onInternalMsg internalMsg
 
 
-translateToolsAutocompleteMsg : CardsAutocomplete.Types.MsgTranslator Msg
+translateToolsAutocompleteMsg : Cards.Autocomplete.Types.MsgTranslator Msg
 translateToolsAutocompleteMsg =
-    CardsAutocomplete.Types.translateMsg
+    Cards.Autocomplete.Types.translateMsg
         { onAdd = ForSelf << AddCard
         , onCreate = \cardTypes cardName -> ForSelf <| CreateCard cardTypes cardName
         , onInternalMsg = ForSelf << ToolsAutocompleteMsg
         }
 
 
-translateUseCasesAutocompleteMsg : CardsAutocomplete.Types.MsgTranslator Msg
+translateUseCasesAutocompleteMsg : Cards.Autocomplete.Types.MsgTranslator Msg
 translateUseCasesAutocompleteMsg =
-    CardsAutocomplete.Types.translateMsg
+    Cards.Autocomplete.Types.translateMsg
         { onAdd = ForSelf << AddCard
         , onCreate = \cardTypes cardName -> ForSelf <| CreateCard cardTypes cardName
         , onInternalMsg = ForSelf << UseCasesAutocompleteMsg
