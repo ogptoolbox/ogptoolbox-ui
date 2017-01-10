@@ -153,7 +153,7 @@ viewCardContent language card cards values =
                                 , onClick (ForSelf (LoadProperties card.id keyId))
                                 , type_ "button"
                                 ]
-                                [ text "Edit" ]
+                                [ text (I18n.translate language (I18n.Edit)) ]
                             ]
                         ]
     in
@@ -184,7 +184,7 @@ viewCardContent language card cards values =
                             , style [ ( "margin-left", "15px" ) ]
                             , type_ "button"
                             ]
-                            [ text "Edit" ]
+                            [ text (I18n.translate language (I18n.Edit)) ]
                         ]
                     ]
                 ]
@@ -217,8 +217,10 @@ viewCardContent language card cards values =
                                 panelTitle =
                                     div [ class "col-xs-8 text-left" ]
                                         [ h3 [ class "panel-title" ]
-                                            [ text (I18n.translate language I18n.About) ]
+                                            [ text (I18n.translate language I18n.Description) ]
                                         ]
+                                cardType =
+                                    getCardType card
                              in
                                 case I18n.getOneString language descriptionKeys card values of
                                     Nothing ->
@@ -228,12 +230,12 @@ viewCardContent language card cards values =
                                             ]
                                         , div [ class "panel-body" ]
                                             [ div [ class "call-container" ]
-                                                [ p [] [ text "No description for this tool yet." ]
+                                                [ p [] [ text (I18n.translate language (I18n.MissingDescription)) ]
                                                 , button
                                                     [ class "button call-add"
                                                     , onClick (ForSelf (LoadProperties card.id "description"))
                                                     ]
-                                                    [ text "+ Add a description" ]
+                                                    [ text (I18n.translate language (I18n.CallToActionForDescription cardType)) ]
                                                 ]
                                             ]
                                         ]
@@ -252,7 +254,7 @@ viewCardContent language card cards values =
                                                         , onClick (ForSelf (LoadProperties card.id "description"))
                                                         , type_ "button"
                                                         ]
-                                                        [ text "Edit" ]
+                                                        [ text (I18n.translate language (I18n.Edit)) ]
                                                     ]
                                                 ]
                                             ]
@@ -324,7 +326,7 @@ viewCardContent language card cards values =
                                                     , onClick (ForSelf (LoadProperties card.id "use-cases"))
                                                     , type_ "button"
                                                     ]
-                                                    [ text "Add" ]
+                                                    [ text (I18n.translate language (I18n.Add)) ]
                                                 ]
                                             ]
                                         ]
@@ -378,7 +380,7 @@ viewCardContent language card cards values =
                                                     , onClick (ForSelf (LoadProperties card.id "used-for"))
                                                     , type_ "button"
                                                     ]
-                                                    [ text "Add" ]
+                                                    [ text (I18n.translate language (I18n.Add)) ]
                                                 ]
                                             ]
                                         ]
@@ -432,7 +434,7 @@ viewCardContent language card cards values =
                                                     , onClick (ForSelf (LoadProperties card.id "uses"))
                                                     , type_ "button"
                                                     ]
-                                                    [ text "Add" ]
+                                                    [ text (I18n.translate language (I18n.Add)) ]
                                                 ]
                                             ]
                                         ]
@@ -495,7 +497,7 @@ viewCardContent language card cards values =
                                                     , onClick (ForSelf (LoadProperties card.id "used-by"))
                                                     , type_ "button"
                                                     ]
-                                                    [ text "Add" ]
+                                                    [ text (I18n.translate language (I18n.Add)) ]
                                                 ]
                                             ]
                                         ]
@@ -816,14 +818,14 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                                                         |> Decode.map (\x -> ForSelf (SelectField x))
                                                     )
                                                 ]
-                                                ([ "One line text"
-                                                 , "Multi line text"
-                                                 , "Number"
-                                                 , "Yes / No"
-                                                 , "Email"
-                                                 , "URL"
-                                                 , "Image"
-                                                 , "Internal link"
+                                                ([ (I18n.translate language (I18n.FieldTypeSingleLine))
+                                                 , (I18n.translate language (I18n.FieldTypeMultiLine))
+                                                 , (I18n.translate language (I18n.FieldTypeInternalLink))
+                                                 , (I18n.translate language (I18n.FieldTypeURL))
+                                                 , (I18n.translate language (I18n.FieldTypeInteger))
+                                                 , (I18n.translate language (I18n.FieldTypeBoolean))
+                                                 , (I18n.translate language (I18n.FieldTypeEmail))
+                                                 , (I18n.translate language (I18n.FieldTypeImage))
                                                  ]
                                                     |> List.map (\s -> option [ value s ] [ text s ])
                                                 )
@@ -832,7 +834,7 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                                                 [ viewField ]
                                             , div [ class "navbar-right" ]
                                                 [ button [ class "btn btn-default", type_ "submit" ]
-                                                    [ text "Publish" ]
+                                                    [ text (I18n.translate language (I18n.Add)) ]
                                                 ]
                                             ]
                                         ]
@@ -872,7 +874,7 @@ viewUseItModal language frenchGovDeployUrl =
                                 [ text "Close" ]
                             ]
                         , h4 [ class "modal-title", id "myModalLabel" ]
-                            [ text "Use this tool" ]
+                            [ text (I18n.translate language (I18n.UseTool)) ]
                         ]
                     , div [ class "modal-body" ]
                         [ div [ class "row" ]
@@ -896,8 +898,8 @@ viewUseItModal language frenchGovDeployUrl =
                                         ]
                                     , div [ class "media-body" ]
                                         [ h4 [ class "media-heading" ]
-                                            [ text "Use it online" ]
-                                        , text "install and use this tool directly on a server provided by an institution"
+                                            [ text (I18n.translate language (I18n.ServiceDisclaimer)) ]
+                                        , text (I18n.translate language (I18n.Deploy))
                                         , ul [ class "options" ]
                                             [ li [ class "option" ]
                                                 [ a
@@ -906,9 +908,9 @@ viewUseItModal language frenchGovDeployUrl =
                                                     , target "_blank"
                                                     ]
                                                     [ span []
-                                                        [ text "Deployer avec le Gouvernment Français"
+                                                        [ text (I18n.translate language (I18n.DeployFrenchGov))
                                                         , i []
-                                                            [ text "Valable si vous êtes une administration française" ]
+                                                            [ text (I18n.translate language (I18n.DeployFrenchGovEligibility)) ]
                                                         ]
                                                     ]
                                                 ]
@@ -997,7 +999,7 @@ viewSidebar language card values =
                                         [ class "button call-add pull-right"
                                         , onClick (ForSelf (LoadProperties card.id "logo"))
                                         ]
-                                        [ text "Edit" ]
+                                        [ text (I18n.translate language (I18n.Edit)) ]
                                     , img [ alt "Logo", src url ] []
                                     ]
 
@@ -1115,7 +1117,7 @@ viewSidebar language card values =
                                                 , onClick (ForSelf (LoadProperties card.id "tags"))
                                                 , type_ "button"
                                                 ]
-                                                [ text "Edit" ]
+                                                [ text (I18n.translate language (I18n.Edit)) ]
                                             ]
                                         ]
                                     ]

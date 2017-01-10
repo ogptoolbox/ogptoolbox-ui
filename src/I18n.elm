@@ -56,8 +56,6 @@ type TranslationId
     | CollectionDescriptionPlaceholder
     | CollectionNamePlaceholder
     | CollectionsDescription
-    | CollectionsNameTitle
-    | CollectionsNameDescription
     | CollectionsRecommendedBy
     | CollectionSubmissionFailed
     | CollectionsTitle
@@ -69,6 +67,13 @@ type TranslationId
     | CreateAccountNow
     | CreateOrganizationPage
     | CreateYourAccount
+    | Deploy
+    | DeployFrenchGov
+    | DeployFrenchGovEligibility
+    | Description
+    | Download
+    | DownloadDescription
+    | Edit
     | EditCollection
     | EditCollectionCatchPhrase
     | EditCollectionDescription
@@ -122,6 +127,14 @@ type TranslationId
     | FaqWhy
     | FaqWhyContent1
     | FaqWhyContent2
+    | FieldTypeEmail
+    | FieldTypeInteger
+    | FieldTypeSingleLine
+    | FieldTypeMultiLine
+    | FieldTypeBoolean
+    | FieldTypeImage
+    | FieldTypeInternalLink
+    | FieldTypeURL
     | FindAnotherCard
     | FindCard
     | FooterAbout
@@ -131,6 +144,8 @@ type TranslationId
     | Help
     | Home
     | HomeDescription
+    | HomeResults
+    | HomeStart
     | HomeTitle
     | Image
     | ImageAlt
@@ -140,6 +155,7 @@ type TranslationId
     | LanguageWord
     | License
     | LoadingMenu
+    | Logo
     | MissingDescription
     | MissingValue
     | Name
@@ -150,13 +166,19 @@ type TranslationId
     | NewCardCollectionCatchPhrase
     | NewCardOrganization
     | NewCardOrganizationDescription
+    | NewCardOrganizationDescriptionPlaceholder
     | NewCardOrganizationCatchPhrase
+    | NewCardOrganizationName
     | NewCardTool
     | NewCardToolCatchPhrase
     | NewCardToolDescription
+    | NewCardToolDescriptionPlaceholder
+    | NewCardToolName
     | NewCardUseCase
     | NewCardUseCaseCatchPhrase
     | NewCardUseCaseDescription
+    | NewCardUseCaseDescriptionPlaceholder
+    | NewCardUseCaseName
     | OGPsummitLink
     | OpenGovernmentPartnership
     | OpenGovernmentPartnershipLogo
@@ -172,16 +194,20 @@ type TranslationId
     | PasswordChangeFailed
     | PasswordLost
     | PasswordPlaceholder
+    | Platform
     | Press
     | PressDescription
     | PressLead
     | ProfileMyCollections
+    | Publish
     | PublishCollection
     | PublishOrganization
     | PublishTool
     | PublishUseCase
     | ReadingSelectedImage
     | ReadMore
+    | ReleaseDate
+    | ReleaseDatePlaceholder
     | Register
     | RegisterNow
     | Remove
@@ -195,6 +221,7 @@ type TranslationId
     | SelectCardOrTypeMoreCharacters
     | Send
     | SendEmailAgain
+    | ServiceDisclaimer
     | Share
     | ShowAll Int
     | ShowMore
@@ -228,8 +255,10 @@ type TranslationId
     | UserProfileDescription
     | Uses
     | UseIt
+    | UseTool
     | VoteBestContributions
     | Website
+    | WebsiteDescription
 
 
 getTranslationSet : TranslationId -> TranslationSet
@@ -329,8 +358,8 @@ getTranslationSet translationId =
             }
 
         AddCollection ->
-            { english = s "Add Collection"
-            , french = s "Ajouter une collection"
+            { english = s "Add your collection"
+            , french = s "Ajouter votre collection"
             , spanish = todo
             }
 
@@ -341,7 +370,7 @@ getTranslationSet translationId =
             }
 
         AddTool ->
-            { english = s "Add Tool"
+            { english = s "Add a tool"
             , french = s "Ajouter un outil"
             , spanish = todo
             }
@@ -353,7 +382,7 @@ getTranslationSet translationId =
             }
 
         AddUseCase ->
-            { english = s "Add Use Case"
+            { english = s "Add a use case"
             , french = s "Ajouter un cas d'usage"
             , spanish = todo
             }
@@ -447,7 +476,7 @@ getTranslationSet translationId =
                         s "Ajouter une description pour ce cas d'usage"
 
                     OrganizationCard ->
-                        s "Ajouter ne description pour cette organisation"
+                        s "Ajouter une description pour cette organisation"
 
                     ToolCard ->
                         s "Ajouter une description pour cet outil"
@@ -518,8 +547,8 @@ getTranslationSet translationId =
             }
 
         CollectionAdd ->
-            { english = s "Add a new collection"
-            , french = s "Ajouter une nouvelle collection"
+            { english = s "Add your collection"
+            , french = s "Ajouter votre collection"
             , spanish = todo
             }
 
@@ -536,8 +565,8 @@ getTranslationSet translationId =
             }
 
         CollectionDescriptionPlaceholder ->
-            { english = s "Describe the collection"
-            , french = s "Décrivez la collection"
+            { english = s "Presentation of your collection"
+            , french = s "Présentation de votre collection"
             , spanish = todo
             }
 
@@ -548,26 +577,14 @@ getTranslationSet translationId =
             }
 
         CollectionNamePlaceholder ->
-            { english = s "What's the official name of the collection?"
-            , french = s "Quel est le nom de la collection ?"
-            , spanish = todo
-            }
-
-        CollectionsNameTitle ->
-            { english = s "Name"
-            , french = s "Nom"
-            , spanish = todo
-            }
-
-        CollectionsNameDescription ->
-            { english = s "What name do you want to give your collection?"
-            , french = s "Quel nom voulez-vous donner à votre collection ?"
+            { english = s "Name of your collection"
+            , french = s "Nom de votre collection"
             , spanish = todo
             }
 
         CollectionsRecommendedBy ->
             { english = s "Recommended by "
-            , french = s "Recommandé par"
+            , french = s "Recommandé par "
             , spanish = todo
             }
 
@@ -649,9 +666,51 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        Deploy ->
+            { english = s "Use this tool by installing it on a server provided by a third-party"
+            , french = s "Utiliser cet outil en l'installant sur un serveur fourni par un tiers"
+            , spanish = todo
+            }
+
+        DeployFrenchGov ->
+            { english = s "Service provided by the French government"
+            , french = s "Service fourni par le gouvernment Français"
+            , spanish = todo
+            }
+
+        DeployFrenchGovEligibility ->
+            { english = s "Available to French administrations"
+            , french = s "Réservé aux administrations françaises"
+            , spanish = todo
+            }
+
+        Description ->
+            { english = s "Description"
+            , french = s "Description"
+            , spanish = todo
+            }
+
+        Download ->
+            { english = s "Download link"
+            , french = s "Lien de téléchargement"
+            , spanish = todo
+            }
+
+        DownloadDescription ->
+            { english = s "Address to download the tool (URL)"
+            , french = s "Adresse pour télécharger l'outil (URL)"
+            , spanish = todo
+            }
+
+        Edit ->
+            { english = s "Edit"
+            , french = s "Éditer"
+            , spanish = todo
+            }
+
         EditCollection ->
-            { english = s "Edit Collection"
-            , french = s "Éditer une collection"
+            { english = s "Edit your collection"
+            , french = s "Éditer votre collection"
             , spanish = todo
             }
 
@@ -919,7 +978,7 @@ getTranslationSet translationId =
 
         FaqTypesContentCollection ->
             { english = s "A collection is a list of tools recommended by a contributor. The same as bookmarks or favorites, but for tools!"
-            , french = s "Une collection est une liste d'outils recommandés par un contributeur. Similaire à un marque-page ou un favori, mais pour des outils !"
+            , french = s "Une collection est une liste d'outils recommandés par un contributeur. Comme des marque-pages ou des favoris, mais pour des outils !"
             , spanish = todo
             }
 
@@ -937,7 +996,7 @@ getTranslationSet translationId =
 
         FaqTypesContentUseCase ->
             { english = s "A use case is a concrete example showing how one or multiple tools were used by an organization."
-            , french = s "Un cas d'usage est un exemple concret d'utilisation d'un ou plusieurs outils par un acteur."
+            , french = s "Un cas d'usage est un exemple concret d'utilisation d'un ou plusieurs outils par une organisation."
             , spanish = todo
             }
 
@@ -977,6 +1036,54 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        FieldTypeBoolean ->
+            { english = s "Yes / No"
+            , french = s "Oui / Non"
+            , spanish = todo
+            }
+
+        FieldTypeEmail ->
+            { english = s "Email address"
+            , french = s "Adresse email"
+            , spanish = todo
+            }
+
+        FieldTypeImage ->
+            { english = s "Image"
+            , french = s "Image"
+            , spanish = todo
+            }
+
+        FieldTypeInternalLink ->
+            { english = s "OGP Toolbox internal link"
+            , french = s "Lien interne à l'OGP Toolbox"
+            , spanish = todo
+            }
+
+        FieldTypeInteger ->
+            { english = s "Number"
+            , french = s "Nombre"
+            , spanish = todo
+            }
+
+        FieldTypeMultiLine ->
+            { english = s "Multi-line text"
+            , french = s "Texte sur plusieurs lignes"
+            , spanish = todo
+            }
+
+        FieldTypeSingleLine ->
+            { english = s "Single line text"
+            , french = s "Texte sur une seule ligne"
+            , spanish = todo
+            }
+
+        FieldTypeURL ->
+            { english = s "Web address (URL)"
+            , french = s "Adresse web (URL)"
+            , spanish = todo
+            }
+
         FindAnotherCard ->
             { english = s "Find another card"
             , french = s "Rechercher une autre fiche"
@@ -991,7 +1098,7 @@ getTranslationSet translationId =
 
         FooterAbout ->
             { english = s "About"
-            , french = s "A propos"
+            , french = s "À propos"
             , spanish = s "Acerca"
             }
 
@@ -1031,6 +1138,18 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        HomeResults ->
+            { english = s "See results"
+            , french = s "Afficher les résultats"
+            , spanish = todo
+            }
+
+        HomeStart ->
+            { english = s "Click on a bubble to start"
+            , french = s "Cliquez sur une bulle pour commencer"
+            , spanish = todo
+            }
+
         HomeTitle ->
             { english = s "OGP Toolbox"
             , french = s "OGP Toolbox"
@@ -1045,7 +1164,7 @@ getTranslationSet translationId =
 
         ImageAlt ->
             { english = s "The uploaded image"
-            , french = s "L'image téléversée"
+            , french = s "L'image ajoutée"
             , spanish = todo
             }
 
@@ -1099,6 +1218,12 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        Logo ->
+            { english = s "Logo"
+            , french = s "Logo"
+            , spanish = todo
+          }
+
         MissingDescription ->
             { english = s "Missing description"
             , french = s "Description manquante"
@@ -1148,8 +1273,8 @@ getTranslationSet translationId =
             }
 
         NewCardOrganization ->
-            { english = s "Add a new organization."
-            , french = s "Ajouter une nouvelle organisation."
+            { english = s "Add a new organization"
+            , french = s "Ajouter une nouvelle organisation"
             , spanish = todo
             }
 
@@ -1162,6 +1287,18 @@ getTranslationSet translationId =
         NewCardOrganizationDescription ->
             { english = s "Creating a new organization by giving a few generic informations"
             , french = s "Création d'une nouvelle organisation en fournissant quelques informations générales"
+            , spanish = todo
+            }
+
+        NewCardOrganizationDescriptionPlaceholder ->
+            { english = s "Presentation of the organization"
+            , french = s "Présentation de l'organisation"
+            , spanish = todo
+            }
+
+        NewCardOrganizationName ->
+            { english = s "Offical name of the organization (e.g. \"Open Knowledge International\")"
+            , french = s "Nom officiel de l'organisation (par ex : \"Open Knowledge International\")"
             , spanish = todo
             }
 
@@ -1183,6 +1320,18 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        NewCardToolDescriptionPlaceholder ->
+            { english = s "Presentation of the tool"
+            , french = s "Présentation de l'outil"
+            , spanish = todo
+            }
+
+        NewCardToolName ->
+            { english = s "Official name of the tool (e.g. \"Loomio\")"
+            , french = s "Nom officiel de l'outil (par ex : \"Loomio\")"
+            , spanish = todo
+            }
+
         NewCardUseCase ->
             { english = s "Add a new use case"
             , french = s "Ajouter un nouveau cas d'usage"
@@ -1198,6 +1347,18 @@ getTranslationSet translationId =
         NewCardUseCaseDescription ->
             { english = s "Creating a new use case by giving a few generic informations"
             , french = s "Création d'un nouveau cas d'usage en fournissant quelques informations générales"
+            , spanish = todo
+            }
+
+        NewCardUseCaseDescriptionPlaceholder ->
+            { english = s "Presentation of the use case"
+            , french = s "Présentation du cas d'usage"
+            , spanish = todo
+            }
+
+        NewCardUseCaseName ->
+            { english = s "Name of the use case (e.g. \"Open Knowledge Forums\")"
+            , french = s "Nom du cas d'usage (par ex : \"Forums d'Open Knowledge\")"
             , spanish = todo
             }
 
@@ -1313,6 +1474,12 @@ to strengthen governance.
             , spanish = todo
             }
 
+        Platform ->
+            { english = s "Online service (website, platform, resource)"
+            , french = s "Service en ligne (site Internet, plateforme, ressource)"
+            , spanish = todo
+            }
+
         Press ->
             { english = s "Press"
             , french = s "Presse"
@@ -1334,6 +1501,12 @@ to strengthen governance.
             , spanish = todo
             }
 
+        Publish ->
+            { english = s "Publish"
+            , french = s "Publier"
+            , spanish = todo
+            }
+
         PublishCollection ->
             { english = s "Publish your collection"
             , french = s "Publier votre collection"
@@ -1348,7 +1521,7 @@ to strengthen governance.
 
         PublishUseCase ->
             { english = s "Publish use case"
-            , french = s "Poublier ce cas d'usage"
+            , french = s "Publier ce cas d'usage"
             , spanish = todo
             }
 
@@ -1367,6 +1540,18 @@ to strengthen governance.
         ReadMore ->
             { english = s "Read more"
             , french = s "En savoir plus"
+            , spanish = todo
+            }
+
+        ReleaseDate ->
+            { english = s "Release date"
+            , french = s "Date de sortie"
+            , spanish = todo
+            }
+
+        ReleaseDatePlaceholder ->
+            { english = s "Launch date of the last stable version"
+            , french = s "Date de lancement de la dernière version stable"
             , spanish = todo
             }
 
@@ -1448,6 +1633,12 @@ to strengthen governance.
             , spanish = todo
             }
 
+        ServiceDisclaimer ->
+            { english = s "Online service"
+            , french = s "Service en ligne"
+            , spanish = todo
+            }
+
         Share ->
             { english = s "Share"
             , french = s "Partager"
@@ -1503,9 +1694,9 @@ to strengthen governance.
             }
 
         Software ->
-            { english = s "Software"
-            , french = s "Logiciel"
-            , spanish = s "Software"
+            { english = s "Computer program (software, application)"
+            , french = s "Programme informatique (logiciel, application)"
+            , spanish = todo
             }
 
         Tags ->
@@ -1581,14 +1772,14 @@ to strengthen governance.
             }
 
         UploadImage ->
-            { english = s "Upload image"
-            , french = s "Téléverser une image"
+            { english = s "Upload an image"
+            , french = s "Ajouter une image"
             , spanish = todo
             }
 
         UploadingImage filename ->
             { english = s ("Uploading image \"" ++ filename ++ "\"...")
-            , french = s ("Téléversement de l'image \"" ++ filename ++ "\"...")
+            , french = s ("Ajout de l'image \"" ++ filename ++ "\"...")
             , spanish = todo
             }
 
@@ -1682,6 +1873,12 @@ to strengthen governance.
             , spanish = todo
             }
 
+        UseTool ->
+            { english = s "Use this tool"
+            , french = s "Utiliser cet outil"
+            , spanish = todo
+            }
+
         VoteBestContributions ->
             { english = s "Vote for the best contributions"
             , french = s "Votez pour les meilleurs contributions"
@@ -1694,6 +1891,11 @@ to strengthen governance.
             , spanish = todo
             }
 
+        WebsiteDescription ->
+            { english = s "Address of the official website (URl)"
+            , french = s "Adresse du site officiel (URL)"
+            , spanish = todo
+            }
 
 
 -- INTERNALS

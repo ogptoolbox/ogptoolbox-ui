@@ -54,10 +54,10 @@ view model =
                                                 [ text
                                                     (case model.editedCollectionId of
                                                         Nothing ->
-                                                            I18n.translate language I18n.AddCollection
+                                                            (I18n.translate language I18n.AddCollection)
 
                                                         Just _ ->
-                                                            I18n.translate language I18n.EditCollection
+                                                            (I18n.translate language I18n.EditCollection)
                                                     )
                                                 ]
                                             ]
@@ -129,7 +129,7 @@ view model =
                                             [ div [ class "thumbnail orga grey" ]
                                                 [ div [ class "upload-container" ]
                                                     [ label [ for "logoField" ]
-                                                        [ text "Logo" ]
+                                                        [ text (I18n.translate language (I18n.Logo)) ]
                                                     , div [ class "upload-zone" ]
                                                         [ viewImageUploadStatus language model.imageUploadStatus ]
                                                     , input
@@ -160,7 +160,7 @@ view model =
                                     , disabled (model.collectionJson == Nothing)
                                     , type_ "submit"
                                     ]
-                                    [ text "Publish"
+                                    [ text (I18n.translate language (I18n.PublishCollection))
                                       -- TODO i18n
                                     ]
                                 ]

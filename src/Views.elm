@@ -152,7 +152,7 @@ viewDescriptionControl valueChanged language placeholderI18n errors controlValue
             "description"
 
         controlLabel =
-            I18n.translate language I18n.About
+            I18n.translate language I18n.Description
 
         controlPlaceholder =
             I18n.translate language placeholderI18n

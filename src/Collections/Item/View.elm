@@ -227,7 +227,7 @@ viewCollectionContent language user data collection =
                                         []
                                     ]
                                 , div [ class "panel-body simple" ]
-                                    [ p []
+                                    [ h4 []
                                         [ text collection.description ]
                                     ]
                                 ]
