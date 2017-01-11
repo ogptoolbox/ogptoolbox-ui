@@ -321,6 +321,17 @@ mergeDataId new old =
         }
 
 
+mergeDataIds : DataIds -> DataIds -> DataIds
+mergeDataIds new old =
+    let
+        mergedData =
+            mergeData new old
+    in
+        { mergedData
+            | ids = List.append old.ids new.ids
+        }
+
+
 
 -- KEYS
 

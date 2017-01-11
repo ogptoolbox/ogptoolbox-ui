@@ -89,33 +89,48 @@ getCard authentication cardId =
         }
 
 
-getCards : Maybe Authentication -> String -> Maybe Int -> List String -> List String -> Http.Request DataIdsBody
-getCards authentication searchQuery limit tagIds cardTypes =
+getCards : Maybe Authentication -> String -> Int -> Int -> List String -> List String -> Http.Request DataIdsBody
+getCards authentication term limit offset tagIds cardTypes =
     Http.request
         { method = "GET"
         , headers = authenticationHeaders authentication
         , url =
             apiUrl
-                ++ "cards?"
-                ++ (List.map (\cardType -> "type=" ++ cardType) cardTypes
-                        ++ (([ Just "show=values"
-                             , Just "depth=1"
-                             , (if String.isEmpty searchQuery then
-                                    Nothing
-                                else
-                                    Just ("term=" ++ searchQuery)
-                               )
-                             , limit |> Maybe.map (\limit -> "limit=" ++ (toString limit))
-                             ]
-                                |> List.filterMap identity
+                ++ "cards"
+                ++ Urls.paramsToQuery
+                    ([ ( "depth", Just "1" )
+                     , ( "limit", Just (toString limit) )
+                     , ( "offset", Just (toString offset) )
+                     , ( "show", Just "values" )
+                     , ( "term"
+                       , let
+                            cleanTerm =
+                                String.trim term
+                         in
+                            if String.isEmpty cleanTerm then
+                                Nothing
+                            else
+                                Just cleanTerm
+                       )
+                     ]
+                        ++ List.map
+                            (\tagId ->
+                                ( "tag"
+                                , let
+                                    cleanTagId =
+                                        String.trim tagId
+                                  in
+                                    if String.isEmpty cleanTagId then
+                                        Nothing
+                                    else
+                                        Just cleanTagId
+                                )
                             )
-                                ++ (tagIds
-                                        |> List.filter (\s -> not (String.isEmpty s))
-                                        |> List.map (\tagId -> "tag=" ++ tagId)
-                                   )
+                            tagIds
+                        ++ (cardTypes
+                                |> List.map (\cardType -> ( "type", Just cardType ))
                            )
-                        |> String.join "&"
-                   )
+                    )
         , body = Http.emptyBody
         , expect = Http.expectJson dataIdsBodyDecoder
         , timeout = Nothing

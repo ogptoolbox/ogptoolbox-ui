@@ -2,8 +2,10 @@ module Search.View exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 import Html.Helpers exposing (aForPath)
 import I18n
+import Json.Decode
 import Navigation
 import Search.Types exposing (..)
 import Types exposing (..)
@@ -12,54 +14,71 @@ import Views exposing (viewCardListItem, viewLoading, viewWebData)
 import WebData exposing (getData, getLoadingStatusData, LoadingStatus(..), WebData(..))
 
 
-searchResultsListPaginationSize : Int
-searchResultsListPaginationSize =
-    20
-
-
 view : Model -> CardType -> I18n.Language -> Navigation.Location -> Html Msg
 view { organizations, tools, useCases } activeCardType language location =
     let
-        webData =
+        ( onLoadMore, webData ) =
             case activeCardType of
                 OrganizationCard ->
-                    organizations
+                    ( LoadMoreOrganizations, organizations )
 
                 ToolCard ->
-                    tools
+                    ( LoadMoreTools, tools )
 
                 UseCaseCard ->
-                    useCases
+                    ( LoadMoreUseCases, useCases )
 
         viewCardListItems =
             viewWebData language
                 (\loadingStatus ->
                     case loadingStatus of
-                        Loading _ ->
-                            div [ class "col-xs-12 text-center" ]
-                                [ viewLoading language ]
+                        Loading body ->
+                            let
+                                bodyView =
+                                    case body of
+                                        Just body ->
+                                            viewCardListItemsBody body
+
+                                        Nothing ->
+                                            []
+                            in
+                                div [ class "col-xs-12" ]
+                                    (bodyView
+                                        ++ [ div [ class "text-center" ]
+                                                [ viewLoading language ]
+                                           ]
+                                    )
 
                         Loaded body ->
                             div [ class "col-xs-12" ]
-                                ((List.map
-                                    (viewCardListItem Search.Types.navigate language body.data.values)
-                                    (getOrderedCards body.data)
-                                 )
-                                    ++ (if body.count > searchResultsListPaginationSize then
-                                            [ div [ class "col-sm-12 text-center" ]
-                                                [ a [ class "show-more" ]
-                                                    [ text (I18n.translate language (I18n.ShowAll body.count))
-                                                    , span [ class "glyphicon glyphicon-menu-down" ]
-                                                        []
-                                                    ]
-                                                ]
-                                            ]
-                                        else
-                                            []
-                                       )
-                                )
+                                (viewCardListItemsBody body)
                 )
                 webData
+
+        viewCardListItemsBody body =
+            ((List.map
+                (viewCardListItem Search.Types.navigate language body.data.values)
+                (getOrderedCards body.data)
+             )
+                ++ (if List.length body.data.ids < body.count then
+                        [ div [ class "col-sm-12 text-center" ]
+                            [ a
+                                [ class "show-more"
+                                , onWithOptions
+                                    "click"
+                                    { stopPropagation = False, preventDefault = True }
+                                    (Json.Decode.succeed (ForSelf onLoadMore))
+                                ]
+                                [ text (I18n.translate language I18n.ShowMore)
+                                , span [ class "glyphicon glyphicon-menu-down" ]
+                                    []
+                                ]
+                            ]
+                        ]
+                    else
+                        []
+                   )
+            )
 
         viewPills =
             div [ class "col-xs-12" ]

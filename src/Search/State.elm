@@ -103,13 +103,13 @@ update msg model authentication language location =
 
             GotCollections response ->
                 case response of
-                    Result.Err err ->
+                    Result.Err httpError ->
                         let
                             _ =
-                                Debug.log "Search.State GotCollections Error" err
+                                Debug.log "Search.State GotCollections Error" httpError
 
                             newModel =
-                                { model | collections = Failure err }
+                                { model | collections = Failure httpError }
                         in
                             ( newModel, Cmd.none )
 
@@ -118,15 +118,102 @@ update msg model authentication language location =
                         , Cmd.none
                         )
 
-            GotOrganizations response ->
+            GotMoreOrganizations response ->
                 case response of
-                    Result.Err err ->
+                    Result.Err httpError ->
                         let
                             _ =
-                                Debug.log "Search.State GotOrganizations Error" err
+                                Debug.log "Search.State GotMoreOrganizations Error" httpError
 
                             newModel =
-                                { model | organizations = Failure err }
+                                { model | organizations = Failure httpError }
+                        in
+                            ( newModel, Cmd.none )
+
+                    Result.Ok body ->
+                        let
+                            oldBody =
+                                getData model.organizations
+
+                            newBody =
+                                case oldBody of
+                                    Just oldBody ->
+                                        { oldBody | data = mergeDataIds body.data oldBody.data }
+
+                                    Nothing ->
+                                        body
+                        in
+                            ( { model | organizations = Data (Loaded newBody) }
+                            , Cmd.none
+                            )
+
+            GotMoreTools response ->
+                case response of
+                    Result.Err httpError ->
+                        let
+                            _ =
+                                Debug.log "Search.State GotMoreTools Error" httpError
+
+                            newModel =
+                                { model | tools = Failure httpError }
+                        in
+                            ( newModel, Cmd.none )
+
+                    Result.Ok body ->
+                        let
+                            oldBody =
+                                getData model.tools
+
+                            newBody =
+                                case oldBody of
+                                    Just oldBody ->
+                                        { oldBody | data = mergeDataIds body.data oldBody.data }
+
+                                    Nothing ->
+                                        body
+                        in
+                            ( { model | tools = Data (Loaded newBody) }
+                            , Cmd.none
+                            )
+
+            GotMoreUseCases response ->
+                case response of
+                    Result.Err httpError ->
+                        let
+                            _ =
+                                Debug.log "Search.State GotMoreUseCases Error" httpError
+
+                            newModel =
+                                { model | useCases = Failure httpError }
+                        in
+                            ( newModel, Cmd.none )
+
+                    Result.Ok body ->
+                        let
+                            oldBody =
+                                getData model.useCases
+
+                            newBody =
+                                case oldBody of
+                                    Just oldBody ->
+                                        { oldBody | data = mergeDataIds body.data oldBody.data }
+
+                                    Nothing ->
+                                        body
+                        in
+                            ( { model | useCases = Data (Loaded newBody) }
+                            , Cmd.none
+                            )
+
+            GotOrganizations response ->
+                case response of
+                    Result.Err httpError ->
+                        let
+                            _ =
+                                Debug.log "Search.State GotOrganizations Error" httpError
+
+                            newModel =
+                                { model | organizations = Failure httpError }
                         in
                             ( newModel, Cmd.none )
 
@@ -137,13 +224,13 @@ update msg model authentication language location =
 
             GotTagsPopularity response ->
                 case response of
-                    Result.Err err ->
+                    Result.Err httpError ->
                         let
                             _ =
-                                Debug.log "Search.State GotTagsPopularity Error" err
+                                Debug.log "Search.State GotTagsPopularity Error" httpError
 
                             newModel =
-                                { model | popularTagsData = Failure err }
+                                { model | popularTagsData = Failure httpError }
                         in
                             ( newModel, Cmd.none )
 
@@ -210,13 +297,13 @@ update msg model authentication language location =
 
             GotTools response ->
                 case response of
-                    Result.Err err ->
+                    Result.Err httpError ->
                         let
                             _ =
-                                Debug.log "Search.State GotTools Error" err
+                                Debug.log "Search.State GotTools Error" httpError
 
                             newModel =
-                                { model | tools = Failure err }
+                                { model | tools = Failure httpError }
                         in
                             ( newModel, Cmd.none )
 
@@ -227,13 +314,13 @@ update msg model authentication language location =
 
             GotUseCases response ->
                 case response of
-                    Result.Err err ->
+                    Result.Err httpError ->
                         let
                             _ =
-                                Debug.log "Search.State GotUseCases Error" err
+                                Debug.log "Search.State GotUseCases Error" httpError
 
                             newModel =
-                                { model | useCases = Failure err }
+                                { model | useCases = Failure httpError }
                         in
                             ( newModel, Cmd.none )
 
@@ -244,49 +331,150 @@ update msg model authentication language location =
 
             Load ->
                 let
+                    limit =
+                        8
+
                     newModel =
                         { model
-                            | organizations = Data (Loading (getData model.organizations))
-                            , tools = Data (Loading (getData model.tools))
-                            , useCases = Data (Loading (getData model.useCases))
+                            | organizations = Data (Loading Nothing)
+                            , tools = Data (Loading Nothing)
+                            , useCases = Data (Loading Nothing)
                         }
 
+                    selectedTagIds =
+                        List.map .tagId model.selectedTags
+
+                    term =
+                        Urls.querySearchTerm location
+
                     requestsCmds =
-                        let
-                            limit =
-                                Just 8
-
-                            selectedTagIds =
-                                List.map .tagId model.selectedTags
-
-                            searchQuery =
-                                Urls.querySearchTerm location
-                        in
-                            [ Requests.getCollections authentication (Just 3)
-                                |> Http.send (ForSelf << GotCollections)
-                            , Requests.getCards
-                                authentication
-                                searchQuery
-                                limit
-                                selectedTagIds
-                                cardTypesForOrganization
-                                |> Http.send (ForSelf << GotOrganizations)
-                            , Requests.getCards
-                                authentication
-                                searchQuery
-                                limit
-                                selectedTagIds
-                                cardTypesForTool
-                                |> Http.send (ForSelf << GotTools)
-                            , Requests.getCards
-                                authentication
-                                searchQuery
-                                limit
-                                selectedTagIds
-                                cardTypesForUseCase
-                                |> Http.send (ForSelf << GotUseCases)
-                            , Requests.getTagsPopularity authentication selectedTagIds
-                                |> Http.send (ForSelf << GotTagsPopularity)
-                            ]
+                        [ Requests.getCollections authentication (Just 3)
+                            |> Http.send (ForSelf << GotCollections)
+                        , Requests.getCards
+                            authentication
+                            term
+                            limit
+                            0
+                            selectedTagIds
+                            cardTypesForOrganization
+                            |> Http.send (ForSelf << GotOrganizations)
+                        , Requests.getCards
+                            authentication
+                            term
+                            limit
+                            0
+                            selectedTagIds
+                            cardTypesForTool
+                            |> Http.send (ForSelf << GotTools)
+                        , Requests.getCards
+                            authentication
+                            term
+                            limit
+                            0
+                            selectedTagIds
+                            cardTypesForUseCase
+                            |> Http.send (ForSelf << GotUseCases)
+                        , Requests.getTagsPopularity authentication selectedTagIds
+                            |> Http.send (ForSelf << GotTagsPopularity)
+                        ]
                 in
                     newModel ! requestsCmds
+
+            LoadMoreOrganizations ->
+                let
+                    body =
+                        getData model.organizations
+
+                    limit =
+                        8
+
+                    offset =
+                        case body of
+                            Just body ->
+                                List.length body.data.ids
+
+                            Nothing ->
+                                0
+
+                    selectedTagIds =
+                        List.map .tagId model.selectedTags
+
+                    term =
+                        Urls.querySearchTerm location
+                in
+                    ( { model | organizations = Data (Loading body) }
+                    , Requests.getCards
+                        authentication
+                        term
+                        limit
+                        offset
+                        selectedTagIds
+                        cardTypesForOrganization
+                        |> Http.send (ForSelf << GotMoreOrganizations)
+                    )
+
+            LoadMoreTools ->
+                let
+                    body =
+                        getData model.tools
+
+                    limit =
+                        8
+
+                    offset =
+                        case body of
+                            Just body ->
+                                List.length body.data.ids
+
+                            Nothing ->
+                                0
+
+                    selectedTagIds =
+                        List.map .tagId model.selectedTags
+
+                    term =
+                        Urls.querySearchTerm location
+                in
+                    ( { model | tools = Data (Loading body) }
+                    , Requests.getCards
+                        authentication
+                        term
+                        limit
+                        offset
+                        selectedTagIds
+                        cardTypesForTool
+                        |> Http.send (ForSelf << GotMoreTools)
+                    )
+
+            LoadMoreUseCases ->
+                let
+                    body =
+                        getData model.useCases
+
+                    limit =
+                        8
+
+                    offset =
+                        case body of
+                            Just body ->
+                                List.length body.data.ids
+
+                            Nothing ->
+                                0
+
+                    selectedTagIds =
+                        List.map .tagId model.selectedTags
+
+                    term =
+                        Urls.querySearchTerm location
+                in
+                    ( { model | useCases = Data (Loading body) }
+                    , Requests.getCards
+                        authentication
+                        term
+                        limit
+                        offset
+                        selectedTagIds
+                        cardTypesForUseCase
+                        |> Http.send (ForSelf << GotMoreUseCases)
+                    )
