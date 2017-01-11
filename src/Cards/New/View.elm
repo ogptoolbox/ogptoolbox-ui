@@ -18,12 +18,12 @@ viewOrganization model language =
                     [ div [ class "col-xs-12" ]
                         [ div [ class "form-group" ]
                             [ label [ for "nameField" ]
-                                [ text "Name" ]
+                                [ text (I18n.translate language (I18n.Name)) ]
                             , input
                                 [ class "form-control"
                                 , id "nameField"
                                 , onInput (\x -> ForSelf (SetField "Name" x))
-                                , placeholder "What's the official name of the organization?"
+                                , placeholder (I18n.translate language (I18n.NewCardOrganizationName))
                                 , required True
                                 , type_ "text"
                                 ]
@@ -31,11 +31,12 @@ viewOrganization model language =
                             ]
                         , div [ class "form-group" ]
                             [ label [ for "aboutField" ]
-                                [ text "About" ]
+                                [ text (I18n.translate language (I18n.Description)) ]
                             , textarea
                                 [ class "form-control"
                                 , id "aboutField"
                                 , onInput (\x -> ForSelf (SetField "Description" x))
+                                , placeholder (I18n.translate language (I18n.NewCardOrganizationDescriptionPlaceholder))
                                 ]
                                 []
                             ]
@@ -64,12 +65,12 @@ viewOrganization model language =
                       div [ class "col-xs-12" ]
                         [ div [ class "form-group" ]
                             [ label [ for "websiteLinkField" ]
-                                [ text "Website link" ]
+                                [ text (I18n.translate language (I18n.Website)) ]
                             , input
                                 [ class "form-control"
                                 , id "websiteLinkField"
                                 , onInput (\x -> ForSelf (SetField "Website" x))
-                                , placeholder "Enter the address of the informational website"
+                                , placeholder (I18n.translate language (I18n.WebsiteDescription))
                                 , type_ "url"
                                 ]
                                 []
@@ -87,7 +88,7 @@ viewOrganization model language =
                             [ div [ class "row" ]
                                 [ div [ class "col-xs-12" ]
                                     [ h1 []
-                                        [ text (I18n.translate language I18n.NewCardOrganization) ]
+                                      [ text (I18n.translate language I18n.NewCardOrganization) ]
                                     ]
                                 ]
                             ]
@@ -124,12 +125,12 @@ viewTool model language =
                     [ div [ class "col-xs-12" ]
                         [ div [ class "form-group" ]
                             [ label [ for "nameField" ]
-                                [ text "Name" ]
+                                [ text (I18n.translate language (I18n.Name)) ]
                             , input
                                 [ class "form-control"
                                 , id "nameField"
                                 , onInput (\x -> ForSelf (SetField "Name" x))
-                                , placeholder "What's the official name of the tool?"
+                                , placeholder (I18n.translate language (I18n.NewCardToolName))
                                 , required True
                                 , type_ "text"
                                 ]
@@ -137,11 +138,12 @@ viewTool model language =
                             ]
                         , div [ class "form-group" ]
                             [ label [ for "aboutField" ]
-                                [ text "About" ]
+                                [ text (I18n.translate language (I18n.Description)) ]
                             , textarea
                                 [ class "form-control"
                                 , id "aboutField"
                                 , onInput (\x -> ForSelf (SetField "Description" x))
+                                , placeholder (I18n.translate language (I18n.NewCardToolDescriptionPlaceholder))
                                 ]
                                 []
                             ]
@@ -151,7 +153,7 @@ viewTool model language =
                     [ div [ class "col-xs-6" ]
                         [ div [ class "form-group" ]
                             [ label [ for "typeField" ]
-                                [ text "Type" ]
+                                [ text (I18n.translate language (I18n.Type)) ]
                             , select
                                 [ class "form-control"
                                 , id "typeField"
@@ -161,16 +163,16 @@ viewTool model language =
                                     )
                                 ]
                                 [ option [ value "software" ]
-                                    [ text "Software" ]
+                                    [ text (I18n.translate language (I18n.Software)) ]
                                 , option [ value "platform" ]
-                                    [ text "Platform" ]
+                                    [ text (I18n.translate language (I18n.Platform)) ]
                                 ]
                             ]
                         ]
                     , div [ class "col-xs-6" ]
                         [ div [ class "form-group" ]
                             [ label [ for "licenseField" ]
-                                [ text "License" ]
+                                [ text (I18n.translate language (I18n.License)) ]
                             , input
                                 [ class "form-control"
                                 , id "licenseField"
@@ -183,24 +185,24 @@ viewTool model language =
                     , div [ class "col-xs-12" ]
                         [ div [ class "form-group" ]
                             [ label [ for "websiteLinkField" ]
-                                [ text "Website link" ]
+                                [ text (I18n.translate language (I18n.Website)) ]
                             , input
                                 [ class "form-control"
                                 , id "websiteLinkField"
                                 , onInput (\x -> ForSelf (SetField "Website" x))
-                                , placeholder "Enter the address of the informational website"
+                                , placeholder (I18n.translate language (I18n.WebsiteDescription))
                                 , type_ "url"
                                 ]
                                 []
                             ]
                         , div [ class "form-group" ]
                             [ label [ for "downloadLinkField" ]
-                                [ text "Download link" ]
+                                [ text (I18n.translate language (I18n.Download)) ]
                             , input
                                 [ class "form-control"
                                 , id "downloadLinkField"
                                 , onInput (\x -> ForSelf (SetField "Download" x))
-                                , placeholder "Enter the address to download the tool"
+                                , placeholder (I18n.translate language (I18n.DownloadDescription))
                                 , type_ "url"
                                 ]
                                 []
@@ -223,11 +225,11 @@ viewTool model language =
                                 [ div [ class "row" ]
                                     [ div [ class "col-xs-8 text-left" ]
                                         [ h3 [ class "panel-title" ]
-                                            [ text "Additional informations" ]
+                                            [ text (I18n.translate language (I18n.AdditionalInformations)) ]
                                         ]
                                     , div [ class "col-xs-4 text-right" ]
                                         [ a [ class "show-more pull-right" ]
-                                            [ text "Show more"
+                                            [ text (I18n.translate language (I18n.ShowMore))
                                             , span [ class "glyphicon glyphicon-menu-down" ]
                                                 []
                                             ]
@@ -243,12 +245,12 @@ viewTool model language =
                                 [ div [ class "panel-body nomargin" ]
                                     [ div [ class "form-group" ]
                                         [ label [ for "releaseDateField" ]
-                                            [ text "Release date" ]
+                                            [ text (I18n.translate language (I18n.ReleaseDate)) ]
                                         , input
                                             [ class "form-control"
                                             , id "releaseDateField"
                                             , onInput (\x -> ForSelf (SetField "Release Date" x))
-                                              -- , placeholder "What's the official name of the tool?" -- TODO
+                                            , placeholder (I18n.translate language (I18n.ReleaseDatePlaceholder))
                                             , type_ "date"
                                             ]
                                             []
@@ -311,7 +313,7 @@ viewTool model language =
                                     [ div [ class "thumbnail orga grey" ]
                                         [ div [ class "upload-container" ]
                                             [ label [ for "logoField" ]
-                                                [ text "Logo" ]
+                                                [ text (I18n.translate language (I18n.Logo)) ]
                                             , div [ class "upload-zone" ]
                                                 [ viewImageUploadStatus language model.imageUploadStatus ]
                                             , input
@@ -358,12 +360,12 @@ viewUseCase model language =
                     [ div [ class "col-xs-12" ]
                         [ div [ class "form-group" ]
                             [ label [ for "nameField" ]
-                                [ text "Name" ]
+                                [ text (I18n.translate language (I18n.Name)) ]
                             , input
                                 [ class "form-control"
                                 , id "nameField"
                                 , onInput (\x -> ForSelf (SetField "Name" x))
-                                , placeholder "What's the official name of the use case?"
+                                , placeholder (I18n.translate language I18n.NewCardUseCaseName)
                                 , required True
                                 , type_ "text"
                                 ]
@@ -371,11 +373,12 @@ viewUseCase model language =
                             ]
                         , div [ class "form-group" ]
                             [ label [ for "aboutField" ]
-                                [ text "About" ]
+                                [ text (I18n.translate language (I18n.Description)) ]
                             , textarea
                                 [ class "form-control"
                                 , id "aboutField"
                                 , onInput (\x -> ForSelf (SetField "Description" x))
+                                , placeholder (I18n.translate language I18n.NewCardUseCaseDescriptionPlaceholder)
                                 ]
                                 []
                             ]
@@ -404,12 +407,12 @@ viewUseCase model language =
                       div [ class "col-xs-12" ]
                         [ div [ class "form-group" ]
                             [ label [ for "websiteLinkField" ]
-                                [ text "Website link" ]
+                                [ text (I18n.translate language (I18n.Website)) ]
                             , input
                                 [ class "form-control"
                                 , id "websiteLinkField"
                                 , onInput (\x -> ForSelf (SetField "Website" x))
-                                , placeholder "Enter the address of the informational website"
+                                , placeholder (I18n.translate language (I18n.WebsiteDescription))
                                 , type_ "url"
                                 ]
                                 []
@@ -443,7 +446,7 @@ viewUseCase model language =
                                     [ div [ class "thumbnail orga grey" ]
                                         [ div [ class "upload-container" ]
                                             [ label [ for "logoField" ]
-                                                [ text "Logo" ]
+                                                [ text (I18n.translate language (I18n.Logo)) ]
                                             , div [ class "upload-zone" ]
                                                 [ viewImageUploadStatus language model.imageUploadStatus ]
                                             , input
