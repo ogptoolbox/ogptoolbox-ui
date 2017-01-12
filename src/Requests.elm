@@ -81,7 +81,7 @@ getCard authentication cardId =
     Http.request
         { method = "GET"
         , headers = authenticationHeaders authentication
-        , url = apiUrl ++ "objects/" ++ cardId ++ "?depth=3&show=references&show=values"
+        , url = apiUrl ++ "objects/" ++ cardId ++ "?depth=4&show=references&show=values"
         , body = Http.emptyBody
         , expect = Http.expectJson dataIdBodyDecoder
         , timeout = Nothing
@@ -264,7 +264,7 @@ postCard authentication fields language =
         Http.request
             { method = "POST"
             , headers = authenticationHeaders authentication
-            , url = apiUrl ++ "cards/easy" ++ "?depth=3&show=references&show=values"
+            , url = apiUrl ++ "cards/easy" ++ "?depth=4&show=references&show=values"
             , body = body
             , expect = Http.expectJson dataIdBodyDecoder
             , timeout = Nothing
