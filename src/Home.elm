@@ -1,25 +1,24 @@
 module Home exposing (..)
 
-import Configuration
+import Cards.ViewsParts exposing (..)
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onClick)
 import Html.Helpers exposing (aExternal, aForPath)
-import I18n exposing (getImageUrl, getManyStrings, getName, getOneString)
-import Routes
+import I18n
+import Navigation
 import Search.Types exposing (..)
-import String
 import Types exposing (..)
-import Views exposing (viewLoading, viewTagsWithCallToAction, viewWebData)
+import Urls
+import Views exposing (viewLoading, viewWebData)
 import WebData exposing (..)
 
 
-view : Model -> String -> I18n.Language -> Html Msg
-view model searchQuery language =
+view : Model -> I18n.Language -> Navigation.Location -> Html Msg
+view model language location =
     div []
         ([ viewBanner
-         , viewMetrics language model
+         , viewMetrics language location model
          ]
             ++ [ div [ class "row section" ]
                     [ div [ class "container" ]
@@ -27,7 +26,7 @@ view model searchQuery language =
                             [ text (I18n.translate language (I18n.UseCase I18n.Plural)) ]
                          ]
                             ++ [ viewWebData language
-                                    (viewThumbnails "example grey" searchQuery language)
+                                    (viewThumbnails language location "example grey")
                                     model.useCases
                                ]
                         )
@@ -38,7 +37,7 @@ view model searchQuery language =
                             [ text (I18n.translate language (I18n.Tool I18n.Plural)) ]
                          ]
                             ++ [ viewWebData language
-                                    (viewThumbnails "tool" searchQuery language)
+                                    (viewThumbnails language location "tool")
                                     model.tools
                                ]
                         )
@@ -49,7 +48,7 @@ view model searchQuery language =
 
 
 viewBanner : Html Msg
-viewBanner = 
+viewBanner =
     -- let
     --     viewSlide1 =
     --         div [ class "col-md-12 text-center" ]
@@ -123,13 +122,13 @@ viewBanner =
                                 [ div [ class "col-md-12 text-center" ]
                                     [ div [ class "bubbles" ] [] ]
                                 ]
-                               , div [ class "row show" ]
-                                   [ a [ href "#metrics", class "col-md-12 text-center banner-link" ]
-                                     [ text "See results "
+                            , div [ class "row show" ]
+                                [ a [ href "#metrics", class "col-md-12 text-center banner-link" ]
+                                    [ text "See results "
                                     , span [ class "glyphicon glyphicon-menu-down" ]
                                         []
                                     ]
-                               ]
+                                ]
                             ]
                         ]
                     , div [ class "item text-center" ]
@@ -151,7 +150,7 @@ viewBanner =
                                                 [ attribute "checked" ""
                                                 , id "optionsRadios1"
                                                 , name "optionsRadios"
-                                                , type' "radio"
+                                                , type_ "radio"
                                                 , value "option1"
                                                 ]
                                                 []
@@ -166,7 +165,7 @@ viewBanner =
                                                 [ attribute "checked" ""
                                                 , id "optionsRadios1"
                                                 , name "optionsRadios"
-                                                , type' "radio"
+                                                , type_ "radio"
                                                 , value "option1"
                                                 ]
                                                 []
@@ -181,7 +180,7 @@ viewBanner =
                                                 [ attribute "checked" ""
                                                 , id "optionsRadios1"
                                                 , name "optionsRadios"
-                                                , type' "radio"
+                                                , type_ "radio"
                                                 , value "option1"
                                                 ]
                                                 []
@@ -196,7 +195,7 @@ viewBanner =
                                                 [ attribute "checked" ""
                                                 , id "optionsRadios1"
                                                 , name "optionsRadios"
-                                                , type' "radio"
+                                                , type_ "radio"
                                                 , value "option1"
                                                 ]
                                                 []
@@ -211,7 +210,7 @@ viewBanner =
                                                 [ attribute "checked" ""
                                                 , id "optionsRadios1"
                                                 , name "optionsRadios"
-                                                , type' "radio"
+                                                , type_ "radio"
                                                 , value "option1"
                                                 ]
                                                 []
@@ -226,7 +225,7 @@ viewBanner =
                                                 [ attribute "checked" ""
                                                 , id "optionsRadios1"
                                                 , name "optionsRadios"
-                                                , type' "radio"
+                                                , type_ "radio"
                                                 , value "option1"
                                                 ]
                                                 []
@@ -241,7 +240,7 @@ viewBanner =
                                                 [ attribute "checked" ""
                                                 , id "optionsRadios1"
                                                 , name "optionsRadios"
-                                                , type' "radio"
+                                                , type_ "radio"
                                                 , value "option1"
                                                 ]
                                                 []
@@ -256,7 +255,7 @@ viewBanner =
                                                 [ attribute "checked" ""
                                                 , id "optionsRadios1"
                                                 , name "optionsRadios"
-                                                , type' "radio"
+                                                , type_ "radio"
                                                 , value "option1"
                                                 ]
                                                 []
@@ -298,7 +297,7 @@ viewBanner =
                                             [ attribute "checked" ""
                                             , id "optionsRadios1"
                                             , name "optionsRadios"
-                                            , type' "checkbox"
+                                            , type_ "checkbox"
                                             , value "option1"
                                             ]
                                             []
@@ -356,9 +355,7 @@ viewCollections collectionsWebData language =
                             [ div [ class "row section" ]
                                 [ div [ class "container" ]
                                     [ h3 [ class "zone-label" ]
-                                        [ text "Collections"
-                                          -- TODO i18n
-                                        ]
+                                        [ text (I18n.translate language (I18n.Collection I18n.Plural)) ]
                                     , div [ class "row" ]
                                         ((List.map
                                             (\collection ->
@@ -382,8 +379,7 @@ viewCollections collectionsWebData language =
                                                         "/collections"
                                                         [ class "show-more" ]
                                                         [ span [ class "glyphicon glyphicon-menu-down" ] []
-                                                        , text "Show more"
-                                                          -- TODO i18n
+                                                        , text (I18n.translate language (I18n.ShowMore))
                                                         ]
                                                     ]
                                                ]
@@ -409,7 +405,7 @@ viewCollectionThumbnail language user collection =
                         []
 
                     Just logo ->
-                        [ img [ alt "screen", src (Configuration.apiUrlWithPath logo) ] []
+                        [ img [ alt "screen", src (Urls.fullApiUrl logo) ] []
                         ]
                 )
             , div [ class "caption" ]
@@ -426,7 +422,7 @@ viewCollectionThumbnail language user collection =
         ]
 
 
-viewMetric : WebData DataIdsBody -> Html msg
+viewMetric : WebData DataIdsBody -> Html Msg
 viewMetric webData =
     case webData of
         NotAsked ->
@@ -444,87 +440,51 @@ viewMetric webData =
                     text (toString body.count)
 
 
-viewMetrics : I18n.Language -> Model -> Html msg
-viewMetrics language model =
+viewMetrics : I18n.Language -> Navigation.Location -> Model -> Html Msg
+viewMetrics language location model =
     div [ class "row metrics", id "metrics" ]
         [ div [ class "container" ]
             [ div [ class "col-xs-4 text-center" ]
                 [ span [ class "metric-label" ]
                     [ text (I18n.translate language (I18n.UseCase I18n.Plural)) ]
-                , a []
+                , aForPath
+                    navigate
+                    language
+                    (Urls.basePathForCardType UseCaseCard
+                        ++ (Urls.queryStringForParams [ "q", "tagIds" ] location)
+                    )
+                    []
                     [ viewMetric model.useCases
                     ]
                 ]
             , div [ class "col-xs-4 text-center" ]
                 [ span [ class "metric-label" ]
                     [ text (I18n.translate language (I18n.Tool I18n.Plural)) ]
-                , a []
+                , aForPath
+                    navigate
+                    language
+                    (Urls.basePathForCardType ToolCard
+                        ++ (Urls.queryStringForParams [ "q", "tagIds" ] location)
+                    )
+                    []
                     [ viewMetric model.tools
                     ]
                 ]
             , div [ class "col-xs-4 text-center" ]
                 [ span [ class "metric-label" ]
                     [ text (I18n.translate language (I18n.Organization I18n.Plural)) ]
-                , a []
+                , aForPath
+                    navigate
+                    language
+                    (Urls.basePathForCardType OrganizationCard
+                        ++ (Urls.queryStringForParams [ "q", "tagIds" ] location)
+                    )
+                    []
                     [ viewMetric model.organizations
                     ]
                 ]
             ]
         ]
-
-
-viewThumbnail : String -> I18n.Language -> Dict String Value -> Card -> Html Msg
-viewThumbnail thumbnailExtraClasses language values card =
-    let
-        name =
-            getName language card values
-
-        urlPath =
-            Routes.urlPathForCard card
-
-        cardType =
-            getCardType card
-    in
-        div [ class "col-xs-12 col-sm-6 col-md-4 col-lg-3" ]
-            [ div
-                [ class ("thumbnail " ++ thumbnailExtraClasses)
-                , onClick (navigate urlPath)
-                ]
-                [ div [ class "visual" ]
-                    [ case getImageUrl language "1000" card values of
-                        Just url ->
-                            img [ alt "Logo", src url ] []
-
-                        Nothing ->
-                            h1 [ class "dynamic" ]
-                                [ text
-                                    (case cardType of
-                                        OrganizationCard ->
-                                            String.left 1 name
-
-                                        ToolCard ->
-                                            String.left 2 name
-
-                                        UseCaseCard ->
-                                            name
-                                    )
-                                ]
-                    ]
-                , div [ class "caption" ]
-                    [ h4 []
-                        [ aForPath navigate language urlPath [] [ text name ] ]
-                    , case getOneString language descriptionKeys card values of
-                        Just description ->
-                            p [] [ text description ]
-
-                        Nothing ->
-                            p
-                                [ class "call" ]
-                                [ text (I18n.translate language (I18n.CallToActionForDescription cardType)) ]
-                    ]
-                , viewTagsWithCallToAction navigate language values card
-                ]
-            ]
 
 
 viewThumbnailLoading : String -> Html Msg
@@ -550,8 +510,8 @@ viewThumbnailLoading thumbnailExtraClasses =
         ]
 
 
-viewThumbnails : String -> String -> I18n.Language -> LoadingStatus DataIdsBody -> Html Msg
-viewThumbnails thumbnailExtraClasses searchQuery language loadingStatus =
+viewThumbnails : I18n.Language -> Navigation.Location -> String -> LoadingStatus DataIdsBody -> Html Msg
+viewThumbnails language location thumbnailExtraClasses loadingStatus =
     div [ class "row" ]
         (case loadingStatus of
             Loading _ ->
@@ -563,7 +523,7 @@ viewThumbnails thumbnailExtraClasses searchQuery language loadingStatus =
                         body.data.cards |> Dict.values |> List.head
                 in
                     (List.map
-                        (viewThumbnail thumbnailExtraClasses language body.data.values)
+                        (viewCardThumbnail language navigate Nothing thumbnailExtraClasses body.data)
                         (getOrderedCards body.data)
                     )
                         ++ (case firstCard of
@@ -575,12 +535,8 @@ viewThumbnails thumbnailExtraClasses searchQuery language loadingStatus =
                                         [ aForPath
                                             navigate
                                             language
-                                            ((Routes.urlBasePathForCard firstCard)
-                                                ++ (if String.isEmpty searchQuery then
-                                                        ""
-                                                    else
-                                                        "?q=" ++ searchQuery
-                                                   )
+                                            ((Urls.basePathForCard firstCard)
+                                                ++ (Urls.queryStringForParams [ "q", "tagIds" ] location)
                                             )
                                             [ class "show-more" ]
                                             [ text (I18n.translate language (I18n.ShowAll body.count))

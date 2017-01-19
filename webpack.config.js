@@ -52,7 +52,7 @@ if (TARGET_ENV === 'development') {
   module.exports = merge(commonConfig, {
     entry: [
       'webpack-dev-server/client?http://localhost:3011',
-      'font-awesome-loader',
+      'font-awesome-webpack',
       'expose?$!expose?jQuery!jquery',
       'bootstrap-webpack!./bootstrap.config.js',
       path.join(__dirname, 'static/js/index.js')
@@ -83,7 +83,7 @@ if (TARGET_ENV === 'production') {
   console.log('Building for prod...');
   module.exports = merge(commonConfig, {
     entry: [
-      'font-awesome-loader',
+      'font-awesome-webpack',
       'expose?$!expose?jQuery!jquery',
       'bootstrap-webpack!./bootstrap.config.prod.js',
       path.join(__dirname, 'static/js/index.js')

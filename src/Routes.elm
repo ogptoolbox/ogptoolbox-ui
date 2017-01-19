@@ -1,221 +1,132 @@
 module Routes exposing (..)
 
-import Combine exposing (Parser)
-import Dict exposing (Dict)
-import Hop
-import Hop.Matchers exposing (match1, match2, match3, nested1, regex)
-import Hop.Types
+import Authenticator.Routes
 import I18n
 import Navigation
-import String
-import Types exposing (..)
+import UrlParser exposing ((</>), map, oneOf, parsePath, Parser, remaining, s, string, top)
 
 
--- MAIN ROUTE
+type CollectionsRoute
+    = CollectionEditRoute (Maybe String)
+    | CollectionRoute String
+    | CollectionsIndexRoute
 
 
-type Route
+type LocalizedRoute
     = AboutRoute
-    | ActivationRoute String
-    | CollectionsRoute CollectionsNestedRoute
+    | AuthenticatorRoute Authenticator.Routes.Route
+    | CollectionsRoute CollectionsRoute
+    | FaqRoute
     | HomeRoute
-    | NotFoundRoute String
-    | OrganizationsRoute OrganizationsNestedRoute
-    | ToolsRoute ToolsNestedRoute
-    | UseCasesRoute UseCasesNestedRoute
+    | NotFoundRoute (List String)
+    | OrganizationsRoute OrganizationsRoute
+    | PressRoute
+    | ToolsRoute ToolsRoute
+    | UseCasesRoute UseCasesRoute
     | UserProfileRoute
 
 
-type I18nRoute
-    = I18nRouteWithLanguage I18n.Language Route
-    | I18nRouteWithoutLanguage String
-
-
-
--- NESTED ROUTES
-
-
-type CollectionsNestedRoute
-    = CollectionRoute String
-    | CollectionsIndexRoute
-    | NewCollectionRoute
-    | EditCollectionRoute String
-
-
-type OrganizationsNestedRoute
+type OrganizationsRoute
     = OrganizationRoute String
     | OrganizationsIndexRoute
     | NewOrganizationRoute
 
 
-type ToolsNestedRoute
+type Route
+    = I18nRouteWithLanguage I18n.Language LocalizedRoute
+    | I18nRouteWithoutLanguage String
+
+
+type ToolsRoute
     = ToolRoute String
     | ToolsIndexRoute
     | NewToolRoute
 
 
-type UseCasesNestedRoute
+type UseCasesRoute
     = UseCaseRoute String
     | UseCasesIndexRoute
     | NewUseCaseRoute
 
 
-makeUrl : String -> String
-makeUrl path =
-    Hop.makeUrl routerConfig path
-
-
-makeUrlFromLocation : Hop.Types.Location -> String
-makeUrlFromLocation location =
-    Hop.makeUrlFromLocation routerConfig location
-
-
-makeUrlWithLanguage : I18n.Language -> String -> String
-makeUrlWithLanguage language urlPath =
-    makeUrl ("/" ++ (I18n.iso639_1FromLanguage language) ++ urlPath)
-
-
-matchers : List (Hop.Types.PathMatcher Route)
-matchers =
-    [ match1 HomeRoute ""
-    , nested1 CollectionsRoute
-        "/collections"
-        [ match1 CollectionsIndexRoute ""
-        , match1 NewCollectionRoute "/new"
-        , match3 EditCollectionRoute "/" idParser "/edit"
-        , match2 CollectionRoute "/" idParser
+collectionsRouteParser : Parser (CollectionsRoute -> a) a
+collectionsRouteParser =
+    oneOf
+        [ map CollectionsIndexRoute top
+        , map (CollectionEditRoute Nothing) (s "new")
+        , map CollectionRoute idParser
+        , map (CollectionEditRoute << Just) (idParser </> s "edit")
         ]
-    , match1 AboutRoute "/help"
-    , nested1 OrganizationsRoute
-        "/organizations"
-        [ match1 OrganizationsIndexRoute ""
-        , match1 NewOrganizationRoute "/new"
-        , match2 OrganizationRoute "/" idParser
-        ]
-    , match1 UserProfileRoute "/profile"
-    , nested1 ToolsRoute
-        "/tools"
-        [ match1 ToolsIndexRoute ""
-        , match1 NewToolRoute "/new"
-        , match2 ToolRoute "/" idParser
-        ]
-    , nested1 UseCasesRoute
-        "/use-cases"
-        [ match1 UseCasesIndexRoute ""
-        , match1 NewUseCaseRoute "/new"
-        , match2 UseCaseRoute "/" idParser
-        ]
-    , match3 ActivationRoute "/users/" idParser "/activate"
-    , match2 NotFoundRoute "" (regex ".*")
-    ]
 
 
-i18nMatchers : List (Hop.Types.PathMatcher I18nRoute)
-i18nMatchers =
-    (List.map
-        (\language ->
-            nested1 (I18nRouteWithLanguage language)
-                ("/" ++ (I18n.iso639_1FromLanguage language))
-                matchers
-        )
-        [ I18n.English
-        , I18n.French
-        , I18n.Spanish
-        ]
-    )
-        ++ [ match2 I18nRouteWithoutLanguage "" (regex ".*") ]
-
-
-routerConfig : Hop.Types.Config I18nRoute
-routerConfig =
-    -- Production:
-    -- { hash = False
-    -- , basePath = ""
-    -- , matchers = matchers
-    -- , notFound = I18nRouteWithoutLanguage ""
-    -- }
-    -- Development:
-    { hash =
-        -- Use with "devServer.historyApiFallback = true" in webpack config.
-        False
-    , basePath = ""
-    , matchers = i18nMatchers
-    , notFound = I18nRouteWithoutLanguage ""
-    }
-
-
-idParser : Parser String
+idParser : Parser (String -> a) a
 idParser =
-    Combine.regex "[0-9]+"
+    string
 
 
-urlParser : Navigation.Parser ( I18nRoute, Hop.Types.Location )
-urlParser =
-    Navigation.makeParser (.href >> Hop.matchUrl routerConfig)
+localizedRouteParser : Parser (LocalizedRoute -> a) a
+localizedRouteParser =
+    oneOf
+        [ map HomeRoute top
+        , map AboutRoute (s "about")
+        , map CollectionsRoute (s "collections" </> collectionsRouteParser)
+        , map FaqRoute (s "faq")
+        , map OrganizationsRoute (s "organizations" </> organizationsRouteParser)
+        , map PressRoute (s "press")
+        , map UserProfileRoute (s "profile")
+        , map ToolsRoute (s "tools" </> toolsRouteParser)
+        , map UseCasesRoute (s "use-cases" </> useCasesRouteParser)
+        , map
+            (AuthenticatorRoute << Authenticator.Routes.ActivateRoute)
+            (s "users" </> idParser </> s "activate")
+        , map
+            (AuthenticatorRoute << Authenticator.Routes.ChangePasswordRoute)
+            (s "users" </> idParser </> s "reset-password")
+        , map NotFoundRoute remaining
+        ]
 
 
-
--- UPDATE LOCATION
-
-
-getSearchQuery : Hop.Types.Location -> String
-getSearchQuery location =
-    Dict.get "q" location.query |> Maybe.withDefault ""
-
-
-queryStringForParams : List String -> Hop.Types.Location -> String
-queryStringForParams params location =
-    let
-        keptParams =
-            params
-                |> List.filterMap
-                    (\k ->
-                        Dict.get k location.query
-                            |> Maybe.map (\v -> ( k, v ))
-                    )
-    in
-        if List.isEmpty keptParams then
-            ""
-        else
-            "?"
-                ++ (keptParams
-                        |> List.map (\( k, v ) -> k ++ "=" ++ v)
-                        |> String.join "&"
-                   )
+organizationsRouteParser : Parser (OrganizationsRoute -> a) a
+organizationsRouteParser =
+    oneOf
+        [ map OrganizationsIndexRoute top
+        , map NewOrganizationRoute (s "new")
+        , map OrganizationRoute idParser
+        ]
 
 
-replaceLanguageInLocation : I18n.Language -> Hop.Types.Location -> String
-replaceLanguageInLocation language location =
-    let
-        urlWithoutLanguage =
-            makeUrlFromLocation location
-                |> String.dropLeft 3
-    in
-        "/" ++ (I18n.iso639_1FromLanguage language) ++ urlWithoutLanguage
+parseLocation : Navigation.Location -> Maybe Route
+parseLocation location =
+    UrlParser.parsePath routeParser location
 
 
-
--- REVERSE
-
-
-urlBasePathForCardType : CardType -> String
-urlBasePathForCardType cardType =
-    case cardType of
-        UseCaseCard ->
-            "/use-cases/"
-
-        OrganizationCard ->
-            "/organizations/"
-
-        ToolCard ->
-            "/tools/"
+routeParser : Parser (Route -> a) a
+routeParser =
+    oneOf
+        (List.map
+            (\language ->
+                map (I18nRouteWithLanguage language) (s (I18n.iso639_1FromLanguage language) </> localizedRouteParser)
+            )
+            [ I18n.English
+            , I18n.French
+            , I18n.Spanish
+            ]
+        )
 
 
-urlBasePathForCard : Card -> String
-urlBasePathForCard card =
-    urlBasePathForCardType (getCardType card)
+toolsRouteParser : Parser (ToolsRoute -> a) a
+toolsRouteParser =
+    oneOf
+        [ map ToolsIndexRoute top
+        , map NewToolRoute (s "new")
+        , map ToolRoute idParser
+        ]
 
 
-urlPathForCard : Card -> String
-urlPathForCard card =
-    (urlBasePathForCard card) ++ card.id
+useCasesRouteParser : Parser (UseCasesRoute -> a) a
+useCasesRouteParser =
+    oneOf
+        [ map UseCasesIndexRoute top
+        , map NewUseCaseRoute (s "new")
+        , map UseCaseRoute idParser
+        ]

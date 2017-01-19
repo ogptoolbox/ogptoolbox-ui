@@ -1,6 +1,7 @@
 module Types exposing (..)
 
 import Dict exposing (Dict)
+import Json.Decode
 
 
 type alias Ballot =
@@ -35,10 +36,22 @@ type alias Card =
     }
 
 
+type alias CardAutocompletion =
+    { autocomplete : String
+    , card : Card
+    , distance : Float
+    }
+
+
+type alias CardsAutocompletionBody =
+    { data : List CardAutocompletion
+    }
+
+
 type CardType
-    = UseCaseCard
-    | OrganizationCard
+    = OrganizationCard
     | ToolCard
+    | UseCaseCard
 
 
 type alias Collection =
@@ -58,7 +71,7 @@ type alias DataId =
     , id : String
     , properties : Dict String Property
     , users : Dict String User
-    , values : Dict String Value
+    , values : Dict String TypedValue
     }
 
 
@@ -74,7 +87,7 @@ type alias DataIds =
     , ids : List String
     , properties : Dict String Property
     , users : Dict String User
-    , values : Dict String Value
+    , values : Dict String TypedValue
     }
 
 
@@ -86,9 +99,21 @@ type alias DataIdsBody =
     }
 
 
-type alias DocumentMetatags =
-    { title : String
+type alias DataProxy a =
+    { a
+        | ballots : Dict String Ballot
+        , cards : Dict String Card
+        , collections : Dict String Collection
+        , properties : Dict String Property
+        , users : Dict String User
+        , values : Dict String TypedValue
+    }
+
+
+type alias DocumentMetadata =
+    { description : String
     , imageUrl : String
+    , title : String
     }
 
 
@@ -103,6 +128,12 @@ type Field
     | CardIdField String
 
 
+type alias Flags =
+    { language : String
+    , authentication : Json.Decode.Value
+    }
+
+
 type alias PopularTag =
     { count : Float
     , tagId : String
@@ -111,7 +142,7 @@ type alias PopularTag =
 
 type alias PopularTagsData =
     { popularity : List PopularTag
-    , values : Dict String Value
+    , values : Dict String TypedValue
     }
 
 
@@ -136,24 +167,22 @@ type alias Property =
     }
 
 
-type alias User =
-    { activated : Bool
-    , apiKey :
-        String
-        -- TODO Use Maybe
-    , email :
-        String
-        -- TODO Use Maybe
-    , name : String
-    , urlName : String
+type alias TypedValue =
+    { createdAt : String
+    , id : String
+    , schemaId : String
+    , type_ : String
+    , value : ValueType
+    , widgetId : String
     }
 
 
-type alias UserForPort =
-    -- Workaround for ports removing booleans
-    { activated : String
+type alias User =
+    { activated : Bool
     , apiKey : String
     , email : String
+    , id : String
+    , isAdmin : Bool
     , name : String
     , urlName : String
     }
@@ -164,27 +193,23 @@ type alias UserBody =
     }
 
 
-type alias Value =
-    { createdAt : String
-    , id : String
-    , schemaId : String
-    , type_ : String
-    , value : ValueType
-    , widgetId : String
-    }
-
-
 type ValueType
-    = StringValue String
+    = BijectiveCardReferenceValue BijectiveCardReference
+    | BooleanValue Bool
+    | CardIdArrayValue (List String)
+    | CardIdValue String
     | LocalizedStringValue (Dict String String)
     | NumberValue Float
-    | BooleanValue Bool
-    | BijectiveCardReferenceValue BijectiveCardReference
-    | CardIdValue String
-    | CardIdArrayValue (List String)
-    | ValueIdValue String
+    | StringValue String
     | ValueIdArrayValue (List String)
+    | ValueIdValue String
     | WrongValue String String
+
+
+cardSubTypeIdsIntersect : List String -> List String -> Bool
+cardSubTypeIdsIntersect cardSubTypeIds1 cardSubTypeIds2 =
+    List.any (\subTypeId -> List.member subTypeId cardSubTypeIds2)
+        cardSubTypeIds1
 
 
 getCard : Dict String Card -> String -> Card
@@ -215,12 +240,6 @@ getCardType card =
                 Debug.crash "getCardType: unhandled case"
 
 
-cardSubTypeIdsIntersect : List String -> List String -> Bool
-cardSubTypeIdsIntersect cardSubTypeIds1 cardSubTypeIds2 =
-    List.any (\subTypeId -> List.member subTypeId cardSubTypeIds2)
-        cardSubTypeIds1
-
-
 getOrderedCards : DataIds -> List Card
 getOrderedCards { cards, ids } =
     List.map (getCard cards) ids
@@ -241,7 +260,7 @@ getProperty properties id =
             property
 
 
-getValue : Dict String Value -> String -> Value
+getValue : Dict String TypedValue -> String -> TypedValue
 getValue values id =
     case Dict.get id values of
         Nothing ->
@@ -249,6 +268,68 @@ getValue values id =
 
         Just value ->
             value
+
+
+initDataId : DataId
+initDataId =
+    { ballots = Dict.empty
+    , cards = Dict.empty
+    , collections = Dict.empty
+    , id = ""
+    , properties = Dict.empty
+    , users = Dict.empty
+    , values = Dict.empty
+    }
+
+
+initDataIds : DataIds
+initDataIds =
+    { ballots = Dict.empty
+    , cards = Dict.empty
+    , collections = Dict.empty
+    , ids = []
+    , properties = Dict.empty
+    , users = Dict.empty
+    , values = Dict.empty
+    }
+
+
+mergeData : DataProxy a -> DataProxy b -> DataProxy b
+mergeData new old =
+    { old
+        | ballots = Dict.union new.ballots old.ballots
+        , cards = Dict.union new.cards old.cards
+        , collections = Dict.union new.collections old.collections
+        , properties = Dict.union new.properties old.properties
+        , users = Dict.union new.users old.users
+        , values = Dict.union new.values old.values
+    }
+
+
+mergeDataId : DataId -> DataId -> DataId
+mergeDataId new old =
+    let
+        mergedData =
+            mergeData new old
+    in
+        { mergedData
+            | id =
+                if String.isEmpty new.id then
+                    old.id
+                else
+                    new.id
+        }
+
+
+mergeDataIds : DataIds -> DataIds -> DataIds
+mergeDataIds new old =
+    let
+        mergedData =
+            mergeData new old
+    in
+        { mergedData
+            | ids = List.append old.ids new.ids
+        }
 
 
 
@@ -260,19 +341,19 @@ descriptionKeys =
     [ "description" ]
 
 
-imageLogoUrlPathKeys : List String
-imageLogoUrlPathKeys =
+imageLogoPathKeys : List String
+imageLogoPathKeys =
     [ "logo" ]
 
 
-imageScreenshotUrlPathKeys : List String
-imageScreenshotUrlPathKeys =
+imageScreenshotPathKeys : List String
+imageScreenshotPathKeys =
     [ "screenshot" ]
 
 
-imageUrlPathKeys : List String
-imageUrlPathKeys =
-    imageLogoUrlPathKeys ++ imageScreenshotUrlPathKeys
+imagePathKeys : List String
+imagePathKeys =
+    imageLogoPathKeys ++ imageScreenshotPathKeys
 
 
 licenseKeys : List String

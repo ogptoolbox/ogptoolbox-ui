@@ -1,8 +1,12 @@
 > OGPToolbox-UI -- Web interface for OGP Toolbox
-> By: Emmanuel Raviart <emmanuel.raviart@data.gouv.fr>
+> By: Christophe Benz <christophe.benz@data.gouv.fr>
+>     Angelo Chiacchio <angelo@nodesign.net>
+>     Paula Fortez <paula.forteza@data.gouv.fr>
+>     Emmanuel Raviart <emmanuel.raviart@data.gouv.fr>
+>     Johan Richer <johan.richer@data.gouv.fr>
 >
 > Copyright (C) 2016 Etalab
-> https://git.framasoft.org/etalab/ogptoolbox-ui
+> https://framagit.org/ogptoolbox/ogptoolbox-ui
 >
 > OGPToolbox-UI is free software; you can redistribute it and/or modify
 > it under the terms of the GNU Affero General Public License as

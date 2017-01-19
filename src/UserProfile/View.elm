@@ -1,6 +1,5 @@
 module UserProfile.View exposing (..)
 
-import Configuration
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -8,6 +7,7 @@ import Html.Helpers exposing (aForPath)
 import I18n
 import UserProfile.Types exposing (..)
 import Types exposing (..)
+import Urls
 import WebData exposing (..)
 
 
@@ -49,9 +49,7 @@ view model language user =
                 , div [ class "row section" ]
                     [ div [ class "container" ]
                         [ h3 [ class "zone-label" ]
-                            [ text "My Collections"
-                              -- TODO i18n
-                            ]
+                            [ text (I18n.translate language (I18n.ProfileMyCollections)) ]
                         , div [ class "row" ]
                             ((List.map (viewCollectionThumbnail language user) collections)
                                 ++ [ div [ class "col-sm-12 text-center" ]
@@ -62,9 +60,7 @@ view model language user =
                                             [ class "show-more" ]
                                             [ span [ class "glyphicon glyphicon-plus" ]
                                                 []
-                                            , text "Ajouter une collection"
-                                              -- TODO i18n
-                                            ]
+                                            , text (I18n.translate language (I18n.CollectionAdd)) ]
                                         ]
                                    ]
                             )
@@ -88,7 +84,7 @@ viewCollectionThumbnail language user collection =
                         []
 
                     Just logo ->
-                        [ img [ alt "screen", src (Configuration.apiUrlWithPath logo) ] []
+                        [ img [ alt "screen", src (Urls.fullApiUrl logo) ] []
                         ]
                 )
             , div [ class "caption" ]

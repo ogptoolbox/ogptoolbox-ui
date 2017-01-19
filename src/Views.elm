@@ -3,14 +3,39 @@ module Views exposing (..)
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Attributes.Aria exposing (..)
 import Html.Events exposing (..)
 import Html.Helpers exposing (aForPath)
 import Http exposing (Error(..))
-import I18n exposing (..)
-import Routes
+import Http.Error
+import I18n
 import String
+import Tags.ViewsParts exposing (..)
 import Types exposing (..)
+import Urls
 import WebData exposing (LoadingStatus, WebData(..))
+
+
+errorInfos : I18n.Language -> String -> Maybe I18n.TranslationId -> ( String, List (Attribute msg), List (Html msg1) )
+errorInfos language fieldId error =
+    let
+        errorId =
+            fieldId ++ "-error"
+    in
+        case error of
+            Just error ->
+                ( " has-error"
+                , [ ariaDescribedby errorId ]
+                , [ span
+                        [ class "help-block"
+                        , id errorId
+                        ]
+                        [ text <| I18n.translate language error ]
+                  ]
+                )
+
+            Nothing ->
+                ( "", [], [] )
 
 
 viewBigMessage : String -> String -> Html msg
@@ -38,14 +63,14 @@ viewBigMessage title message =
         ]
 
 
-viewCardListItem : (String -> msg) -> I18n.Language -> Dict String Value -> Card -> Html msg
+viewCardListItem : (String -> msg) -> I18n.Language -> Dict String TypedValue -> Card -> Html msg
 viewCardListItem navigate language values card =
     let
         name =
-            getName language card values
+            I18n.getName language card values
 
-        urlPath =
-            Routes.urlPathForCard card
+        path =
+            Urls.pathForCard card
 
         cardType =
             getCardType card
@@ -63,10 +88,10 @@ viewCardListItem navigate language values card =
                         OrganizationCard ->
                             "orga"
                 )
-            , onClick (navigate urlPath)
+            , onClick (navigate path)
             ]
             [ div [ class "visual" ]
-                [ case getImageUrl language "300" card values of
+                [ case Urls.imageFullUrl language "300" card values of
                     Just url ->
                         img [ alt "Logo", src url ] []
 
@@ -90,11 +115,11 @@ viewCardListItem navigate language values card =
                     [ aForPath
                         navigate
                         language
-                        urlPath
+                        path
                         []
                         [ text name ]
                     , small []
-                        [ text (getSubTypes language card values |> String.join ", ") ]
+                        [ text (I18n.getSubTypes language card values |> String.join ", ") ]
                     ]
                   -- , div [ class "example-author" ]
                   --     [ img [ alt "screen", src "/img/TODO.png" ]
@@ -102,7 +127,7 @@ viewCardListItem navigate language values card =
                   --     , text "TODO The White House"
                   --     ]
                 , p []
-                    (case getOneString language descriptionKeys card values of
+                    (case I18n.getOneString language descriptionKeys card values of
                         Just description ->
                             [ text description ]
 
@@ -114,30 +139,94 @@ viewCardListItem navigate language values card =
             ]
 
 
-getHttpErrorAsString : I18n.Language -> Http.Error -> String
-getHttpErrorAsString language err =
-    case err of
-        Timeout ->
-            I18n.translate language I18n.TimeoutExplanation
+viewDescriptionControl :
+    (String -> msg)
+    -> I18n.Language
+    -> I18n.TranslationId
+    -> Dict String I18n.TranslationId
+    -> String
+    -> Html msg
+viewDescriptionControl valueChanged language placeholderI18n errors controlValue =
+    let
+        controlId =
+            "description"
 
-        NetworkError ->
-            I18n.translate language I18n.NetworkErrorExplanation
+        controlLabel =
+            I18n.translate language I18n.Description
 
-        UnexpectedPayload string ->
-            I18n.translate language I18n.UnexpectedPayloadExplanation
+        controlPlaceholder =
+            I18n.translate language placeholderI18n
 
-        BadResponse code string ->
-            if code == 404 then
-                I18n.translate language I18n.PageNotFoundExplanation
-            else
-                -- TODO Add I18n.BadResponseExplanation prefix
-                string
+        controlTitle =
+            I18n.translate language I18n.EnterDescription
+
+        ( errorClass, errorAttributes, errorBlock ) =
+            errorInfos language controlId (Dict.get controlId errors)
+    in
+        div [ class ("form-group" ++ errorClass) ]
+            ([ label [ class "control-label", for controlId ] [ text controlLabel ]
+             , textarea
+                ([ class "form-control"
+                 , id controlId
+                 , onInput valueChanged
+                 , placeholder controlPlaceholder
+                 , title controlTitle
+                 ]
+                    ++ errorAttributes
+                )
+                [ text controlValue ]
+             ]
+                ++ errorBlock
+            )
 
 
 viewLoading : I18n.Language -> Html msg
 viewLoading language =
     div [ style [ ( "height", "100em" ) ] ]
         [ img [ class "loader", src "/img/loader.gif" ] [] ]
+
+
+viewNameControl :
+    (String -> msg)
+    -> I18n.Language
+    -> I18n.TranslationId
+    -> Dict String I18n.TranslationId
+    -> String
+    -> Html msg
+viewNameControl valueChanged language placeholderI18n errors controlValue =
+    let
+        controlId =
+            "name"
+
+        controlLabel =
+            I18n.translate language I18n.Name
+
+        controlPlaceholder =
+            I18n.translate language placeholderI18n
+
+        controlTitle =
+            I18n.translate language I18n.EnterName
+
+        ( errorClass, errorAttributes, errorBlock ) =
+            errorInfos language controlId (Dict.get controlId errors)
+    in
+        div [ class ("form-group" ++ errorClass) ]
+            ([ label [ class "control-label", for controlId ] [ text controlLabel ]
+             , input
+                ([ class "form-control"
+                 , id controlId
+                 , onInput valueChanged
+                 , placeholder controlPlaceholder
+                 , title controlTitle
+                 , type_ "text"
+                 , value controlValue
+                 ]
+                    ++ errorAttributes
+                )
+                []
+             ]
+                ++ errorBlock
+            )
 
 
 viewNotAuthentified : I18n.Language -> Html msg
@@ -154,36 +243,6 @@ viewNotFound language =
         (I18n.translate language I18n.PageNotFoundExplanation)
 
 
-viewTagsWithCallToAction : (String -> msg) -> I18n.Language -> Dict String Value -> Card -> Html msg
-viewTagsWithCallToAction navigate language values card =
-    div [ class "tags" ]
-        (case getTags language card values of
-            [] ->
-                [ span
-                    -- TODO call to action
-                    [ class "label label-default label-tool" ]
-                    [ text (I18n.translate language I18n.CallToActionForCategory) ]
-                ]
-
-            tags ->
-                tags
-                    |> List.take 3
-                    |> List.map
-                        (\{ tag, tagId } ->
-                            let
-                                urlPath =
-                                    Routes.urlBasePathForCard card ++ "?tagIds=" ++ tagId
-                            in
-                                aForPath
-                                    navigate
-                                    language
-                                    urlPath
-                                    [ class "label label-default label-tool" ]
-                                    [ text tag ]
-                        )
-        )
-
-
 viewWebData : I18n.Language -> (LoadingStatus a -> Html msg) -> WebData a -> Html msg
 viewWebData language viewSuccess webData =
     case webData of
@@ -198,23 +257,26 @@ viewWebData language viewSuccess webData =
 
                 title =
                     case err of
-                        Timeout ->
+                        BadPayload message response ->
+                            genericTitle
+
+                        BadStatus response ->
+                            if response.status.code == 404 then
+                                I18n.translate language I18n.PageNotFound
+                            else
+                                -- TODO Add I18n.BadStatusExplanation prefix
+                                genericTitle
+
+                        BadUrl message ->
                             genericTitle
 
                         NetworkError ->
                             genericTitle
 
-                        UnexpectedPayload _ ->
+                        Timeout ->
                             genericTitle
-
-                        BadResponse code _ ->
-                            if code == 404 then
-                                I18n.translate language I18n.PageNotFound
-                            else
-                                -- TODO Add I18n.BadResponse prefix
-                                genericTitle
             in
-                viewBigMessage title (getHttpErrorAsString language err)
+                viewBigMessage title (Http.Error.toString language err)
 
         Data loadingStatus ->
             viewSuccess loadingStatus

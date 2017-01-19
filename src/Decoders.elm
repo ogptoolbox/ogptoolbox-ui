@@ -10,67 +10,81 @@ import Types exposing (..)
 ballotDecoder : Decoder Ballot
 ballotDecoder =
     succeed Ballot
-        |: oneOf [ ("rating" := int) `andThen` (\_ -> succeed False), succeed True ]
-        |: ("id" := string)
-        |: oneOf [ ("rating" := int), succeed 0 ]
-        |: ("statementId" := string)
-        |: oneOf [ ("updatedAt" := string), succeed "" ]
-        |: ("voterId" := string)
+        |: oneOf [ (field "rating" int) |> andThen (\_ -> succeed False), succeed True ]
+        |: (field "id" string)
+        |: oneOf [ (field "rating" int), succeed 0 ]
+        |: (field "statementId" string)
+        |: oneOf [ (field "updatedAt" string), succeed "" ]
+        |: (field "voterId" string)
 
 
 bijectiveCardReferenceDecoder : Decoder BijectiveCardReference
 bijectiveCardReferenceDecoder =
     succeed BijectiveCardReference
-        |: ("targetId" := string)
-        |: ("reverseKeyId" := string)
+        |: (field "targetId" string)
+        |: (field "reverseKeyId" string)
 
 
 popularTagDecoder : Decoder PopularTag
 popularTagDecoder =
     succeed PopularTag
-        |: ("count" := (string `customDecoder` String.toFloat))
-        |: ("tagId" := string)
+        |: (field "count" float)
+        |: (field "tagId" string)
 
 
 popularTagsDataDecoder : Decoder PopularTagsData
 popularTagsDataDecoder =
-    ("data"
-        := (succeed PopularTagsData
-                |: ("popularity" := list popularTagDecoder)
-                |: (oneOf [ ("values" := dict valueDecoder), succeed Dict.empty ])
-           )
+    (field "data"
+        (succeed PopularTagsData
+            |: (field "popularity" (list popularTagDecoder))
+            |: (oneOf [ (field "values" (dict valueDecoder)), succeed Dict.empty ])
+        )
     )
 
 
 cardDecoder : Decoder Card
 cardDecoder =
     succeed Card
-        |: ("createdAt" := string)
-        |: oneOf [ ("deleted" := bool), succeed False ]
-        |: ("id" := string)
-        |: ("properties" := dict string)
-        |: oneOf [ ("rating" := int), succeed 0 ]
-        |: oneOf [ ("ratingCount" := int), succeed 0 ]
-        |: oneOf [ ("ratingSum" := int), succeed 0 ]
-        |: oneOf [ ("references" := dict (list string)), succeed Dict.empty ]
-        |: oneOf [ ("subTypeIds" := list string), succeed [] ]
-        |: oneOf [ ("tagIds" := list string), succeed [] ]
-        |: ("type" := string)
-        |: oneOf [ ("usageIds" := list string), succeed [] ]
+        |: (field "createdAt" string)
+        |: oneOf [ (field "deleted" bool), succeed False ]
+        |: (field "id" string)
+        |: (field "properties" (dict string))
+        |: oneOf [ (field "rating" int), succeed 0 ]
+        |: oneOf [ (field "ratingCount" int), succeed 0 ]
+        |: oneOf [ (field "ratingSum" int), succeed 0 ]
+        |: oneOf [ (field "references" (dict (list string))), succeed Dict.empty ]
+        |: oneOf [ (field "subTypeIds" (list string)), succeed [] ]
+        |: oneOf [ (field "tagIds" (list string)), succeed [] ]
+        |: (field "type" string)
+        |: oneOf [ (field "usageIds" (list string)), succeed [] ]
+
+
+cardsAutocompletionBodyDecoder : Decoder CardsAutocompletionBody
+cardsAutocompletionBodyDecoder =
+    succeed CardsAutocompletionBody
+        |: (field "data" (list cardsAutocompletionDecoder))
+
+
+cardsAutocompletionDecoder : Decoder CardAutocompletion
+cardsAutocompletionDecoder =
+    succeed CardAutocompletion
+        |: (field "autocomplete" string)
+        |: (field "card" cardDecoder)
+        |: (field "distance" float)
 
 
 collectionDecoder : Decoder Collection
 collectionDecoder =
     succeed Collection
-        |: ("authorId" := string)
-        |: oneOf [ ("cardIds" := list string), succeed [] ]
-        |: oneOf [ ("description" := string), succeed "" ]
-        |: ("id" := string)
-        |: (maybe ("logo" := string)
+        |: (field "authorId" string)
+        |: oneOf [ (field "cardIds" (list string)), succeed [] ]
+        |: oneOf [ (field "description" string), succeed "" ]
+        |: (field "id" string)
+        |: (maybe (field "logo" string)
                 |> map
                     (\v ->
                         v
-                            `Maybe.andThen`
+                            |> Maybe.andThen
                                 (\s ->
                                     if String.isEmpty s then
                                         Nothing
@@ -79,43 +93,43 @@ collectionDecoder =
                                 )
                     )
            )
-        |: ("name" := string)
+        |: (field "name" string)
 
 
 dataIdDecoder : Decoder DataId
 dataIdDecoder =
     succeed DataId
-        |: oneOf [ ("ballots" := dict ballotDecoder), succeed Dict.empty ]
-        |: oneOf [ ("cards" := dict cardDecoder), succeed Dict.empty ]
-        |: oneOf [ ("collections" := dict collectionDecoder), succeed Dict.empty ]
-        |: ("id" := string)
-        |: (oneOf [ ("properties" := dict propertyDecoder), succeed Dict.empty ])
-        |: (oneOf [ ("users" := dict userDecoder), succeed Dict.empty ])
-        |: oneOf [ ("values" := dict valueDecoder), succeed Dict.empty ]
+        |: oneOf [ (field "ballots" (dict ballotDecoder)), succeed Dict.empty ]
+        |: oneOf [ (field "cards" (dict cardDecoder)), succeed Dict.empty ]
+        |: oneOf [ (field "collections" (dict collectionDecoder)), succeed Dict.empty ]
+        |: (field "id" string)
+        |: (oneOf [ (field "properties" (dict propertyDecoder)), succeed Dict.empty ])
+        |: (oneOf [ (field "users" (dict userDecoder)), succeed Dict.empty ])
+        |: oneOf [ (field "values" (dict valueDecoder)), succeed Dict.empty ]
 
 
 dataIdBodyDecoder : Decoder DataIdBody
 dataIdBodyDecoder =
     succeed DataIdBody
-        |: ("data" := dataIdDecoder)
+        |: (field "data" dataIdDecoder)
 
 
 dataIdsDecoder : Decoder DataIds
 dataIdsDecoder =
-    object2 (,)
-        ("ids" := list string)
-        (oneOf [ ("users" := dict userDecoder), succeed Dict.empty ])
-        `andThen`
+    map2 (,)
+        (field "ids" (list string))
+        (oneOf [ (field "users" (dict userDecoder)), succeed Dict.empty ])
+        |> andThen
             (\( ids, users ) ->
                 (if List.isEmpty ids then
                     succeed ( Dict.empty, Dict.empty, Dict.empty, Dict.empty, Dict.empty )
                  else
-                    object5 (,,,,)
-                        (oneOf [ ("ballots" := dict ballotDecoder), succeed Dict.empty ])
-                        (oneOf [ ("cards" := dict cardDecoder), succeed Dict.empty ])
-                        (oneOf [ ("collections" := dict collectionDecoder), succeed Dict.empty ])
-                        (oneOf [ ("properties" := dict propertyDecoder), succeed Dict.empty ])
-                        (oneOf [ ("values" := dict valueDecoder), succeed Dict.empty ])
+                    map5 (,,,,)
+                        (oneOf [ (field "ballots" (dict ballotDecoder)), succeed Dict.empty ])
+                        (oneOf [ (field "cards" (dict cardDecoder)), succeed Dict.empty ])
+                        (oneOf [ (field "collections" (dict collectionDecoder)), succeed Dict.empty ])
+                        (oneOf [ (field "properties" (dict propertyDecoder)), succeed Dict.empty ])
+                        (oneOf [ (field "values" (dict valueDecoder)), succeed Dict.empty ])
                 )
                     |> map
                         (\( ballots, cards, collections, properties, values ) ->
@@ -127,82 +141,67 @@ dataIdsDecoder =
 dataIdsBodyDecoder : Decoder DataIdsBody
 dataIdsBodyDecoder =
     succeed DataIdsBody
-        |: oneOf [ ("count" := string `customDecoder` String.toInt), succeed 0 ]
-        |: ("data" := dataIdsDecoder)
-        |: oneOf [ ("limit" := int), succeed 0 ]
-        |: oneOf [ ("offset" := int), succeed 0 ]
+        |: oneOf [ (field "count" int), succeed 0 ]
+        |: (field "data" dataIdsDecoder)
+        |: oneOf [ (field "limit" int), succeed 0 ]
+        |: oneOf [ (field "offset" int), succeed 0 ]
 
 
 messageBodyDecoder : Decoder String
 messageBodyDecoder =
-    ("data" := string)
+    (field "data" string)
 
 
 propertyDecoder : Decoder Property
 propertyDecoder =
     succeed Property
-        |: oneOf [ ("ballotId" := string), succeed "" ]
-        |: ("createdAt" := string)
-        |: oneOf [ ("deleted" := bool), succeed False ]
-        |: ("id" := string)
-        |: ("keyId" := string)
-        |: ("objectId" := string)
-        |: oneOf [ ("properties" := dict string), succeed Dict.empty ]
-        |: oneOf [ ("rating" := int), succeed 0 ]
-        |: oneOf [ ("ratingCount" := int), succeed 0 ]
-        |: oneOf [ ("ratingSum" := int), succeed 0 ]
-        |: oneOf [ ("references" := dict (list string)), succeed Dict.empty ]
-        |: oneOf [ ("subTypeIds" := list string), succeed [] ]
-        |: oneOf [ ("tags" := list (dict string)), succeed [] ]
-        |: ("type" := string)
-        |: ("valueId" := string)
+        |: oneOf [ (field "ballotId" string), succeed "" ]
+        |: (field "createdAt" string)
+        |: oneOf [ (field "deleted" bool), succeed False ]
+        |: (field "id" string)
+        |: (field "keyId" string)
+        |: (field "objectId" string)
+        |: oneOf [ (field "properties" (dict string)), succeed Dict.empty ]
+        |: oneOf [ (field "rating" int), succeed 0 ]
+        |: oneOf [ (field "ratingCount" int), succeed 0 ]
+        |: oneOf [ (field "ratingSum" int), succeed 0 ]
+        |: oneOf [ (field "references" (dict (list string))), succeed Dict.empty ]
+        |: oneOf [ (field "subTypeIds" (list string)), succeed [] ]
+        |: oneOf [ (field "tags" (list (dict string))), succeed [] ]
+        |: (field "type" string)
+        |: (field "valueId" string)
 
 
 userBodyDecoder : Decoder UserBody
 userBodyDecoder =
     succeed UserBody
-        |: ("data" := userDecoder)
+        |: (field "data" userDecoder)
 
 
 userDecoder : Decoder User
 userDecoder =
     succeed User
-        |: ("activated" := bool)
-        |: oneOf [ ("apiKey" := string), succeed "" ]
-        |: oneOf [ ("email" := string), succeed "" ]
-        |: ("name" := string)
-        |: ("urlName" := string)
+        |: (field "activated" bool)
+        |: oneOf [ (field "apiKey" string), succeed "" ]
+        |: oneOf [ (field "email" string), succeed "" ]
+        |: (field "id" string)
+        |: (field "isAdmin" bool)
+        |: (field "name" string)
+        |: (field "urlName" string)
 
 
-userForPortDecoder : Decoder User
-userForPortDecoder =
-    succeed User
-        -- Workaround a bug in ports that removes boolean values.
-        |:
-            (("activated" := string)
-                `andThen`
-                    (\activated ->
-                        succeed (not (String.isEmpty activated))
-                    )
-            )
-        |: ("apiKey" := string)
-        |: ("email" := string)
-        |: ("name" := string)
-        |: ("urlName" := string)
-
-
-valueDecoder : Decoder Types.Value
+valueDecoder : Decoder Types.TypedValue
 valueDecoder =
-    object5 (,,,,)
-        ("createdAt" := string)
-        ("id" := string)
-        ("schemaId" := string)
-        ("type" := string)
-        (oneOf [ ("widgetId" := string), succeed "" ])
-        `andThen`
+    map5 (,,,,)
+        (field "createdAt" string)
+        (field "id" string)
+        (field "schemaId" string)
+        (field "type" string)
+        (oneOf [ (field "widgetId" string), succeed "" ])
+        |> andThen
             (\( createdAt, id, schemaId, type_, widgetId ) ->
-                ("value" := valueTypeDecoder schemaId)
-                    |> map (\value -> Types.Value createdAt id schemaId type_ value widgetId)
+                (field "value" (valueTypeDecoder schemaId))
+                    |> map (\value -> Types.TypedValue createdAt id schemaId type_ value widgetId)
             )
 
 

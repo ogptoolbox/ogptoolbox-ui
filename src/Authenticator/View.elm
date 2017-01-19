@@ -1,43 +1,102 @@
 module Authenticator.View exposing (..)
 
-import Authenticator.Model exposing (Model, Route(..))
-import Authenticator.ResetPassword as ResetPassword
-import Authenticator.SignIn as SignIn
-import Authenticator.SignOut as SignOut
-import Authenticator.SignUp as SignUp
-import Authenticator.Update exposing (Msg(..))
-import Html exposing (Html)
-import Html.App
+import Authenticator.Activate.View
+import Authenticator.ChangePassword.View
+import Authenticator.ResetPassword.View
+import Authenticator.Routes exposing (Route(..))
+import Authenticator.SignIn.View
+import Authenticator.SignOut.View
+import Authenticator.SignUp.View
+import Authenticator.Types exposing (..)
+import Html exposing (Html, text)
 import I18n
 
 
-modalTitle : Route -> String
-modalTitle route =
+modalTitle : I18n.Language -> Route -> String
+modalTitle language route =
     case route of
+        ActivateRoute _ ->
+            (I18n.translate language I18n.ActivationTitle)
+
+        ChangePasswordRoute _ ->
+            (I18n.translate language I18n.ChangePassword)
+
         ResetPasswordRoute ->
-            "Password lost?"
+            (I18n.translate language I18n.PasswordLost)
 
         SignInRoute ->
-            "Sign in to contribute"
+            (I18n.translate language I18n.SignInToContribute)
 
         SignOutRoute ->
-            "Sign out and contribute later"
+            (I18n.translate language I18n.SignOutAndContributeLater)
 
         SignUpRoute ->
-            "Create your account"
+            (I18n.translate language I18n.CreateYourAccount)
+
+
+view : I18n.Language -> Route -> Model -> Html Msg
+view language route model =
+    case route of
+        ActivateRoute _ ->
+            Html.map
+                translateActivateMsg
+                (Authenticator.Activate.View.view language model.activate)
+
+        ChangePasswordRoute _ ->
+            Html.map
+                translateChangePasswordMsg
+                (Authenticator.ChangePassword.View.view language model.changePassword)
+
+        ResetPasswordRoute ->
+            Html.map
+                translateResetPasswordMsg
+                (Authenticator.ResetPassword.View.view language model.resetPassword)
+
+        SignInRoute ->
+            Html.map
+                translateSignInMsg
+                (Authenticator.SignIn.View.view language model.signIn)
+
+        SignOutRoute ->
+            Html.map
+                translateSignOutMsg
+                (Authenticator.SignOut.View.view language model.signOut)
+
+        SignUpRoute ->
+            Html.map
+                translateSignUpMsg
+                (Authenticator.SignUp.View.view language model.signUp)
 
 
 viewModalBody : I18n.Language -> Route -> Model -> Html Msg
 viewModalBody language route model =
     case route of
+        ActivateRoute _ ->
+            Html.map
+                translateActivateMsg
+                (Authenticator.Activate.View.viewModalBody language model.activate)
+
+        ChangePasswordRoute _ ->
+            Html.map
+                translateChangePasswordMsg
+                (Authenticator.ChangePassword.View.viewModalBody language model.changePassword)
+
         ResetPasswordRoute ->
-            Html.App.map ResetPasswordMsg (ResetPassword.viewModalBody model.resetPassword)
+            Html.map
+                translateResetPasswordMsg
+                (Authenticator.ResetPassword.View.viewModalBody language model.resetPassword)
 
         SignInRoute ->
-            Html.App.map SignInMsg (SignIn.viewModalBody language model.signIn)
+            Html.map
+                translateSignInMsg
+                (Authenticator.SignIn.View.viewModalBody language model.signIn)
 
         SignOutRoute ->
-            Html.App.map SignOutMsg (SignOut.viewModalBody model.signOut)
+            Html.map
+                translateSignOutMsg
+                (Authenticator.SignOut.View.viewModalBody language model.signOut)
 
         SignUpRoute ->
-            Html.App.map SignUpMsg (SignUp.viewModalBody model.signUp)
+            Html.map
+                translateSignUpMsg
+                (Authenticator.SignUp.View.viewModalBody language model.signUp)
