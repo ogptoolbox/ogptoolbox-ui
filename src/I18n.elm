@@ -140,6 +140,7 @@ type TranslationId
     | FooterAbout
     | FooterDiscover
     | GenericError
+    | Haveanaccount
     | HeaderTitle
     | Help
     | Home
@@ -649,8 +650,8 @@ getTranslationSet translationId =
             }
 
         CreateAccountNow ->
-            { english = s "Create your account now"
-            , french = s "Créez votre compte maintenant"
+            { english = s "Create your account"
+            , french = s "Créez votre compte"
             , spanish = todo
             }
 
@@ -1111,6 +1112,12 @@ getTranslationSet translationId =
         GenericError ->
             { english = s "Something wrong happened!"
             , french = s "Quelque chose s'est mal passé !"
+            , spanish = todo
+            }
+
+        Haveanaccount ->
+            { english = s "I already have an account"
+            , french = s "J'ai déjà un compte"
             , spanish = todo
             }
 
