@@ -1682,10 +1682,22 @@ table {
     }
 
 }
-
-#edit-overlay.modal-dialog .modal-body {
+#edit-overlay.modal-dialog {
+     width: 930px;
+    .modal-body {
      overflow: scroll;
+
+     h5 {
+      font-weight: bold;
+      margin-bottom: 20px;
+      margin-top: 15px;
+     }
+     input.form-control {
+        margin: 15px 0;
+    }
+    }
 }
+
 
 .grey {
     background-color: @light-grey;
@@ -1703,6 +1715,12 @@ table {
 }
 .haveanaccount {
     margin-top: 67px;
+}
+.fullheight-right {
+  position: absolute;
+  bottom: 0;
+  top: 0;
+  right: 0;
 }
 
 //FULL SCREEN BROWSE PAGE
