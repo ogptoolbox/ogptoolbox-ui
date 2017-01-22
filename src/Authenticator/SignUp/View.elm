@@ -1,5 +1,6 @@
 module Authenticator.SignUp.View exposing (..)
 
+import Authenticator.Routes
 import Authenticator.SignUp.Types exposing (..)
 import Authenticator.ViewsParts exposing (..)
 import Dict exposing (Dict)
@@ -11,6 +12,7 @@ import Html.Helpers exposing (aForPath)
 import Http exposing (Error(BadStatus))
 import Http.Error
 import I18n
+import Json.Decode
 
 
 view : I18n.Language -> Model -> Html Msg
@@ -46,36 +48,9 @@ view language model =
     in
         div [ class "modal-body" ]
             [ div [ class "row" ]
-                [ div [ class "col-xs-7" ]
-                    [ div [ class "well" ]
-                        [ Html.form [ onSubmit (ForSelf <| Submit) ]
-                            [ viewUsernameControl
-                                (ForSelf << UsernameInput)
-                                language
-                                (Dict.get "username" model.errors)
-                                model.username
-                            , viewEmailControl
-                                (ForSelf << EmailInput)
-                                language
-                                (Dict.get "email" model.errors)
-                                model.email
-                            , viewPasswordControl
-                                (ForSelf << PasswordInput)
-                                language
-                                (Dict.get "password" model.errors)
-                                model.password
-                            , alert
-                            , button
-                                [ class "btn btn-block btn-default grey", type_ "submit" ]
-                                [ text (I18n.translate language I18n.Register) ]
-                            ]
-                        ]
-                    ]
-                , div [ class "col-xs-5" ]
-                    [ div [ class "well well-right" ]
-                        [ p [ class "lead" ]
-                            [ text (I18n.translate language I18n.CreateAccountNow) ]
-                        , ul [ class "list-unstyled" ]
+                [ div [ class "col-xs-6" ]
+                    [ div [ class "well well-left" ]
+                        [ ul [ class "list-unstyled" ]
                             [ li []
                                 [ span [ class "fa fa-check text-success" ]
                                     []
@@ -106,6 +81,40 @@ view language model =
                                         [ text (I18n.translate language I18n.ReadMore) ]
                                     ]
                                 ]
+                            ]
+                        , a
+                            [ class "btn btn-block btn-default grey haveanaccount"
+                            , href "#"
+                            , onWithOptions
+                                "click"
+                                { preventDefault = True, stopPropagation = False }
+                                (Json.Decode.succeed (ForParent (ChangeRoute Authenticator.Routes.SignInRoute)))
+                            ]
+                            [ text (I18n.translate language I18n.HaveAnAccount) ]
+                        ]
+                    ]
+                , div [ class "col-xs-6" ]
+                    [ div [ class "well" ]
+                        [ Html.form [ onSubmit (ForSelf <| Submit) ]
+                            [ viewUsernameControl
+                                (ForSelf << UsernameInput)
+                                language
+                                (Dict.get "username" model.errors)
+                                model.username
+                            , viewEmailControl
+                                (ForSelf << EmailInput)
+                                language
+                                (Dict.get "email" model.errors)
+                                model.email
+                            , viewPasswordControl
+                                (ForSelf << PasswordInput)
+                                language
+                                (Dict.get "password" model.errors)
+                                model.password
+                            , alert
+                            , button
+                                [ class "btn btn-block btn-default", type_ "submit" ]
+                                [ text (I18n.translate language I18n.Register) ]
                             ]
                         ]
                     ]

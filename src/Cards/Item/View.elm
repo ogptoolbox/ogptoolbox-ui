@@ -761,18 +761,21 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                                        ]
                                 )
                             ]
-                        , div [ class "modal-body", style [ ( "min-height", "20em" ) ] ]
+                        , div [ class "modal-body", style [ ( "min-height", "35em" ) ] ]
                             [ div [ class "row" ]
-                                [ div [ class "col-xs-12" ]
+                                [ div [ class "col-xs-8" ]
                                     [ ul [ class "media-list" ]
                                         (propertyIds
                                             |> List.map (getProperty properties)
                                             |> List.indexedMap viewProperty
                                         )
-                                    , nav [ class "navbar-fixed-bottom grey" ]
-                                        [ Html.form
-                                            [ class "navbar-form navbar-left big"
-                                            , onSubmit (ForSelf (SubmitValue selectedField))
+                                    ]
+                                , div [ class "col-xs-4 grey fullheight-right" ]
+                                    [ div []
+                                        [ h5 [ attribute "aria-hidden" "true" ]
+                                            [ text (I18n.translate language I18n.AddYourContribution) ]
+                                        , Html.form
+                                            [ onSubmit (ForSelf (SubmitValue selectedField))
                                             ]
                                             [ select
                                                 [ on "change"
@@ -830,10 +833,10 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                                                     |> List.map (\s -> option [ value s ] [ text s ])
                                                 )
                                             , div
-                                                [ class "form-group" ]
+                                                [ class "form-group " ]
                                                 [ viewField ]
-                                            , div [ class "navbar-right" ]
-                                                [ button [ class "btn btn-default", type_ "submit" ]
+                                            , div []
+                                                [ button [ class "btn btn-default btn-block", type_ "submit" ]
                                                     [ text (I18n.translate language (I18n.Add)) ]
                                                 ]
                                             ]

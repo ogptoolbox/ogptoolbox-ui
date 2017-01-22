@@ -31,6 +31,7 @@ type TranslationId
     | AddTool
     | AddToolOrUseCase
     | AddUseCase
+    | AddYourContribution
     | AuthenticationFailed
     | AuthenticationRequired
     | AuthenticationRequiredExplanation
@@ -140,6 +141,7 @@ type TranslationId
     | FooterAbout
     | FooterDiscover
     | GenericError
+    | HaveAnAccount
     | HeaderTitle
     | Help
     | Home
@@ -384,6 +386,12 @@ getTranslationSet translationId =
         AddUseCase ->
             { english = s "Add a use case"
             , french = s "Ajouter un cas d'usage"
+            , spanish = todo
+            }
+
+        AddYourContribution ->
+            { english = s "Add your contribution"
+            , french = s "Ajouter votre contribution"
             , spanish = todo
             }
 
@@ -649,8 +657,8 @@ getTranslationSet translationId =
             }
 
         CreateAccountNow ->
-            { english = s "Create your account now"
-            , french = s "Créez votre compte maintenant"
+            { english = s "Create your account"
+            , french = s "Créez votre compte"
             , spanish = todo
             }
 
@@ -1114,6 +1122,12 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        HaveAnAccount ->
+            { english = s "I already have an account"
+            , french = s "J'ai déjà un compte"
+            , spanish = todo
+            }
+
         HeaderTitle ->
             { english = s "digital solutions to improve democracy"
             , french = s "solutions numériques pour la démocratie"
@@ -1222,7 +1236,7 @@ getTranslationSet translationId =
             { english = s "Logo"
             , french = s "Logo"
             , spanish = todo
-          }
+            }
 
         MissingDescription ->
             { english = s "Missing description"
@@ -1896,6 +1910,7 @@ to strengthen governance.
             , french = s "Adresse du site officiel (URL)"
             , spanish = todo
             }
+
 
 
 -- INTERNALS
