@@ -219,6 +219,7 @@ viewCardContent language card cards values =
                                         [ h3 [ class "panel-title" ]
                                             [ text (I18n.translate language I18n.Description) ]
                                         ]
+
                                 cardType =
                                     getCardType card
                              in

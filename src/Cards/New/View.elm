@@ -88,7 +88,7 @@ viewOrganization model language =
                             [ div [ class "row" ]
                                 [ div [ class "col-xs-12" ]
                                     [ h1 []
-                                      [ text (I18n.translate language I18n.NewCardOrganization) ]
+                                        [ text (I18n.translate language I18n.NewCardOrganization) ]
                                     ]
                                 ]
                             ]
