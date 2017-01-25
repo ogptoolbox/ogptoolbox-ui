@@ -135,7 +135,7 @@ init =
     { authentication = Nothing
     , cardIds = []
     , collectionJson = Nothing
-    , data = initDataId
+    , data = initData
     , description = ""
     , editedCollectionId = Nothing
     , errors = Dict.empty
@@ -193,7 +193,7 @@ update msg model =
             let
                 newModel =
                     { model
-                        | data = mergeDataId body.data model.data
+                        | data = mergeData body.data model.data
                         , webData = Data (Loaded body)
                     }
 
@@ -236,7 +236,7 @@ update msg model =
                     convertControls
                         { model
                             | cardIds = collection.cardIds
-                            , data = mergeDataId body.data model.data
+                            , data = mergeData body.data model.data
                             , description = collection.description
                             , imageUploadStatus =
                                 case collection.logo of

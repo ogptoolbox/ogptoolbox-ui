@@ -42,7 +42,7 @@ type alias Model =
     { authentication : Maybe Authentication
     , cardIds : List String
     , collectionJson : Maybe Json.Encode.Value
-    , data : DataId
+    , data : DataProxy {}
     , description : String
     , editedCollectionId : Maybe String
     , errors : FormErrors
