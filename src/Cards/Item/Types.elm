@@ -1,28 +1,9 @@
 module Cards.Item.Types exposing (..)
 
-import Dict exposing (Dict)
+import Authenticator.Types exposing (Authentication)
 import Http
+import I18n
 import Types exposing (..)
-import WebData exposing (..)
-
-
-type alias EditedProperty =
-    { ballots : Dict String Ballot
-    , cardId : String
-    , cards : Dict String Card
-    , keyId : String
-    , properties : Dict String Property
-    , propertyIds : List String
-    , selectedField : Field
-    , values : Dict String TypedValue
-    }
-
-
-type alias Model =
-    { displayUseItModal : Bool
-    , editedProperty : Maybe EditedProperty
-    , webData : WebData DataIdBody
-    }
 
 
 type ExternalMsg
@@ -44,8 +25,22 @@ type InternalMsg
     | ShareOnLinkedIn String
     | ShareOnTwitter String
     | SubmitValue Field
+    | ValuePosted (Result Http.Error DataIdBody)
     | VotePropertyDown String
     | VotePropertyUp String
+
+
+type alias Model =
+    { authentication : Maybe Authentication
+    , cardId : String
+    , data : DataProxy {}
+    , displayUseItModal : Bool
+    , editedKeyId : Maybe String
+    , httpError : Maybe Http.Error
+    , language : I18n.Language
+    , sameKeyPropertyIds : List String
+    , selectedField : Field
+    }
 
 
 type Msg

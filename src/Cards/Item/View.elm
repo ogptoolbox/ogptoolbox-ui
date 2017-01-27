@@ -14,61 +14,58 @@ import Set
 import String
 import Types exposing (..)
 import Urls
-import Views exposing (viewCardListItem, viewLoading, viewWebData)
-import WebData exposing (..)
+import Values.ViewsParts exposing (viewValueTypeLine)
+import Views exposing (viewCardListItem, viewLoading)
 
 
-view : Model -> I18n.Language -> Html Msg
-view model language =
-    viewWebData
-        language
-        (\loadingStatus ->
-            case loadingStatus of
-                Loading _ ->
-                    div [ class "text-center" ]
-                        [ viewLoading language ]
+view : Model -> Html Msg
+view model =
+    case Dict.get model.cardId model.data.cards of
+        Just card ->
+            viewCard model card
 
-                Loaded body ->
-                    div []
-                        [ viewCard language body model.editedProperty model.displayUseItModal ]
-        )
-        model.webData
+        Nothing ->
+            div [ class "text-center" ]
+                [ viewLoading model.language ]
 
 
-viewCard : I18n.Language -> DataIdBody -> Maybe EditedProperty -> Bool -> Html Msg
-viewCard language body editedProperty displayUseItModal =
+viewCard : Model -> Card -> Html Msg
+viewCard model card =
     let
+        data =
+            model.data
+
         cards =
-            body.data.cards
+            data.cards
+
+        language =
+            model.language
 
         values =
-            body.data.values
-
-        card =
-            getCard cards body.data.id
+            data.values
     in
         let
             container =
                 div [ class "container" ]
                     [ div
                         [ class "row" ]
-                        ([ viewSidebar language card values
-                         , viewCardContent language card cards values
+                        ([ viewSidebar model card
+                         , viewCardContent model card
                          ]
-                            ++ (case editedProperty of
+                            ++ (case model.editedKeyId of
+                                    Just editedKeyId ->
+                                        [ viewEditPropertyModal model card editedKeyId ]
+
                                     Nothing ->
                                         []
-
-                                    Just editedProperty ->
-                                        [ viewEditPropertyModal language editedProperty cards ]
                                )
-                            ++ (if displayUseItModal then
+                            ++ (if model.displayUseItModal then
                                     case Dict.get card.id Configuration.useItData of
+                                        Just { frenchGovDeployUrl } ->
+                                            [ viewUseItModal model.language frenchGovDeployUrl ]
+
                                         Nothing ->
                                             []
-
-                                        Just { frenchGovDeployUrl } ->
-                                            [ viewUseItModal language frenchGovDeployUrl ]
                                 else
                                     []
                                )
@@ -113,9 +110,21 @@ viewCard language body editedProperty displayUseItModal =
                         [ container ]
 
 
-viewCardContent : I18n.Language -> Card -> Dict String Card -> Dict String TypedValue -> Html Msg
-viewCardContent language card cards values =
+viewCardContent : Model -> Card -> Html Msg
+viewCardContent model card =
     let
+        data =
+            model.data
+
+        cards =
+            data.cards
+
+        language =
+            model.language
+
+        values =
+            data.values
+
         bestOf keys =
             let
                 count =
@@ -142,10 +151,10 @@ viewCardContent language card cards values =
                                         )
 
                                 Just keyValue ->
-                                    viewValueType language cards values False keyValue.value
+                                    viewValueTypeLine language (Just navigate) data False keyValue.value
                             ]
                         , td []
-                            [ viewValueType language cards values True valueValue.value
+                            [ viewValueTypeLine language (Just navigate) data False valueValue.value
                             ]
                         , td []
                             [ button
@@ -541,9 +550,21 @@ viewCardContent language card cards values =
             ]
 
 
-viewEditPropertyModal : I18n.Language -> EditedProperty -> Dict String Card -> Html Msg
-viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds, selectedField, values } cards =
+viewEditPropertyModal : Model -> Card -> String -> Html Msg
+viewEditPropertyModal model card editedKeyId =
     let
+        data =
+            model.data
+
+        cards =
+            data.cards
+
+        language =
+            model.language
+
+        values =
+            data.values
+
         viewField =
             let
                 selectField tagger =
@@ -552,33 +573,33 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                 onInputSelectField tagger =
                     onInput (selectField tagger)
             in
-                case selectedField of
-                    LocalizedInputTextField _ string ->
+                case model.selectedField of
+                    BooleanField bool ->
                         input
                             [ class "form-control"
-                            , onInput
-                                (\inputString ->
-                                    ForSelf
-                                        (SelectField
-                                            (LocalizedInputTextField (I18n.iso639_1FromLanguage language) inputString)
-                                        )
-                                )
+                            , onCheck (selectField BooleanField)
+                            , type_ "checkbox"
+                            ]
+                            []
+
+                    CardIdField string ->
+                        -- TODO replace with autocomplete
+                        input
+                            [ class "form-control"
+                            , onInputSelectField CardIdField
                             , type_ "text"
                             , value string
                             ]
                             []
 
-                    LocalizedTextareaField _ string ->
-                        textarea
-                            [ onInput
-                                (\inputString ->
-                                    ForSelf
-                                        (SelectField
-                                            (LocalizedTextareaField (I18n.iso639_1FromLanguage language) inputString)
-                                        )
-                                )
+                    InputEmailField string ->
+                        input
+                            [ class "form-control"
+                            , onInputSelectField InputEmailField
+                            , type_ "email"
+                            , value string
                             ]
-                            [ text string ]
+                            []
 
                     InputNumberField float ->
                         input
@@ -591,7 +612,7 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                                                 InputNumberField float
 
                                             Err _ ->
-                                                selectedField
+                                                model.selectedField
                                         )
                                     )
                                 )
@@ -601,19 +622,11 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                             ]
                             []
 
-                    BooleanField bool ->
+                    InputTextField string ->
                         input
                             [ class "form-control"
-                            , onCheck (selectField BooleanField)
-                            , type_ "checkbox"
-                            ]
-                            []
-
-                    InputEmailField string ->
-                        input
-                            [ class "form-control"
-                            , onInputSelectField InputEmailField
-                            , type_ "email"
+                            , onInputSelectField InputTextField
+                            , type_ "text"
                             , value string
                             ]
                             []
@@ -636,15 +649,40 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                             ]
                             []
 
-                    CardIdField string ->
-                        -- TODO replace with autocomplete
+                    LocalizedInputTextField _ string ->
                         input
                             [ class "form-control"
-                            , onInputSelectField CardIdField
+                            , onInput
+                                (\inputString ->
+                                    ForSelf
+                                        (SelectField
+                                            (LocalizedInputTextField (I18n.iso639_1FromLanguage language) inputString)
+                                        )
+                                )
                             , type_ "text"
                             , value string
                             ]
                             []
+
+                    LocalizedTextareaField _ string ->
+                        textarea
+                            [ class "form-control"
+                            , onInput
+                                (\inputString ->
+                                    ForSelf
+                                        (SelectField
+                                            (LocalizedTextareaField (I18n.iso639_1FromLanguage language) inputString)
+                                        )
+                                )
+                            ]
+                            [ text string ]
+
+                    TextareaField string ->
+                        input
+                            [ class "form-control"
+                            , onInputSelectField InputTextField
+                            ]
+                            [ text string ]
 
         viewProperty index property =
             let
@@ -652,7 +690,7 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                     Dict.get property.valueId values
 
                 ballot =
-                    Dict.get property.ballotId ballots
+                    Dict.get property.ballotId data.ballots
             in
                 li [ classList [ ( "media", True ), ( "best", index == 0 ) ] ]
                     [ div [ class "media-body" ]
@@ -669,7 +707,7 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                                 []
 
                             Just value ->
-                                [ viewValueType language cards values True value.value ]
+                                [ viewValueTypeLine language (Just navigate) data True value.value ]
                          )
                         )
                     , div [ class "media-right" ]
@@ -742,7 +780,7 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                                     [ text "Close" ]
                                 ]
                             , h4 [ class "modal-title", id "myModalLabel" ]
-                                ((case Dict.get keyId values of
+                                ((case Dict.get editedKeyId values of
                                     Nothing ->
                                         []
 
@@ -757,7 +795,9 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                                  )
                                     ++ [ span []
                                             [ text
-                                                (I18n.translate language (I18n.CountVersionsAvailable (List.length propertyIds)))
+                                                (I18n.translate language
+                                                    (I18n.CountVersionsAvailable (List.length model.sameKeyPropertyIds))
+                                                )
                                             ]
                                        ]
                                 )
@@ -766,8 +806,8 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                             [ div [ class "row" ]
                                 [ div [ class "col-xs-8" ]
                                     [ ul [ class "media-list" ]
-                                        (propertyIds
-                                            |> List.map (getProperty properties)
+                                        (model.sameKeyPropertyIds
+                                            |> List.map (getProperty data.properties)
                                             |> List.indexedMap viewProperty
                                         )
                                     ]
@@ -776,7 +816,7 @@ viewEditPropertyModal language { ballots, cardId, keyId, properties, propertyIds
                                         [ h5 [ attribute "aria-hidden" "true" ]
                                             [ text (I18n.translate language I18n.AddYourContribution) ]
                                         , Html.form
-                                            [ onSubmit (ForSelf (SubmitValue selectedField))
+                                            [ onSubmit (ForSelf (SubmitValue model.selectedField))
                                             ]
                                             [ select
                                                 [ on "change"
@@ -952,370 +992,294 @@ viewUseItModal language frenchGovDeployUrl =
 --         []
 
 
-viewSidebar : I18n.Language -> Card -> Dict String TypedValue -> Html Msg
-viewSidebar language card values =
-    -- let
-    --     viewSimilarTools =
-    --         div [ class "row" ]
-    --             [ div [ class "col-xs-12" ]
-    --                 [ div [ class "panel panel-default panel-side" ]
-    --                     [ div [ class "panel-heading" ]
-    --                         [ div [ class "row" ]
-    --                             [ div [ class "col-xs-7 text-left" ]
-    --                                 [ h6 [ class "panel-title" ]
-    --                                     [ text (I18n.translate language I18n.SimilarTools) ]
-    --                                 ]
-    --                             , div [ class "col-xs-5 text-right label-small" ]
-    --                                 [ text (I18n.translate language I18n.Score) ]
-    --                             ]
-    --                         ]
-    --                     , div [ class "panel-body chart" ]
-    --                         [ table [ class "table" ]
-    --                             [ tbody []
-    --                                 [ tr []
-    --                                     [ th [ class "tool-icon-small", scope "row" ]
-    --                                         [ img [ src "/img/TODO.png" ]
-    --                                             []
-    --                                         ]
-    --                                     , td []
-    --                                         [ text "TODO Udata" ]
-    --                                     , td [ class "text-right label-small" ]
-    --                                         [ text "TODO 50.367" ]
-    --                                     ]
-    --                                 ]
-    --                             ]
-    --                         , button [ class "btn btn-default btn-xs btn-action btn-block", type' "button" ]
-    --                             [ text (I18n.translate language I18n.SeeAllAndCompare) ]
-    --                         ]
-    --                     ]
-    --                 ]
-    --             ]
-    -- in
-    div [ class "col-md-3 sidebar" ]
-        [ div [ class "row" ]
-            [ div [ class "col-xs-12" ]
-                [ div [ class "thumbnail orga grey" ]
-                    [ div [ class "visual" ]
-                        [ case Urls.logoFullUrl language "1000" card values of
-                            Just url ->
-                                div []
-                                    [ button
-                                        [ class "button call-add pull-right"
-                                        , onClick (ForSelf (LoadProperties card.id "logo"))
-                                        ]
-                                        [ text (I18n.translate language (I18n.Edit)) ]
-                                    , img [ alt "Logo", src url ] []
-                                    ]
+viewSidebar : Model -> Card -> Html Msg
+viewSidebar model card =
+    let
+        data =
+            model.data
 
-                            Nothing ->
-                                div [ class "call-container" ]
-                                    [ button
-                                        [ class "button call-add"
-                                        , onClick (ForSelf (LoadProperties card.id "logo"))
-                                        ]
-                                        [ text "+ Add a logo" ]
-                                    ]
-                        ]
-                    , div [ class "caption" ]
-                        [ table [ class "table" ]
-                            [ tbody []
-                                ([ --      tr [ class "editable" ]
-                                   --     [ td [ class "table-label" ]
-                                   --         [ text (I18n.translate language I18n.Type) ]
-                                   --     , td []
-                                   --         [ text "TODO type" ]
-                                   --     ]
-                                   -- ,
-                                   tr
-                                    [ class "editable"
-                                    , onClick (ForSelf (LoadProperties card.id "license"))
-                                    ]
-                                    [ td [ class "table-label" ]
-                                        [ text (I18n.translate language I18n.License) ]
-                                    , td []
-                                        [ text
-                                            (I18n.getOneString language licenseKeys card values
-                                                |> Maybe.withDefault ""
-                                            )
-                                        ]
-                                    ]
-                                 , let
-                                    firstTd =
-                                        td [ class "table-label" ]
-                                            [ text (I18n.translate language I18n.Website) ]
-                                   in
-                                    case I18n.getOneString language urlKeys card values of
-                                        Nothing ->
-                                            tr []
-                                                [ firstTd
-                                                , td []
-                                                    [ button
-                                                        [ class "button call-add"
-                                                        , onClick (ForSelf (LoadProperties card.id "website"))
-                                                        ]
-                                                        [ text "+ Add a link" ]
-                                                    ]
-                                                ]
+        language =
+            model.language
 
-                                        Just url ->
-                                            tr
-                                                [ class "editable"
-                                                , onClick (ForSelf (LoadProperties card.id "website"))
-                                                ]
-                                                [ firstTd
-                                                , td [] [ aExternal [ href url ] [ text url ] ]
-                                                ]
-                                 ]
-                                    ++ (case Dict.get card.id Configuration.useItData of
+        values =
+            data.values
+
+        --     viewSimilarTools =
+        --         div [ class "row" ]
+        --             [ div [ class "col-xs-12" ]
+        --                 [ div [ class "panel panel-default panel-side" ]
+        --                     [ div [ class "panel-heading" ]
+        --                         [ div [ class "row" ]
+        --                             [ div [ class "col-xs-7 text-left" ]
+        --                                 [ h6 [ class "panel-title" ]
+        --                                     [ text (I18n.translate language I18n.SimilarTools) ]
+        --                                 ]
+        --                             , div [ class "col-xs-5 text-right label-small" ]
+        --                                 [ text (I18n.translate language I18n.Score) ]
+        --                             ]
+        --                         ]
+        --                     , div [ class "panel-body chart" ]
+        --                         [ table [ class "table" ]
+        --                             [ tbody []
+        --                                 [ tr []
+        --                                     [ th [ class "tool-icon-small", scope "row" ]
+        --                                         [ img [ src "/img/TODO.png" ]
+        --                                             []
+        --                                         ]
+        --                                     , td []
+        --                                         [ text "TODO Udata" ]
+        --                                     , td [ class "text-right label-small" ]
+        --                                         [ text "TODO 50.367" ]
+        --                                     ]
+        --                                 ]
+        --                             ]
+        --                         , button [ class "btn btn-default btn-xs btn-action btn-block", type' "button" ]
+        --                             [ text (I18n.translate language I18n.SeeAllAndCompare) ]
+        --                         ]
+        --                     ]
+        --                 ]
+        --             ]
+    in
+        div [ class "col-md-3 sidebar" ]
+            [ div [ class "row" ]
+                [ div [ class "col-xs-12" ]
+                    [ div [ class "thumbnail orga grey" ]
+                        [ div [ class "visual" ]
+                            [ case Urls.logoFullUrl language "1000" card values of
+                                Just url ->
+                                    div []
+                                        [ button
+                                            [ class "button call-add pull-right"
+                                            , onClick (ForSelf (LoadProperties card.id "logo"))
+                                            ]
+                                            [ text (I18n.translate language (I18n.Edit)) ]
+                                        , img [ alt "Logo", src url ] []
+                                        ]
+
+                                Nothing ->
+                                    div [ class "call-container" ]
+                                        [ button
+                                            [ class "button call-add"
+                                            , onClick (ForSelf (LoadProperties card.id "logo"))
+                                            ]
+                                            [ text "+ Add a logo" ]
+                                        ]
+                            ]
+                        , div [ class "caption" ]
+                            [ table [ class "table" ]
+                                [ tbody []
+                                    ([ --      tr [ class "editable" ]
+                                       --     [ td [ class "table-label" ]
+                                       --         [ text (I18n.translate language I18n.Type) ]
+                                       --     , td []
+                                       --         [ text "TODO type" ]
+                                       --     ]
+                                       -- ,
+                                       tr
+                                        [ class "editable"
+                                        , onClick (ForSelf (LoadProperties card.id "license"))
+                                        ]
+                                        [ td [ class "table-label" ]
+                                            [ text (I18n.translate language I18n.License) ]
+                                        , td []
+                                            [ text
+                                                (I18n.getOneString language licenseKeys card values
+                                                    |> Maybe.withDefault ""
+                                                )
+                                            ]
+                                        ]
+                                     , let
+                                        firstTd =
+                                            td [ class "table-label" ]
+                                                [ text (I18n.translate language I18n.Website) ]
+                                       in
+                                        case I18n.getOneString language urlKeys card values of
                                             Nothing ->
-                                                []
-
-                                            Just { frenchGovDeployUrl } ->
-                                                [ tr []
-                                                    [ td [ attribute "colspan" "2" ]
+                                                tr []
+                                                    [ firstTd
+                                                    , td []
                                                         [ button
-                                                            [ class "btn btn-default btn-action btn-block"
-                                                            , onClick (ForSelf (DisplayUseItModal True))
-                                                            , type_ "button"
+                                                            [ class "button call-add"
+                                                            , onClick (ForSelf (LoadProperties card.id "website"))
                                                             ]
-                                                            [ text (I18n.translate language I18n.UseIt) ]
+                                                            [ text "+ Add a link" ]
                                                         ]
                                                     ]
-                                                ]
-                                       )
-                                )
+
+                                            Just url ->
+                                                tr
+                                                    [ class "editable"
+                                                    , onClick (ForSelf (LoadProperties card.id "website"))
+                                                    ]
+                                                    [ firstTd
+                                                    , td [] [ aExternal [ href url ] [ text url ] ]
+                                                    ]
+                                     ]
+                                        ++ (case Dict.get card.id Configuration.useItData of
+                                                Nothing ->
+                                                    []
+
+                                                Just { frenchGovDeployUrl } ->
+                                                    [ tr []
+                                                        [ td [ attribute "colspan" "2" ]
+                                                            [ button
+                                                                [ class "btn btn-default btn-action btn-block"
+                                                                , onClick (ForSelf (DisplayUseItModal True))
+                                                                , type_ "button"
+                                                                ]
+                                                                [ text (I18n.translate language I18n.UseIt) ]
+                                                            ]
+                                                        ]
+                                                    ]
+                                           )
+                                    )
+                                ]
                             ]
                         ]
                     ]
                 ]
-            ]
-        , div [ class "row" ]
-            [ div [ class "col-xs-12" ]
-                [ div [ class "panel panel-default panel-side" ]
-                    (let
-                        panelTitle =
-                            div [ class "col-xs-7 text-left" ]
-                                [ h6 [ class "panel-title" ]
-                                    [ text (I18n.translate language I18n.Tags) ]
-                                ]
-                     in
-                        case I18n.getTags language card values of
-                            [] ->
-                                [ div [ class "panel-heading" ]
-                                    [ div [ class "row" ] [ panelTitle ] ]
-                                , div [ class "panel-body" ]
-                                    [ div [ class "call-container" ]
-                                        [ button [ class "button call-add" ]
-                                            [ text "+ Add a tag" ]
-                                        ]
+            , div [ class "row" ]
+                [ div [ class "col-xs-12" ]
+                    [ div [ class "panel panel-default panel-side" ]
+                        (let
+                            panelTitle =
+                                div [ class "col-xs-7 text-left" ]
+                                    [ h6 [ class "panel-title" ]
+                                        [ text (I18n.translate language I18n.Tags) ]
                                     ]
-                                ]
-
-                            tags ->
-                                [ div [ class "panel-heading" ]
-                                    [ div [ class "row" ]
-                                        [ panelTitle
-                                        , div [ class "col-xs-5 text-right up7" ]
-                                            [ button
-                                                [ class "btn btn-default btn-xs btn-action"
-                                                , onClick (ForSelf (LoadProperties card.id "tags"))
-                                                , type_ "button"
-                                                ]
-                                                [ text (I18n.translate language (I18n.Edit)) ]
+                         in
+                            case I18n.getTags language card values of
+                                [] ->
+                                    [ div [ class "panel-heading" ]
+                                        [ div [ class "row" ] [ panelTitle ] ]
+                                    , div [ class "panel-body" ]
+                                        [ div [ class "call-container" ]
+                                            [ button [ class "button call-add" ]
+                                                [ text "+ Add a tag" ]
                                             ]
                                         ]
                                     ]
-                                , div [ class "panel-body" ]
-                                    (List.map
-                                        (\{ tag, tagId } ->
-                                            let
-                                                path =
-                                                    Urls.basePathForCard card ++ "?tagIds=" ++ tagId
-                                            in
-                                                aForPath
-                                                    navigate
-                                                    language
-                                                    path
-                                                    [ class "label label-default label-tag" ]
-                                                    [ text tag ]
+
+                                tags ->
+                                    [ div [ class "panel-heading" ]
+                                        [ div [ class "row" ]
+                                            [ panelTitle
+                                            , div [ class "col-xs-5 text-right up7" ]
+                                                [ button
+                                                    [ class "btn btn-default btn-xs btn-action"
+                                                    , onClick (ForSelf (LoadProperties card.id "tags"))
+                                                    , type_ "button"
+                                                    ]
+                                                    [ text (I18n.translate language (I18n.Edit)) ]
+                                                ]
+                                            ]
+                                        ]
+                                    , div [ class "panel-body" ]
+                                        (List.map
+                                            (\{ tag, tagId } ->
+                                                let
+                                                    path =
+                                                        Urls.basePathForCard card ++ "?tagIds=" ++ tagId
+                                                in
+                                                    aForPath
+                                                        navigate
+                                                        language
+                                                        path
+                                                        [ class "label label-default label-tag" ]
+                                                        [ text tag ]
+                                            )
+                                            tags
                                         )
-                                        tags
-                                    )
-                                ]
-                    )
-                ]
-            ]
-          -- , viewSimilarTools -- TODO
-        , div
-            [ class "row" ]
-            [ div [ class "col-xs-12" ]
-                [ div [ class "panel panel-default panel-side" ]
-                    [ h6 [ class "panel-title" ]
-                        [ text (I18n.translate language I18n.Share) ]
-                    , div [ class "panel-body chart" ]
-                        (let
-                            cardName =
-                                I18n.getName language card values
-
-                            imageUrl =
-                                I18n.getOneString language imagePathKeys card values
-                                    |> Maybe.withDefault Urls.appLogoFullUrl
-
-                            url =
-                                Urls.fullUrl
-                                    (Urls.languagePath language (Urls.pathForCard card))
-
-                            facebookUrl =
-                                "http://www.facebook.com/sharer.php?s=100&p[title]="
-                                    ++ Http.encodeUri cardName
-                                    ++ "&p[summary]="
-                                    ++ Http.encodeUri (I18n.translate language (I18n.TweetMessage cardName url))
-                                    ++ "&p[url]="
-                                    ++ Http.encodeUri url
-                                    ++ "&p[images][0]="
-                                    ++ Http.encodeUri imageUrl
-
-                            googlePlusUrl =
-                                "https://plus.google.com/share?url=" ++ Http.encodeUri url
-
-                            linkedInUrl =
-                                "https://www.linkedin.com/shareArticle?mini=true&url="
-                                    ++ Http.encodeUri url
-                                    ++ "&title="
-                                    ++ Http.encodeUri cardName
-                                    ++ "&summary="
-                                    ++ Http.encodeUri (I18n.translate language (I18n.TweetMessage cardName url))
-                                    ++ "&source="
-                                    ++ Http.encodeUri "OGP Toolbox"
-
-                            twitterUrl =
-                                "https://twitter.com/intent/tweet?text="
-                                    ++ Http.encodeUri (I18n.translate language (I18n.TweetMessage cardName url))
-                         in
-                            [ a
-                                [ class "btn btn-default btn-action btn-round"
-                                , href facebookUrl
-                                , onWithOptions
-                                    "click"
-                                    { stopPropagation = True, preventDefault = True }
-                                    (Decode.succeed (ForSelf <| ShareOnFacebook facebookUrl))
-                                ]
-                                [ i [ attribute "aria-hidden" "true", class "fa fa-facebook" ] [] ]
-                            , a
-                                [ class "btn btn-default btn-action btn-round"
-                                , href googlePlusUrl
-                                , onWithOptions
-                                    "click"
-                                    { stopPropagation = True, preventDefault = True }
-                                    (Decode.succeed (ForSelf <| ShareOnGooglePlus googlePlusUrl))
-                                ]
-                                [ i [ attribute "aria-hidden" "true", class "fa fa-google-plus" ] [] ]
-                            , a
-                                [ class "btn btn-default btn-action btn-round"
-                                , href linkedInUrl
-                                , onWithOptions
-                                    "click"
-                                    { stopPropagation = True, preventDefault = True }
-                                    (Decode.succeed (ForSelf <| ShareOnLinkedIn linkedInUrl))
-                                ]
-                                [ i [ attribute "aria-hidden" "true", class "fa fa-linkedin" ] [] ]
-                            , a
-                                [ class "btn btn-default btn-action btn-round"
-                                , href twitterUrl
-                                , onWithOptions
-                                    "click"
-                                    { stopPropagation = True, preventDefault = True }
-                                    (Decode.succeed (ForSelf <| ShareOnTwitter twitterUrl))
-                                ]
-                                [ i [ attribute "aria-hidden" "true", class "fa fa-twitter" ] [] ]
-                            ]
+                                    ]
                         )
                     ]
                 ]
-            ]
-        ]
+              -- , viewSimilarTools -- TODO
+            , div
+                [ class "row" ]
+                [ div [ class "col-xs-12" ]
+                    [ div [ class "panel panel-default panel-side" ]
+                        [ h6 [ class "panel-title" ]
+                            [ text (I18n.translate language I18n.Share) ]
+                        , div [ class "panel-body chart" ]
+                            (let
+                                cardName =
+                                    I18n.getName language card values
 
+                                imageUrl =
+                                    I18n.getOneString language imagePathKeys card values
+                                        |> Maybe.withDefault Urls.appLogoFullUrl
 
-viewValueType : I18n.Language -> Dict String Card -> Dict String TypedValue -> Bool -> ValueType -> Html Msg
-viewValueType language cards values showLanguage value =
-    let
-        cardLink cardId =
-            case Dict.get cardId cards of
-                Nothing ->
-                    text ("Error: target card not found for ID: " ++ cardId)
+                                url =
+                                    Urls.fullUrl
+                                        (Urls.languagePath language (Urls.pathForCard card))
 
-                Just card ->
-                    let
-                        linkText =
-                            case I18n.getOneString language nameKeys card values of
-                                Nothing ->
-                                    cardId
+                                facebookUrl =
+                                    "http://www.facebook.com/sharer.php?s=100&p[title]="
+                                        ++ Http.encodeUri cardName
+                                        ++ "&p[summary]="
+                                        ++ Http.encodeUri (I18n.translate language (I18n.TweetMessage cardName url))
+                                        ++ "&p[url]="
+                                        ++ Http.encodeUri url
+                                        ++ "&p[images][0]="
+                                        ++ Http.encodeUri imageUrl
 
-                                Just name ->
-                                    name
+                                googlePlusUrl =
+                                    "https://plus.google.com/share?url=" ++ Http.encodeUri url
 
-                        path =
-                            Urls.pathForCard card
-                    in
-                        aForPath navigate language path [] [ text linkText ]
-    in
-        case value of
-            StringValue str ->
-                aIfIsUrl [] str
+                                linkedInUrl =
+                                    "https://www.linkedin.com/shareArticle?mini=true&url="
+                                        ++ Http.encodeUri url
+                                        ++ "&title="
+                                        ++ Http.encodeUri cardName
+                                        ++ "&summary="
+                                        ++ Http.encodeUri (I18n.translate language (I18n.TweetMessage cardName url))
+                                        ++ "&source="
+                                        ++ Http.encodeUri "OGP Toolbox"
 
-            WrongValue str schemaId ->
-                div []
-                    [ p [ style [ ( "color", "red" ) ] ] [ text "Wrong value!" ]
-                    , pre [] [ text str ]
-                    , p [] [ text ("schemaId: " ++ schemaId) ]
+                                twitterUrl =
+                                    "https://twitter.com/intent/tweet?text="
+                                        ++ Http.encodeUri (I18n.translate language (I18n.TweetMessage cardName url))
+                             in
+                                [ a
+                                    [ class "btn btn-default btn-action btn-round"
+                                    , href facebookUrl
+                                    , onWithOptions
+                                        "click"
+                                        { stopPropagation = True, preventDefault = True }
+                                        (Decode.succeed (ForSelf <| ShareOnFacebook facebookUrl))
+                                    ]
+                                    [ i [ attribute "aria-hidden" "true", class "fa fa-facebook" ] [] ]
+                                , a
+                                    [ class "btn btn-default btn-action btn-round"
+                                    , href googlePlusUrl
+                                    , onWithOptions
+                                        "click"
+                                        { stopPropagation = True, preventDefault = True }
+                                        (Decode.succeed (ForSelf <| ShareOnGooglePlus googlePlusUrl))
+                                    ]
+                                    [ i [ attribute "aria-hidden" "true", class "fa fa-google-plus" ] [] ]
+                                , a
+                                    [ class "btn btn-default btn-action btn-round"
+                                    , href linkedInUrl
+                                    , onWithOptions
+                                        "click"
+                                        { stopPropagation = True, preventDefault = True }
+                                        (Decode.succeed (ForSelf <| ShareOnLinkedIn linkedInUrl))
+                                    ]
+                                    [ i [ attribute "aria-hidden" "true", class "fa fa-linkedin" ] [] ]
+                                , a
+                                    [ class "btn btn-default btn-action btn-round"
+                                    , href twitterUrl
+                                    , onWithOptions
+                                        "click"
+                                        { stopPropagation = True, preventDefault = True }
+                                        (Decode.succeed (ForSelf <| ShareOnTwitter twitterUrl))
+                                    ]
+                                    [ i [ attribute "aria-hidden" "true", class "fa fa-twitter" ] [] ]
+                                ]
+                            )
+                        ]
                     ]
-
-            LocalizedStringValue values ->
-                let
-                    viewString languageCode string =
-                        if showLanguage || Dict.size values > 1 then
-                            [ dt [] [ text languageCode ]
-                            , dd [] [ aIfIsUrl [] string ]
-                            ]
-                        else
-                            [ aIfIsUrl [] string ]
-                in
-                    dl []
-                        (values
-                            |> Dict.toList
-                            |> List.concatMap (\( languageCode, childValue ) -> viewString languageCode childValue)
-                        )
-
-            BooleanValue bool ->
-                text (toString bool)
-
-            NumberValue float ->
-                text (toString float)
-
-            CardIdArrayValue childValues ->
-                ul [ class "list-unstyled" ]
-                    (List.map
-                        (\childValue -> li [] [ viewValueType language cards values showLanguage (CardIdValue childValue) ])
-                        childValues
-                    )
-
-            ValueIdArrayValue childValues ->
-                ul [ class "list-unstyled" ]
-                    (List.map
-                        (\childValue -> li [] [ viewValueType language cards values showLanguage (ValueIdValue childValue) ])
-                        childValues
-                    )
-
-            BijectiveCardReferenceValue { targetId } ->
-                cardLink targetId
-
-            CardIdValue cardId ->
-                cardLink cardId
-
-            ValueIdValue valueId ->
-                case Dict.get valueId values of
-                    Nothing ->
-                        text ("Error: referenced value not found for valueId: " ++ valueId)
-
-                    Just subValue ->
-                        viewValueType language cards values showLanguage subValue.value
+                ]
+            ]

@@ -39,6 +39,7 @@ init flags location =
     , authenticatorModel = Authenticator.State.init
     , authenticatorRoute = Nothing
     , cardModel = Cards.Item.State.init
+    , cardNewModel = Cards.New.State.init
     , collectionEditModel = Collections.Edit.State.init
     , collectionModel = Collections.Item.State.init
     , collectionsModel = Collections.Index.State.init
@@ -49,7 +50,6 @@ init flags location =
             |> String.left 2
             |> String.toLower
             |> I18n.languageFromIso639_1
-    , newCardModel = Cards.New.State.init
     , route = I18nRouteWithoutLanguage ""
     , searchInputValue = ""
     , searchModel = Search.State.init
@@ -84,7 +84,7 @@ subscriptions model =
     -- TODO Fix duplicate messages with port "fileContentRead", that was worked around by a "ImageSelectedStatus"
     -- constructor.
     Sub.batch
-        [ Sub.map NewCardMsg (Cards.New.State.subscriptions model.newCardModel)
+        [ Sub.map NewCardMsg (Cards.New.State.subscriptions model.cardNewModel)
         , Sub.map EditCollectionMsg (Collections.Edit.State.subscriptions model.collectionEditModel)
         , Sub.map SearchMsg (Search.State.subscriptions model.searchModel)
         ]
@@ -104,10 +104,10 @@ update msg model =
         case msg of
             NewCardMsg childMsg ->
                 let
-                    ( newCardModel, childCmd ) =
-                        Cards.New.State.update childMsg model.newCardModel model.authentication language
+                    ( cardNewModel, childCmd ) =
+                        Cards.New.State.update childMsg model.cardNewModel model.authentication language
                 in
-                    ( { model | newCardModel = newCardModel }
+                    ( { model | cardNewModel = cardNewModel }
                     , Cmd.map translateNewCardMsg childCmd
                     )
 
@@ -163,7 +163,7 @@ update msg model =
             CardMsg childMsg ->
                 let
                     ( cardModel, childCmd ) =
-                        Cards.Item.State.update childMsg model.cardModel model.authentication language
+                        Cards.Item.State.update childMsg model.cardModel
                 in
                     ( { model | cardModel = cardModel }
                     , Cmd.map translateCardMsg childCmd
@@ -485,16 +485,15 @@ urlUpdate location model =
                                         OrganizationRoute cardId ->
                                             let
                                                 ( cardModel, childCmd ) =
-                                                    Cards.Item.State.update
-                                                        (Cards.Item.Types.LoadCard cardId)
-                                                        model.cardModel
+                                                    Cards.Item.State.urlUpdate
                                                         model.authentication
                                                         language
-
-                                                newModel =
-                                                    { model | cardModel = cardModel }
+                                                        cardId
+                                                        model.cardModel
                                             in
-                                                ( model, Cmd.map translateCardMsg childCmd )
+                                                ( { model | cardModel = cardModel }
+                                                , Cmd.map translateCardMsg childCmd
+                                                )
 
                                         OrganizationsIndexRoute ->
                                             indexRoute (I18n.Organization I18n.Plural) I18n.OrganizationsDescription
@@ -506,15 +505,15 @@ urlUpdate location model =
                                                         (Navigate (Urls.parentUrl location.href))
                                                         model
 
-                                                newCardModel =
-                                                    model1.newCardModel
+                                                cardNewModel =
+                                                    model1.cardNewModel
 
-                                                newNewCardModel =
-                                                    { newCardModel
+                                                newCardNewModel =
+                                                    { cardNewModel
                                                         | fields = Dict.fromList [ ( "Types", "organization" ) ]
                                                     }
                                             in
-                                                { model1 | newCardModel = newNewCardModel }
+                                                { model1 | cardNewModel = newCardNewModel }
                                                     ! [ cmd1
                                                       , Ports.setDocumentMetadata
                                                             { description =
@@ -540,16 +539,15 @@ urlUpdate location model =
                                         ToolRoute cardId ->
                                             let
                                                 ( cardModel, childCmd ) =
-                                                    Cards.Item.State.update
-                                                        (Cards.Item.Types.LoadCard cardId)
-                                                        model.cardModel
+                                                    Cards.Item.State.urlUpdate
                                                         model.authentication
                                                         language
-
-                                                newModel =
-                                                    { model | cardModel = cardModel }
+                                                        cardId
+                                                        model.cardModel
                                             in
-                                                ( model, Cmd.map translateCardMsg childCmd )
+                                                ( { model | cardModel = cardModel }
+                                                , Cmd.map translateCardMsg childCmd
+                                                )
 
                                         ToolsIndexRoute ->
                                             indexRoute (I18n.Tool I18n.Plural) I18n.ToolsDescription
@@ -561,15 +559,15 @@ urlUpdate location model =
                                                         (Navigate (Urls.parentUrl location.href))
                                                         model
 
-                                                newCardModel =
-                                                    model1.newCardModel
+                                                cardNewModel =
+                                                    model1.cardNewModel
 
-                                                newNewCardModel =
-                                                    { newCardModel
+                                                newCardNewModel =
+                                                    { cardNewModel
                                                         | fields = Dict.fromList [ ( "Types", "software" ) ]
                                                     }
                                             in
-                                                { model1 | newCardModel = newNewCardModel }
+                                                { model1 | cardNewModel = newCardNewModel }
                                                     ! [ cmd1
                                                       , Ports.setDocumentMetadata
                                                             { description =
@@ -584,16 +582,15 @@ urlUpdate location model =
                                         UseCaseRoute cardId ->
                                             let
                                                 ( cardModel, childCmd ) =
-                                                    Cards.Item.State.update
-                                                        (Cards.Item.Types.LoadCard cardId)
-                                                        model.cardModel
+                                                    Cards.Item.State.urlUpdate
                                                         model.authentication
                                                         language
-
-                                                newModel =
-                                                    { model | cardModel = cardModel }
+                                                        cardId
+                                                        model.cardModel
                                             in
-                                                ( model, Cmd.map translateCardMsg childCmd )
+                                                ( { model | cardModel = cardModel }
+                                                , Cmd.map translateCardMsg childCmd
+                                                )
 
                                         UseCasesIndexRoute ->
                                             indexRoute (I18n.UseCase I18n.Plural) I18n.UseCasesDescription
@@ -605,15 +602,15 @@ urlUpdate location model =
                                                         (Navigate (Urls.parentUrl location.href))
                                                         model
 
-                                                newCardModel =
-                                                    model1.newCardModel
+                                                cardNewModel =
+                                                    model1.cardNewModel
 
-                                                newNewCardModel =
-                                                    { newCardModel
+                                                newCardNewModel =
+                                                    { cardNewModel
                                                         | fields = Dict.fromList [ ( "Types", "use-case" ) ]
                                                     }
                                             in
-                                                { model1 | newCardModel = newNewCardModel }
+                                                { model1 | cardNewModel = newCardNewModel }
                                                     ! [ cmd1
                                                       , Ports.setDocumentMetadata
                                                             { description =

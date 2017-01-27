@@ -15,7 +15,6 @@ import Requests
 import String
 import Types exposing (..)
 import Urls
-import WebData exposing (..)
 
 
 convertControls : Model -> Model
@@ -139,12 +138,12 @@ init =
     , description = ""
     , editedCollectionId = Nothing
     , errors = Dict.empty
+    , httpError = Nothing
     , imageUploadStatus = ImageNotUploadedStatus
     , language = I18n.English
     , name = ""
     , toolsAutocompleteModel = Cards.Autocomplete.State.init cardTypesForTool
     , useCasesAutocompleteModel = Cards.Autocomplete.State.init cardTypesForUseCase
-    , webData = NotAsked
     }
 
 
@@ -187,15 +186,12 @@ update msg model =
             )
 
         CollectionPosted (Err httpError) ->
-            ( { model | webData = Failure httpError }, Cmd.none )
+            ( { model | httpError = Just httpError }, Cmd.none )
 
         CollectionPosted (Ok body) ->
             let
                 newModel =
-                    { model
-                        | data = mergeData body.data model.data
-                        , webData = Data (Loaded body)
-                    }
+                    { model | data = mergeData body.data model.data }
 
                 path =
                     "/collections/" ++ body.data.id
@@ -220,7 +216,7 @@ update msg model =
             )
 
         GotCollection (Err httpError) ->
-            ( { model | webData = Failure httpError }, Cmd.none )
+            ( { model | httpError = Just httpError }, Cmd.none )
 
         GotCollection (Ok body) ->
             let
@@ -246,7 +242,6 @@ update msg model =
                                     Just path ->
                                         ImageUploadedStatus path
                             , name = collection.name
-                            , webData = Data (Loaded body)
                         }
 
                 cmd =
@@ -313,7 +308,7 @@ update msg model =
                 newModel =
                     { model
                         | editedCollectionId = Just collectionId
-                        , webData = Data (Loading Nothing)
+                        , httpError = Nothing
                     }
 
                 cmd =
@@ -325,7 +320,7 @@ update msg model =
         PostCollection ->
             let
                 newModel =
-                    convertControls { model | webData = Data (Loading Nothing) }
+                    convertControls { model | httpError = Nothing }
 
                 cmd =
                     case newModel.collectionJson of

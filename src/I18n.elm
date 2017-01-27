@@ -43,9 +43,13 @@ type TranslationId
     | BadUrl
     | BadUrlExplanation
     | BestOf Int
+    | BijectiveCardReference
+    | Boolean
     | CallToActionForCategory
     | CallToActionForDescription CardType
     | Card
+    | CardId
+    | CardIdArray
     | CardPlaceholder
     | ChangePassword
     | ChangePasswordExplanation
@@ -157,6 +161,7 @@ type TranslationId
     | LanguageWord
     | License
     | LoadingMenu
+    | LocalizedString
     | Logo
     | MissingDescription
     | MissingValue
@@ -181,6 +186,7 @@ type TranslationId
     | NewCardUseCaseDescription
     | NewCardUseCaseDescriptionPlaceholder
     | NewCardUseCaseName
+    | Number
     | OGPsummitLink
     | OpenGovernmentPartnership
     | OpenGovernmentPartnershipLogo
@@ -232,6 +238,7 @@ type TranslationId
     | SignOut
     | SignOutAndContributeLater
     | SignUp
+    | String
     | SimilarTools
     | Software
     | Tags
@@ -241,6 +248,7 @@ type TranslationId
     | ToolsDescription
     | TweetMessage String String
     | Type
+    | UnknownSchemaId String
     | UnknownUser
     | UntitledCard
     | UploadImage
@@ -258,6 +266,8 @@ type TranslationId
     | Uses
     | UseIt
     | UseTool
+    | ValueId
+    | ValueIdArray
     | VoteBestContributions
     | Website
     | WebsiteDescription
@@ -461,6 +471,18 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        BijectiveCardReference ->
+            { english = s "Bijective link to a card"
+            , french = s "Lien bijectif vers une fiche"
+            , spanish = todo
+            }
+
+        Boolean ->
+            { english = s "Boolean"
+            , french = s "Booléen"
+            , spanish = todo
+            }
+
         CallToActionForCategory ->
             { english = s "+ Add category"
             , french = s "+ Ajouter une catégorie"
@@ -503,6 +525,18 @@ getTranslationSet translationId =
         Card ->
             { english = s "Card"
             , french = s "Fiche"
+            , spanish = todo
+            }
+
+        CardId ->
+            { english = s "Link to a card"
+            , french = s "Lien vers une fiche"
+            , spanish = todo
+            }
+
+        CardIdArray ->
+            { english = s "Array of links to cards"
+            , french = s "Tableau de liens vers des fiches"
             , spanish = todo
             }
 
@@ -1232,6 +1266,12 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        LocalizedString ->
+            { english = s "Localized string"
+            , french = s "Chaîne de caractères localisée"
+            , spanish = todo
+            }
+
         Logo ->
             { english = s "Logo"
             , french = s "Logo"
@@ -1373,6 +1413,12 @@ getTranslationSet translationId =
         NewCardUseCaseName ->
             { english = s "Name of the use case (e.g. \"Open Knowledge Forums\")"
             , french = s "Nom du cas d'usage (par ex : \"Forums d'Open Knowledge\")"
+            , spanish = todo
+            }
+
+        Number ->
+            { english = s "Number"
+            , french = s "Nombre"
             , spanish = todo
             }
 
@@ -1713,6 +1759,12 @@ to strengthen governance.
             , spanish = todo
             }
 
+        String ->
+            { english = s "String"
+            , french = s "Chaîne de caractères"
+            , spanish = todo
+            }
+
         Tags ->
             { english = s "Tags"
             , french = s "Tags"
@@ -1771,6 +1823,12 @@ to strengthen governance.
             { english = s "Type"
             , french = s "Type"
             , spanish = s "Tipo"
+            }
+
+        UnknownSchemaId schemaId ->
+            { english = s ("Reference to an unknown schema: " ++ schemaId)
+            , french = s ("Référence à un schema inconnu : " ++ schemaId)
+            , spanish = todo
             }
 
         UnknownUser ->
@@ -1893,6 +1951,18 @@ to strengthen governance.
             , spanish = todo
             }
 
+        ValueId ->
+            { english = s "Link to a value"
+            , french = s "Lien vers une valeur"
+            , spanish = todo
+            }
+
+        ValueIdArray ->
+            { english = s "Array of links to valuess"
+            , french = s "Tableau de liens vers des valeurs"
+            , spanish = todo
+            }
+
         VoteBestContributions ->
             { english = s "Vote for the best contributions"
             , french = s "Votez pour les meilleurs contributions"
@@ -1969,8 +2039,20 @@ getManyStrings language keyIds card values =
         getStrings : ValueType -> List String
         getStrings value =
             case value of
-                StringValue value ->
-                    [ value ]
+                BijectiveCardReferenceValue _ ->
+                    []
+
+                BooleanValue _ ->
+                    []
+
+                CardIdArrayValue ids ->
+                    []
+
+                CardIdValue cardId ->
+                    []
+
+                ImagePathValue path ->
+                    []
 
                 LocalizedStringValue valueByLanguage ->
                     case getValueByPreferredLanguage language valueByLanguage of
@@ -1980,20 +2062,11 @@ getManyStrings language keyIds card values =
                         Just value ->
                             [ value ]
 
-                CardIdArrayValue ids ->
-                    []
-
-                CardIdValue cardId ->
-                    []
-
                 NumberValue _ ->
                     []
 
-                BooleanValue _ ->
-                    []
-
-                BijectiveCardReferenceValue _ ->
-                    []
+                StringValue value ->
+                    [ value ]
 
                 ValueIdArrayValue ids ->
                     List.concatMap (\id -> getStrings (ValueIdValue id)) ids
@@ -2037,32 +2110,35 @@ getOneString language keyIds card values =
 getOneStringFromValueType : Language -> Dict String TypedValue -> ValueType -> Maybe String
 getOneStringFromValueType language values valueType =
     case valueType of
-        StringValue value ->
-            Just value
+        BijectiveCardReferenceValue _ ->
+            Nothing
+
+        BooleanValue _ ->
+            Nothing
+
+        CardIdArrayValue _ ->
+            Nothing
+
+        CardIdValue cardId ->
+            Nothing
+
+        ImagePathValue path ->
+            Nothing
 
         LocalizedStringValue valueByLanguage ->
             getValueByPreferredLanguage language valueByLanguage
 
-        CardIdArrayValue _ ->
+        NumberValue _ ->
             Nothing
+
+        StringValue value ->
+            Just value
 
         ValueIdArrayValue [] ->
             Nothing
 
         ValueIdArrayValue (childValue :: _) ->
             getOneStringFromValueType language values (ValueIdValue childValue)
-
-        NumberValue _ ->
-            Nothing
-
-        BooleanValue _ ->
-            Nothing
-
-        BijectiveCardReferenceValue _ ->
-            Nothing
-
-        CardIdValue cardId ->
-            Nothing
 
         ValueIdValue valueId ->
             Dict.get valueId values

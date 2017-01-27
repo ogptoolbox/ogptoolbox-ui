@@ -330,6 +330,33 @@ postValue authentication field =
     let
         ( schemaId, widgetId, encodedValue ) =
             case field of
+                BooleanField bool ->
+                    ( "schema:boolean", "widget:input-checkbox", Encode.bool bool )
+
+                CardIdField string ->
+                    case Urls.urlToId string of
+                        Just cardId ->
+                            ( "schema:card-id", "widget:autocomplete", Encode.string cardId )
+
+                        Nothing ->
+                            -- TODO: Improve errors handling.
+                            ( "schema:string", "widget:input-text", Encode.string string )
+
+                ImageField string ->
+                    ( "schema:uri", "widget:image", Encode.string string )
+
+                InputEmailField string ->
+                    ( "schema:email", "widget:input-email", Encode.string string )
+
+                InputNumberField float ->
+                    ( "schema:number", "widget:input-number", Encode.float float )
+
+                InputTextField string ->
+                    ( "schema:string", "widget:input-text", Encode.string string )
+
+                InputUrlField string ->
+                    ( "schema:uri", "widget:input-url", Encode.string string )
+
                 LocalizedInputTextField language string ->
                     ( "schema:localized-string"
                     , "widget:input-text"
@@ -346,29 +373,8 @@ postValue authentication field =
                         ]
                     )
 
-                InputNumberField float ->
-                    ( "schema:number", "widget:input-number", Encode.float float )
-
-                BooleanField bool ->
-                    ( "schema:boolean", "widget:input-checkbox", Encode.bool bool )
-
-                InputEmailField string ->
-                    ( "schema:email", "widget:input-email", Encode.string string )
-
-                InputUrlField string ->
-                    ( "schema:uri", "widget:input-url", Encode.string string )
-
-                ImageField string ->
-                    ( "schema:uri", "widget:image", Encode.string string )
-
-                CardIdField string ->
-                    case Urls.urlToId string of
-                        Just cardId ->
-                            ( "schema:card-id", "widget:autocomplete", Encode.string cardId )
-
-                        Nothing ->
-                            -- TODO: Improve errors handling.
-                            ( "schema:string", "widget:input-text", Encode.string string )
+                TextareaField string ->
+                    ( "schema:string", "widget:textarea", Encode.string string )
     in
         Http.request
             { method = "POST"

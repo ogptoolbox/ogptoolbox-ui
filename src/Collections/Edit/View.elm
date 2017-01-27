@@ -13,7 +13,6 @@ import Http.Error
 import Image.View exposing (..)
 import I18n
 import Views exposing (..)
-import WebData exposing (..)
 
 
 view : Model -> Html Msg
@@ -23,8 +22,8 @@ view model =
             model.language
 
         alert =
-            case model.webData of
-                Failure httpError ->
+            case model.httpError of
+                Just httpError ->
                     [ div
                         [ class "alert alert-danger"
                         , role "alert"
@@ -38,7 +37,7 @@ view model =
                         ]
                     ]
 
-                _ ->
+                Nothing ->
                     []
     in
         Html.form

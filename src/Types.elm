@@ -118,14 +118,16 @@ type alias DocumentMetadata =
 
 
 type Field
-    = LocalizedInputTextField String String
-    | LocalizedTextareaField String String
-    | InputNumberField Float
-    | BooleanField Bool
-    | InputEmailField String
-    | InputUrlField String
-    | ImageField String
+    = BooleanField Bool
     | CardIdField String
+    | ImageField String
+    | InputEmailField String
+    | InputNumberField Float
+    | InputTextField String
+    | InputUrlField String
+    | LocalizedInputTextField String String
+    | LocalizedTextareaField String String
+    | TextareaField String
 
 
 type alias Flags =
@@ -198,6 +200,7 @@ type ValueType
     | BooleanValue Bool
     | CardIdArrayValue (List String)
     | CardIdValue String
+    | ImagePathValue String
     | LocalizedStringValue (Dict String String)
     | NumberValue Float
     | StringValue String
@@ -268,6 +271,17 @@ getValue values id =
 
         Just value ->
             value
+
+
+initData : DataProxy {}
+initData =
+    { ballots = Dict.empty
+    , cards = Dict.empty
+    , collections = Dict.empty
+    , properties = Dict.empty
+    , users = Dict.empty
+    , values = Dict.empty
+    }
 
 
 initDataId : DataId

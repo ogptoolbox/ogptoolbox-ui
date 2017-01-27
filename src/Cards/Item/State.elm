@@ -1,288 +1,135 @@
 module Cards.Item.State exposing (..)
 
-import Authenticator.Types
+import Authenticator.Types exposing (Authentication)
 import Cards.Item.Types exposing (..)
-import Dict exposing (Dict)
 import Http
 import I18n
 import Ports
 import Requests
-import Task
 import Types exposing (..)
 import Urls
-import WebData exposing (..)
 
 
 init : Model
 init =
-    { displayUseItModal = False
-    , editedProperty = Nothing
-    , webData = NotAsked
+    { authentication = Nothing
+    , cardId = ""
+    , data = initData
+    , displayUseItModal = False
+    , editedKeyId = Nothing
+    , httpError = Nothing
+    , language = I18n.English
+    , sameKeyPropertyIds = []
+    , selectedField = LocalizedInputTextField "en" ""
     }
 
 
-update :
-    InternalMsg
-    -> Model
-    -> Maybe Authenticator.Types.Authentication
-    -> I18n.Language
-    -> ( Model, Cmd Msg )
-update msg ({ editedProperty } as model) authentication language =
+update : InternalMsg -> Model -> ( Model, Cmd Msg )
+update msg model =
     case msg of
         CloseEditPropertiesModal ->
-            let
-                newModel =
-                    { model | editedProperty = Nothing }
-
-                webData =
-                    case getData model.webData of
-                        Nothing ->
-                            Debug.crash "CloseEditPropertiesModal: cannot happen"
-
-                        Just webData ->
-                            webData
-
-                cmd =
-                    Requests.getCard authentication webData.data.id
-                        |> Http.send (ForSelf << GotCard)
-            in
-                ( newModel, cmd )
+            ( { model
+                | editedKeyId = Nothing
+                , httpError = Nothing
+                , sameKeyPropertyIds = []
+              }
+            , Requests.getCard model.authentication model.cardId
+                |> Http.send (ForSelf << GotCard)
+            )
 
         DisplayUseItModal displayUseItModal ->
             ( { model | displayUseItModal = displayUseItModal }
             , Cmd.none
             )
 
-        GotCard response ->
-            case response of
-                Result.Err err ->
-                    let
-                        _ =
-                            Debug.log "Cards.Item.State GotCard Error" err
-                    in
-                        ( { model | webData = Failure err }, Cmd.none )
+        GotCard (Err httpError) ->
+            ( { model | httpError = Just httpError }, Cmd.none )
 
-                Result.Ok body ->
-                    let
-                        card =
-                            getCard body.data.cards body.data.id
+        GotCard (Ok body) ->
+            let
+                data =
+                    mergeData body.data model.data
 
-                        newModel =
-                            { model | webData = Data (Loaded body) }
+                card =
+                    getCard data.cards body.data.id
 
-                        cmd =
-                            Ports.setDocumentMetadata
-                                { description =
-                                    I18n.getOneString language descriptionKeys card body.data.values
-                                        |> Maybe.withDefault (I18n.translate language I18n.MissingDescription)
-                                , imageUrl =
-                                    Urls.imageOrAppLogoFullUrl
-                                        language
-                                        body.data.id
-                                        body.data.cards
-                                        body.data.values
-                                , title = I18n.getName language card body.data.values
-                                }
-                    in
-                        ( newModel, cmd )
+                language =
+                    model.language
 
-        GotProperties response ->
-            case response of
-                Result.Err err ->
-                    let
-                        _ =
-                            Debug.log "Cards.Item.State GotProperties Error" err
-                    in
-                        ( model, Cmd.none )
+                cmd =
+                    Ports.setDocumentMetadata
+                        { description =
+                            I18n.getOneString language descriptionKeys card data.values
+                                |> Maybe.withDefault (I18n.translate language I18n.MissingDescription)
+                        , imageUrl =
+                            Urls.imageOrAppLogoFullUrl
+                                language
+                                card.id
+                                data.cards
+                                data.values
+                        , title = I18n.getName language card data.values
+                        }
+            in
+                ( { model | data = data }, cmd )
 
-                Result.Ok { data } ->
-                    let
-                        newEditedProperty =
-                            Maybe.map
-                                (\editedProperty ->
-                                    { editedProperty
-                                        | ballots = data.ballots
-                                        , cards = Dict.union data.cards editedProperty.cards
-                                        , properties = data.properties
-                                        , propertyIds = data.ids
-                                        , values = Dict.union data.values editedProperty.values
-                                    }
-                                )
-                                editedProperty
+        GotProperties (Err httpError) ->
+            ( { model | httpError = Just httpError }, Cmd.none )
 
-                        newModel =
-                            { model | editedProperty = newEditedProperty }
-                    in
-                        ( newModel, Cmd.none )
+        GotProperties (Ok body) ->
+            ( { model
+                | data = mergeData body.data model.data
+                , sameKeyPropertyIds = body.data.ids
+              }
+            , Cmd.none
+            )
 
         LoadCard cardId ->
-            let
-                newModel =
-                    { model | webData = Data (Loading Nothing) }
-
-                cmd =
-                    Requests.getCard authentication cardId
-                        |> Http.send (ForSelf << GotCard)
-            in
-                ( newModel, cmd )
+            ( { model
+                | cardId = cardId
+                , httpError = Nothing
+              }
+            , Requests.getCard model.authentication cardId
+                |> Http.send (ForSelf << GotCard)
+            )
 
         LoadProperties cardId keyId ->
-            let
-                newEditedProperty =
-                    Just
-                        { ballots = Dict.empty
-                        , cardId = cardId
-                        , cards = Dict.empty
-                        , keyId = keyId
-                        , properties = Dict.empty
-                        , propertyIds = []
-                        , selectedField = LocalizedInputTextField (I18n.iso639_1FromLanguage language) ""
-                        , values = Dict.empty
-                        }
+            ( { model
+                | editedKeyId = Just keyId
+                , httpError = Nothing
+                , sameKeyPropertyIds = []
+              }
+            , Requests.getObjectProperties model.authentication cardId keyId
+                |> Http.send (ForSelf << GotProperties)
+            )
 
-                newModel =
-                    { model | editedProperty = newEditedProperty }
+        PropertyPosted (Err httpError) ->
+            ( { model | httpError = Just httpError }, Cmd.none )
 
-                cmd =
-                    Requests.getObjectProperties authentication cardId keyId
-                        |> Http.send (ForSelf << GotProperties)
-            in
-                ( newModel, cmd )
+        PropertyPosted (Ok body) ->
+            ( { model
+                | data = mergeData body.data model.data
+                , sameKeyPropertyIds = body.data.id :: model.sameKeyPropertyIds
+                , selectedField = LocalizedInputTextField (I18n.iso639_1FromLanguage model.language) ""
+              }
+            , Cmd.none
+            )
 
-        PropertyPosted (Result.Err err) ->
-            let
-                _ =
-                    Debug.log "Cards.Item.State PropertyPosted Error" err
-            in
-                ( model, Cmd.none )
+        RatingPosted (Err httpError) ->
+            ( { model | httpError = Just httpError }, Cmd.none )
 
-        PropertyPosted (Result.Ok { data }) ->
-            let
-                newEditedProperty =
-                    Maybe.map
-                        (\editedProperty ->
-                            let
-                                newBallots =
-                                    Dict.union data.ballots editedProperty.ballots
-
-                                newCards =
-                                    Dict.union data.cards editedProperty.cards
-
-                                newPropertyIds =
-                                    data.id :: editedProperty.propertyIds
-
-                                newProperties =
-                                    Dict.union data.properties editedProperty.properties
-
-                                newValues =
-                                    Dict.union data.values editedProperty.values
-                            in
-                                { editedProperty
-                                    | ballots = newBallots
-                                    , cards = newCards
-                                    , properties = newProperties
-                                    , propertyIds = newPropertyIds
-                                    , selectedField = LocalizedInputTextField (I18n.iso639_1FromLanguage language) ""
-                                    , values = newValues
-                                }
-                        )
-                        editedProperty
-
-                webData =
-                    case getData model.webData of
-                        Nothing ->
-                            Debug.crash "SubmitValueSuccess: cannot happen: no webData"
-
-                        Just webData ->
-                            webData
-
-                existingData =
-                    webData.data
-
-                newData =
-                    case editedProperty of
-                        Just editedProperty ->
-                            let
-                                newBallots =
-                                    Dict.union data.ballots existingData.ballots
-
-                                newCards =
-                                    Dict.union data.cards existingData.cards
-
-                                newProperties =
-                                    Dict.union data.properties existingData.properties
-
-                                newValues =
-                                    Dict.union data.values existingData.values
-                            in
-                                { existingData
-                                    | ballots = newBallots
-                                    , cards = newCards
-                                    , properties = newProperties
-                                    , values = newValues
-                                }
-
-                        Nothing ->
-                            Debug.crash "SubmitValueSuccess: cannot happen: no editedProperty"
-
-                newModel =
-                    { model
-                        | editedProperty = newEditedProperty
-                        , webData = Data (Loaded { webData | data = newData })
-                    }
-            in
-                ( newModel, Cmd.none )
-
-        RatingPosted (Result.Err err) ->
-            let
-                _ =
-                    Debug.log "Cards.Item.State RatingPosted Error" err
-            in
-                ( model, Cmd.none )
-
-        RatingPosted (Result.Ok { data }) ->
-            let
-                newEditedProperty =
-                    Maybe.map
-                        (\editedProperty ->
-                            let
-                                newBallots =
-                                    Dict.union data.ballots editedProperty.ballots
-
-                                newCards =
-                                    Dict.union data.cards editedProperty.cards
-
-                                newProperties =
-                                    Dict.union data.properties editedProperty.properties
-
-                                newValues =
-                                    Dict.union data.values editedProperty.values
-                            in
-                                { editedProperty
-                                    | ballots = newBallots
-                                    , cards = newCards
-                                    , properties = newProperties
-                                    , values = newValues
-                                }
-                        )
-                        editedProperty
-
-                newModel =
-                    { model | editedProperty = newEditedProperty }
-            in
-                ( newModel, Cmd.none )
+        RatingPosted (Ok body) ->
+            ( { model
+                | data = mergeData body.data model.data
+              }
+            , Cmd.none
+            )
 
         SelectField field ->
-            let
-                newEditedProperty =
-                    Maybe.map
-                        (\editedProperty -> { editedProperty | selectedField = field })
-                        editedProperty
-
-                newModel =
-                    { model | editedProperty = newEditedProperty }
-            in
-                ( newModel, Cmd.none )
+            ( { model
+                | selectedField = field
+              }
+            , Cmd.none
+            )
 
         ShareOnFacebook url ->
             ( model, Ports.shareOnFacebook url )
@@ -297,47 +144,46 @@ update msg ({ editedProperty } as model) authentication language =
             ( model, Ports.shareOnTwitter url )
 
         SubmitValue selectedField ->
+            ( model
+            , Requests.postValue model.authentication selectedField
+                |> Http.send (ForSelf << PropertyPosted)
+            )
+
+        ValuePosted (Err httpError) ->
+            ( { model | httpError = Just httpError }, Cmd.none )
+
+        ValuePosted (Ok body) ->
             let
-                ( cardId, keyId ) =
-                    case editedProperty of
+                editedKeyId =
+                    case model.editedKeyId of
+                        Just editedKeyId ->
+                            editedKeyId
+
                         Nothing ->
-                            Debug.crash "SubmitValue: cannot happen"
-
-                        Just { cardId, keyId } ->
-                            ( cardId, keyId )
-
-                task =
-                    Http.toTask (Requests.postValue authentication selectedField)
-                        |> Task.andThen
-                            (\dataIdBody ->
-                                Http.toTask
-                                    (Requests.postProperty
-                                        authentication
-                                        cardId
-                                        keyId
-                                        dataIdBody.data.id
-                                    )
-                            )
-
-                cmd =
-                    Task.attempt (ForSelf << PropertyPosted) task
+                            Debug.crash "Cards.Item.State update ValuePosted: model.editedKeyId == Nothing"
             in
-                ( model, cmd )
+                ( { model | data = mergeData body.data model.data }
+                , Requests.postProperty model.authentication model.cardId editedKeyId body.data.id
+                    |> Http.send (ForSelf << PropertyPosted)
+                )
 
         VotePropertyDown propertyId ->
-            let
-                cmd =
-                    Requests.rateProperty authentication propertyId -1
-                        |> Http.send RatingPosted
-                        |> Cmd.map ForSelf
-            in
-                ( model, cmd )
+            ( model
+            , Requests.rateProperty model.authentication propertyId -1
+                |> Http.send (ForSelf << RatingPosted)
+            )
 
         VotePropertyUp propertyId ->
-            let
-                cmd =
-                    Requests.rateProperty authentication propertyId 1
-                        |> Http.send RatingPosted
-                        |> Cmd.map ForSelf
-            in
-                ( model, cmd )
+            ( model
+            , Requests.rateProperty model.authentication propertyId 1
+                |> Http.send (ForSelf << RatingPosted)
+            )
+
+
+urlUpdate : Maybe Authentication -> I18n.Language -> String -> Model -> ( Model, Cmd Msg )
+urlUpdate authentication language cardId model =
+    update (LoadCard cardId)
+        { init
+            | authentication = authentication
+            , language = language
+        }

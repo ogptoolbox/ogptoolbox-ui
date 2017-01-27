@@ -21,13 +21,13 @@ type alias Model =
     , authenticatorModel : Authenticator.Types.Model
     , authenticatorRoute : Maybe Authenticator.Routes.Route
     , cardModel : Cards.Item.Types.Model
+    , cardNewModel : Cards.New.Types.Model
     , collectionEditModel : Collections.Edit.Types.Model
     , collectionModel : Collections.Item.Types.Model
     , collectionsModel : Collections.Index.Types.Model
     , displayNewCardModal : Bool
     , location : Navigation.Location
     , navigatorLanguage : Maybe I18n.Language
-    , newCardModel : Cards.New.Types.Model
     , route : Routes.Route
     , searchInputValue : String
     , searchModel : Search.Types.Model
