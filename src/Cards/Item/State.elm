@@ -6,6 +6,7 @@ import Http
 import I18n
 import Ports
 import Requests
+import Task
 import Types exposing (..)
 import Urls
 
@@ -22,6 +23,11 @@ init =
     , sameKeyPropertyIds = []
     , selectedField = LocalizedInputTextField "en" ""
     }
+
+
+setAuthentication : Maybe Authentication -> Model -> Model
+setAuthentication authentication model =
+    { model | authentication = authentication }
 
 
 update : InternalMsg -> Model -> ( Model, Cmd Msg )
@@ -92,15 +98,24 @@ update msg model =
                 |> Http.send (ForSelf << GotCard)
             )
 
-        LoadProperties cardId keyId ->
-            ( { model
-                | editedKeyId = Just keyId
-                , httpError = Nothing
-                , sameKeyPropertyIds = []
-              }
-            , Requests.getObjectProperties model.authentication cardId keyId
-                |> Http.send (ForSelf << GotProperties)
-            )
+        LoadProperties keyId ->
+            case model.authentication of
+                Just _ ->
+                    ( { model
+                        | editedKeyId = Just keyId
+                        , httpError = Nothing
+                        , sameKeyPropertyIds = []
+                      }
+                    , Requests.getObjectProperties model.authentication model.cardId keyId
+                        |> Http.send (ForSelf << GotProperties)
+                    )
+
+                Nothing ->
+                    ( model
+                    , Task.perform
+                        (\_ -> ForParent <| RequireSignIn <| LoadProperties keyId)
+                        (Task.succeed ())
+                    )
 
         PropertyPosted (Err httpError) ->
             ( { model | httpError = Just httpError }, Cmd.none )

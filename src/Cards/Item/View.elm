@@ -159,7 +159,7 @@ viewCardContent model card =
                         , td []
                             [ button
                                 [ class "btn btn-default btn-xs btn-action"
-                                , onClick (ForSelf (LoadProperties card.id keyId))
+                                , onClick (ForSelf (LoadProperties keyId))
                                 , type_ "button"
                                 ]
                                 [ text (I18n.translate language (I18n.Edit)) ]
@@ -189,7 +189,7 @@ viewCardContent model card =
                             [ attribute "data-target" "#edit-content"
                             , attribute "data-toggle" "modal"
                             , class "btn btn-default btn-xs btn-action4"
-                            , onClick (ForSelf (LoadProperties card.id "name"))
+                            , onClick (ForSelf (LoadProperties "name"))
                             , style [ ( "margin-left", "15px" ) ]
                             , type_ "button"
                             ]
@@ -243,7 +243,7 @@ viewCardContent model card =
                                                 [ p [] [ text (I18n.translate language (I18n.MissingDescription)) ]
                                                 , button
                                                     [ class "button call-add"
-                                                    , onClick (ForSelf (LoadProperties card.id "description"))
+                                                    , onClick (ForSelf (LoadProperties "description"))
                                                     ]
                                                     [ text (I18n.translate language (I18n.CallToActionForDescription cardType)) ]
                                                 ]
@@ -261,7 +261,7 @@ viewCardContent model card =
                                                         [ attribute "data-target" "#edit-content"
                                                         , attribute "data-toggle" "modal"
                                                         , class "btn btn-default btn-xs btn-action"
-                                                        , onClick (ForSelf (LoadProperties card.id "description"))
+                                                        , onClick (ForSelf (LoadProperties "description"))
                                                         , type_ "button"
                                                         ]
                                                         [ text (I18n.translate language (I18n.Edit)) ]
@@ -333,7 +333,7 @@ viewCardContent model card =
                                                 --     [ bestOf usagesKeys ]
                                                 [ button
                                                     [ class "btn btn-default btn-xs btn-action"
-                                                    , onClick (ForSelf (LoadProperties card.id "use-cases"))
+                                                    , onClick (ForSelf (LoadProperties "use-cases"))
                                                     , type_ "button"
                                                     ]
                                                     [ text (I18n.translate language (I18n.Add)) ]
@@ -348,7 +348,7 @@ viewCardContent model card =
                                                     [ p [] [ text "No use case listed for this organization yet." ]
                                                     , button
                                                         [ class "button call-add"
-                                                        , onClick (ForSelf (LoadProperties card.id "use-cases"))
+                                                        , onClick (ForSelf (LoadProperties "use-cases"))
                                                         ]
                                                         [ text "+ Add a use case" ]
                                                     ]
@@ -387,7 +387,7 @@ viewCardContent model card =
                                                 --     [ bestOf usedForKeys ]
                                                 [ button
                                                     [ class "btn btn-default btn-xs btn-action"
-                                                    , onClick (ForSelf (LoadProperties card.id "used-for"))
+                                                    , onClick (ForSelf (LoadProperties "used-for"))
                                                     , type_ "button"
                                                     ]
                                                     [ text (I18n.translate language (I18n.Add)) ]
@@ -402,7 +402,7 @@ viewCardContent model card =
                                                     [ p [] [ text "No use case listed for this tool yet." ]
                                                     , button
                                                         [ class "button call-add"
-                                                        , onClick (ForSelf (LoadProperties card.id "used-for"))
+                                                        , onClick (ForSelf (LoadProperties "used-for"))
                                                         ]
                                                         [ text "+ Add a use case" ]
                                                     ]
@@ -441,7 +441,7 @@ viewCardContent model card =
                                                 --     [ bestOf usesKeys ]
                                                 [ button
                                                     [ class "btn btn-default btn-xs btn-action"
-                                                    , onClick (ForSelf (LoadProperties card.id "uses"))
+                                                    , onClick (ForSelf (LoadProperties "uses"))
                                                     , type_ "button"
                                                     ]
                                                     [ text (I18n.translate language (I18n.Add)) ]
@@ -465,7 +465,7 @@ viewCardContent model card =
                                                     [ p [] [ text "No tool listed for this use case yet." ]
                                                     , button
                                                         [ class "button call-add"
-                                                        , onClick (ForSelf (LoadProperties card.id "uses"))
+                                                        , onClick (ForSelf (LoadProperties "uses"))
                                                         ]
                                                         [ text "+ Add a tool" ]
                                                     ]
@@ -504,7 +504,7 @@ viewCardContent model card =
                                                 --     [ bestOf usedByKeys ]
                                                 [ button
                                                     [ class "btn btn-default btn-xs btn-action"
-                                                    , onClick (ForSelf (LoadProperties card.id "used-by"))
+                                                    , onClick (ForSelf (LoadProperties "used-by"))
                                                     , type_ "button"
                                                     ]
                                                     [ text (I18n.translate language (I18n.Add)) ]
@@ -518,7 +518,7 @@ viewCardContent model card =
                                                     [ p [] [ text "No organization listed for this tool yet." ]
                                                     , button
                                                         [ class "button call-add"
-                                                        , onClick (ForSelf (LoadProperties card.id "used-by"))
+                                                        , onClick (ForSelf (LoadProperties "used-by"))
                                                         ]
                                                         [ text "+ Add an organization" ]
                                                     ]
@@ -1050,7 +1050,7 @@ viewSidebar model card =
                                     div []
                                         [ button
                                             [ class "button call-add pull-right"
-                                            , onClick (ForSelf (LoadProperties card.id "logo"))
+                                            , onClick (ForSelf (LoadProperties "logo"))
                                             ]
                                             [ text (I18n.translate language (I18n.Edit)) ]
                                         , img [ alt "Logo", src url ] []
@@ -1060,7 +1060,7 @@ viewSidebar model card =
                                     div [ class "call-container" ]
                                         [ button
                                             [ class "button call-add"
-                                            , onClick (ForSelf (LoadProperties card.id "logo"))
+                                            , onClick (ForSelf (LoadProperties "logo"))
                                             ]
                                             [ text "+ Add a logo" ]
                                         ]
@@ -1077,7 +1077,7 @@ viewSidebar model card =
                                        -- ,
                                        tr
                                         [ class "editable"
-                                        , onClick (ForSelf (LoadProperties card.id "license"))
+                                        , onClick (ForSelf (LoadProperties "license"))
                                         ]
                                         [ td [ class "table-label" ]
                                             [ text (I18n.translate language I18n.License) ]
@@ -1100,7 +1100,7 @@ viewSidebar model card =
                                                     , td []
                                                         [ button
                                                             [ class "button call-add"
-                                                            , onClick (ForSelf (LoadProperties card.id "website"))
+                                                            , onClick (ForSelf (LoadProperties "website"))
                                                             ]
                                                             [ text "+ Add a link" ]
                                                         ]
@@ -1109,7 +1109,7 @@ viewSidebar model card =
                                             Just url ->
                                                 tr
                                                     [ class "editable"
-                                                    , onClick (ForSelf (LoadProperties card.id "website"))
+                                                    , onClick (ForSelf (LoadProperties "website"))
                                                     ]
                                                     [ firstTd
                                                     , td [] [ aExternal [ href url ] [ text url ] ]
@@ -1167,7 +1167,7 @@ viewSidebar model card =
                                             , div [ class "col-xs-5 text-right up7" ]
                                                 [ button
                                                     [ class "btn btn-default btn-xs btn-action"
-                                                    , onClick (ForSelf (LoadProperties card.id "tags"))
+                                                    , onClick (ForSelf (LoadProperties "tags"))
                                                     , type_ "button"
                                                     ]
                                                     [ text (I18n.translate language (I18n.Edit)) ]

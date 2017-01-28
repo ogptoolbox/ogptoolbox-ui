@@ -5,7 +5,6 @@ import Authenticator.Routes exposing (..)
 import Authenticator.State
 import Authenticator.Types
 import Cards.Item.State
-import Cards.Item.Types
 import Collections.Item.State
 import Collections.Edit.State
 import Collections.Index.State
@@ -163,7 +162,8 @@ update msg model =
             CardMsg childMsg ->
                 let
                     ( cardModel, childCmd ) =
-                        Cards.Item.State.update childMsg model.cardModel
+                        Cards.Item.State.setAuthentication model.authentication model.cardModel
+                            |> Cards.Item.State.update childMsg
                 in
                     ( { model | cardModel = cardModel }
                     , Cmd.map translateCardMsg childCmd
@@ -222,6 +222,12 @@ update msg model =
 
             NoOp ->
                 ( model, Cmd.none )
+
+            RequireSignInForCard cardCompletionMsg ->
+                if model.authentication == Nothing then
+                    update (StartAuthenticator Nothing (Just (CardMsg cardCompletionMsg)) SignInRoute) model
+                else
+                    update (CardMsg cardCompletionMsg) model
 
             Search ->
                 let

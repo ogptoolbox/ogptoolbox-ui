@@ -8,6 +8,7 @@ import Types exposing (..)
 
 type ExternalMsg
     = Navigate String
+    | RequireSignIn InternalMsg
 
 
 type InternalMsg
@@ -16,7 +17,7 @@ type InternalMsg
     | GotCard (Result Http.Error DataIdBody)
     | GotProperties (Result Http.Error DataIdsBody)
     | LoadCard String
-    | LoadProperties String String
+    | LoadProperties String
     | PropertyPosted (Result Http.Error DataIdBody)
     | RatingPosted (Result Http.Error DataIdBody)
     | SelectField Field
@@ -51,6 +52,7 @@ type Msg
 type alias MsgTranslation parentMsg =
     { onInternalMsg : InternalMsg -> parentMsg
     , onNavigate : String -> parentMsg
+    , onRequireSignIn : InternalMsg -> parentMsg
     }
 
 
@@ -64,10 +66,13 @@ navigate path =
 
 
 translateMsg : MsgTranslation parentMsg -> MsgTranslator parentMsg
-translateMsg { onInternalMsg, onNavigate } msg =
+translateMsg { onInternalMsg, onRequireSignIn, onNavigate } msg =
     case msg of
         ForParent (Navigate path) ->
             onNavigate path
+
+        ForParent (RequireSignIn completionMsg) ->
+            onRequireSignIn completionMsg
 
         ForSelf internalMsg ->
             onInternalMsg internalMsg

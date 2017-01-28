@@ -51,6 +51,7 @@ type Msg
     | NavigateBack
     | NewCardMsg Cards.New.Types.InternalMsg
     | NoOp
+    | RequireSignInForCard Cards.Item.Types.InternalMsg
     | Search
     | SearchInputChanged String
     | SearchMsg Search.Types.InternalMsg
@@ -82,6 +83,7 @@ translateCardMsg =
     Cards.Item.Types.translateMsg
         { onInternalMsg = CardMsg
         , onNavigate = Navigate
+        , onRequireSignIn = RequireSignInForCard
         }
 
 
