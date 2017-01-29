@@ -4,6 +4,7 @@ import Authenticator.Types exposing (Authentication)
 import Http
 import I18n
 import Types exposing (..)
+import Values.New.Types
 
 
 type ExternalMsg
@@ -17,16 +18,15 @@ type InternalMsg
     | GotCard (Result Http.Error DataIdBody)
     | GotProperties (Result Http.Error DataIdsBody)
     | LoadCard String
+    | NewValueMsg Values.New.Types.InternalMsg
     | LoadProperties String
-    | PropertyPosted (Result Http.Error DataIdBody)
+    | PropertyUpserted (Result Http.Error DataIdBody)
     | RatingPosted (Result Http.Error DataIdBody)
-    | SelectField Field
     | ShareOnFacebook String
     | ShareOnGooglePlus String
     | ShareOnLinkedIn String
     | ShareOnTwitter String
-    | SubmitValue Field
-    | ValuePosted (Result Http.Error DataIdBody)
+    | ValueUpserted DataId
     | VotePropertyDown String
     | VotePropertyUp String
 
@@ -39,8 +39,8 @@ type alias Model =
     , editedKeyId : Maybe String
     , httpError : Maybe Http.Error
     , language : I18n.Language
+    , newValueModel : Values.New.Types.Model
     , sameKeyPropertyIds : List String
-    , selectedField : Field
     }
 
 
@@ -76,3 +76,11 @@ translateMsg { onInternalMsg, onRequireSignIn, onNavigate } msg =
 
         ForSelf internalMsg ->
             onInternalMsg internalMsg
+
+
+translateNewValueMsg : Values.New.Types.MsgTranslator Msg
+translateNewValueMsg =
+    Values.New.Types.translateMsg
+        { onInternalMsg = ForSelf << NewValueMsg
+        , onValueUpserted = ForSelf << ValueUpserted
+        }

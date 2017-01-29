@@ -84,6 +84,7 @@ subscriptions model =
     -- constructor.
     Sub.batch
         [ Sub.map NewCardMsg (Cards.New.State.subscriptions model.cardNewModel)
+        , Sub.map CardMsg (Cards.Item.State.subscriptions model.cardModel)
         , Sub.map EditCollectionMsg (Collections.Edit.State.subscriptions model.collectionEditModel)
         , Sub.map SearchMsg (Search.State.subscriptions model.searchModel)
         ]

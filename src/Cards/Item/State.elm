@@ -9,6 +9,7 @@ import Requests
 import Task
 import Types exposing (..)
 import Urls
+import Values.New.State
 
 
 init : Model
@@ -20,14 +21,19 @@ init =
     , editedKeyId = Nothing
     , httpError = Nothing
     , language = I18n.English
+    , newValueModel = Values.New.State.init
     , sameKeyPropertyIds = []
-    , selectedField = LocalizedInputTextField "en" ""
     }
 
 
 setAuthentication : Maybe Authentication -> Model -> Model
 setAuthentication authentication model =
     { model | authentication = authentication }
+
+
+subscriptions : Model -> Sub InternalMsg
+subscriptions model =
+    Sub.map NewValueMsg (Values.New.State.subscriptions model.newValueModel)
 
 
 update : InternalMsg -> Model -> ( Model, Cmd Msg )
@@ -117,14 +123,28 @@ update msg model =
                         (Task.succeed ())
                     )
 
-        PropertyPosted (Err httpError) ->
+        NewValueMsg childMsg ->
+            let
+                ( newValueModel, childCmd ) =
+                    model.newValueModel
+                        |> Values.New.State.setContext model.authentication model.language
+                        |> Values.New.State.update childMsg
+            in
+                ( { model | newValueModel = newValueModel }
+                , Cmd.map translateNewValueMsg childCmd
+                )
+
+        PropertyUpserted (Err httpError) ->
             ( { model | httpError = Just httpError }, Cmd.none )
 
-        PropertyPosted (Ok body) ->
+        PropertyUpserted (Ok body) ->
             ( { model
                 | data = mergeData body.data model.data
-                , sameKeyPropertyIds = body.data.id :: model.sameKeyPropertyIds
-                , selectedField = LocalizedInputTextField (I18n.iso639_1FromLanguage model.language) ""
+                , sameKeyPropertyIds =
+                    if List.member body.data.id model.sameKeyPropertyIds then
+                        model.sameKeyPropertyIds
+                    else
+                        body.data.id :: model.sameKeyPropertyIds
               }
             , Cmd.none
             )
@@ -135,13 +155,6 @@ update msg model =
         RatingPosted (Ok body) ->
             ( { model
                 | data = mergeData body.data model.data
-              }
-            , Cmd.none
-            )
-
-        SelectField field ->
-            ( { model
-                | selectedField = field
               }
             , Cmd.none
             )
@@ -158,16 +171,7 @@ update msg model =
         ShareOnTwitter url ->
             ( model, Ports.shareOnTwitter url )
 
-        SubmitValue selectedField ->
-            ( model
-            , Requests.postValue model.authentication selectedField
-                |> Http.send (ForSelf << PropertyPosted)
-            )
-
-        ValuePosted (Err httpError) ->
-            ( { model | httpError = Just httpError }, Cmd.none )
-
-        ValuePosted (Ok body) ->
+        ValueUpserted data ->
             let
                 editedKeyId =
                     case model.editedKeyId of
@@ -177,9 +181,9 @@ update msg model =
                         Nothing ->
                             Debug.crash "Cards.Item.State update ValuePosted: model.editedKeyId == Nothing"
             in
-                ( { model | data = mergeData body.data model.data }
-                , Requests.postProperty model.authentication model.cardId editedKeyId body.data.id
-                    |> Http.send (ForSelf << PropertyPosted)
+                ( { model | data = mergeData data model.data }
+                , Requests.postProperty model.authentication model.cardId editedKeyId data.id
+                    |> Http.send (ForSelf << PropertyUpserted)
                 )
 
         VotePropertyDown propertyId ->

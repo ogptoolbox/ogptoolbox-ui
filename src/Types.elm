@@ -200,10 +200,12 @@ type ValueType
     | BooleanValue Bool
     | CardIdArrayValue (List String)
     | CardIdValue String
+    | EmailValue String
     | ImagePathValue String
     | LocalizedStringValue (Dict String String)
     | NumberValue Float
     | StringValue String
+    | UrlValue String
     | ValueIdArrayValue (List String)
     | ValueIdValue String
     | WrongValue String String

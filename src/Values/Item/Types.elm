@@ -65,6 +65,9 @@ valueTypeToTypeLabel language valueType =
             CardIdValue _ ->
                 I18n.CardId
 
+            EmailValue _ ->
+                I18n.Email
+
             ImagePathValue _ ->
                 I18n.Image
 
@@ -76,6 +79,9 @@ valueTypeToTypeLabel language valueType =
 
             StringValue _ ->
                 I18n.String
+
+            UrlValue _ ->
+                I18n.Url
 
             ValueIdArrayValue _ ->
                 I18n.ValueIdArray

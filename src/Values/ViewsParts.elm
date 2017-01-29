@@ -80,6 +80,9 @@ viewValueTypeLineContent language navigate data showDetails valueType =
         CardIdValue cardId ->
             viewCardIdLine language navigate data cardId
 
+        EmailValue str ->
+            aIfIsUrl [] str
+
         ImagePathValue path ->
             figure
                 [ class "figure text-xs-center" ]
@@ -112,6 +115,9 @@ viewValueTypeLineContent language navigate data showDetails valueType =
             text (toString float)
 
         StringValue str ->
+            aIfIsUrl [] str
+
+        UrlValue str ->
             aIfIsUrl [] str
 
         ValueIdArrayValue childValues ->

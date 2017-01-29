@@ -14,6 +14,7 @@ import Set
 import String
 import Types exposing (..)
 import Urls
+import Values.New.View
 import Values.ViewsParts exposing (viewValueTypeLine)
 import Views exposing (viewCardListItem, viewLoading)
 
@@ -565,125 +566,113 @@ viewEditPropertyModal model card editedKeyId =
         values =
             data.values
 
-        viewField =
-            let
-                selectField tagger =
-                    \inputString -> ForSelf (SelectField (tagger inputString))
-
-                onInputSelectField tagger =
-                    onInput (selectField tagger)
-            in
-                case model.selectedField of
-                    BooleanField bool ->
-                        input
-                            [ class "form-control"
-                            , onCheck (selectField BooleanField)
-                            , type_ "checkbox"
-                            ]
-                            []
-
-                    CardIdField string ->
-                        -- TODO replace with autocomplete
-                        input
-                            [ class "form-control"
-                            , onInputSelectField CardIdField
-                            , type_ "text"
-                            , value string
-                            ]
-                            []
-
-                    InputEmailField string ->
-                        input
-                            [ class "form-control"
-                            , onInputSelectField InputEmailField
-                            , type_ "email"
-                            , value string
-                            ]
-                            []
-
-                    InputNumberField float ->
-                        input
-                            [ class "form-control"
-                            , onInput
-                                (selectField
-                                    (\inputString ->
-                                        (case String.toFloat inputString of
-                                            Ok float ->
-                                                InputNumberField float
-
-                                            Err _ ->
-                                                model.selectedField
-                                        )
-                                    )
-                                )
-                            , step "any"
-                            , type_ "number"
-                            , value (toString float)
-                            ]
-                            []
-
-                    InputTextField string ->
-                        input
-                            [ class "form-control"
-                            , onInputSelectField InputTextField
-                            , type_ "text"
-                            , value string
-                            ]
-                            []
-
-                    InputUrlField string ->
-                        input
-                            [ class "form-control"
-                            , onInputSelectField InputUrlField
-                            , type_ "url"
-                            , value string
-                            ]
-                            []
-
-                    ImageField string ->
-                        input
-                            [ class "form-control"
-                            , onInputSelectField ImageField
-                            , type_ "url"
-                            , value string
-                            ]
-                            []
-
-                    LocalizedInputTextField _ string ->
-                        input
-                            [ class "form-control"
-                            , onInput
-                                (\inputString ->
-                                    ForSelf
-                                        (SelectField
-                                            (LocalizedInputTextField (I18n.iso639_1FromLanguage language) inputString)
-                                        )
-                                )
-                            , type_ "text"
-                            , value string
-                            ]
-                            []
-
-                    LocalizedTextareaField _ string ->
-                        textarea
-                            [ class "form-control"
-                            , onInput
-                                (\inputString ->
-                                    ForSelf
-                                        (SelectField
-                                            (LocalizedTextareaField (I18n.iso639_1FromLanguage language) inputString)
-                                        )
-                                )
-                            ]
-                            [ text string ]
-
-                    TextareaField string ->
-                        input
-                            [ class "form-control"
-                            , onInputSelectField InputTextField
-                            ]
-                            [ text string ]
-
+        -- viewField =
+        --     let
+        --         selectField tagger =
+        --             \inputString -> ForSelf (SelectField (tagger inputString))
+        --         onInputSelectField tagger =
+        --             onInput (selectField tagger)
+        --     in
+        --         case model.selectedField of
+        --             BooleanField bool ->
+        --                 input
+        --                     [ class "form-control"
+        --                     , onCheck (selectField BooleanField)
+        --                     , type_ "checkbox"
+        --                     ]
+        --                     []
+        --             CardIdField string ->
+        --                 -- TODO replace with autocomplete
+        --                 input
+        --                     [ class "form-control"
+        --                     , onInputSelectField CardIdField
+        --                     , type_ "text"
+        --                     , value string
+        --                     ]
+        --                     []
+        --             InputEmailField string ->
+        --                 input
+        --                     [ class "form-control"
+        --                     , onInputSelectField InputEmailField
+        --                     , type_ "email"
+        --                     , value string
+        --                     ]
+        --                     []
+        --             InputNumberField float ->
+        --                 input
+        --                     [ class "form-control"
+        --                     , onInput
+        --                         (selectField
+        --                             (\inputString ->
+        --                                 (case String.toFloat inputString of
+        --                                     Ok float ->
+        --                                         InputNumberField float
+        --                                     Err _ ->
+        --                                         model.selectedField
+        --                                 )
+        --                             )
+        --                         )
+        --                     , step "any"
+        --                     , type_ "number"
+        --                     , value (toString float)
+        --                     ]
+        --                     []
+        --             InputTextField string ->
+        --                 input
+        --                     [ class "form-control"
+        --                     , onInputSelectField InputTextField
+        --                     , type_ "text"
+        --                     , value string
+        --                     ]
+        --                     []
+        --             InputUrlField string ->
+        --                 input
+        --                     [ class "form-control"
+        --                     , onInputSelectField InputUrlField
+        --                     , type_ "url"
+        --                     , value string
+        --                     ]
+        --                     []
+        --             ImageField string ->
+        --                 input
+        --                     [ class "form-control"
+        --                     , onInputSelectField ImageField
+        --                     , type_ "url"
+        --                     , value string
+        --                     ]
+        --                     []
+        --             LocalizedInputTextField _ string ->
+        --                 input
+        --                     [ class "form-control"
+        --                     , onInput
+        --                         (\inputString ->
+        --                             ForSelf
+        --                                 (SelectField
+        --                                     (LocalizedInputTextField (I18n.iso639_1FromLanguage language) inputString)
+        --                                 )
+        --                         )
+        --                     , type_ "text"
+        --                     , value string
+        --                     ]
+        --                     []
+        --             LocalizedTextareaField _ string ->
+        --                 textarea
+        --                     [ class "form-control"
+        --                     , onInput
+        --                         (\inputString ->
+        --                             ForSelf
+        --                                 (SelectField
+        --                                     (LocalizedTextareaField (I18n.iso639_1FromLanguage language) inputString)
+        --                                 )
+        --                         )
+        --                     ]
+        --                     [ text string ]
+        --             TextareaField string ->
+        --                 input
+        --                     [ class "form-control"
+        --                     , onInputSelectField InputTextField
+        --                     ]
+        --                     [ text string ]
         viewProperty index property =
             let
                 value =
@@ -815,72 +804,66 @@ viewEditPropertyModal model card editedKeyId =
                                     [ div []
                                         [ h5 [ attribute "aria-hidden" "true" ]
                                             [ text (I18n.translate language I18n.AddYourContribution) ]
-                                        , Html.form
-                                            [ onSubmit (ForSelf (SubmitValue model.selectedField))
-                                            ]
-                                            [ select
-                                                [ on "change"
-                                                    (Html.Events.targetValue
-                                                        |> Decode.andThen
-                                                            (\str ->
-                                                                case str of
-                                                                    "One line text" ->
-                                                                        Decode.succeed
-                                                                            (LocalizedInputTextField
-                                                                                (I18n.iso639_1FromLanguage language)
-                                                                                ""
-                                                                            )
-
-                                                                    "Multi line text" ->
-                                                                        Decode.succeed
-                                                                            (LocalizedTextareaField
-                                                                                (I18n.iso639_1FromLanguage language)
-                                                                                ""
-                                                                            )
-
-                                                                    "Number" ->
-                                                                        Decode.succeed (InputNumberField 0)
-
-                                                                    "Yes / No" ->
-                                                                        Decode.succeed (BooleanField False)
-
-                                                                    "Email" ->
-                                                                        Decode.succeed (InputEmailField "")
-
-                                                                    "URL" ->
-                                                                        Decode.succeed (InputUrlField "")
-
-                                                                    "Image" ->
-                                                                        Decode.succeed (ImageField "")
-
-                                                                    "Internal link" ->
-                                                                        Decode.succeed (CardIdField "")
-
-                                                                    _ ->
-                                                                        Decode.fail ("Invalid select value: " ++ str)
-                                                            )
-                                                        |> Decode.map (\x -> ForSelf (SelectField x))
-                                                    )
-                                                ]
-                                                ([ (I18n.translate language (I18n.FieldTypeSingleLine))
-                                                 , (I18n.translate language (I18n.FieldTypeMultiLine))
-                                                 , (I18n.translate language (I18n.FieldTypeInternalLink))
-                                                 , (I18n.translate language (I18n.FieldTypeURL))
-                                                 , (I18n.translate language (I18n.FieldTypeInteger))
-                                                 , (I18n.translate language (I18n.FieldTypeBoolean))
-                                                 , (I18n.translate language (I18n.FieldTypeEmail))
-                                                 , (I18n.translate language (I18n.FieldTypeImage))
-                                                 ]
-                                                    |> List.map (\s -> option [ value s ] [ text s ])
-                                                )
-                                            , div
-                                                [ class "form-group " ]
-                                                [ viewField ]
-                                            , div []
-                                                [ button [ class "btn btn-default btn-block", type_ "submit" ]
-                                                    [ text (I18n.translate language (I18n.Add)) ]
-                                                ]
-                                            ]
+                                        , Values.New.View.viewForm I18n.Add model.newValueModel
+                                            |> Html.map translateNewValueMsg
+                                          -- , Html.form
+                                          --     [ onSubmit (ForSelf (SubmitValue model.selectedField))
+                                          --     ]
+                                          --     [ select
+                                          --         [ on "change"
+                                          --             (Html.Events.targetValue
+                                          --                 |> Decode.andThen
+                                          --                     (\str ->
+                                          --                         case str of
+                                          --                             "One line text" ->
+                                          --                                 Decode.succeed
+                                          --                                     (LocalizedInputTextField
+                                          --                                         (I18n.iso639_1FromLanguage language)
+                                          --                                         ""
+                                          --                                     )
+                                          --                             "Multi line text" ->
+                                          --                                 Decode.succeed
+                                          --                                     (LocalizedTextareaField
+                                          --                                         (I18n.iso639_1FromLanguage language)
+                                          --                                         ""
+                                          --                                     )
+                                          --                             "Number" ->
+                                          --                                 Decode.succeed (InputNumberField 0)
+                                          --                             "Yes / No" ->
+                                          --                                 Decode.succeed (BooleanField False)
+                                          --                             "Email" ->
+                                          --                                 Decode.succeed (InputEmailField "")
+                                          --                             "URL" ->
+                                          --                                 Decode.succeed (InputUrlField "")
+                                          --                             "Image" ->
+                                          --                                 Decode.succeed (ImageField "")
+                                          --                             "Internal link" ->
+                                          --                                 Decode.succeed (CardIdField "")
+                                          --                             _ ->
+                                          --                                 Decode.fail ("Invalid select value: " ++ str)
+                                          --                     )
+                                          --                 |> Decode.map (\x -> ForSelf (SelectField x))
+                                          --             )
+                                          --         ]
+                                          --         ([ (I18n.translate language (I18n.FieldTypeSingleLine))
+                                          --          , (I18n.translate language (I18n.FieldTypeMultiLine))
+                                          --          , (I18n.translate language (I18n.FieldTypeInternalLink))
+                                          --          , (I18n.translate language (I18n.FieldTypeURL))
+                                          --          , (I18n.translate language (I18n.FieldTypeInteger))
+                                          --          , (I18n.translate language (I18n.FieldTypeBoolean))
+                                          --          , (I18n.translate language (I18n.FieldTypeEmail))
+                                          --          , (I18n.translate language (I18n.FieldTypeImage))
+                                          --          ]
+                                          --             |> List.map (\s -> option [ value s ] [ text s ])
+                                          --         )
+                                          --     , div
+                                          --         [ class "form-group " ]
+                                          --         [ viewField ]
+                                          --     , div []
+                                          --         [ button [ class "btn btn-default btn-block", type_ "submit" ]
+                                          --             [ text (I18n.translate language (I18n.Add)) ]
+                                          --         ]
+                                          --     ]
                                         ]
                                     ]
                                 ]
@@ -1052,7 +1035,7 @@ viewSidebar model card =
                                             [ class "button call-add pull-right"
                                             , onClick (ForSelf (LoadProperties "logo"))
                                             ]
-                                            [ text (I18n.translate language (I18n.Edit)) ]
+                                            [ text (I18n.translate language I18n.Edit) ]
                                         , img [ alt "Logo", src url ] []
                                         ]
 
@@ -1062,7 +1045,7 @@ viewSidebar model card =
                                             [ class "button call-add"
                                             , onClick (ForSelf (LoadProperties "logo"))
                                             ]
-                                            [ text "+ Add a logo" ]
+                                            [ text (I18n.translate language I18n.AddALogo) ]
                                         ]
                             ]
                         , div [ class "caption" ]

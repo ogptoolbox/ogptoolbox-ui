@@ -142,8 +142,8 @@ init =
     , imageUploadStatus = ImageNotUploadedStatus
     , language = I18n.English
     , name = ""
-    , toolsAutocompleteModel = Cards.Autocomplete.State.init cardTypesForTool
-    , useCasesAutocompleteModel = Cards.Autocomplete.State.init cardTypesForUseCase
+    , toolsAutocompleteModel = Cards.Autocomplete.State.init cardTypesForTool True
+    , useCasesAutocompleteModel = Cards.Autocomplete.State.init cardTypesForUseCase True
     }
 
 

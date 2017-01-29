@@ -200,45 +200,51 @@ valueDecoder =
         (oneOf [ (field "widgetId" string), succeed "" ])
         |> andThen
             (\( createdAt, id, schemaId, type_, widgetId ) ->
-                (field "value" (valueTypeDecoder schemaId))
+                (field "value" (valueTypeDecoder schemaId widgetId))
                     |> map (\value -> Types.TypedValue createdAt id schemaId type_ value widgetId)
             )
 
 
-valueTypeDecoder : String -> Decoder ValueType
-valueTypeDecoder schemaId =
+valueTypeDecoder : String -> String -> Decoder ValueType
+valueTypeDecoder schemaId widgetId =
     let
         decoder =
-            case schemaId of
-                "schema:bijective-card-reference" ->
+            case ( schemaId, widgetId ) of
+                ( "schema:bijective-card-reference", _ ) ->
                     bijectiveCardReferenceDecoder |> map BijectiveCardReferenceValue
 
-                "schema:boolean" ->
+                ( "schema:boolean", _ ) ->
                     bool |> map BooleanValue
 
-                "schema:card-id" ->
+                ( "schema:card-id", _ ) ->
                     string |> map CardIdValue
 
-                "schema:card-ids-array" ->
+                ( "schema:card-ids-array", _ ) ->
                     list string |> map CardIdArrayValue
 
-                "schema:localized-string" ->
+                ( "schema:email", _ ) ->
+                    string |> map EmailValue
+
+                ( "schema:localized-string", _ ) ->
                     dict string |> map LocalizedStringValue
 
-                "schema:number" ->
+                ( "schema:number", _ ) ->
                     float |> map NumberValue
 
-                "schema:string" ->
+                ( "schema:string", _ ) ->
                     string |> map StringValue
 
-                "schema:uri" ->
-                    string |> map StringValue
+                ( "schema:uri", "widget:image" ) ->
+                    string |> map ImagePathValue
 
-                "schema:value-ids-array" ->
+                ( "schema:uri", _ ) ->
+                    string |> map UrlValue
+
+                ( "schema:value-ids-array", _ ) ->
                     list string |> map ValueIdArrayValue
 
-                _ ->
-                    fail ("TODO Unsupported schemaId: " ++ schemaId)
+                ( _, _ ) ->
+                    fail ("TODO Unsupported schemaId \"" ++ schemaId ++ "\" & widgetId \"" ++ widgetId ++ "\"")
     in
         oneOf
             [ decoder

@@ -24,6 +24,7 @@ type alias Model =
     , autocompletions : List CardAutocompletion
     , cardTypes : List String
     , selected : Maybe CardAutocompletion
+    , showAddOrCreateButton : Bool
     }
 
 

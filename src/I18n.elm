@@ -25,6 +25,7 @@ type TranslationId
     | ActivationSucceeded
     | ActivationTitle
     | Add
+    | AddALogo
     | AddCard
     | AddCollection
     | AdditionalInformations
@@ -45,11 +46,13 @@ type TranslationId
     | BestOf Int
     | BijectiveCardReference
     | Boolean
+    | BooleanField
     | CallToActionForCategory
     | CallToActionForDescription CardType
     | Card
     | CardId
     | CardIdArray
+    | CardIdField
     | CardPlaceholder
     | ChangePassword
     | ChangePasswordExplanation
@@ -86,13 +89,20 @@ type TranslationId
     | Email
     | EmailPlaceholder
     | EmailSentForAccountActivation String
+    | EnterBoolean
     | EnterCard
     | EnterDescription
     | EnterEmail
+    | EnterImage
     | EnterName
+    | EnterNumber
     | EnterPassword
+    | EnterUrl
     | EnterUsername
+    | EnterValue
     | EtalabLogo
+    | EveryLanguage
+    | FalseWord
     | Faq
     | FaqBug
     | FaqBugContent
@@ -155,8 +165,13 @@ type TranslationId
     | HomeTitle
     | Image
     | ImageAlt
+    | ImageField
     | ImageUploadError String
     | ImproveExistingContent
+    | InputEmailField
+    | InputNumberField
+    | InputUrlField
+    | InvalidNumber
     | Language Language
     | LanguageWord
     | License
@@ -186,7 +201,10 @@ type TranslationId
     | NewCardUseCaseDescription
     | NewCardUseCaseDescriptionPlaceholder
     | NewCardUseCaseName
+    | NewValue
+    | NewValueDescription
     | Number
+    | NumberPlaceholder
     | OGPsummitLink
     | OpenGovernmentPartnership
     | OpenGovernmentPartnershipLogo
@@ -242,17 +260,23 @@ type TranslationId
     | SimilarTools
     | Software
     | Tags
+    | TextField
     | TimeoutExplanation
     | Tool GrammaticalNumber
     | ToolPlaceholder
     | ToolsDescription
+    | TrueWord
     | TweetMessage String String
     | Type
+    | UnknownLanguage
     | UnknownSchemaId String
     | UnknownUser
+    | UnknownValue
     | UntitledCard
     | UploadImage
     | UploadingImage String
+    | Url
+    | UrlPlaceholder
     | UseCase GrammaticalNumber
     | UseCasePlaceholder
     | UseCases
@@ -266,8 +290,11 @@ type TranslationId
     | Uses
     | UseIt
     | UseTool
+    | Value
+    | ValueCreationFailed
     | ValueId
     | ValueIdArray
+    | ValuePlaceholder
     | VoteBestContributions
     | Website
     | WebsiteDescription
@@ -360,6 +387,12 @@ getTranslationSet translationId =
         Add ->
             { english = s "Add"
             , french = s "Ajouter"
+            , spanish = todo
+            }
+
+        AddALogo ->
+            { english = s "+ Add a logo"
+            , french = s "+ Ajouter un logo"
             , spanish = todo
             }
 
@@ -483,6 +516,9 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        BooleanField ->
+            getTranslationSet Boolean
+
         CallToActionForCategory ->
             { english = s "+ Add category"
             , french = s "+ Ajouter une catégorie"
@@ -539,6 +575,9 @@ getTranslationSet translationId =
             , french = s "Tableau de liens vers des fiches"
             , spanish = todo
             }
+
+        CardIdField ->
+            getTranslationSet CardId
 
         CardPlaceholder ->
             { english = s "Name of a card"
@@ -802,6 +841,12 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        EnterBoolean ->
+            { english = s "Please check or uncheck the box"
+            , french = s "Veuillez cocher ou décocher la case"
+            , spanish = todo
+            }
+
         EnterCard ->
             { english = s "Please enter the name or the ID of a card"
             , french = s "Veuillez entrer le nom ou l'identifiant d'une fiche"
@@ -820,9 +865,21 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        EnterImage ->
+            { english = s "Please select an image"
+            , french = s "Veuillez sélectionner une image"
+            , spanish = todo
+            }
+
         EnterName ->
             { english = s "Please enter a name"
             , french = s "Veuillez entrer un nom"
+            , spanish = todo
+            }
+
+        EnterNumber ->
+            { english = s "Please enter a number"
+            , french = s "Veuillez entrer un nombre"
             , spanish = todo
             }
 
@@ -832,15 +889,39 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        EnterUrl ->
+            { english = s "Please enter a link (an URL)"
+            , french = s "Veuillez entrer un lien (une URL)"
+            , spanish = todo
+            }
+
         EnterUsername ->
             { english = s "Please enter your username"
             , french = s "Veuillez entrer votre nom d'utilisateur"
             , spanish = todo
             }
 
+        EnterValue ->
+            { english = s "Please enter value"
+            , french = s "Veuillez entrer une valeur"
+            , spanish = todo
+            }
+
         EtalabLogo ->
             { english = s "Etalab logo"
             , french = s "Logo d'Etalab"
+            , spanish = todo
+            }
+
+        EveryLanguage ->
+            { english = s "Every language"
+            , french = s "Toutes les langues"
+            , spanish = todo
+            }
+
+        FalseWord ->
+            { english = s "False"
+            , french = s "Faux"
             , spanish = todo
             }
 
@@ -1216,6 +1297,9 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        ImageField ->
+            getTranslationSet Image
+
         ImageUploadError message ->
             { english = s ("Image upload error: " ++ message)
             , french = s ("Échec du téléversement de l'image :" ++ message)
@@ -1225,6 +1309,21 @@ getTranslationSet translationId =
         ImproveExistingContent ->
             { english = s "Improve existing content"
             , french = s "Améliorez le contenu existant"
+            , spanish = todo
+            }
+
+        InputEmailField ->
+            getTranslationSet Email
+
+        InputNumberField ->
+            getTranslationSet Number
+
+        InputUrlField ->
+            getTranslationSet Url
+
+        InvalidNumber ->
+            { english = s "Not a valid number"
+            , french = s "Ce n'est pas un nombre valide."
             , spanish = todo
             }
 
@@ -1416,10 +1515,28 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        NewValue ->
+            { english = s "New Value"
+            , french = s "Nouvelle valeur"
+            , spanish = todo
+            }
+
+        NewValueDescription ->
+            { english = s "Form to enter a new value"
+            , french = s "Formulaire de création d'une nouvelle valeur"
+            , spanish = todo
+            }
+
         Number ->
             { english = s "Number"
             , french = s "Nombre"
             , spanish = todo
+            }
+
+        NumberPlaceholder ->
+            { english = s "3.1415927"
+            , french = s "3.1415927"
+            , spanish = s "3.1415927"
             }
 
         OGPsummitLink ->
@@ -1771,6 +1888,12 @@ to strengthen governance.
             , spanish = s "Tags"
             }
 
+        TextField ->
+            { english = s "Text"
+            , french = s "Texte"
+            , spanish = todo
+            }
+
         TimeoutExplanation ->
             { english = s "The server was too slow to respond (timeout)."
             , french = s "Le servert a mis trop de temps à repondre (timeout)"
@@ -1813,6 +1936,12 @@ to strengthen governance.
             , spanish = todo
             }
 
+        TrueWord ->
+            { english = s "True"
+            , french = s "Vrai"
+            , spanish = todo
+            }
+
         TweetMessage name url ->
             { english = s ("Discover " ++ name ++ " on OGPToolbox.org: " ++ url)
             , french = s ("Découvrez " ++ name ++ " dans OGPToolbox.org : " ++ url)
@@ -1825,6 +1954,12 @@ to strengthen governance.
             , spanish = s "Tipo"
             }
 
+        UnknownLanguage ->
+            { english = s "Unknown language"
+            , french = s "Langue inconnue"
+            , spanish = todo
+            }
+
         UnknownSchemaId schemaId ->
             { english = s ("Reference to an unknown schema: " ++ schemaId)
             , french = s ("Référence à un schema inconnu : " ++ schemaId)
@@ -1834,6 +1969,12 @@ to strengthen governance.
         UnknownUser ->
             { english = s "User is unknown."
             , french = s "L'utilisateur est inconnu."
+            , spanish = todo
+            }
+
+        UnknownValue ->
+            { english = s "Unknown value"
+            , french = s "Valeur inconnue"
             , spanish = todo
             }
 
@@ -1852,6 +1993,18 @@ to strengthen governance.
         UploadingImage filename ->
             { english = s ("Uploading image \"" ++ filename ++ "\"...")
             , french = s ("Ajout de l'image \"" ++ filename ++ "\"...")
+            , spanish = todo
+            }
+
+        Url ->
+            { english = s "Link (URL)"
+            , french = s "Lien (URL)"
+            , spanish = todo
+            }
+
+        UrlPlaceholder ->
+            { english = s "https://www.example.com/sample-page"
+            , french = s "https://www.exemple.fr/exemple-de-page"
             , spanish = todo
             }
 
@@ -1951,6 +2104,18 @@ to strengthen governance.
             , spanish = todo
             }
 
+        Value ->
+            { english = s "Value"
+            , french = s "Valeur"
+            , spanish = todo
+            }
+
+        ValueCreationFailed ->
+            { english = s "Value creation failed"
+            , french = s "Échec de la création de la valeur"
+            , spanish = todo
+            }
+
         ValueId ->
             { english = s "Link to a value"
             , french = s "Lien vers une valeur"
@@ -1960,6 +2125,12 @@ to strengthen governance.
         ValueIdArray ->
             { english = s "Array of links to valuess"
             , french = s "Tableau de liens vers des valeurs"
+            , spanish = todo
+            }
+
+        ValuePlaceholder ->
+            { english = s "The value..."
+            , french = s "La valeur"
             , spanish = todo
             }
 
@@ -2051,6 +2222,9 @@ getManyStrings language keyIds card values =
                 CardIdValue cardId ->
                     []
 
+                EmailValue value ->
+                    [ value ]
+
                 ImagePathValue path ->
                     []
 
@@ -2066,6 +2240,9 @@ getManyStrings language keyIds card values =
                     []
 
                 StringValue value ->
+                    [ value ]
+
+                UrlValue value ->
                     [ value ]
 
                 ValueIdArrayValue ids ->
@@ -2122,8 +2299,11 @@ getOneStringFromValueType language values valueType =
         CardIdValue cardId ->
             Nothing
 
+        EmailValue value ->
+            Just value
+
         ImagePathValue path ->
-            Nothing
+            Just path
 
         LocalizedStringValue valueByLanguage ->
             getValueByPreferredLanguage language valueByLanguage
@@ -2132,6 +2312,9 @@ getOneStringFromValueType language values valueType =
             Nothing
 
         StringValue value ->
+            Just value
+
+        UrlValue value ->
             Just value
 
         ValueIdArrayValue [] ->
