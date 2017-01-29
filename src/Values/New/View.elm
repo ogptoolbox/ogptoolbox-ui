@@ -323,10 +323,11 @@ viewForm submitButtonI18n model =
                                      , placeholder controlPlaceholder
                                      , title controlTitle
                                      , onInput (ForSelf << ValueChanged)
+                                     , value model.value
                                      ]
                                         ++ errorAttributes
                                     )
-                                    [ text model.value ]
+                                    []
                                  ]
                                     ++ errorBlock
                                 )
