@@ -29,7 +29,7 @@ viewCardLine language navigate data card =
     in
         case navigate of
             Just navigate ->
-                aForPath navigate language ("/cards/" ++ card.id) [] [ text cardName ]
+                aForPath navigate language (Urls.pathForCard card) [] [ text cardName ]
 
             Nothing ->
                 text cardName
