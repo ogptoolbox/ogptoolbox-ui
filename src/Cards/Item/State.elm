@@ -21,9 +21,61 @@ init =
     , editedKeyId = Nothing
     , httpError = Nothing
     , language = I18n.English
-    , newValueModel = Values.New.State.init
+    , newValueModel = Values.New.State.init []
     , sameKeyPropertyIds = []
     }
+
+
+validFieldTypes : String -> List String
+validFieldTypes keyId =
+    case keyId of
+        "description" ->
+            [ "TextField" ]
+
+        -- "email" ->
+        --     [ "InputEmailField" ]
+        "license" ->
+            [ "TextField" ]
+
+        "location" ->
+            [ "TextField" ]
+
+        "logo" ->
+            [ "ImageField" ]
+
+        "name" ->
+            [ "TextField" ]
+
+        "screenshot" ->
+            [ "ImageField" ]
+
+        "tags" ->
+            [ "TextField" ]
+
+        "title" ->
+            [ "TextField" ]
+
+        "twitter-name" ->
+            [ "TextField" ]
+
+        "use-cases" ->
+            [ "UseCaseIdField" ]
+
+        "used-by" ->
+            [ "OrganizationIdField" ]
+
+        "used-for" ->
+            [ "UseCaseIdField" ]
+
+        "uses" ->
+            [ "ToolIdField" ]
+
+        "website" ->
+            [ "InputUrlField" ]
+
+        _ ->
+            -- By default, all field types are valid.
+            []
 
 
 setAuthentication : Maybe Authentication -> Model -> Model
@@ -110,6 +162,7 @@ update msg model =
                     ( { model
                         | editedKeyId = Just keyId
                         , httpError = Nothing
+                        , newValueModel = Values.New.State.init <| validFieldTypes keyId
                         , sameKeyPropertyIds = []
                       }
                     , Requests.getObjectProperties model.authentication model.cardId keyId

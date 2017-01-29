@@ -65,46 +65,58 @@ viewForm submitButtonI18n model =
             [ onSubmit (ForSelf <| Submit) ]
             (alert
                 ++ [ let
-                        controlId =
-                            "fieldType"
-
-                        ( errorClass, errorAttributes, errorBlock ) =
-                            errorInfos language controlId (Dict.get controlId model.errors)
+                        validFieldTypeLabelCouples =
+                            if List.isEmpty model.validFieldTypes then
+                                fieldTypeLabelCouples
+                            else
+                                List.filter
+                                    (\( symbol, labelI18n ) -> List.member symbol model.validFieldTypes)
+                                    fieldTypeLabelCouples
                      in
-                        div [ class ("form-group" ++ errorClass) ]
-                            ([ label
-                                [ class "control-label", for controlId ]
-                                [ text <| I18n.translate language I18n.Type ]
-                             , select
-                                ([ class "form-control"
-                                 , id controlId
-                                 , on "change"
-                                    (Json.Decode.map (ForSelf << FieldTypeChanged)
-                                        targetValue
-                                    )
-                                 ]
-                                    ++ errorAttributes
-                                )
-                                (fieldTypeLabelCouples
-                                    |> List.map
-                                        (\( symbol, labelI18n ) ->
-                                            ( symbol
-                                            , I18n.translate language labelI18n
+                        if List.length validFieldTypeLabelCouples == 1 then
+                            text ""
+                        else
+                            let
+                                controlId =
+                                    "fieldType"
+
+                                ( errorClass, errorAttributes, errorBlock ) =
+                                    errorInfos language controlId (Dict.get controlId model.errors)
+                            in
+                                div [ class ("form-group" ++ errorClass) ]
+                                    ([ label
+                                        [ class "control-label", for controlId ]
+                                        [ text <| I18n.translate language I18n.Type ]
+                                     , select
+                                        ([ class "form-control"
+                                         , id controlId
+                                         , on "change"
+                                            (Json.Decode.map (ForSelf << FieldTypeChanged)
+                                                targetValue
                                             )
+                                         ]
+                                            ++ errorAttributes
                                         )
-                                    |> List.sortBy (\( symbol, label ) -> label)
-                                    |> List.map
-                                        (\( fieldType, label ) ->
-                                            option
-                                                [ selected (fieldType == model.fieldType)
-                                                , value fieldType
-                                                ]
-                                                [ text label ]
+                                        (validFieldTypeLabelCouples
+                                            |> List.map
+                                                (\( symbol, labelI18n ) ->
+                                                    ( symbol
+                                                    , I18n.translate language labelI18n
+                                                    )
+                                                )
+                                            |> List.sortBy (\( symbol, label ) -> label)
+                                            |> List.map
+                                                (\( fieldType, label ) ->
+                                                    option
+                                                        [ selected (fieldType == model.fieldType)
+                                                        , value fieldType
+                                                        ]
+                                                        [ text label ]
+                                                )
                                         )
-                                )
-                             ]
-                                ++ errorBlock
-                            )
+                                     ]
+                                        ++ errorBlock
+                                    )
                    , if model.fieldType == "TextField" then
                         let
                             controlId =

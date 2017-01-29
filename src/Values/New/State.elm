@@ -16,20 +16,33 @@ import Urls
 import Values.New.Types exposing (..)
 
 
-init : Model
-init =
-    { authentication = Nothing
-    , booleanValue = False
-    , cardsAutocompleteModel = Cards.Autocomplete.State.init cardTypesForTool False
-    , errors = Dict.empty
-    , field = Nothing
-    , fieldType = "TextField"
-    , httpError = Nothing
-    , imageUploadStatus = ImageNotUploadedStatus
-    , language = I18n.English
-    , languageIso639_1 = ""
-    , value = ""
-    }
+init : List String -> Model
+init validFieldTypes =
+    let
+        fieldType =
+            case List.head validFieldTypes of
+                Just firstFieldType ->
+                    if List.member "TextField" validFieldTypes then
+                        "TextField"
+                    else
+                        firstFieldType
+
+                Nothing ->
+                    "TextField"
+    in
+        { authentication = Nothing
+        , booleanValue = False
+        , cardsAutocompleteModel = Cards.Autocomplete.State.init cardTypesForTool False
+        , errors = Dict.empty
+        , field = Nothing
+        , fieldType = fieldType
+        , httpError = Nothing
+        , imageUploadStatus = ImageNotUploadedStatus
+        , language = I18n.English
+        , languageIso639_1 = ""
+        , validFieldTypes = validFieldTypes
+        , value = ""
+        }
 
 
 convertControls : Model -> Model

@@ -44,6 +44,7 @@ type alias Model =
     , imageUploadStatus : ImageUploadStatus
     , language : I18n.Language
     , languageIso639_1 : String
+    , validFieldTypes : List String
     , value : String
     }
 
