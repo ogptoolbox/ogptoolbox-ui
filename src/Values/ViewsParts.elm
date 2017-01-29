@@ -90,6 +90,7 @@ viewValueTypeLineContent language navigate data showDetails valueType =
                     [ alt <| I18n.translate language I18n.ImageAlt
                     , class "figure-img img-fluid rounded"
                     , src (Urls.fullApiUrl path ++ "?dim=96")
+                    , style [ ( "max-width", "96px" ) ]
                     ]
                     []
                 , figcaption [ class "figure-caption" ] [ text path ]
