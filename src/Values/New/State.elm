@@ -253,7 +253,6 @@ setContext authentication language model =
     { model
         | authentication = authentication
         , language = language
-        , languageIso639_1 = I18n.iso639_1FromLanguage language
     }
 
 
@@ -376,10 +375,18 @@ update msg model =
             ( { model | httpError = Just httpError }, Cmd.none )
 
         Upserted (Ok body) ->
-            ( init
-                |> setContext model.authentication model.language
-            , Task.perform (\_ -> ForParent <| ValueUpserted body.data) (Task.succeed ())
-            )
+            let
+                initedModel =
+                    init model.validFieldTypes
+            in
+                ( { initedModel
+                    | authentication = model.authentication
+                    , fieldType = model.fieldType
+                    , language = model.language
+                    , languageIso639_1 = model.languageIso639_1
+                  }
+                , Task.perform (\_ -> ForParent <| ValueUpserted body.data) (Task.succeed ())
+                )
 
         ValueChanged value ->
             ( convertControls { model | value = value }
@@ -394,11 +401,17 @@ update msg model =
 
 urlUpdate : Maybe Authentication -> I18n.Language -> Navigation.Location -> Model -> ( Model, Cmd Msg )
 urlUpdate authentication language location model =
-    ( init
-        |> setContext authentication language
-    , Ports.setDocumentMetadata
-        { description = I18n.translate language I18n.NewValueDescription
-        , imageUrl = Urls.appLogoFullUrl
-        , title = I18n.translate language I18n.NewValue
-        }
-    )
+    let
+        initedModel =
+            init model.validFieldTypes
+    in
+        ( { initedModel
+            | languageIso639_1 = I18n.iso639_1FromLanguage language
+          }
+            |> setContext authentication language
+        , Ports.setDocumentMetadata
+            { description = I18n.translate language I18n.NewValueDescription
+            , imageUrl = Urls.appLogoFullUrl
+            , title = I18n.translate language I18n.NewValue
+            }
+        )
