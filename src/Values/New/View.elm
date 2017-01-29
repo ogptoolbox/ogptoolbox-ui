@@ -17,12 +17,14 @@ import Views exposing (errorInfos)
 fieldTypeLabelCouples : List ( String, I18n.TranslationId )
 fieldTypeLabelCouples =
     [ ( "BooleanField", I18n.BooleanField )
-    , ( "CardIdField", I18n.CardIdField )
     , ( "ImageField", I18n.ImageField )
     , ( "InputEmailField", I18n.InputEmailField )
     , ( "InputNumberField", I18n.InputNumberField )
     , ( "InputUrlField", I18n.InputUrlField )
+    , ( "OrganizationIdField", I18n.OrganizationIdField )
     , ( "TextField", I18n.TextField )
+    , ( "ToolIdField", I18n.ToolIdField )
+    , ( "UseCaseIdField", I18n.UseCaseIdField )
     ]
 
 
@@ -182,19 +184,6 @@ viewForm submitButtonI18n model =
                                  ]
                                     ++ errorBlock
                                 )
-                     else if model.fieldType == "CardIdField" then
-                        let
-                            controlId =
-                                "cardId"
-                        in
-                            Cards.Autocomplete.View.viewAutocomplete
-                                language
-                                controlId
-                                I18n.AddCard
-                                I18n.CardPlaceholder
-                                (Dict.get controlId model.errors)
-                                model.cardsAutocompleteModel
-                                |> Html.map translateCardsAutocompleteMsg
                      else if model.fieldType == "InputEmailField" then
                         let
                             controlId =
@@ -362,6 +351,45 @@ viewForm submitButtonI18n model =
                                     ++ errorBlock
                                     ++ [ viewImageUploadStatus language model.imageUploadStatus ]
                                 )
+                     else if model.fieldType == "OrganizationIdField" then
+                        let
+                            controlId =
+                                "cardId"
+                        in
+                            Cards.Autocomplete.View.viewAutocomplete
+                                language
+                                controlId
+                                (I18n.Organization I18n.Singular)
+                                I18n.OrganizationPlaceholder
+                                (Dict.get controlId model.errors)
+                                model.cardsAutocompleteModel
+                                |> Html.map translateCardsAutocompleteMsg
+                     else if model.fieldType == "ToolIdField" then
+                        let
+                            controlId =
+                                "cardId"
+                        in
+                            Cards.Autocomplete.View.viewAutocomplete
+                                language
+                                controlId
+                                (I18n.Tool I18n.Singular)
+                                I18n.ToolPlaceholder
+                                (Dict.get controlId model.errors)
+                                model.cardsAutocompleteModel
+                                |> Html.map translateCardsAutocompleteMsg
+                     else if model.fieldType == "UseCaseIdField" then
+                        let
+                            controlId =
+                                "cardId"
+                        in
+                            Cards.Autocomplete.View.viewAutocomplete
+                                language
+                                controlId
+                                (I18n.UseCase I18n.Singular)
+                                I18n.UseCasePlaceholder
+                                (Dict.get controlId model.errors)
+                                model.cardsAutocompleteModel
+                                |> Html.map translateCardsAutocompleteMsg
                      else
                         text ""
                    , button

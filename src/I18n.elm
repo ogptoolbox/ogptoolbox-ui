@@ -29,6 +29,7 @@ type TranslationId
     | AddCard
     | AddCollection
     | AdditionalInformations
+    | AddOrganization
     | AddTool
     | AddToolOrUseCase
     | AddUseCase
@@ -210,6 +211,9 @@ type TranslationId
     | OpenGovernmentPartnershipLogo
     | OpenGovParagraph
     | Organization GrammaticalNumber
+    | OrganizationId
+    | OrganizationIdField
+    | OrganizationPlaceholder
     | OrganizationsDescription
     | PageLoading
     | PageLoadingExplanation
@@ -263,6 +267,8 @@ type TranslationId
     | TextField
     | TimeoutExplanation
     | Tool GrammaticalNumber
+    | ToolId
+    | ToolIdField
     | ToolPlaceholder
     | ToolsDescription
     | TrueWord
@@ -278,6 +284,8 @@ type TranslationId
     | Url
     | UrlPlaceholder
     | UseCase GrammaticalNumber
+    | UseCaseId
+    | UseCaseIdField
     | UseCasePlaceholder
     | UseCases
     | UseCasesDescription
@@ -411,6 +419,12 @@ getTranslationSet translationId =
         AdditionalInformations ->
             { english = s "Additional informations"
             , french = s "Informations supplémentaires"
+            , spanish = todo
+            }
+
+        AddOrganization ->
+            { english = s "Add an organization"
+            , french = s "Ajouter une organisation"
             , spanish = todo
             }
 
@@ -565,8 +579,8 @@ getTranslationSet translationId =
             }
 
         CardId ->
-            { english = s "Link to a card"
-            , french = s "Lien vers une fiche"
+            { english = s "Card"
+            , french = s "Fiche"
             , spanish = todo
             }
 
@@ -1591,6 +1605,21 @@ to strengthen governance.
                         s "Organizaciones"
             }
 
+        OrganizationId ->
+            { english = s "Organization"
+            , french = s "Organisation"
+            , spanish = todo
+            }
+
+        OrganizationIdField ->
+            getTranslationSet OrganizationId
+
+        OrganizationPlaceholder ->
+            { english = s "Name of an organization"
+            , french = s "Nom d'une organisation"
+            , spanish = todo
+            }
+
         OrganizationsDescription ->
             { english = s "List of organizations"
             , french = s "Liste d'organisations"
@@ -1924,6 +1953,15 @@ to strengthen governance.
                         s "Herramientas"
             }
 
+        ToolId ->
+            { english = s "Tool"
+            , french = s "Outil"
+            , spanish = todo
+            }
+
+        ToolIdField ->
+            getTranslationSet ToolId
+
         ToolPlaceholder ->
             { english = s "Name of a tool"
             , french = s "Nom d'un outil"
@@ -2031,6 +2069,15 @@ to strengthen governance.
                     Plural ->
                         s "Casos de uso"
             }
+
+        UseCaseId ->
+            { english = s "Use case"
+            , french = s "Cas d'usage"
+            , spanish = todo
+            }
+
+        UseCaseIdField ->
+            getTranslationSet UseCaseId
 
         UseCasePlaceholder ->
             { english = s "Name of a use case"

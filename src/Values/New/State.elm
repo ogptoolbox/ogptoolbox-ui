@@ -11,7 +11,7 @@ import Navigation
 import Ports
 import Requests
 import Task
-import Types exposing (cardTypesForTool, Field(..))
+import Types exposing (cardTypesForOrganization, cardTypesForTool, cardTypesForUseCase, Field(..))
 import Urls
 import Values.New.Types exposing (..)
 
@@ -49,22 +49,6 @@ convertControls model =
                     ( Just (BooleanField model.booleanValue)
                     , []
                     )
-
-                "CardIdField" ->
-                    let
-                        cardAutocompletion =
-                            model.cardsAutocompleteModel.selected
-                    in
-                        case cardAutocompletion of
-                            Just cardAutocompletion ->
-                                ( Just (CardIdField cardAutocompletion.card.id)
-                                , []
-                                )
-
-                            Nothing ->
-                                ( Nothing
-                                , [ ( "cardId", Just I18n.MissingValue ) ]
-                                )
 
                 "ImageField" ->
                     case model.imageUploadStatus of
@@ -136,6 +120,22 @@ convertControls model =
                             , []
                             )
 
+                "OrganizationIdField" ->
+                    let
+                        cardAutocompletion =
+                            model.cardsAutocompleteModel.selected
+                    in
+                        case cardAutocompletion of
+                            Just cardAutocompletion ->
+                                ( Just (CardIdField cardAutocompletion.card.id)
+                                , []
+                                )
+
+                            Nothing ->
+                                ( Nothing
+                                , [ ( "cardId", Just I18n.MissingValue ) ]
+                                )
+
                 "TextField" ->
                     let
                         ( languageIso639_1, languageError ) =
@@ -173,6 +173,38 @@ convertControls model =
                                 , [ ( "language", languageError )
                                   , ( "value", valueError )
                                   ]
+                                )
+
+                "ToolIdField" ->
+                    let
+                        cardAutocompletion =
+                            model.cardsAutocompleteModel.selected
+                    in
+                        case cardAutocompletion of
+                            Just cardAutocompletion ->
+                                ( Just (CardIdField cardAutocompletion.card.id)
+                                , []
+                                )
+
+                            Nothing ->
+                                ( Nothing
+                                , [ ( "cardId", Just I18n.MissingValue ) ]
+                                )
+
+                "UseCaseIdField" ->
+                    let
+                        cardAutocompletion =
+                            model.cardsAutocompleteModel.selected
+                    in
+                        case cardAutocompletion of
+                            Just cardAutocompletion ->
+                                ( Just (CardIdField cardAutocompletion.card.id)
+                                , []
+                                )
+
+                            Nothing ->
+                                ( Nothing
+                                , [ ( "cardId", Just I18n.MissingValue ) ]
                                 )
 
                 _ ->
@@ -244,7 +276,23 @@ update msg model =
             ( model, Cmd.none )
 
         FieldTypeChanged fieldType ->
-            ( convertControls { model | fieldType = fieldType }
+            ( convertControls
+                { model
+                    | cardsAutocompleteModel =
+                        case fieldType of
+                            "OrganizationIdField" ->
+                                Cards.Autocomplete.State.init cardTypesForOrganization False
+
+                            "ToolIdField" ->
+                                Cards.Autocomplete.State.init cardTypesForTool False
+
+                            "UseCaseIdField" ->
+                                Cards.Autocomplete.State.init cardTypesForUseCase False
+
+                            _ ->
+                                model.cardsAutocompleteModel
+                    , fieldType = fieldType
+                }
             , Cmd.none
             )
 
