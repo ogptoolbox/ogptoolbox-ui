@@ -377,6 +377,21 @@ licenseKeys =
     [ "license" ]
 
 
+openSourceKeys : List String
+openSourceKeys =
+    [ "9647" ]
+
+
+repoKeys : List String
+repoKeys =
+    [ "12795" ]
+
+
+sourceCodeKeys : List String
+sourceCodeKeys =
+    [ "9389" ]
+
+
 nameKeys : List String
 nameKeys =
     [ "name" ]

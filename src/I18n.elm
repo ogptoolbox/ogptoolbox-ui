@@ -210,6 +210,7 @@ type TranslationId
     | OpenGovernmentPartnership
     | OpenGovernmentPartnershipLogo
     | OpenGovParagraph
+    | OpenSource
     | Organization GrammaticalNumber
     | OrganizationId
     | OrganizationIdField
@@ -229,6 +230,7 @@ type TranslationId
     | PressDescription
     | PressLead
     | ProfileMyCollections
+    | Proprietary
     | Publish
     | PublishCollection
     | PublishOrganization
@@ -1605,6 +1607,12 @@ to strengthen governance.
                         s "Organizaciones"
             }
 
+        OpenSource ->
+            { english = s "Free Open Source Software"
+            , french = s "Logiciel Libre Open Source"
+            , spanish = todo
+            }
+
         OrganizationId ->
             { english = s "Organization"
             , french = s "Organisation"
@@ -1704,6 +1712,12 @@ to strengthen governance.
         ProfileMyCollections ->
             { english = s "My collections"
             , french = s "Mes collections"
+            , spanish = todo
+            }
+
+        Proprietary ->
+            { english = s "Closed Proprietary Software"
+            , french = s "Logiciel propriétaire fermé"
             , spanish = todo
             }
 

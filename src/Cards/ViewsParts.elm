@@ -1,5 +1,6 @@
 module Cards.ViewsParts exposing (..)
 
+import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Attributes.Aria exposing (..)
@@ -11,6 +12,53 @@ import Tags.ViewsParts exposing (..)
 import Types exposing (..)
 import Urls
 
+
+viewCardOpenSourceStatus : I18n.Language -> Dict String TypedValue -> Card -> Html msg
+viewCardOpenSourceStatus language values card =
+    let
+        repo =
+            (case I18n.getOneString language repoKeys card values of
+                Just value ->
+                    String.length value > 8
+                Nothing ->
+                    False
+            )
+
+        sourceCode =
+            (case I18n.getOneString language sourceCodeKeys card values of
+                Just value ->
+                    String.length value > 8
+                Nothing ->
+                    False
+            )
+
+        openSource =
+            (case I18n.getOneString language openSourceKeys card values of
+                Just value ->
+                    String.toLower value == "yes" ||
+                    String.toLower value == "oui"
+                Nothing ->
+                    False
+            )
+
+        license =
+            (case I18n.getOneString language licenseKeys card values of
+                Just value ->
+                    String.toLower value
+                Nothing ->
+                    ""
+            )
+        openLicense =
+            (
+                String.length license > 1 &&
+                not (String.contains license "proprieta") &&
+                not (String.contains license "non-free")
+            )
+    in
+        if repo || sourceCode || openSource || openLicense then
+            img [ src "/img/open.png", title (I18n.translate language I18n.OpenSource) ] []
+        else
+            img [ src "/img/closed.png", title (I18n.translate language I18n.Proprietary) ] []
 
 viewCardThumbnail :
     I18n.Language
@@ -46,7 +94,14 @@ viewCardThumbnail language navigate onRemoveCard extraClass data card =
               in
                 element
                     [ class ("thumbnail " ++ extraClass) ]
-                    [ div [ class "visual" ]
+                    [ (case cardType of
+                        ToolCard ->
+                            div [ class "opensource-home" ]
+                                [ viewCardOpenSourceStatus language data.values card ]
+                        _ ->
+                            Html.text ""
+                      )
+                    , div [ class "visual" ]
                         [ case Urls.imageFullUrl language "500" card data.values of
                             Just url ->
                                 img [ alt "logo", src url ] []

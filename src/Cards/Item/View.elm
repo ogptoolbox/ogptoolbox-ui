@@ -1,6 +1,7 @@
 module Cards.Item.View exposing (..)
 
 import Cards.Item.Types exposing (..)
+import Cards.ViewsParts exposing (..)
 import Configuration
 import Dict exposing (Dict)
 import Html exposing (..)
@@ -906,6 +907,8 @@ viewSidebar model card =
                                                 )
                                             ]
                                         ]
+                                     , div [ class "opensource-card" ]
+                                        [ viewCardOpenSourceStatus language values card ]
                                      , let
                                         firstTd =
                                             td [ class "table-label" ]

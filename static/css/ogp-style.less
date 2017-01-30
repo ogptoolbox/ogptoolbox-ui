@@ -286,8 +286,8 @@ nav.navbar.navbar-default {
     display: block;
     width: 191px;
     height: 25px;
-    background: url(../img/ogptoolbox-logo.png) no-repeat no-repeat ;
-    background-size: 191px ;
+    background: url(../img/ogptoolbox-logo.png) no-repeat no-repeat;
+    background-size: 191px;
     margin: 29px 0 25px;
     margin-left: 0px !important;
 }
@@ -897,16 +897,16 @@ h4.zone-label {
         }
     }
 
-    &.example, &.tool, &.orga   {
+    &.example, &.tool, &.orga {
         box-shadow: none;
         border: none;
         border-radius: 0px;
     }
 
-    &.tool .visual, &.orga .visual  {
+    &.tool .visual, &.orga .visual {
         background: white;
         position: relative;
-        img     {
+        img {
             height: auto;
             width: auto;
             min-width: auto;
@@ -921,7 +921,38 @@ h4.zone-label {
         }
     }
 
-    &.tool  {
+    &.tool .opensource, &.orga .opensource {
+        img {
+            position: relative;
+            width: 35px;
+            height: 35px;
+            right: 38px;
+            top: 3px;
+        }
+    }
+
+    &.tool .opensource-home, &.orga .opensource-home {
+        img {
+            position: absolute;
+            width: 35px;
+            height: 35px;
+            right: 5px;
+            top: 5px;
+            z-index: 10;
+        }
+    }
+
+    &.tool .opensource-card, &.orga .opensource-card {
+        img {
+            position: absolute;
+            width: 35px;
+            height: 35px;
+            left: 5px;
+            top: 5px;
+        }
+    }
+
+    &.tool {
         background: white;
         box-shadow: none;
         border-size: 0;
