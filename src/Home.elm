@@ -16,7 +16,7 @@ import WebData exposing (..)
 
 view : Model -> I18n.Language -> Navigation.Location -> Html Msg
 view model language location =
-    div []
+    div [ class "container-fluid"]
         ([ viewBanner
          , viewMetrics language location model
          ]
@@ -112,168 +112,20 @@ viewBanner =
     --                 ]
     --             ]
     -- in
-    div [ class "banner" ]
-        [ div [ class "row " ]
-            [ div [ class "carousel slide", attribute "data-ride" "", id "carousel-example-generic" ]
-                [ div [ class "carousel-inner ", attribute "role" "listbox" ]
-                    [ div [ class "item active text-center" ]
-                        [ div [ class "container-fluid" ]
-                            [ div [ class "row" ]
-                                [ div [ class "col-md-12 text-center" ]
-                                    [ div [ class "bubbles" ] [] ]
-                                ]
-                            , div [ class "row show" ]
-                                [ a [ href "#metrics", class "col-md-12 text-center banner-link" ]
-                                    [ text "See results "
-                                    , span [ class "glyphicon glyphicon-menu-down" ]
-                                        []
-                                    ]
-                                ]
+    div [ class "row banner" ]
+        [ div [ class "carousel slide", attribute "data-ride" "", id "carousel-example-generic" ]
+            [ div [ class "carousel-inner", attribute "role" "listbox" ]
+                [ div [ class "item active text-center" ]
+                    [ div [ class "container-fluid" ]
+                        [ div [ class "row" ]
+                            [ div [ class "col-md-12 text-center" ]
+                                [ div [ class "bubbles" ] [] ]
                             ]
-                        ]
-                    , div [ class "item text-center" ]
-                        [ div [ class "container" ]
-                            [ div [ class "row form-title" ]
-                                [ div [ class "col-md-12 text-center " ]
-                                    [ h2 []
-                                        [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-education" ]
-                                            []
-                                        , text "Which kind of organization are your intrested in ?"
-                                        ]
-                                    ]
-                                ]
-                            , div [ class "row form-content" ]
-                                [ div [ class "col-md-3 text-center" ]
-                                    [ div [ class "radio" ]
-                                        [ label []
-                                            [ input
-                                                [ attribute "checked" ""
-                                                , id "optionsRadios1"
-                                                , name "optionsRadios"
-                                                , type_ "radio"
-                                                , value "option1"
-                                                ]
-                                                []
-                                            , text "All organizations"
-                                            ]
-                                        ]
-                                    ]
-                                , div [ class "col-md-3 text-center" ]
-                                    [ div [ class "radio" ]
-                                        [ label []
-                                            [ input
-                                                [ attribute "checked" ""
-                                                , id "optionsRadios1"
-                                                , name "optionsRadios"
-                                                , type_ "radio"
-                                                , value "option1"
-                                                ]
-                                                []
-                                            , text "Local government"
-                                            ]
-                                        ]
-                                    ]
-                                , div [ class "col-md-3 text-center" ]
-                                    [ div [ class "radio" ]
-                                        [ label []
-                                            [ input
-                                                [ attribute "checked" ""
-                                                , id "optionsRadios1"
-                                                , name "optionsRadios"
-                                                , type_ "radio"
-                                                , value "option1"
-                                                ]
-                                                []
-                                            , text "Regional government"
-                                            ]
-                                        ]
-                                    ]
-                                , div [ class "col-md-3 text-center" ]
-                                    [ div [ class "radio" ]
-                                        [ label []
-                                            [ input
-                                                [ attribute "checked" ""
-                                                , id "optionsRadios1"
-                                                , name "optionsRadios"
-                                                , type_ "radio"
-                                                , value "option1"
-                                                ]
-                                                []
-                                            , text "National government"
-                                            ]
-                                        ]
-                                    ]
-                                , div [ class "col-md-3 text-center" ]
-                                    [ div [ class "radio" ]
-                                        [ label []
-                                            [ input
-                                                [ attribute "checked" ""
-                                                , id "optionsRadios1"
-                                                , name "optionsRadios"
-                                                , type_ "radio"
-                                                , value "option1"
-                                                ]
-                                                []
-                                            , text "Political organization"
-                                            ]
-                                        ]
-                                    ]
-                                , div [ class "col-md-3 text-center" ]
-                                    [ div [ class "radio" ]
-                                        [ label []
-                                            [ input
-                                                [ attribute "checked" ""
-                                                , id "optionsRadios1"
-                                                , name "optionsRadios"
-                                                , type_ "radio"
-                                                , value "option1"
-                                                ]
-                                                []
-                                            , text "Political movement"
-                                            ]
-                                        ]
-                                    ]
-                                , div [ class "col-md-3 text-center" ]
-                                    [ div [ class "radio" ]
-                                        [ label []
-                                            [ input
-                                                [ attribute "checked" ""
-                                                , id "optionsRadios1"
-                                                , name "optionsRadios"
-                                                , type_ "radio"
-                                                , value "option1"
-                                                ]
-                                                []
-                                            , text "Non-profit organization"
-                                            ]
-                                        ]
-                                    ]
-                                , div [ class "col-md-3 text-center" ]
-                                    [ div [ class "radio" ]
-                                        [ label []
-                                            [ input
-                                                [ attribute "checked" ""
-                                                , id "optionsRadios1"
-                                                , name "optionsRadios"
-                                                , type_ "radio"
-                                                , value "option1"
-                                                ]
-                                                []
-                                            , text "For-profit organization"
-                                            ]
-                                        ]
-                                    ]
-                                ]
-                            , div [ class "row" ]
-                                [ div [ class "col-md-12 text-center" ]
-                                    [ a
-                                        [ class "btn btn-primary btn-lg"
-                                        , attribute "data-slide-to" "1"
-                                        , href "#carousel-example-generic"
-                                        , attribute "role" "button"
-                                        ]
-                                        [ text "Continue" ]
-                                    ]
+                        , div [ class "row show" ]
+                            [ a [ href "#metrics", class "col-md-12 text-center banner-link" ]
+                                [ text "See results "
+                                , span [ class "glyphicon glyphicon-menu-down" ]
+                                    []
                                 ]
                             ]
                         ]
@@ -283,25 +135,130 @@ viewBanner =
                         [ div [ class "row form-title" ]
                             [ div [ class "col-md-12 text-center " ]
                                 [ h2 []
-                                    [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-globe" ]
+                                    [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-education" ]
                                         []
-                                    , text "Which language do you use ?"
+                                    , text "Which kind of organization are your intrested in ?"
                                     ]
                                 ]
                             ]
                         , div [ class "row form-content" ]
                             [ div [ class "col-md-3 text-center" ]
-                                [ div [ class "checkbox" ]
+                                [ div [ class "radio" ]
                                     [ label []
                                         [ input
                                             [ attribute "checked" ""
                                             , id "optionsRadios1"
                                             , name "optionsRadios"
-                                            , type_ "checkbox"
+                                            , type_ "radio"
                                             , value "option1"
                                             ]
                                             []
-                                        , text "English                    "
+                                        , text "All organizations"
+                                        ]
+                                    ]
+                                ]
+                            , div [ class "col-md-3 text-center" ]
+                                [ div [ class "radio" ]
+                                    [ label []
+                                        [ input
+                                            [ attribute "checked" ""
+                                            , id "optionsRadios1"
+                                            , name "optionsRadios"
+                                            , type_ "radio"
+                                            , value "option1"
+                                            ]
+                                            []
+                                        , text "Local government"
+                                        ]
+                                    ]
+                                ]
+                            , div [ class "col-md-3 text-center" ]
+                                [ div [ class "radio" ]
+                                    [ label []
+                                        [ input
+                                            [ attribute "checked" ""
+                                            , id "optionsRadios1"
+                                            , name "optionsRadios"
+                                            , type_ "radio"
+                                            , value "option1"
+                                            ]
+                                            []
+                                        , text "Regional government"
+                                        ]
+                                    ]
+                                ]
+                            , div [ class "col-md-3 text-center" ]
+                                [ div [ class "radio" ]
+                                    [ label []
+                                        [ input
+                                            [ attribute "checked" ""
+                                            , id "optionsRadios1"
+                                            , name "optionsRadios"
+                                            , type_ "radio"
+                                            , value "option1"
+                                            ]
+                                            []
+                                        , text "National government"
+                                        ]
+                                    ]
+                                ]
+                            , div [ class "col-md-3 text-center" ]
+                                [ div [ class "radio" ]
+                                    [ label []
+                                        [ input
+                                            [ attribute "checked" ""
+                                            , id "optionsRadios1"
+                                            , name "optionsRadios"
+                                            , type_ "radio"
+                                            , value "option1"
+                                            ]
+                                            []
+                                        , text "Political organization"
+                                        ]
+                                    ]
+                                ]
+                            , div [ class "col-md-3 text-center" ]
+                                [ div [ class "radio" ]
+                                    [ label []
+                                        [ input
+                                            [ attribute "checked" ""
+                                            , id "optionsRadios1"
+                                            , name "optionsRadios"
+                                            , type_ "radio"
+                                            , value "option1"
+                                            ]
+                                            []
+                                        , text "Political movement"
+                                        ]
+                                    ]
+                                ]
+                            , div [ class "col-md-3 text-center" ]
+                                [ div [ class "radio" ]
+                                    [ label []
+                                        [ input
+                                            [ attribute "checked" ""
+                                            , id "optionsRadios1"
+                                            , name "optionsRadios"
+                                            , type_ "radio"
+                                            , value "option1"
+                                            ]
+                                            []
+                                        , text "Non-profit organization"
+                                        ]
+                                    ]
+                                ]
+                            , div [ class "col-md-3 text-center" ]
+                                [ div [ class "radio" ]
+                                    [ label []
+                                        [ input
+                                            [ attribute "checked" ""
+                                            , id "optionsRadios1"
+                                            , name "optionsRadios"
+                                            , type_ "radio"
+                                            , value "option1"
+                                            ]
+                                            []
+                                        , text "For-profit organization"
                                         ]
                                     ]
                                 ]
@@ -316,6 +273,47 @@ viewBanner =
                                     ]
                                     [ text "Continue" ]
                                 ]
+                            ]
+                        ]
+                    ]
+                ]
+            , div [ class "item text-center" ]
+                [ div [ class "container" ]
+                    [ div [ class "row form-title" ]
+                        [ div [ class "col-md-12 text-center " ]
+                            [ h2 []
+                                [ span [ attribute "aria-hidden" "true", class "glyphicon glyphicon-globe" ]
+                                    []
+                                , text "Which language do you use ?"
+                                ]
+                            ]
+                        ]
+                    , div [ class "row form-content" ]
+                        [ div [ class "col-md-3 text-center" ]
+                            [ div [ class "checkbox" ]
+                                [ label []
+                                    [ input
+                                        [ attribute "checked" ""
+                                        , id "optionsRadios1"
+                                        , name "optionsRadios"
+                                        , type_ "checkbox"
+                                        , value "option1"
+                                        ]
+                                        []
+                                    , text "English                    "
+                                    ]
+                                ]
+                            ]
+                        ]
+                    , div [ class "row" ]
+                        [ div [ class "col-md-12 text-center" ]
+                            [ a
+                                [ class "btn btn-primary btn-lg"
+                                , attribute "data-slide-to" "1"
+                                , href "#carousel-example-generic"
+                                , attribute "role" "button"
+                                ]
+                                [ text "Continue" ]
                             ]
                         ]
                     ]

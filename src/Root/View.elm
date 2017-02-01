@@ -361,7 +361,7 @@ viewBackdrop model =
 
 viewFooter : Model -> I18n.Language -> Html Msg
 viewFooter model language =
-    footer []
+    footer [ class "container-fluid" ]
         [ div [ class "row section footer" ]
             [ div [ class "container" ]
                 [ div [ class "row" ]
