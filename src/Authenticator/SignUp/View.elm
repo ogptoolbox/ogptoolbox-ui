@@ -1,5 +1,6 @@
 module Authenticator.SignUp.View exposing (..)
 
+import Authenticator.Routes
 import Authenticator.SignUp.Types exposing (..)
 import Authenticator.ViewsParts exposing (..)
 import Authenticator.Routes
@@ -83,14 +84,14 @@ view language model =
                                 ]
                             ]
                         , a
-                            [ class "btn btn-block btn-default grey haveanaccount  "
+                            [ class "btn btn-block btn-default grey haveanaccount"
                             , href "#"
                             , onWithOptions
                                 "click"
                                 { preventDefault = True, stopPropagation = False }
                                 (Json.Decode.succeed (ForParent (ChangeRoute Authenticator.Routes.SignInRoute)))
                             ]
-                            [ text (I18n.translate language I18n.Haveanaccount) ]
+                            [ text (I18n.translate language I18n.HaveAnAccount) ]
                         ]
                     ]
                 , div [ class "col-xs-6" ]

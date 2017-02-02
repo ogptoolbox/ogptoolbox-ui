@@ -25,12 +25,15 @@ type TranslationId
     | ActivationSucceeded
     | ActivationTitle
     | Add
+    | AddALogo
     | AddCard
     | AddCollection
     | AdditionalInformations
+    | AddOrganization
     | AddTool
     | AddToolOrUseCase
     | AddUseCase
+    | AddYourContribution
     | AuthenticationFailed
     | AuthenticationRequired
     | AuthenticationRequiredExplanation
@@ -42,9 +45,15 @@ type TranslationId
     | BadUrl
     | BadUrlExplanation
     | BestOf Int
+    | BijectiveCardReference
+    | Boolean
+    | BooleanField
     | CallToActionForCategory
     | CallToActionForDescription CardType
     | Card
+    | CardId
+    | CardIdArray
+    | CardIdField
     | CardPlaceholder
     | ChangePassword
     | ChangePasswordExplanation
@@ -81,13 +90,20 @@ type TranslationId
     | Email
     | EmailPlaceholder
     | EmailSentForAccountActivation String
+    | EnterBoolean
     | EnterCard
     | EnterDescription
     | EnterEmail
+    | EnterImage
     | EnterName
+    | EnterNumber
     | EnterPassword
+    | EnterUrl
     | EnterUsername
+    | EnterValue
     | EtalabLogo
+    | EveryLanguage
+    | FalseWord
     | Faq
     | FaqBug
     | FaqBugContent
@@ -140,7 +156,7 @@ type TranslationId
     | FooterAbout
     | FooterDiscover
     | GenericError
-    | Haveanaccount
+    | HaveAnAccount
     | HeaderTitle
     | Help
     | Home
@@ -150,12 +166,18 @@ type TranslationId
     | HomeTitle
     | Image
     | ImageAlt
+    | ImageField
     | ImageUploadError String
     | ImproveExistingContent
+    | InputEmailField
+    | InputNumberField
+    | InputUrlField
+    | InvalidNumber
     | Language Language
     | LanguageWord
     | License
     | LoadingMenu
+    | LocalizedString
     | Logo
     | MissingDescription
     | MissingValue
@@ -180,11 +202,18 @@ type TranslationId
     | NewCardUseCaseDescription
     | NewCardUseCaseDescriptionPlaceholder
     | NewCardUseCaseName
+    | NewValue
+    | NewValueDescription
+    | Number
+    | NumberPlaceholder
     | OGPsummitLink
     | OpenGovernmentPartnership
     | OpenGovernmentPartnershipLogo
     | OpenGovParagraph
     | Organization GrammaticalNumber
+    | OrganizationId
+    | OrganizationIdField
+    | OrganizationPlaceholder
     | OrganizationsDescription
     | PageLoading
     | PageLoadingExplanation
@@ -231,20 +260,32 @@ type TranslationId
     | SignOut
     | SignOutAndContributeLater
     | SignUp
+    | String
     | SimilarTools
     | Software
     | Tags
+    | TextField
     | TimeoutExplanation
     | Tool GrammaticalNumber
+    | ToolId
+    | ToolIdField
     | ToolPlaceholder
     | ToolsDescription
+    | TrueWord
     | TweetMessage String String
     | Type
+    | UnknownLanguage
+    | UnknownSchemaId String
     | UnknownUser
+    | UnknownValue
     | UntitledCard
     | UploadImage
     | UploadingImage String
+    | Url
+    | UrlPlaceholder
     | UseCase GrammaticalNumber
+    | UseCaseId
+    | UseCaseIdField
     | UseCasePlaceholder
     | UseCases
     | UseCasesDescription
@@ -257,6 +298,11 @@ type TranslationId
     | Uses
     | UseIt
     | UseTool
+    | Value
+    | ValueCreationFailed
+    | ValueId
+    | ValueIdArray
+    | ValuePlaceholder
     | VoteBestContributions
     | Website
     | WebsiteDescription
@@ -352,6 +398,12 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        AddALogo ->
+            { english = s "+ Add a logo"
+            , french = s "+ Ajouter un logo"
+            , spanish = todo
+            }
+
         AddCard ->
             { english = s "Add Card"
             , french = s "Ajouter une fiche"
@@ -370,6 +422,12 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        AddOrganization ->
+            { english = s "Add an organization"
+            , french = s "Ajouter une organisation"
+            , spanish = todo
+            }
+
         AddTool ->
             { english = s "Add a tool"
             , french = s "Ajouter un outil"
@@ -385,6 +443,12 @@ getTranslationSet translationId =
         AddUseCase ->
             { english = s "Add a use case"
             , french = s "Ajouter un cas d'usage"
+            , spanish = todo
+            }
+
+        AddYourContribution ->
+            { english = s "Add your contribution"
+            , french = s "Ajouter votre contribution"
             , spanish = todo
             }
 
@@ -454,6 +518,21 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        BijectiveCardReference ->
+            { english = s "Bijective link to a card"
+            , french = s "Lien bijectif vers une fiche"
+            , spanish = todo
+            }
+
+        Boolean ->
+            { english = s "Boolean"
+            , french = s "Booléen"
+            , spanish = todo
+            }
+
+        BooleanField ->
+            getTranslationSet Boolean
+
         CallToActionForCategory ->
             { english = s "+ Add category"
             , french = s "+ Ajouter une catégorie"
@@ -498,6 +577,21 @@ getTranslationSet translationId =
             , french = s "Fiche"
             , spanish = todo
             }
+
+        CardId ->
+            { english = s "Card"
+            , french = s "Fiche"
+            , spanish = todo
+            }
+
+        CardIdArray ->
+            { english = s "Array of links to cards"
+            , french = s "Tableau de liens vers des fiches"
+            , spanish = todo
+            }
+
+        CardIdField ->
+            getTranslationSet CardId
 
         CardPlaceholder ->
             { english = s "Name of a card"
@@ -761,6 +855,12 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        EnterBoolean ->
+            { english = s "Please check or uncheck the box"
+            , french = s "Veuillez cocher ou décocher la case"
+            , spanish = todo
+            }
+
         EnterCard ->
             { english = s "Please enter the name or the ID of a card"
             , french = s "Veuillez entrer le nom ou l'identifiant d'une fiche"
@@ -779,9 +879,21 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        EnterImage ->
+            { english = s "Please select an image"
+            , french = s "Veuillez sélectionner une image"
+            , spanish = todo
+            }
+
         EnterName ->
             { english = s "Please enter a name"
             , french = s "Veuillez entrer un nom"
+            , spanish = todo
+            }
+
+        EnterNumber ->
+            { english = s "Please enter a number"
+            , french = s "Veuillez entrer un nombre"
             , spanish = todo
             }
 
@@ -791,15 +903,39 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        EnterUrl ->
+            { english = s "Please enter a link (an URL)"
+            , french = s "Veuillez entrer un lien (une URL)"
+            , spanish = todo
+            }
+
         EnterUsername ->
             { english = s "Please enter your username"
             , french = s "Veuillez entrer votre nom d'utilisateur"
             , spanish = todo
             }
 
+        EnterValue ->
+            { english = s "Please enter value"
+            , french = s "Veuillez entrer une valeur"
+            , spanish = todo
+            }
+
         EtalabLogo ->
             { english = s "Etalab logo"
             , french = s "Logo d'Etalab"
+            , spanish = todo
+            }
+
+        EveryLanguage ->
+            { english = s "Every language"
+            , french = s "Toutes les langues"
+            , spanish = todo
+            }
+
+        FalseWord ->
+            { english = s "False"
+            , french = s "Faux"
             , spanish = todo
             }
 
@@ -1115,7 +1251,7 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
-        Haveanaccount ->
+        HaveAnAccount ->
             { english = s "I already have an account"
             , french = s "J'ai déjà un compte"
             , spanish = todo
@@ -1175,6 +1311,9 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        ImageField ->
+            getTranslationSet Image
+
         ImageUploadError message ->
             { english = s ("Image upload error: " ++ message)
             , french = s ("Échec du téléversement de l'image :" ++ message)
@@ -1184,6 +1323,21 @@ getTranslationSet translationId =
         ImproveExistingContent ->
             { english = s "Improve existing content"
             , french = s "Améliorez le contenu existant"
+            , spanish = todo
+            }
+
+        InputEmailField ->
+            getTranslationSet Email
+
+        InputNumberField ->
+            getTranslationSet Number
+
+        InputUrlField ->
+            getTranslationSet Url
+
+        InvalidNumber ->
+            { english = s "Not a valid number"
+            , french = s "Ce n'est pas un nombre valide."
             , spanish = todo
             }
 
@@ -1225,11 +1379,17 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        LocalizedString ->
+            { english = s "Localized string"
+            , french = s "Chaîne de caractères localisée"
+            , spanish = todo
+            }
+
         Logo ->
             { english = s "Logo"
             , french = s "Logo"
             , spanish = todo
-          }
+            }
 
         MissingDescription ->
             { english = s "Missing description"
@@ -1369,6 +1529,30 @@ getTranslationSet translationId =
             , spanish = todo
             }
 
+        NewValue ->
+            { english = s "New Value"
+            , french = s "Nouvelle valeur"
+            , spanish = todo
+            }
+
+        NewValueDescription ->
+            { english = s "Form to enter a new value"
+            , french = s "Formulaire de création d'une nouvelle valeur"
+            , spanish = todo
+            }
+
+        Number ->
+            { english = s "Number"
+            , french = s "Nombre"
+            , spanish = todo
+            }
+
+        NumberPlaceholder ->
+            { english = s "3.1415927"
+            , french = s "3.1415927"
+            , spanish = s "3.1415927"
+            }
+
         OGPsummitLink ->
             { english = s "https://en.ogpsummit.org/osem/conference/ogp-summit"
             , french = s "https://fr.ogpsummit.org/osem/conference/ogp-summit"
@@ -1419,6 +1603,21 @@ to strengthen governance.
 
                     Plural ->
                         s "Organizaciones"
+            }
+
+        OrganizationId ->
+            { english = s "Organization"
+            , french = s "Organisation"
+            , spanish = todo
+            }
+
+        OrganizationIdField ->
+            getTranslationSet OrganizationId
+
+        OrganizationPlaceholder ->
+            { english = s "Name of an organization"
+            , french = s "Nom d'une organisation"
+            , spanish = todo
             }
 
         OrganizationsDescription ->
@@ -1706,10 +1905,22 @@ to strengthen governance.
             , spanish = todo
             }
 
+        String ->
+            { english = s "String"
+            , french = s "Chaîne de caractères"
+            , spanish = todo
+            }
+
         Tags ->
             { english = s "Tags"
             , french = s "Tags"
             , spanish = s "Tags"
+            }
+
+        TextField ->
+            { english = s "Text"
+            , french = s "Texte"
+            , spanish = todo
             }
 
         TimeoutExplanation ->
@@ -1742,6 +1953,15 @@ to strengthen governance.
                         s "Herramientas"
             }
 
+        ToolId ->
+            { english = s "Tool"
+            , french = s "Outil"
+            , spanish = todo
+            }
+
+        ToolIdField ->
+            getTranslationSet ToolId
+
         ToolPlaceholder ->
             { english = s "Name of a tool"
             , french = s "Nom d'un outil"
@@ -1751,6 +1971,12 @@ to strengthen governance.
         ToolsDescription ->
             { english = s "List of tools"
             , french = s "Liste d'outils"
+            , spanish = todo
+            }
+
+        TrueWord ->
+            { english = s "True"
+            , french = s "Vrai"
             , spanish = todo
             }
 
@@ -1766,9 +1992,27 @@ to strengthen governance.
             , spanish = s "Tipo"
             }
 
+        UnknownLanguage ->
+            { english = s "Unknown language"
+            , french = s "Langue inconnue"
+            , spanish = todo
+            }
+
+        UnknownSchemaId schemaId ->
+            { english = s ("Reference to an unknown schema: " ++ schemaId)
+            , french = s ("Référence à un schema inconnu : " ++ schemaId)
+            , spanish = todo
+            }
+
         UnknownUser ->
             { english = s "User is unknown."
             , french = s "L'utilisateur est inconnu."
+            , spanish = todo
+            }
+
+        UnknownValue ->
+            { english = s "Unknown value"
+            , french = s "Valeur inconnue"
             , spanish = todo
             }
 
@@ -1787,6 +2031,18 @@ to strengthen governance.
         UploadingImage filename ->
             { english = s ("Uploading image \"" ++ filename ++ "\"...")
             , french = s ("Ajout de l'image \"" ++ filename ++ "\"...")
+            , spanish = todo
+            }
+
+        Url ->
+            { english = s "Link (URL)"
+            , french = s "Lien (URL)"
+            , spanish = todo
+            }
+
+        UrlPlaceholder ->
+            { english = s "https://www.example.com/sample-page"
+            , french = s "https://www.exemple.fr/exemple-de-page"
             , spanish = todo
             }
 
@@ -1813,6 +2069,15 @@ to strengthen governance.
                     Plural ->
                         s "Casos de uso"
             }
+
+        UseCaseId ->
+            { english = s "Use case"
+            , french = s "Cas d'usage"
+            , spanish = todo
+            }
+
+        UseCaseIdField ->
+            getTranslationSet UseCaseId
 
         UseCasePlaceholder ->
             { english = s "Name of a use case"
@@ -1886,6 +2151,36 @@ to strengthen governance.
             , spanish = todo
             }
 
+        Value ->
+            { english = s "Value"
+            , french = s "Valeur"
+            , spanish = todo
+            }
+
+        ValueCreationFailed ->
+            { english = s "Value creation failed"
+            , french = s "Échec de la création de la valeur"
+            , spanish = todo
+            }
+
+        ValueId ->
+            { english = s "Link to a value"
+            , french = s "Lien vers une valeur"
+            , spanish = todo
+            }
+
+        ValueIdArray ->
+            { english = s "Array of links to valuess"
+            , french = s "Tableau de liens vers des valeurs"
+            , spanish = todo
+            }
+
+        ValuePlaceholder ->
+            { english = s "The value..."
+            , french = s "La valeur"
+            , spanish = todo
+            }
+
         VoteBestContributions ->
             { english = s "Vote for the best contributions"
             , french = s "Votez pour les meilleurs contributions"
@@ -1903,6 +2198,7 @@ to strengthen governance.
             , french = s "Adresse du site officiel (URL)"
             , spanish = todo
             }
+
 
 
 -- INTERNALS
@@ -1961,8 +2257,23 @@ getManyStrings language keyIds card values =
         getStrings : ValueType -> List String
         getStrings value =
             case value of
-                StringValue value ->
+                BijectiveCardReferenceValue _ ->
+                    []
+
+                BooleanValue _ ->
+                    []
+
+                CardIdArrayValue ids ->
+                    []
+
+                CardIdValue cardId ->
+                    []
+
+                EmailValue value ->
                     [ value ]
+
+                ImagePathValue path ->
+                    []
 
                 LocalizedStringValue valueByLanguage ->
                     case getValueByPreferredLanguage language valueByLanguage of
@@ -1972,20 +2283,14 @@ getManyStrings language keyIds card values =
                         Just value ->
                             [ value ]
 
-                CardIdArrayValue ids ->
-                    []
-
-                CardIdValue cardId ->
-                    []
-
                 NumberValue _ ->
                     []
 
-                BooleanValue _ ->
-                    []
+                StringValue value ->
+                    [ value ]
 
-                BijectiveCardReferenceValue _ ->
-                    []
+                UrlValue value ->
+                    [ value ]
 
                 ValueIdArrayValue ids ->
                     List.concatMap (\id -> getStrings (ValueIdValue id)) ids
@@ -2029,32 +2334,41 @@ getOneString language keyIds card values =
 getOneStringFromValueType : Language -> Dict String TypedValue -> ValueType -> Maybe String
 getOneStringFromValueType language values valueType =
     case valueType of
-        StringValue value ->
+        BijectiveCardReferenceValue _ ->
+            Nothing
+
+        BooleanValue _ ->
+            Nothing
+
+        CardIdArrayValue _ ->
+            Nothing
+
+        CardIdValue cardId ->
+            Nothing
+
+        EmailValue value ->
             Just value
+
+        ImagePathValue path ->
+            Just path
 
         LocalizedStringValue valueByLanguage ->
             getValueByPreferredLanguage language valueByLanguage
 
-        CardIdArrayValue _ ->
+        NumberValue _ ->
             Nothing
+
+        StringValue value ->
+            Just value
+
+        UrlValue value ->
+            Just value
 
         ValueIdArrayValue [] ->
             Nothing
 
         ValueIdArrayValue (childValue :: _) ->
             getOneStringFromValueType language values (ValueIdValue childValue)
-
-        NumberValue _ ->
-            Nothing
-
-        BooleanValue _ ->
-            Nothing
-
-        BijectiveCardReferenceValue _ ->
-            Nothing
-
-        CardIdValue cardId ->
-            Nothing
 
         ValueIdValue valueId ->
             Dict.get valueId values

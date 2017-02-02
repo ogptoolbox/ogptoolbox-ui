@@ -72,7 +72,8 @@ viewCollections language users collections =
                                 [ class "show-more" ]
                                 [ span [ class "glyphicon glyphicon-plus" ]
                                     []
-                                , text (I18n.translate language (I18n.CollectionAdd)) ]
+                                , text (I18n.translate language (I18n.CollectionAdd))
+                                ]
                             ]
                        ]
                 )

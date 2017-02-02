@@ -9,7 +9,6 @@ import Image.Types exposing (..)
 import Json.Encode
 import Ports
 import Types exposing (..)
-import WebData exposing (..)
 
 
 type ExternalMsg
@@ -42,16 +41,16 @@ type alias Model =
     { authentication : Maybe Authentication
     , cardIds : List String
     , collectionJson : Maybe Json.Encode.Value
-    , data : DataId
+    , data : DataProxy {}
     , description : String
     , editedCollectionId : Maybe String
     , errors : FormErrors
+    , httpError : Maybe Http.Error
     , imageUploadStatus : ImageUploadStatus
     , language : I18n.Language
     , name : String
     , toolsAutocompleteModel : Cards.Autocomplete.Types.Model
     , useCasesAutocompleteModel : Cards.Autocomplete.Types.Model
-    , webData : WebData DataIdBody
     }
 
 

@@ -195,35 +195,38 @@ viewAutocomplete language parentId controlLabelI18n controlPlaceholderI18n error
                                         ]
                               )
                             ]
-                        , case model.selected of
-                            Just selected ->
-                                span [ class "input-group-btn" ]
-                                    [ button
-                                        [ class "btn btn-success"
-                                        , onWithOptions "click"
-                                            { preventDefault = True, stopPropagation = False }
-                                            (Json.Decode.succeed
-                                                (ForParent (Add selected.card))
-                                            )
-                                        ]
-                                        [ text <| I18n.translate language I18n.Add ]
-                                    ]
-
-                            Nothing ->
-                                if String.isEmpty (String.trim model.autocomplete) then
-                                    text ""
-                                else
+                        , if model.showAddOrCreateButton then
+                            case model.selected of
+                                Just selected ->
                                     span [ class "input-group-btn" ]
                                         [ button
-                                            [ class "btn btn-warning"
+                                            [ class "btn btn-success"
                                             , onWithOptions "click"
                                                 { preventDefault = True, stopPropagation = False }
                                                 (Json.Decode.succeed
-                                                    (ForParent (Create model.cardTypes model.autocomplete))
+                                                    (ForParent (Add selected.card))
                                                 )
                                             ]
-                                            [ text <| I18n.translate language I18n.Create ]
+                                            [ text <| I18n.translate language I18n.Add ]
                                         ]
+
+                                Nothing ->
+                                    if String.isEmpty (String.trim model.autocomplete) then
+                                        text ""
+                                    else
+                                        span [ class "input-group-btn" ]
+                                            [ button
+                                                [ class "btn btn-warning"
+                                                , onWithOptions "click"
+                                                    { preventDefault = True, stopPropagation = False }
+                                                    (Json.Decode.succeed
+                                                        (ForParent (Create model.cardTypes model.autocomplete))
+                                                    )
+                                                ]
+                                                [ text <| I18n.translate language I18n.Create ]
+                                            ]
+                          else
+                            text ""
                         ]
                   , span [ class "sr-only" ] [ text <| I18n.translate language I18n.LoadingMenu ]
                   ]

@@ -1,32 +1,15 @@
 module Cards.Item.Types exposing (..)
 
-import Dict exposing (Dict)
+import Authenticator.Types exposing (Authentication)
 import Http
+import I18n
 import Types exposing (..)
-import WebData exposing (..)
-
-
-type alias EditedProperty =
-    { ballots : Dict String Ballot
-    , cardId : String
-    , cards : Dict String Card
-    , keyId : String
-    , properties : Dict String Property
-    , propertyIds : List String
-    , selectedField : Field
-    , values : Dict String TypedValue
-    }
-
-
-type alias Model =
-    { displayUseItModal : Bool
-    , editedProperty : Maybe EditedProperty
-    , webData : WebData DataIdBody
-    }
+import Values.New.Types
 
 
 type ExternalMsg
     = Navigate String
+    | RequireSignIn InternalMsg
 
 
 type InternalMsg
@@ -35,17 +18,30 @@ type InternalMsg
     | GotCard (Result Http.Error DataIdBody)
     | GotProperties (Result Http.Error DataIdsBody)
     | LoadCard String
-    | LoadProperties String String
-    | PropertyPosted (Result Http.Error DataIdBody)
+    | NewValueMsg Values.New.Types.InternalMsg
+    | LoadProperties String
+    | PropertyUpserted (Result Http.Error DataIdBody)
     | RatingPosted (Result Http.Error DataIdBody)
-    | SelectField Field
     | ShareOnFacebook String
     | ShareOnGooglePlus String
     | ShareOnLinkedIn String
     | ShareOnTwitter String
-    | SubmitValue Field
+    | ValueUpserted DataId
     | VotePropertyDown String
     | VotePropertyUp String
+
+
+type alias Model =
+    { authentication : Maybe Authentication
+    , cardId : String
+    , data : DataProxy {}
+    , displayUseItModal : Bool
+    , editedKeyId : Maybe String
+    , httpError : Maybe Http.Error
+    , language : I18n.Language
+    , newValueModel : Values.New.Types.Model
+    , sameKeyPropertyIds : List String
+    }
 
 
 type Msg
@@ -56,6 +52,7 @@ type Msg
 type alias MsgTranslation parentMsg =
     { onInternalMsg : InternalMsg -> parentMsg
     , onNavigate : String -> parentMsg
+    , onRequireSignIn : InternalMsg -> parentMsg
     }
 
 
@@ -69,10 +66,21 @@ navigate path =
 
 
 translateMsg : MsgTranslation parentMsg -> MsgTranslator parentMsg
-translateMsg { onInternalMsg, onNavigate } msg =
+translateMsg { onInternalMsg, onRequireSignIn, onNavigate } msg =
     case msg of
         ForParent (Navigate path) ->
             onNavigate path
 
+        ForParent (RequireSignIn completionMsg) ->
+            onRequireSignIn completionMsg
+
         ForSelf internalMsg ->
             onInternalMsg internalMsg
+
+
+translateNewValueMsg : Values.New.Types.MsgTranslator Msg
+translateNewValueMsg =
+    Values.New.Types.translateMsg
+        { onInternalMsg = ForSelf << NewValueMsg
+        , onValueUpserted = ForSelf << ValueUpserted
+        }

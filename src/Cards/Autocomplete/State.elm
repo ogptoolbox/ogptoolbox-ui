@@ -30,14 +30,15 @@ idToAutocompletion id model =
         |> List.head
 
 
-init : List String -> Model
-init cardTypes =
+init : List String -> Bool -> Model
+init cardTypes showAddOrCreateButton =
     { autocomplete = ""
     , autocompleteMenuState = AutocompleteMenuHidden
     , autocompleter = Autocomplete.empty
     , autocompletions = []
     , cardTypes = cardTypes
     , selected = Nothing
+    , showAddOrCreateButton = showAddOrCreateButton
     }
 
 

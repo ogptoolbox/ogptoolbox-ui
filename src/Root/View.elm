@@ -114,7 +114,7 @@ view model =
                     OrganizationsRoute childRoute ->
                         case childRoute of
                             OrganizationRoute _ ->
-                                Cards.Item.View.view model.cardModel language
+                                Cards.Item.View.view model.cardModel
                                     |> Html.map translateCardMsg
                                     |> standardLayout language
 
@@ -124,7 +124,7 @@ view model =
                                     |> fullscreenLayout language
 
                             NewOrganizationRoute ->
-                                Cards.New.View.viewOrganization model.newCardModel language
+                                Cards.New.View.viewOrganization model.cardNewModel language
                                     |> Html.map translateNewCardMsg
                                     |> standardLayout language
 
@@ -135,7 +135,7 @@ view model =
                     ToolsRoute childRoute ->
                         case childRoute of
                             ToolRoute _ ->
-                                Cards.Item.View.view model.cardModel language
+                                Cards.Item.View.view model.cardModel
                                     |> Html.map translateCardMsg
                                     |> standardLayout language
 
@@ -145,14 +145,14 @@ view model =
                                     |> fullscreenLayout language
 
                             NewToolRoute ->
-                                Cards.New.View.viewTool model.newCardModel language
+                                Cards.New.View.viewTool model.cardNewModel language
                                     |> Html.map translateNewCardMsg
                                     |> standardLayout language
 
                     UseCasesRoute childRoute ->
                         case childRoute of
                             UseCaseRoute _ ->
-                                Cards.Item.View.view model.cardModel language
+                                Cards.Item.View.view model.cardModel
                                     |> Html.map translateCardMsg
                                     |> standardLayout language
 
@@ -162,7 +162,7 @@ view model =
                                     |> fullscreenLayout language
 
                             NewUseCaseRoute ->
-                                Cards.New.View.viewUseCase model.newCardModel language
+                                Cards.New.View.viewUseCase model.cardNewModel language
                                     |> Html.map translateNewCardMsg
                                     |> standardLayout language
 
