@@ -20,6 +20,7 @@ viewCardOpenSourceStatus language values card =
             (case I18n.getOneString language repoKeys card values of
                 Just value ->
                     String.length value > 8
+
                 Nothing ->
                     False
             )
@@ -28,6 +29,7 @@ viewCardOpenSourceStatus language values card =
             (case I18n.getOneString language sourceCodeKeys card values of
                 Just value ->
                     String.length value > 8
+
                 Nothing ->
                     False
             )
@@ -35,8 +37,12 @@ viewCardOpenSourceStatus language values card =
         openSource =
             (case I18n.getOneString language openSourceKeys card values of
                 Just value ->
-                    String.toLower value == "yes" ||
-                    String.toLower value == "oui"
+                    let
+                        lowerValue =
+                            String.toLower value
+                    in
+                        (lowerValue == "yes") || (lowerValue == "oui")
+
                 Nothing ->
                     False
             )
@@ -45,20 +51,22 @@ viewCardOpenSourceStatus language values card =
             (case I18n.getOneString language licenseKeys card values of
                 Just value ->
                     String.toLower value
+
                 Nothing ->
                     ""
             )
+
         openLicense =
-            (
-                String.length license > 1 &&
-                not (String.contains license "proprieta") &&
-                not (String.contains license "non-free")
+            ((String.length license > 1)
+                && not (String.contains license "proprieta")
+                && not (String.contains license "non-free")
             )
     in
         if repo || sourceCode || openSource || openLicense then
             img [ src "/img/open.png", title (I18n.translate language I18n.OpenSource) ] []
         else
             img [ src "/img/closed.png", title (I18n.translate language I18n.Proprietary) ] []
+
 
 viewCardThumbnail :
     I18n.Language
@@ -98,6 +106,7 @@ viewCardThumbnail language navigate onRemoveCard extraClass data card =
                         ToolCard ->
                             div [ class "opensource-home" ]
                                 [ viewCardOpenSourceStatus language data.values card ]
+
                         _ ->
                             Html.text ""
                       )

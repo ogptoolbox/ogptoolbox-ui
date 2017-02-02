@@ -115,6 +115,7 @@ viewCardListItem navigate language values card =
                 ToolCard ->
                     div [ class "opensource" ]
                         [ viewCardOpenSourceStatus language values card ]
+
                 _ ->
                     Html.text ""
               )
