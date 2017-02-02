@@ -1704,7 +1704,7 @@ table {
     a.forgot {
         color: grey;
         margin-bottom: 40px;
-        display: block; 
+        display: block;
 
     &:hover {
         color: @light-blue;
@@ -1747,13 +1747,16 @@ table {
 .haveanaccount {
     margin-top: 67px;
 }
-.fullheight-right {
-  position: absolute;
-  bottom: 0;
-  top: 0;
-  right: 0;
+.media-list {
+    overflow-y: scroll;
 }
-
+.fullheight-right {
+  position: fixed;
+  bottom: 0;
+  top: 68px;
+  right: 0;
+  overflow: hidden;
+}
 //FULL SCREEN BROWSE PAGE
 body, html, #main, .main-container {
     height: 100%;
@@ -2577,13 +2580,11 @@ h3.user-mail {
 
 
 /* Page presse */
-
-
 section.quote {
 padding: 50px 0;
   &:first-of-type {
     margin-top: 80px;
-  }   
+  }
   &:last-of-type {
     margin-bottom: 90px;
   }
@@ -2609,14 +2610,13 @@ padding: 50px 0;
       &:hover {
         color: #25b5ff;
       }
-
   }
   span.glyphicon {
     font-size: 1em;
     padding-left: 7px;
     position: relative;
     top: 3px;
-}
+  }
 }
 
 
