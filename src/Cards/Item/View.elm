@@ -296,7 +296,7 @@ viewCardContent model card =
                                             ]
                                         , div [ class "col-xs-4 text-right" ]
                                             [ a [ class "show-more pull-right" ]
-                                                [ text ("Show " ++ (card.properties |> Dict.size |> toString) ++ " more")
+                                                [ text (I18n.translate language (I18n.ShowMoreCount (card.properties |> Dict.size)))
                                                 , span [ class "glyphicon glyphicon-menu-down" ] []
                                                 ]
                                             ]
