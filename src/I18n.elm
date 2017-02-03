@@ -341,21 +341,21 @@ getTranslationSet translationId =
             { english = s "About the OGP Toolbox"
             , french = s "À propos de la boite à outils OGP"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Over de OGP Toolbox"
             }
 
         AboutLegal ->
             { english = s "Legal notices"
             , french = s "Mentions légales"
             , spanish = s "Nota legal"
-            , dutch = todo
+            , dutch = s "Disclaimer"
             }
 
         AboutLegalContent ->
-            { english = s "OGPtoolobox.org is edited by the Etalab taskforce, a Prime Minister service, 39 quai André Citroën 75015 PARIS."
+            { english = s "OGPtoolobox.org is maintained by Etalab, 39 quai André Citroën 75015 PARIS, FRANCE"
             , french = s "OGPtoolobox.org est édité par la mission Etalab, service du Premier Ministre, 39 quai André Citroën 75015 PARIS."
             , spanish = todo
-            , dutch = todo
+            , dutch = s "OGPtoolobox.org wordt verzorgd door Etalab, 39 quai André Citroën 75015 PARIS, FRANKRIJK"
             }
 
         AccountCreationFailed ->
@@ -1935,7 +1935,7 @@ to strengthen governance.
             { english = s "Press"
             , french = s "Presse"
             , spanish = todo
-            , dutch = s "Druk"
+            , dutch = s "Pers"
             }
 
         PressDescription ->
