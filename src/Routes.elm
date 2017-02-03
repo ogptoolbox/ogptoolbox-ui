@@ -110,6 +110,7 @@ routeParser =
             [ I18n.English
             , I18n.French
             , I18n.Spanish
+            , I18n.Dutch
             ]
         )
 
