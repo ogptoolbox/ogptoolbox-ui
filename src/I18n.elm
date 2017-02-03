@@ -210,6 +210,7 @@ type TranslationId
     | OpenGovernmentPartnership
     | OpenGovernmentPartnershipLogo
     | OpenGovParagraph
+    | OpenData
     | OpenSource
     | Organization GrammaticalNumber
     | OrganizationId
@@ -257,6 +258,7 @@ type TranslationId
     | Share
     | ShowAll Int
     | ShowMore
+    | ShowMoreCount Int
     | SignIn
     | SignInToContribute
     | SignOut
@@ -314,10 +316,10 @@ getTranslationSet : TranslationId -> TranslationSet
 getTranslationSet translationId =
     case translationId of
         About ->
-            { english = s "About"
+            { english = s "General"
             , french = s "À propos"
             , spanish = s "Sobre"
-            , dutch = s "Over"
+            , dutch = s "Algemeen"
             }
 
         AboutCredits ->
@@ -411,7 +413,7 @@ getTranslationSet translationId =
             { english = s "Add"
             , french = s "Ajouter"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Nieuw"
             }
 
         AddALogo ->
@@ -432,14 +434,14 @@ getTranslationSet translationId =
             { english = s "Add your collection"
             , french = s "Ajouter votre collection"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Nieuwe collectie"
             }
 
         AdditionalInformations ->
-            { english = s "Additional informations"
+            { english = s "Additional information"
             , french = s "Informations supplémentaires"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Aanvullende informatie"
             }
 
         AddOrganization ->
@@ -471,10 +473,10 @@ getTranslationSet translationId =
             }
 
         AddYourContribution ->
-            { english = s "Add your contribution"
+            { english = s "Contribute information"
             , french = s "Ajouter votre contribution"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Informatie toevoegen"
             }
 
         AuthenticationFailed ->
@@ -707,7 +709,7 @@ getTranslationSet translationId =
             { english = s "Add your collection"
             , french = s "Ajouter votre collection"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Nieuwe collectie"
             }
 
         CollectionAddDescription ->
@@ -721,7 +723,7 @@ getTranslationSet translationId =
             { english = s "Add your collection"
             , french = s "Ajouter votre collection"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Nieuwe collectie"
             }
 
         CollectionDescriptionPlaceholder ->
@@ -784,7 +786,7 @@ getTranslationSet translationId =
             { english = s "© 2016 Etalab. Design by Nodesign.net"
             , french = s "© 2016 Etalab. Design par Nodesign.net"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "© 2016 Etalab. Ontworpen door Nodesign.net"
             }
 
         CountVersionsAvailable count ->
@@ -809,7 +811,16 @@ getTranslationSet translationId =
                     _ ->
                         s ((toString count) ++ " versions disponibles")
             , spanish = todo
-            , dutch = todo
+            , dutch =
+                case count of
+                    0 ->
+                        s "geen informatie"
+
+                    1 ->
+                        s "1 versie"
+
+                    _ ->
+                        s ((toString count) ++ " versies")
             }
 
         Create ->
@@ -865,7 +876,7 @@ getTranslationSet translationId =
             { english = s "Description"
             , french = s "Description"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Omschrijving"
             }
 
         Download ->
@@ -886,7 +897,7 @@ getTranslationSet translationId =
             { english = s "Edit"
             , french = s "Éditer"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Wijzig"
             }
 
         EditCollection ->
@@ -900,7 +911,7 @@ getTranslationSet translationId =
             { english = s "A simple way to recommend your favorite tools."
             , french = s "Une façon simple de recommander vos outils favoris."
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Groepeer gelijkvormige of afhankelijke platformen"
             }
 
         EditCollectionDescription ->
@@ -1050,14 +1061,14 @@ getTranslationSet translationId =
             { english = s "FAQ"
             , french = s "FAQ"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Veelgestelde vragen"
             }
 
         FaqBug ->
             { english = s "How can I report a bug or suggest a new feature?"
             , french = s "Comment puis-je signaliser un bug ou suggérer une nouvelle fonctionnalité ?"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Hoe kan ik een fout melden of een idee indienen?"
             }
 
         FaqBugContent ->
@@ -1204,14 +1215,14 @@ getTranslationSet translationId =
             { english = s "All the answers to your questions about the OGP Toolbox"
             , french = s "Mieux comprendre l'OGP Toolbox"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Veelgestelde vragen over de OGP Toolbox"
             }
 
         FaqModeration ->
             { english = s "How are contributions moderated?"
             , french = s "Comment sont modérées les contributions ?"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Wordt de inhoud gecontroleerd?"
             }
 
         FaqModerationContent ->
@@ -1239,14 +1250,14 @@ getTranslationSet translationId =
             { english = s "What can I find in the OGP Toolbox?"
             , french = s "Qu'est-ce-qu'on peut trouver dans l'OGP Toolbox ?"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Wat vind ik in de OGP Toolbox?"
             }
 
         FaqTypesContent ->
             { english = s "The platform showcases 4 types of items:"
             , french = s "La plateforme référence 4 types d'éléments :"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Er zijn 4 soorten onderdelen"
             }
 
         FaqTypesContentCollection ->
@@ -1281,7 +1292,7 @@ getTranslationSet translationId =
             { english = s "What is the OGP Toolbox?"
             , french = s "Qu'est ce que l'OGP Toolbox ?"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Wat is de OGP Toolbox?"
             }
 
         FaqWhatContent1 ->
@@ -1393,14 +1404,14 @@ getTranslationSet translationId =
             { english = s "About"
             , french = s "À propos"
             , spanish = s "Acerca"
-            , dutch = todo
+            , dutch = s "Over"
             }
 
         FooterDiscover ->
-            { english = s "Discover"
+            { english = s "Content"
             , french = s "Découvrir"
             , spanish = s "Descubrir"
-            , dutch = todo
+            , dutch = s "Inhoud"
             }
 
         GenericError ->
@@ -1421,14 +1432,14 @@ getTranslationSet translationId =
             { english = s "digital solutions to improve democracy"
             , french = s "solutions numériques pour la démocratie"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Software voor de digitale democratie"
             }
 
         Help ->
-            { english = s "Help"
+            { english = s "FAQ"
             , french = s "Aide"
             , spanish = s "Ayuda"
-            , dutch = s "Help"
+            , dutch = s "Veelgestelde vragen"
             }
 
         Home ->
@@ -1450,7 +1461,7 @@ getTranslationSet translationId =
             { english = s "See results"
             , french = s "Afficher les résultats"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Overzicht tonen"
             }
 
         HomeStart ->
@@ -1575,7 +1586,7 @@ getTranslationSet translationId =
             { english = s "Logo"
             , french = s "Logo"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Logo"
             }
 
         MissingDescription ->
@@ -1589,14 +1600,14 @@ getTranslationSet translationId =
             { english = s "Missing value"
             , french = s "Valeur manquante"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Verplicht veld"
             }
 
         Name ->
             { english = s "Name"
             , french = s "Nom"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Naam"
             }
 
         NetworkErrorExplanation ->
@@ -1617,7 +1628,7 @@ getTranslationSet translationId =
             { english = s "Add new"
             , french = s "Ajouter"
             , spanish = s "Añadir nuevo"
-            , dutch = s "Toevoegen"
+            , dutch = s "Nieuw"
             }
 
         NewCardCollectionCatchPhrase ->
@@ -1631,21 +1642,21 @@ getTranslationSet translationId =
             { english = s "Add a new item"
             , french = s "Ajouter un nouvel élément"
             , spanish = todo
-            , dutch = s "Nieuw onderdeel toevoegen"
+            , dutch = s "Nieuw onderdeel"
             }
 
         NewCardOrganization ->
             { english = s "Add a new organization"
             , french = s "Ajouter une nouvelle organisation"
             , spanish = todo
-            , dutch = s "Nieuwe organisatie toevoegen"
+            , dutch = s "Nieuwe organisatie"
             }
 
         NewCardOrganizationCatchPhrase ->
             { english = s "A developer or user of tools."
             , french = s "Un développeur ou utilisateur d'outil."
             , spanish = todo
-            , dutch = s "Een ontwikkelaar of gebruiker van software"
+            , dutch = s "Een organisatie die software gebruikt of maakt"
             }
 
         NewCardOrganizationDescription ->
@@ -1673,7 +1684,7 @@ getTranslationSet translationId =
             { english = s "Add a new tool"
             , french = s "Ajouter un nouvel outil"
             , spanish = todo
-            , dutch = s "Nieuw platform toevoegen"
+            , dutch = s "Nieuw platform"
             }
 
         NewCardToolCatchPhrase ->
@@ -1715,7 +1726,7 @@ getTranslationSet translationId =
             { english = s "A concrete example showing how a tool was used."
             , french = s "Un exemple concret d'utilisation d'un ou plusieurs outils."
             , spanish = todo
-            , dutch = s "Een voorbeeld dat laat zien hoe het platform wordt gebruikt"
+            , dutch = s "Een platform toegepast in de praktijk"
             }
 
         NewCardUseCaseDescription ->
@@ -1796,7 +1807,11 @@ to strengthen governance.
 """
             , french = s "Le Partenariat pour un gouvernement ouvert est une initiative multilatérale créée en 2011 par huit pays fondateurs, qui s’attache à promouvoir la transparence et l’intégrité du gouvernement ainsi que l’utilisation des nouvelles technologies pour faciliter son ouverture."
             , spanish = todo
-            , dutch = todo
+            , dutch = s """
+Open Government Partnership is een initiatief dat streeft naar samenwerking tussen overheden bij het streven naar
+transparantie, vergroten van burgerparticipatie, voorkomen van onduidelijkheid en het omarmen van technologie voor het
+verbeteren van de dienstverlening door overheden.
+"""
             }
 
         Organization number ->
@@ -1829,7 +1844,12 @@ to strengthen governance.
                     Plural ->
                         s "Organisaties"
             }
-
+        OpenData ->
+            { english = s "Open Data"
+            , french = todo
+            , spanish = todo
+            , dutch = s "Open data"
+            }
         OpenSource ->
             { english = s "Free Open Source Software"
             , french = s "Logiciel Libre Open Source"
@@ -1935,7 +1955,7 @@ to strengthen governance.
             { english = s "Press"
             , french = s "Presse"
             , spanish = todo
-            , dutch = s "Pers"
+            , dutch = s "In het nieuws"
             }
 
         PressDescription ->
@@ -1945,7 +1965,7 @@ to strengthen governance.
             { english = s "What the press says of the OGP Toolbox"
             , french = s "La presse parle de la boite à outils de l'OGP"
             , spanish = todo
-            , dutch = s "Wat de pers zegt over de OGP Toolbox"
+            , dutch = s "Diverse nieuwsberichten over de OGP Toolbox"
             }
 
         ProfileMyCollections ->
@@ -1959,7 +1979,7 @@ to strengthen governance.
             { english = s "Closed Proprietary Software"
             , french = s "Logiciel propriétaire fermé"
             , spanish = todo
-            , dutch = s "Gesloten Software"
+            , dutch = s "Commercieel"
             }
 
         Publish ->
@@ -2092,7 +2112,7 @@ to strengthen governance.
             { english = s "Search for a tool, use case or organization"
             , french = s "Rechercher un outil, un cas d'usage ou une organisation"
             , spanish = todo
-            , dutch = s "Zoek een platform, toepassing of organisatie"
+            , dutch = s "Zoeken..."
             }
 
         SeeAllAndCompare ->
@@ -2143,7 +2163,12 @@ to strengthen governance.
             , spanish = s "Mostrar más"
             , dutch = s "Meer..."
             }
-
+        ShowMoreCount count ->
+            { english = s ("Show " ++ (toString count) ++ " more")
+            , french = s ("Voir " ++ (toString count) ++ " plus")
+            , spanish = s ("Mostrar " ++ (toString count) ++ " más")
+            , dutch = s ("Toon " ++ (toString count) ++ " meer")
+            }
         SignIn ->
             { english = s "Sign In"
             , french = s "Identification"
@@ -2395,7 +2420,7 @@ to strengthen governance.
             { english = s "Use case"
             , french = s "Cas d'usage"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Toepassing"
             }
 
         UseCaseIdField ->
@@ -2468,21 +2493,21 @@ to strengthen governance.
             { english = s "Uses"
             , french = s "Utilise"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Maakt gebruik van"
             }
 
         UseIt ->
             { english = s "Use it"
             , french = s "Utiliser"
             , spanish = todo
-            , dutch = todo
+            , dutch = s "Gebruik"
             }
 
         UseTool ->
             { english = s "Use this tool"
             , french = s "Utiliser cet outil"
             , spanish = s "Utilice esta herramienta"
-            , dutch = s "Gebruik dit gereedschap "
+            , dutch = s "Gebruik deze software"
             }
 
         Value ->

@@ -378,8 +378,9 @@ viewCollections collectionsWebData language =
                                                         language
                                                         "/collections"
                                                         [ class "show-more" ]
-                                                        [ span [ class "glyphicon glyphicon-menu-down" ] []
-                                                        , text (I18n.translate language (I18n.ShowMore))
+                                                        [ text (I18n.translate language (I18n.ShowMore))
+                                                        , span [ class "glyphicon glyphicon-menu-down" ]
+                                                            []
                                                         ]
                                                     ]
                                                ]
