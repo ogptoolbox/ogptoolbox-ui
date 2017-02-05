@@ -107,10 +107,10 @@ routeParser =
             (\language ->
                 map (I18nRouteWithLanguage language) (s (I18n.iso639_1FromLanguage language) </> localizedRouteParser)
             )
-            [ I18n.English
+            [ I18n.Dutch
+            , I18n.English
             , I18n.French
             , I18n.Spanish
-            , I18n.Dutch
             ]
         )
 
