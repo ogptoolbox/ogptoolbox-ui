@@ -411,12 +411,17 @@ viewFooter model language =
                                             I18n.languages
                                                 |> List.map
                                                     (\language ->
+                                                        ( language
+                                                        , (I18n.translate language (I18n.Language language))
+                                                        )
+                                                    )
+                                                |> List.sortBy (\( language, languageLabel ) -> languageLabel)
+                                                |> List.map
+                                                    (\( language, languageLabel ) ->
                                                         li []
                                                             [ aForPath
                                                                 (Urls.replaceLanguageInLocation language model.location)
-                                                                [ text
-                                                                    (I18n.translate language (I18n.Language language))
-                                                                ]
+                                                                [ text languageLabel ]
                                                             ]
                                                     )
                                         )
