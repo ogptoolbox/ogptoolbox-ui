@@ -416,6 +416,11 @@ cardTypesForOrganization =
     [ "organization" ]
 
 
+cardTypesForSoftware : List String
+cardTypesForSoftware =
+    [ "software" ]
+
+
 cardTypesForTool : List String
 cardTypesForTool =
     [ "software", "platform" ]

@@ -10,7 +10,6 @@ import Http exposing (Error(..))
 import Http.Error
 import I18n
 import String
-import Cards.ViewsParts exposing (..)
 import Tags.ViewsParts exposing (..)
 import Types exposing (..)
 import Urls
@@ -111,14 +110,6 @@ viewCardListItem navigate language values card =
                                 )
                             ]
                 ]
-            , (case cardType of
-                ToolCard ->
-                    div [ class "opensource" ]
-                        [ viewCardOpenSourceStatus language values card ]
-
-                _ ->
-                    Html.text ""
-              )
             , div [ class "caption" ]
                 [ h4 []
                     [ aForPath

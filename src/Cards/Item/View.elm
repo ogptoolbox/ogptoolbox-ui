@@ -1,7 +1,7 @@
 module Cards.Item.View exposing (..)
 
+import Cards.Helpers exposing (..)
 import Cards.Item.Types exposing (..)
-import Cards.ViewsParts exposing (..)
 import Configuration
 import Dict exposing (Dict)
 import Html exposing (..)
@@ -884,78 +884,92 @@ viewSidebar model card =
                                             [ text (I18n.translate language I18n.AddALogo) ]
                                         ]
                             ]
-                        , div [ class "caption" ]
-                            [ table [ class "table" ]
-                                [ tbody []
-                                    ([ --      tr [ class "editable" ]
-                                       --     [ td [ class "table-label" ]
-                                       --         [ text (I18n.translate language I18n.Type) ]
-                                       --     , td []
-                                       --         [ text "TODO type" ]
-                                       --     ]
-                                       -- ,
-                                       tr
-                                        [ class "editable"
-                                        , onClick (ForSelf (LoadProperties "license"))
-                                        ]
-                                        [ td [ class "table-label" ]
-                                            [ text (I18n.translate language I18n.License) ]
-                                        , td []
-                                            [ text
-                                                (I18n.getOneString language licenseKeys card values
-                                                    |> Maybe.withDefault ""
-                                                )
-                                            ]
-                                        ]
-                                     , div [ class "opensource-card" ]
-                                        [ viewCardOpenSourceStatus language values card ]
-                                     , let
-                                        firstTd =
-                                            td [ class "table-label" ]
-                                                [ text (I18n.translate language I18n.Website) ]
-                                       in
-                                        case I18n.getOneString language urlKeys card values of
-                                            Nothing ->
-                                                tr []
-                                                    [ firstTd
-                                                    , td []
-                                                        [ button
-                                                            [ class "button call-add"
-                                                            , onClick (ForSelf (LoadProperties "website"))
-                                                            ]
-                                                            [ text "+ Add a link" ]
-                                                        ]
-                                                    ]
-
-                                            Just url ->
-                                                tr
-                                                    [ class "editable"
-                                                    , onClick (ForSelf (LoadProperties "website"))
-                                                    ]
-                                                    [ firstTd
-                                                    , td [] [ aExternal [ href url ] [ text url ] ]
-                                                    ]
-                                     ]
-                                        ++ (case Dict.get card.id Configuration.useItData of
-                                                Nothing ->
-                                                    []
-
-                                                Just { frenchGovDeployUrl } ->
-                                                    [ tr []
-                                                        [ td [ attribute "colspan" "2" ]
-                                                            [ button
-                                                                [ class "btn btn-default btn-action btn-block"
-                                                                , onClick (ForSelf (DisplayUseItModal True))
-                                                                , type_ "button"
+                        , let
+                            isSoftware =
+                                cardSubTypeIdsIntersect card.subTypeIds cardTypesForSoftware
+                          in
+                            div [ class "caption" ]
+                                [ table [ class "table" ]
+                                    [ tbody []
+                                        [ if isSoftware then
+                                            tr
+                                                [ class "editable"
+                                                , onClick (ForSelf (LoadProperties "license"))
+                                                ]
+                                                [ td [ class "table-label" ]
+                                                    [ text (I18n.translate language I18n.License) ]
+                                                , td []
+                                                    (List.concat
+                                                        [ let
+                                                            license =
+                                                                I18n.getOneString language licenseKeys card values
+                                                                    |> Maybe.withDefault ""
+                                                          in
+                                                            if String.isEmpty license then
+                                                                []
+                                                            else
+                                                                [ text license
+                                                                , br [] []
                                                                 ]
-                                                                [ text (I18n.translate language I18n.UseIt) ]
+                                                        , [ strong []
+                                                                [ text <|
+                                                                    I18n.translate language
+                                                                        (if isOpenSource language values card then
+                                                                            I18n.OpenSource
+                                                                         else
+                                                                            I18n.Proprietary
+                                                                        )
+                                                                ]
+                                                          ]
+                                                        ]
+                                                    )
+                                                ]
+                                          else
+                                            text ""
+                                        , let
+                                            firstTd =
+                                                td [ class "table-label" ]
+                                                    [ text (I18n.translate language I18n.Website) ]
+                                          in
+                                            case I18n.getOneString language urlKeys card values of
+                                                Nothing ->
+                                                    tr []
+                                                        [ firstTd
+                                                        , td []
+                                                            [ button
+                                                                [ class "button call-add"
+                                                                , onClick (ForSelf (LoadProperties "website"))
+                                                                ]
+                                                                [ text "+ Add a link" ]
                                                             ]
                                                         ]
+
+                                                Just url ->
+                                                    tr
+                                                        [ class "editable"
+                                                        , onClick (ForSelf (LoadProperties "website"))
+                                                        ]
+                                                        [ firstTd
+                                                        , td [] [ aExternal [ href url ] [ text url ] ]
+                                                        ]
+                                        , case Dict.get card.id Configuration.useItData of
+                                            Just { frenchGovDeployUrl } ->
+                                                tr []
+                                                    [ td [ attribute "colspan" "2" ]
+                                                        [ button
+                                                            [ class "btn btn-default btn-action btn-block"
+                                                            , onClick (ForSelf (DisplayUseItModal True))
+                                                            , type_ "button"
+                                                            ]
+                                                            [ text (I18n.translate language I18n.UseIt) ]
+                                                        ]
                                                     ]
-                                           )
-                                    )
+
+                                            Nothing ->
+                                                text ""
+                                        ]
+                                    ]
                                 ]
-                            ]
                         ]
                     ]
                 ]
