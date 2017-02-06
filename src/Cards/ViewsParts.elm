@@ -89,19 +89,25 @@ viewCardThumbnail language navigate onRemoveCard extraClass data card =
     in
         div [ class "col-xs-12 col-sm-6 col-md-4 col-lg-3" ]
             [ let
-                element =
+                ( element, elementAttributes ) =
                     case onRemoveCard of
                         Just onRemoveCard ->
-                            div
+                            ( a
+                            , [ href <| Urls.languagePath language path
+                              , target "_blank"
+                              ]
+                            )
 
                         Nothing ->
-                            aForPath
+                            ( aForPath
                                 navigate
                                 language
                                 path
+                            , []
+                            )
               in
                 element
-                    [ class ("thumbnail " ++ extraClass) ]
+                    ([ class ("thumbnail " ++ extraClass) ] ++ elementAttributes)
                     [ (case cardType of
                         ToolCard ->
                             div [ class "opensource-home" ]
