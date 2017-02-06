@@ -216,7 +216,7 @@ viewAutocomplete language parentId controlLabelI18n controlPlaceholderI18n error
                                     else
                                         span [ class "input-group-btn" ]
                                             [ button
-                                                [ class "btn btn-warning"
+                                                [ class "btn btn-default"
                                                 , onWithOptions "click"
                                                     { preventDefault = True, stopPropagation = False }
                                                     (Json.Decode.succeed
