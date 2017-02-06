@@ -316,298 +316,1049 @@ getTranslationSet : TranslationId -> TranslationSet
 getTranslationSet translationId =
     case translationId of
         About ->
-            { english = s "General"
-            , french = s "À propos"
-            , spanish = s "Sobre"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Algemeen"
+            , english = s "General"
+            , estonian = todo
+            , finnish = todo
+            , french = s "À propos"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Sobre"
+            , swedish = todo
             }
 
         AboutCredits ->
-            { english = s "Credits"
-            , french = s "Crédits"
-            , spanish = s "Créditos"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Credits"
+            , english = s "Credits"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Crédits"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Créditos"
+            , swedish = todo
             }
 
         AboutCreditsContent ->
-            { english = s "The bubble tags navigation system is based on "
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "De bellen module voor de termen is gebaseerd op "
+            , english = s "The bubble tags navigation system is based on "
+            , estonian = todo
+            , finnish = todo
             , french = s "Le système de navigations des tag par bulles est basé sur la solution "
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         AboutDescription ->
             getTranslationSet AboutLead
 
         AboutLead ->
-            { english = s "About the OGP Toolbox"
-            , french = s "À propos de la boite à outils OGP"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Over de OGP Toolbox"
+            , english = s "About the OGP Toolbox"
+            , estonian = todo
+            , finnish = todo
+            , french = s "À propos de la boite à outils OGP"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         AboutLegal ->
-            { english = s "Legal notices"
-            , french = s "Mentions légales"
-            , spanish = s "Nota legal"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Disclaimer"
+            , english = s "Legal notices"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Mentions légales"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Nota legal"
+            , swedish = todo
             }
 
         AboutLegalContent ->
-            { english = s "OGPtoolobox.org is maintained by Etalab, 39 quai André Citroën 75015 PARIS, FRANCE"
-            , french = s "OGPtoolobox.org est édité par la mission Etalab, service du Premier Ministre, 39 quai André Citroën 75015 PARIS."
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "OGPtoolobox.org wordt verzorgd door Etalab, 39 quai André Citroën 75015 PARIS, FRANKRIJK"
+            , english = s "OGPtoolobox.org is maintained by Etalab, 39 quai André Citroën 75015 PARIS, FRANCE"
+            , estonian = todo
+            , finnish = todo
+            , french = s "OGPtoolobox.org est édité par la mission Etalab, service du Premier Ministre, 39 quai André Citroën 75015 PARIS."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         AccountCreationFailed ->
-            { english = s "Account création failed"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Account maken is mislukt"
+            , english = s "Account création failed"
+            , estonian = todo
+            , finnish = todo
             , french = s "Échec de la création du compte"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         ActivationDescription ->
-            { english = s "Verification of the user's email address."
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Verificatie van het emailadres"
+            , english = s "Verification of the user's email address."
+            , estonian = todo
+            , finnish = todo
             , french = s "Vérification de l'adresse courriel de l'utilisateur."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         ActivationFailed ->
-            { english = s "The verification of your email address has failed. Please try again."
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Verificatie van het emailadres is mislukt. Probeer het nogmaals"
+            , english = s "The verification of your email address has failed. Please try again."
+            , estonian = todo
+            , finnish = todo
             , french = s "La vérification de votre adresse courriel a échoué. Veuillez réessayer."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         ActivationInProgress ->
-            { english = s "Verifying your email address..."
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Email adres wordt geverifieeerd..."
+            , english = s "Verifying your email address..."
+            , estonian = todo
+            , finnish = todo
             , french = s "Vérification de votre adresse courriel..."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         ActivationNotRequested ->
-            { english = s "Your email address will be verified shortly..."
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Email adres wordt geverifieeerd..."
+            , english = s "Your email address will be verified shortly..."
+            , estonian = todo
+            , finnish = todo
             , french = s "Votre adresse courriel va bientôt être vérifiée..."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         ActivationSucceeded ->
-            { english = s "The verification of your email address has succeeded. Your account is now activated!"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Verificatie van het emailadres is gelukt. Account is geactiveerd"
+            , english = s "Verification of your email address has succeeded. Account is now activated!"
+            , estonian = todo
+            , finnish = todo
             , french = s "La vérification de votre adresse courriel a réussi. Votre compte est maintenant activé !"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         ActivationTitle ->
-            { english = s "User Account Activation"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Account verificatie"
+            , english = s "User Account Activation"
+            , estonian = todo
+            , finnish = todo
             , french = s "Activation du compte utilisateur"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         Add ->
-            { english = s "Add"
-            , french = s "Ajouter"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Nieuw"
+            , english = s "Add"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Ajouter"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         AddALogo ->
-            { english = s "+ Add a logo"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "+ Nieuw logo"
+            , english = s "+ Add a logo"
+            , estonian = todo
+            , finnish = todo
             , french = s "+ Ajouter un logo"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         AddCard ->
-            { english = s "Add Card"
-            , french = s "Ajouter une fiche"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Nieuwe kaart"
+            , english = s "Add card"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Ajouter un fiche"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         AddCollection ->
-            { english = s "Add your collection"
-            , french = s "Ajouter votre collection"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Nieuwe collectie"
+            , english = s "Add your collection"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Ajouter votre collection"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         AdditionalInformations ->
-            { english = s "Additional information"
-            , french = s "Informations supplémentaires"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Aanvullende informatie"
+            , english = s "Additional information"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Informations supplémentaires"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         AddOrganization ->
-            { english = s "Add an organization"
-            , french = s "Ajouter une organisation"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Nieuw organisatie"
+            , english = s "Add an organization"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Ajouter une organisation"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         AddTool ->
-            { english = s "Add a tool"
-            , french = s "Ajouter un outil"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Nieuw platform"
+            , english = s "Add a tool"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Ajouter un outil"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         AddToolOrUseCase ->
-            { english = s "Add a new tool or use case"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Nieuwe toepassing of platform"
+            , english = s "Add a new tool or use case"
+            , estonian = todo
+            , finnish = todo
             , french = s "Ajoutez un nouvel outil ou cas d'usage"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         AddUseCase ->
-            { english = s "Add a use case"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Nieuwe toepassing"
+            , english = s "Add a use case"
+            , estonian = todo
+            , finnish = todo
             , french = s "Ajouter un cas d'usage"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         AddYourContribution ->
-            { english = s "Contribute information"
-            , french = s "Ajouter votre contribution"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Informatie toevoegen"
+            , english = s "Contribute information"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Ajouter votre contribution"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         AuthenticationFailed ->
-            { english = s "Authentication failed"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Authenticatie mislukt"
+            , english = s "Authentication failed"
+            , estonian = todo
+            , finnish = todo
             , french = s "L'authentification a échoué"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         AuthenticationRequired ->
-            { english = s "Authentication required"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Authenticatie vereist"
+            , english = s "Authentication required"
+            , estonian = todo
+            , finnish = todo
             , french = todo
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         AuthenticationRequiredExplanation ->
-            { english = s "You must sign in to display this page."
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Je moet aangemeld zijn om deze pagina te bekijken."
+            , english = s "You must sign in to display this page."
+            , estonian = todo
+            , finnish = todo
             , french = todo
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         BadAuthorization ->
-            { english = s "Authorization code is wrong or obsolete."
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "De authorizatie code is fout of verlopen."
+            , english = s "Authorization code is wrong or obsolete."
+            , estonian = todo
+            , finnish = todo
             , french = s "Le code d'autorisation est erroné ou périmé."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         BadEmailOrPassword ->
-            { english = s "Either email address is unknown or password is wrong."
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Emailadres of wachtwoord onjuist"
+            , english = s "Either email address is unknown or password is wrong."
+            , estonian = todo
+            , finnish = todo
             , french = s "Soit l'adresse courriel est inconnue, soit le mot de passe est erroné."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         BadPayload ->
-            { english = s "Bad payload"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Foutieve inhoud"
+            , english = s "Bad payload"
+            , estonian = todo
+            , finnish = todo
             , french = s "Contenu incorrect"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         BadPayloadExplanation ->
-            { english = s "The server returned unexpected data."
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "De server retourneerde onjuiste gegevens."
+            , english = s "The server returned unexpected data."
+            , estonian = todo
+            , finnish = todo
             , french = s "Le server a retourné des données imprévues"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         BadStatus ->
-            { english = s "Bad status"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Foutieve status"
+            , english = s "Bad status"
+            , estonian = todo
+            , finnish = todo
             , french = s "Statut incorrect"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         BadUrl ->
-            { english = s "Bad URL"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Foutieve URL"
+            , english = s "Bad URL"
+            , estonian = todo
+            , finnish = todo
             , french = s "URL incorrecte"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         BadUrlExplanation ->
-            { english = s "The given URL is invalid."
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "De opgegeven URL is onjuist."
+            , english = s "The given URL is invalid."
+            , estonian = todo
+            , finnish = todo
             , french = s "L'URL fournie n'est pas valide."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         BestOf count ->
-            { english = s ("Best of " ++ (toString count))
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s ("Beste van " ++ (toString count))
+            , english = s ("Best of " ++ (toString count))
+            , estonian = todo
+            , finnish = todo
             , french = s ("Meilleur parmi " ++ (toString count))
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         BijectiveCardReference ->
-            { english = s "Bijective link to a card"
-            , french = s "Lien bijectif vers une fiche"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "Bijective link to a card"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Lien bijectif vers une fiche"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         Boolean ->
-            { english = s "Boolean"
-            , french = s "Booléen"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "Boolean"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Booléen"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         BooleanField ->
             getTranslationSet Boolean
 
         CallToActionForCategory ->
-            { english = s "+ Add category"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "+ Nieuwe categorie"
+            , english = s "+ Add category"
+            , estonian = todo
+            , finnish = todo
             , french = s "+ Ajouter une catégorie"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         CallToActionForDescription cardType ->
-            { english =
-                case cardType of
-                    UseCaseCard ->
-                        s "Add a description for this use case"
-
-                    OrganizationCard ->
-                        s "Add a description for this organization"
-
-                    ToolCard ->
-                        s "Add a description for this tool"
-            , french =
-                case cardType of
-                    UseCaseCard ->
-                        s "Ajouter une description pour ce cas d'usage"
-
-                    OrganizationCard ->
-                        s "Ajouter une description pour cette organisation"
-
-                    ToolCard ->
-                        s "Ajouter une description pour cet outil"
-            , spanish =
+            { bulgarian =
                 case cardType of
                     UseCaseCard ->
                         todo
 
                     OrganizationCard ->
                         todo
+
+                    ToolCard ->
+                        todo
+            , croatian =
+                case cardType of
+                    UseCaseCard ->
+                        todo
+
+                    OrganizationCard ->
+                        todo
+
+                    ToolCard ->
+                        todo
+            , czech =
+                case cardType of
+                    UseCaseCard ->
+                        todo
+
+                    OrganizationCard ->
+                        todo
+
+                    ToolCard ->
+                        todo
+            , danish =
+                case cardType of
+                    UseCaseCard ->
+                        todo
+
+                    OrganizationCard ->
+                        todo
+
                     ToolCard ->
                         todo
             , dutch =
@@ -620,68 +1371,446 @@ getTranslationSet translationId =
 
                     ToolCard ->
                         s "Omschrijf dit platform"
+            , english =
+                case cardType of
+                    UseCaseCard ->
+                        s "Add a description for this use case"
+
+                    OrganizationCard ->
+                        s "Add a description for this organization"
+
+                    ToolCard ->
+                        s "Add a description for this tool"
+            , estonian =
+                case cardType of
+                    UseCaseCard ->
+                        todo
+
+                    OrganizationCard ->
+                        todo
+
+                    ToolCard ->
+                        todo
+            , finnish =
+                case cardType of
+                    UseCaseCard ->
+                        todo
+
+                    OrganizationCard ->
+                        todo
+
+                    ToolCard ->
+                        todo
+            , french =
+                case cardType of
+                    UseCaseCard ->
+                        s "Ajouter une description pour ce cas d'usage"
+
+                    OrganizationCard ->
+                        s "Ajouter une description pour cette organisation"
+
+                    ToolCard ->
+                        s "Ajouter une description pour cet outil"
+            , german =
+                case cardType of
+                    UseCaseCard ->
+                        todo
+
+                    OrganizationCard ->
+                        todo
+
+                    ToolCard ->
+                        todo
+            , greek =
+                case cardType of
+                    UseCaseCard ->
+                        todo
+
+                    OrganizationCard ->
+                        todo
+
+                    ToolCard ->
+                        todo
+            , hungarian =
+                case cardType of
+                    UseCaseCard ->
+                        todo
+
+                    OrganizationCard ->
+                        todo
+
+                    ToolCard ->
+                        todo
+            , irish =
+                case cardType of
+                    UseCaseCard ->
+                        todo
+
+                    OrganizationCard ->
+                        todo
+
+                    ToolCard ->
+                        todo
+            , italian =
+                case cardType of
+                    UseCaseCard ->
+                        todo
+
+                    OrganizationCard ->
+                        todo
+
+                    ToolCard ->
+                        todo
+            , latvian =
+                case cardType of
+                    UseCaseCard ->
+                        todo
+
+                    OrganizationCard ->
+                        todo
+
+                    ToolCard ->
+                        todo
+            , lithuanian =
+                case cardType of
+                    UseCaseCard ->
+                        todo
+
+                    OrganizationCard ->
+                        todo
+
+                    ToolCard ->
+                        todo
+            , maltese =
+                case cardType of
+                    UseCaseCard ->
+                        todo
+
+                    OrganizationCard ->
+                        todo
+
+                    ToolCard ->
+                        todo
+            , polish =
+                case cardType of
+                    UseCaseCard ->
+                        todo
+
+                    OrganizationCard ->
+                        todo
+
+                    ToolCard ->
+                        todo
+            , portuguese =
+                case cardType of
+                    UseCaseCard ->
+                        todo
+
+                    OrganizationCard ->
+                        todo
+
+                    ToolCard ->
+                        todo
+            , romanian =
+                case cardType of
+                    UseCaseCard ->
+                        todo
+
+                    OrganizationCard ->
+                        todo
+
+                    ToolCard ->
+                        todo
+            , slovak =
+                case cardType of
+                    UseCaseCard ->
+                        todo
+
+                    OrganizationCard ->
+                        todo
+
+                    ToolCard ->
+                        todo
+            , slovenian =
+                case cardType of
+                    UseCaseCard ->
+                        todo
+
+                    OrganizationCard ->
+                        todo
+
+                    ToolCard ->
+                        todo
+            , spanish =
+                case cardType of
+                    UseCaseCard ->
+                        todo
+
+                    OrganizationCard ->
+                        todo
+                    ToolCard ->
+                        todo
+            , swedish =
+                case cardType of
+                    UseCaseCard ->
+                        todo
+
+                    OrganizationCard ->
+                        todo
+
+                    ToolCard ->
+                        todo
             }
 
         Card ->
-            { english = s "Card"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Kaart"
+            , english = s "Card"
+            , estonian = todo
+            , finnish = todo
             , french = s "Fiche"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         CardId ->
-            { english = s "Card"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Kaart"
+            , english = s "Card"
+            , estonian = todo
+            , finnish = todo
             , french = s "Fiche"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         CardIdArray ->
-            { english = s "Array of links to cards"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Lijst van links naar kaarten"
+            , english = s "Array of links to cards"
+            , estonian = todo
+            , finnish = todo
             , french = s "Tableau de liens vers des fiches"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         CardIdField ->
             getTranslationSet CardId
 
         CardPlaceholder ->
-            { english = s "Name of a card"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Kaartnaam"
+            , english = s "Name of a card"
+            , estonian = todo
+            , finnish = todo
             , french = s "Nom d'une fiche"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         ChangePassword ->
-            { english = s "Change your password"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Wijzig je wachtwoord"
+            , english = s "Change your password"
+            , estonian = todo
+            , finnish = todo
             , french = s "Changez votre mot de passe"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         ChangePasswordExplanation ->
-            { english = s "Enter a new password to be able to sign-in."
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Kies een wachtwoord om mee aan te kunnen melden"
+            , english = s "Enter a new password to be able to sign-in."
+            , estonian = todo
+            , finnish = todo
             , french = s "Entrez un nouveau mot de passe qui vous servira à vous identifier."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         Close ->
-            { english = s "Close"
-            , french = s "Fermer"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Gesloten"
+            , english = s "Close"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Fermer"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         Collection number ->
-            { english =
+            { bulgarian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , croatian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , czech =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , danish =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , dutch =
+                case number of
+                    Singular ->
+                        s "Collectie"
+
+                    Plural ->
+                        s "Collecties"
+            , english =
                 case number of
                     Singular ->
                         s "Collection"
 
                     Plural ->
                         s "Collections"
+            , estonian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , finnish =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
             , french =
                 case number of
                     Singular ->
@@ -689,6 +1818,97 @@ getTranslationSet translationId =
 
                     Plural ->
                         s "Collections"
+            , german =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , greek =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , hungarian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , irish =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , italian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , latvian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , lithuanian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , maltese =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , polish =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , portuguese =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , romanian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , slovak =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , slovenian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
             , spanish =
                 case number of
                     Singular ->
@@ -696,121 +1916,344 @@ getTranslationSet translationId =
 
                     Plural ->
                         s "Colecciones"
-              , dutch =
-                  case number of
-                      Singular ->
-                          s "Collectie"
+            , swedish =
+                case number of
+                    Singular ->
+                        todo
 
-                      Plural ->
-                          s "Collecties"
+                    Plural ->
+                        todo
             }
 
         CollectionAdd ->
-            { english = s "Add your collection"
-            , french = s "Ajouter votre collection"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Nieuwe collectie"
+            , english = s "Add your collection"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Ajouter votre collection"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         CollectionAddDescription ->
-            { english = s "Creation of a new collection."
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Een nieuwe collectie aanmaken."
+            , english = s "Creation of a new collection."
+            , estonian = todo
+            , finnish = todo
             , french = s "Création d'une nouvelle collection."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         CollectionAddTitle ->
-            { english = s "Add your collection"
-            , french = s "Ajouter votre collection"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Nieuwe collectie"
+            , english = s "Add your collection"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Ajouter votre collection"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         CollectionDescriptionPlaceholder ->
-            { english = s "Presentation of your collection"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Presentatie van de collectie"
+            , english = s "Presentation of your collection"
+            , estonian = todo
+            , finnish = todo
             , french = s "Présentation de votre collection"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         CollectionsDescription ->
-            { english = s "List of tools and use cases collected by a user"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Lijst van platformen en toepassingen"
+            , english = s "List of tools and use cases collected by a user"
+            , estonian = todo
+            , finnish = todo
             , french = s "List d'outils et de cas d'usages collectés par un utilisateur"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         CollectionNamePlaceholder ->
-            { english = s "Name of your collection"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Naam van de collectie"
+            , english = s "Name of your collection"
+            , estonian = todo
+            , finnish = todo
             , french = s "Nom de votre collection"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         CollectionsRecommendedBy ->
-            { english = s "Recommended by "
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Aanbevolen door"
+            , english = s "Recommended by "
+            , estonian = todo
+            , finnish = todo
             , french = s "Recommandé par "
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         CollectionSubmissionFailed ->
-            { english = s "Collection submission failed"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Collectie aanmaken mislukt"
+            , english = s "Collection submission failed"
+            , estonian = todo
+            , finnish = todo
             , french = s "Échec de l'envoi de la collection"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         CollectionsTitle ->
-            { english = s "Collections"
-            , french = s "Collections"
-            , spanish = s "Colecciones"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Collecties"
+            , english = s "Collections"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Collections"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Colecciones"
+            , swedish = todo
             }
 
         Colon ->
-            { english = s ": "
-            , french = s " : "
-            , spanish = s ": "
+            { bulgarian = s ": "
+            , croatian = s ": "
+            , czech = s ": "
+            , danish = s ": "
             , dutch = s ": "
+            , english = s ": "
+            , estonian = s ": "
+            , finnish = s ": "
+            , french = s " : "
+            , german = s ": "
+            , greek = s ": "
+            , hungarian = s ": "
+            , irish = s ": "
+            , italian = s ": "
+            , latvian = s ": "
+            , lithuanian = s ": "
+            , maltese = s ": "
+            , polish = s ": "
+            , portuguese = s ": "
+            , romanian = s ": "
+            , slovak = s ": "
+            , slovenian = s ": "
+            , spanish = s ": "
+            , swedish = s ": "
             }
 
         Compare ->
-            { english = s "Compare"
-            , french = s "Comparer"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Vergelijken"
+            , english = s "Compare"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Comparer"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         Copyright ->
-            { english = s "© 2016 Etalab. Design by Nodesign.net"
-            , french = s "© 2016 Etalab. Design par Nodesign.net"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "© 2016 Etalab. Ontworpen door Nodesign.net"
+            , english = s "© 2016 Etalab. Design by Nodesign.net"
+            , estonian = todo
+            , finnish = todo
+            , french = s "© 2016 Etalab. Design par Nodesign.net"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         CountVersionsAvailable count ->
-            { english =
-                case count of
-                    0 ->
-                        s "No version available"
-
-                    1 ->
-                        s "1 version available"
-
-                    _ ->
-                        s ((toString count) ++ " versions available")
-            , french =
-                case count of
-                    0 ->
-                        s "Aucune version disponible"
-
-                    1 ->
-                        s "1 version disponible"
-
-                    _ ->
-                        s ((toString count) ++ " versions disponibles")
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch =
                 case count of
                     0 ->
@@ -821,692 +2264,2653 @@ getTranslationSet translationId =
 
                     _ ->
                         s ((toString count) ++ " versies")
+            , english =
+                case count of
+                    0 ->
+                        s "No version available"
+
+                    1 ->
+                        s "1 version available"
+
+                    _ ->
+                        s ((toString count) ++ " versions available")
+            , estonian = todo
+            , finnish = todo
+            , french =
+                case count of
+                    0 ->
+                        s "Aucune version disponible"
+
+                    1 ->
+                        s "1 version disponible"
+
+                    _ ->
+                        s ((toString count) ++ " versions disponibles")
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         Create ->
-            { english = s "Create"
-            , french = s "Créer"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Maak"
+            , english = s "Create"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Créer"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         CreateAccountNow ->
-            { english = s "Create your account"
-            , french = s "Créez votre compte"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Maak een account"
+            , english = s "Create your account"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Créez votre compte"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         CreateOrganizationPage ->
-            { english = s "Create a page for your organization "
-            , french = s "Créez une page pour votre organisation"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Maak een pagina voor de organisatie"
+            , english = s "Create a page for your organization "
+            , estonian = todo
+            , finnish = todo
+            , french = s "Créez une page pour votre organisation"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         CreateYourAccount ->
-            { english = s "Create your account"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Account aanmaken"
+            , english = s "Create your account"
+            , estonian = todo
+            , finnish = todo
             , french = s "Créez votre compte"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         Deploy ->
-            { english = s "Use this tool by installing it on a server provided by a third-party"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Gebruik dit platorm door het te installeren op een internet omgeving"
+            , english = s "Use this tool by installing it on a server provided by a third-party"
+            , estonian = todo
+            , finnish = todo
             , french = s "Utiliser cet outil en l'installant sur un serveur fourni par un tiers"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         DeployFrenchGov ->
-            { english = s "Service provided by the French government"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Deze dienst is mogelijk gemaakt door de franse regering"
+            , english = s "Service provided by the French government"
+            , estonian = todo
+            , finnish = todo
             , french = s "Service fourni par le gouvernment Français"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         DeployFrenchGovEligibility ->
-            { english = s "Available to French administrations"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Beschikbaar voor franse overheden"
+            , english = s "Available to French administrations"
+            , estonian = todo
+            , finnish = todo
             , french = s "Réservé aux administrations françaises"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         Description ->
-            { english = s "Description"
-            , french = s "Description"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Omschrijving"
+            , english = s "Description"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Description"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         Download ->
-            { english = s "Download link"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Download link"
+            , english = s "Download link"
+            , estonian = todo
+            , finnish = todo
             , french = s "Lien de téléchargement"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         DownloadDescription ->
-            { english = s "Address to download the tool (URL)"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Internetadres om het platform te downloaden (URL)"
+            , english = s "Address to download the tool (URL)"
+            , estonian = todo
+            , finnish = todo
             , french = s "Adresse pour télécharger l'outil (URL)"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         Edit ->
-            { english = s "Edit"
-            , french = s "Éditer"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Wijzig"
+            , english = s "Edit"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Éditer"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         EditCollection ->
-            { english = s "Edit your collection"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Collectie bewerken"
+            , english = s "Edit your collection"
+            , estonian = todo
+            , finnish = todo
             , french = s "Éditer votre collection"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         EditCollectionCatchPhrase ->
-            { english = s "A simple way to recommend your favorite tools."
-            , french = s "Une façon simple de recommander vos outils favoris."
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Groepeer gelijkvormige of afhankelijke platformen"
+            , english = s "A simple way to recommend your favorite tools."
+            , estonian = todo
+            , finnish = todo
+            , french = s "Une façon simple de recommander vos outils favoris."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         EditCollectionDescription ->
-            { english = s "Edition of a collection."
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Bewerk een collectie"
+            , english = s "Edit a collection."
+            , estonian = todo
+            , finnish = todo
             , french = s "Édition d'une collection."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         EditCollectionTitle ->
-            { english = s "Edit your collection"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Bewerk jouw collectie"
+            , english = s "Edit your collection"
+            , estonian = todo
+            , finnish = todo
             , french = s "Éditer votre collection"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         Email ->
-            { english = s "Email"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Email"
+            , english = s "Email"
+            , estonian = todo
+            , finnish = todo
             , french = s "Courriel"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         EmailPlaceholder ->
-            { english = s "john.doe@example.com"
-            , french = s "martine.dupont@exemple.fr"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "jan.jansen@voorbeeld.nl"
+            , english = s "john.doe@example.com"
+            , estonian = todo
+            , finnish = todo
+            , french = s "martin.dupont@exemple.fr"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         EmailSentForAccountActivation email ->
-            { english =
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch =
+                s
+                    ("Er is een email verzonden naar "
+                        ++ email
+                        ++ ". Klik op de link in de email om je account te activeren."
+                    )
+            , english =
                 s
                     ("An email has been sent to "
                         ++ email
                         ++ ". Click the link it contains, to activate your account."
                     )
+            , estonian = todo
+            , finnish = todo
             , french =
                 s
                     ("Un courriel a été envoyé à "
                         ++ email
                         ++ ". Cliquez sur le lien qu'il contient pour activer votre compte."
                     )
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         EnterBoolean ->
-            { english = s "Please check or uncheck the box"
-            , french = s "Veuillez cocher ou décocher la case"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "Please check or uncheck the box"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Veuillez cocher ou décocher la case"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         EnterCard ->
-            { english = s "Please enter the name or the ID of a card"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Geef de naam of id van een kaart"
+            , english = s "Please enter the name or the ID of a card"
+            , estonian = todo
+            , finnish = todo
             , french = s "Veuillez entrer le nom ou l'identifiant d'une fiche"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         EnterDescription ->
-            { english = s "Please enter a description"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Geef een omschrijving"
+            , english = s "Please enter a description"
+            , estonian = todo
+            , finnish = todo
             , french = s "Veuillez entrer une description"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         EnterEmail ->
-            { english = s "Please enter your email"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Geef een emailadres"
+            , english = s "Please enter your email"
+            , estonian = todo
+            , finnish = todo
             , french = s "Veuillez entrer votre courriel"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         EnterImage ->
-            { english = s "Please select an image"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Selecteer een afbeelding"
+            , english = s "Please select an image"
+            , estonian = todo
+            , finnish = todo
             , french = s "Veuillez sélectionner une image"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         EnterName ->
-            { english = s "Please enter a name"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Geef een naam"
+            , english = s "Please enter a name"
+            , estonian = todo
+            , finnish = todo
             , french = s "Veuillez entrer un nom"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         EnterNumber ->
-            { english = s "Please enter a number"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Geef een nummer"
+            , english = s "Please enter a number"
+            , estonian = todo
+            , finnish = todo
             , french = s "Veuillez entrer un nombre"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         EnterPassword ->
-            { english = s "Please enter your password"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Geef een wachtwoord"
+            , english = s "Please enter your password"
+            , estonian = todo
+            , finnish = todo
             , french = s "Veuillez entrer votre mot de passe"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         EnterUrl ->
-            { english = s "Please enter a link (an URL)"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Geef een link (URL)"
+            , english = s "Please enter a link (an URL)"
+            , estonian = todo
+            , finnish = todo
             , french = s "Veuillez entrer un lien (une URL)"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         EnterUsername ->
-            { english = s "Please enter your username"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Geef een gebruikersnaam"
+            , english = s "Please enter your username"
+            , estonian = todo
+            , finnish = todo
             , french = s "Veuillez entrer votre nom d'utilisateur"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         EnterValue ->
-            { english = s "Please enter value"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Geef een waarde"
+            , english = s "Please enter value"
+            , estonian = todo
+            , finnish = todo
             , french = s "Veuillez entrer une valeur"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         EtalabLogo ->
-            { english = s "Etalab logo"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Etalab logo"
+            , english = s "Etalab logo"
+            , estonian = todo
+            , finnish = todo
             , french = s "Logo d'Etalab"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         EveryLanguage ->
-            { english = s "Every language"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Alle talen"
+            , english = s "Every language"
+            , estonian = todo
+            , finnish = todo
             , french = s "Toutes les langues"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         FalseWord ->
-            { english = s "False"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Onwaar"
+            , english = s "False"
+            , estonian = todo
+            , finnish = todo
             , french = s "Faux"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         Faq ->
-            { english = s "FAQ"
-            , french = s "FAQ"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Veelgestelde vragen"
+            , english = s "FAQ"
+            , estonian = todo
+            , finnish = todo
+            , french = s "FAQ"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqBug ->
-            { english = s "How can I report a bug or suggest a new feature?"
-            , french = s "Comment puis-je signaliser un bug ou suggérer une nouvelle fonctionnalité ?"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Hoe kan ik een fout melden of een idee indienen?"
+            , english = s "How can I report a bug or suggest a new feature?"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Comment puis-je signaliser un bug ou suggérer une nouvelle fonctionnalité ?"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqBugContent ->
-            { english = s "If you can't contribute directly to the code of the OGP Toolbox (cf. previous question), you can still help us by telling us about the problems you've encountered on the platform or about your ideas to improve it. Please file a new issue on this page:"
-            , french = s "Si vous ne pouvez pas contribuer directement au code de l'OGP Toolbox (cf. question précédente), vous pouvez apporter une aide en nous indiquant les problèmes que vous avez rencontré en utilisant la plateforme ou vos idées pour l'améliorer. Il vous suffit de saisir une nouvelle entrée ('New Issue') sur cette page :"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "If you can't contribute directly to the code of the OGP Toolbox (cf. previous question), you can still help us by telling us about the problems you've encountered on the platform or about your ideas to improve it. Please file a new issue on this page:"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Si vous ne pouvez pas contribuer directement au code de l'OGP Toolbox (cf. question précédente), vous pouvez apporter une aide en nous indiquant les problèmes que vous avez rencontré en utilisant la plateforme ou vos idées pour l'améliorer. Il vous suffit de saisir une nouvelle entrée ('New Issue') sur cette page :"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqCategories ->
-            { english = s "How are tools and use cases categorized?"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "How worden platformen en toepassingen gecategoriseerd?"
+            , english = s "How are tools and use cases categorized?"
+            , estonian = todo
+            , finnish = todo
             , french = s "Comment sont catégorisés les outils et les cas usages ?"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         FaqCategoriesContent1 ->
-            { english = s "Rather than classify each tool (and their use cases) in monolithic and exclusive categories (i.e. “a tool cannot be in more than one category”), the platform is based on tags, allowing to qualify each tool and each usage with as many key words as necessary. This is called social tagging or "
-            , french = s "Plutôt que de classer les outils (et leurs usages) dans de grandes catégories monolithiques et exclusives (i.e. \"un outil ne peut pas être dans plus d'une catégorie à la fois\"), la plateforme repose sur un système de \"tags\" (labels), permettant de qualifier chaque outil et chaque usage avec autant de mots clés que vous jugerez nécessaire. C'est ce qu'on appelle \"tagging\" social ou "
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "Rather than classify each tool (and their use cases) in monolithic and exclusive categories (i.e. “a tool cannot be in more than one category”), the platform is based on tags, allowing to qualify each tool and each usage with as many key words as necessary. This is called social tagging or "
+            , estonian = todo
+            , finnish = todo
+            , french = s "Plutôt que de classer les outils (et leurs usages) dans de grandes catégories monolithiques et exclusives (i.e. \"un outil ne peut pas être dans plus d'une catégorie à la fois\"), la plateforme repose sur un système de \"tags\" (labels), permettant de qualifier chaque outil et chaque usage avec autant de mots clés que vous jugerez nécessaire. C'est ce qu'on appelle \"tagging\" social ou "
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqCategoriesContentLink ->
-            { english = s "https://en.wikipedia.org/wiki/Folksonomy"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "https://nl.wikipedia.org/wiki/Folksonomie"
+            , english = s "https://en.wikipedia.org/wiki/Folksonomy"
+            , estonian = todo
+            , finnish = todo
             , french = s "https://fr.wikipedia.org/wiki/Folksonomie"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         FaqCategoriesContentLinkText ->
-            { english = s "folksonomy"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Folksonomie"
+            , english = s "folksonomy"
+            , estonian = todo
+            , finnish = todo
             , french = s "folksonomie"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         FaqCategoriesContent2 ->
-            { english = s "These tags are represented by bubbles. By cliking in different bubbles, you're simply searching in the Toolbox the tools and use cases matching those key words. Results are updated in real-time on the page."
-            , french = s "Ces tags sont représentés sous forme de bulles. En cliquant sur différentes bulles, vous cherchez tout simplement dans la Toolbox les outils et cas d'usage qui correspondent à ces mots clés. Les résultats s'affichent en temps réel sur la page."
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "These tags are represented by bubbles. By cliking in different bubbles, you're simply searching in the Toolbox the tools and use cases matching those key words. Results are updated in real-time on the page."
+            , estonian = todo
+            , finnish = todo
+            , french = s "Ces tags sont représentés sous forme de bulles. En cliquant sur différentes bulles, vous cherchez tout simplement dans la Toolbox les outils et cas d'usage qui correspondent à ces mots clés. Les résultats s'affichent en temps réel sur la page."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqContribution ->
-            { english = s "How can I add information about a tool, a use case or a collection?"
-            , french = s "Comment puis-je renseigner un outil, un cas d'usage, une collection ?"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "How can I add information about a tool, a use case or a collection?"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Comment puis-je renseigner un outil, un cas d'usage, une collection ?"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqContributionContent ->
-            { english = s "It's easy. Creat your account on the platform and click on “Add” at the top right of the screen. You will be guided!"
-            , french = s "C'est très simple. Il suffit tout d'abord de créer un compte sur la plateforme. Ensuite, cliquer sur \"Ajouter\" en haut à droite et vous serez guidé."
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "It's easy. Creat your account on the platform and click on “Add” at the top right of the screen. You will be guided!"
+            , estonian = todo
+            , finnish = todo
+            , french = s "C'est très simple. Il suffit tout d'abord de créer un compte sur la plateforme. Ensuite, cliquer sur \"Ajouter\" en haut à droite et vous serez guidé."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqCode ->
-            { english = s "Where can I find the source code of the OGP Toolbox?"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Waar vind ik de broncode van de OGP Toolbox?"
+            , english = s "Where can I find the source code of the OGP Toolbox?"
+            , estonian = todo
+            , finnish = todo
             , french = s "Où puis-je trouver le code source de l'OGP Toolbox ?"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         FaqData ->
-            { english = s "How can I access the data?"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Kan ik de data gebruiken?"
+            , english = s "How can I access the data?"
+            , estonian = todo
+            , finnish = todo
             , french = s "Comment puis-je accéder aux données ?"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         FaqCodeData ->
-            { english = s "The OGP Toolbox is an open source (AGPL License) and open data project (CC0 License), that's why we publish its source code as well as all harvested data. You'll find all informations and resources on this page:"
-            , french = s "L'OGP Toolbox est un projet open source (Licence AGPL) et open data (Licence CC0), nous donnons donc accès à son code source ainsi qu'à toutes les données moissonnées. Vous trouverez toutes les informations et les ressources sur cette page :"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "The OGP Toolbox is an open source (AGPL License) and open data project (CC0 License), that's why we publish its source code as well as all harvested data. You'll find all informations and resources on this page:"
+            , estonian = todo
+            , finnish = todo
+            , french = s "L'OGP Toolbox est un projet open source (Licence AGPL) et open data (Licence CC0), nous donnons donc accès à son code source ainsi qu'à toutes les données moissonnées. Vous trouverez toutes les informations et les ressources sur cette page :"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqDataHarvest ->
-            { english = s "What is the source of the data?"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Waar komt de data vandaan?"
+            , english = s "What is the source of the data?"
+            , estonian = todo
+            , finnish = todo
             , french = s "D'où proviennent les données ?"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         FaqDataHarvestContent0 ->
-            { english = s "The OGP Toolbox data comes from multiple sources:"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Data voor de OGP Toolbox komt uit meerdere bronnen:"
+            , english = s "The OGP Toolbox data comes from multiple sources:"
+            , estonian = todo
+            , finnish = todo
             , french = s "Les données de l'OGP Toolbox proviennent de sources multiples :"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         FaqDataHarvestContent1 ->
-            { english = s "Existing catalogs are regularly harvested to feed and update the data base:"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "De data wordt regelmatig vernieuwd door bestaande catalogi uit te lezen:"
+            , english = s "Existing catalogs are regularly harvested to feed and update the data base:"
+            , estonian = todo
+            , finnish = todo
             , french = s "Des catalogues existants sont moissonnés régulièrement pour alimenter et mettre à jour la base de données :"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         FaqDataHarvestContent2 ->
-            { english = s "OGP Toolbox users can create new tools, use cases and organizations, or edit existing ones."
-            , french = s "Les utilisateurs de l'OGP Toolbox peuvent créer de nouvelles fiches d'outil, de cas d'usage et d'organisation, ou éditer des fiches existantes."
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "OGP Toolbox users can create new tools, use cases and organizations, or edit existing ones."
+            , estonian = todo
+            , finnish = todo
+            , french = s "Les utilisateurs de l'OGP Toolbox peuvent créer de nouvelles fiches d'outil, de cas d'usage et d'organisation, ou éditer des fiches existantes."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqDescription ->
-            { english = s "Frequently asked questions (FAQ)"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Veelgestelde vragen"
+            , english = s "Frequently asked questions (FAQ)"
+            , estonian = todo
+            , finnish = todo
             , french = s "Foire aux questions (FAQ)"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         FaqDev ->
-            { english = s "Who developed the OGP Toolbox?"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Door wie is de OGP Toolbox gemaakt?"
+            , english = s "Who developed the OGP Toolbox?"
+            , estonian = todo
+            , finnish = todo
             , french = s "Qui a développé l'OGP Toolbox ?"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         FaqDevContent ->
-            { english = s "The OGP Toolbox is a free software developed by Etalab, the Prime Minister taskforce in charge of open data and open government French policy, on behalf of the OGP community. Co-created by the open government and the civic tech international community throughout 2016, the OGP Toolbox is one of the main deliverables of the Global Summit of the Open Government Partnership (7, 8 and 9 December 2016)."
-            , french = s "L'OGP Toolbox a été développée par Etalab, service du Premier Ministre en charge de l'ouverture des données publiques et du gouvernement ouvert de la France, pour le compte de la communauté du Partenariat du Gouvernement Ouvert. Co-créée avec les communautés internationales du gouvernement ouvert et de la civic tech tout au long de l'année 2016, l'OGP Toolbox est un des principaux livrables du Sommet mondial du Partenariat pour un Gouvernement Ouvert (7, 8 et 9 décembre 2016)."
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "The OGP Toolbox is a free software developed by Etalab, the Prime Minister taskforce in charge of open data and open government French policy, on behalf of the OGP community. Co-created by the open government and the civic tech international community throughout 2016, the OGP Toolbox is one of the main deliverables of the Global Summit of the Open Government Partnership (7, 8 and 9 December 2016)."
+            , estonian = todo
+            , finnish = todo
+            , french = s "L'OGP Toolbox a été développée par Etalab, service du Premier Ministre en charge de l'ouverture des données publiques et du gouvernement ouvert de la France, pour le compte de la communauté du Partenariat du Gouvernement Ouvert. Co-créée avec les communautés internationales du gouvernement ouvert et de la civic tech tout au long de l'année 2016, l'OGP Toolbox est un des principaux livrables du Sommet mondial du Partenariat pour un Gouvernement Ouvert (7, 8 et 9 décembre 2016)."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqLanguages ->
-            { english = s "In which languages is the OGP Toolbox available?"
-            , french = s "Dans quelles langues est disponible la plateforme ?"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "In which languages is the OGP Toolbox available?"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Dans quelles langues est disponible la plateforme ?"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqLanguagesContent ->
-            { english = s "The OGP Toolbox is available in English and French. The platform is crowdsourced, which means that other than the online interface (translated by Etalab), any content can be modified and translated by users, such as the description of tools and use cases, as well as the tags used to categorize them (see below). Content will be displayed in the language you configured. If an element is not available in your language, it will be displayed in English by default, with an invitation to translate it."
-            , french = s "OGP Toolbox est disponible en Anglais et en Français. La plateforme est crowdsourcée ce qui signifie qu'au-delà de l'interface du site Internet (traduite par Etalab), chaque élément de contenu peut être modifié et traduit par les utilisateurs, notamment les descriptions des outils et des cas d'usage et les tags permettant de les catégoriser (voir ci-dessous). Les éléments de contenu s'afficheront en priorité dans la langue que vous aurez paramétrée. Si un élément n'est pas disponible dans votre langue, il s'affiche en anglais par défaut, et vous invite à le traduire."
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "The OGP Toolbox is available in English and French. The platform is crowdsourced, which means that other than the online interface (translated by Etalab), any content can be modified and translated by users, such as the description of tools and use cases, as well as the tags used to categorize them (see below). Content will be displayed in the language you configured. If an element is not available in your language, it will be displayed in English by default, with an invitation to translate it."
+            , estonian = todo
+            , finnish = todo
+            , french = s "OGP Toolbox est disponible en Anglais et en Français. La plateforme est crowdsourcée ce qui signifie qu'au-delà de l'interface du site Internet (traduite par Etalab), chaque élément de contenu peut être modifié et traduit par les utilisateurs, notamment les descriptions des outils et des cas d'usage et les tags permettant de les catégoriser (voir ci-dessous). Les éléments de contenu s'afficheront en priorité dans la langue que vous aurez paramétrée. Si un élément n'est pas disponible dans votre langue, il s'affiche en anglais par défaut, et vous invite à le traduire."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqLead ->
-            { english = s "All the answers to your questions about the OGP Toolbox"
-            , french = s "Mieux comprendre l'OGP Toolbox"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Veelgestelde vragen over de OGP Toolbox"
+            , english = s "All the answers to your questions about the OGP Toolbox"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Mieux comprendre l'OGP Toolbox"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqModeration ->
-            { english = s "How are contributions moderated?"
-            , french = s "Comment sont modérées les contributions ?"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Wordt de inhoud gecontroleerd?"
+            , english = s "How are contributions moderated?"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Comment sont modérées les contributions ?"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqModerationContent ->
-            { english = s "The OGP Toolbox is based on community moderation. Data from the harvested catalogues and users’ contributions are automatically sort out through an open vote system. For each field, the most popular suggested description is highlighted in the tool, use case or organization card. The vote on available propositions is accessible by clicking on the “edit” button at the right of each field."
-            , french = s "OGP Toolbox s'appuie sur une modération communautaire. Les données provenant des catalogues moissonnées et des contributions des utilisateurs sont triées de façon automatique à travers un système de vote ouvert. Pour chaque champ, la proposition de description ou de valeur la plus votée est mise en avant sur la fiche outil, cas d'usage ou organisation. Le vote sur les propositions disponibles est accessible en cliquant sur le bouton \"edit\" à la droite de chaque champ. "
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "The OGP Toolbox is based on community moderation. Data from the harvested catalogues and users’ contributions are automatically sort out through an open vote system. For each field, the most popular suggested description is highlighted in the tool, use case or organization card. The vote on available propositions is accessible by clicking on the “edit” button at the right of each field."
+            , estonian = todo
+            , finnish = todo
+            , french = s "OGP Toolbox s'appuie sur une modération communautaire. Les données provenant des catalogues moissonnées et des contributions des utilisateurs sont triées de façon automatique à travers un système de vote ouvert. Pour chaque champ, la proposition de description ou de valeur la plus votée est mise en avant sur la fiche outil, cas d'usage ou organisation. Le vote sur les propositions disponibles est accessible en cliquant sur le bouton \"edit\" à la droite de chaque champ. "
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqTarget ->
-            { english = s "Who is the OGP Toolbox for?"
-            , french = s "À qui est destinée l'OGP Toolbox ?"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "Who is the OGP Toolbox for?"
+            , estonian = todo
+            , finnish = todo
+            , french = s "À qui est destinée l'OGP Toolbox ?"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqTargetContent ->
-            { english = s "The OGP is intended to all public sector, private sector and civil society organizations that develop projects to promote democracy and promote transparency, participation and collaboration. Any engaged citizen willing to be introduced to new tools and to discover particular use cases will be able to access relevant information, and to get in touch with the users’ community."
-            , french = s "L'OGP Toolbox est destinée à tous les acteurs publics, privés et de la société civile portant des projets pour renforcer la démocratie et promouvoir la transparence, la participation et la collaboration dans l'action publique. Tout citoyen engagé voulant s'initier à de nouveaux outils et en découvrir les cas d'usages pourra accéder facilement aux informations pertinentes."
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "The OGP is intended to all public sector, private sector and civil society organizations that develop projects to promote democracy and promote transparency, participation and collaboration. Any engaged citizen willing to be introduced to new tools and to discover particular use cases will be able to access relevant information, and to get in touch with the users’ community."
+            , estonian = todo
+            , finnish = todo
+            , french = s "L'OGP Toolbox est destinée à tous les acteurs publics, privés et de la société civile portant des projets pour renforcer la démocratie et promouvoir la transparence, la participation et la collaboration dans l'action publique. Tout citoyen engagé voulant s'initier à de nouveaux outils et en découvrir les cas d'usages pourra accéder facilement aux informations pertinentes."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqTypes ->
-            { english = s "What can I find in the OGP Toolbox?"
-            , french = s "Qu'est-ce-qu'on peut trouver dans l'OGP Toolbox ?"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Wat vind ik in de OGP Toolbox?"
+            , english = s "What can I find in the OGP Toolbox?"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Qu'est-ce-qu'on peut trouver dans l'OGP Toolbox ?"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqTypesContent ->
-            { english = s "The platform showcases 4 types of items:"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Er zijn 4 categoriën"
+            , english = s "The platform showcases 4 types of items:"
+            , estonian = todo
+            , finnish = todo
             , french = s "La plateforme référence 4 types d'éléments :"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = s "Er zijn 4 soorten onderdelen"
+            , swedish = todo
             }
 
         FaqTypesContentCollection ->
-            { english = s "A collection is a list of tools recommended by a contributor. The same as bookmarks or favorites, but for tools!"
-            , french = s "Une collection est une liste d'outils recommandés par un contributeur. Comme des marque-pages ou des favoris, mais pour des outils !"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "A collection is a list of tools recommended by a contributor. The same as bookmarks or favorites, but for tools!"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Une collection est une liste d'outils recommandés par un contributeur. Comme des marque-pages ou des favoris, mais pour des outils !"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqTypesContentOrganization ->
-            { english = s "An organization is either the user or the developer of a tool, and is part of the public sector (government, administration, parliament, subnational entity), the private sector (company, startup) or the civil society (non-profit organization, movement)."
-            , french = s "Une organisation utilise ou développe des outils, et fait partie de la sphère publique (gouvernement, administration, parlement, collectivité locale), du secteur privé (entreprise, startup) ou de la société civile (association, mouvement)."
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "An organization is either the user or the developer of a tool, and is part of the public sector (government, administration, parliament, subnational entity), the private sector (company, startup) or the civil society (non-profit organization, movement)."
+            , estonian = todo
+            , finnish = todo
+            , french = s "Une organisation utilise ou développe des outils, et fait partie de la sphère publique (gouvernement, administration, parlement, collectivité locale), du secteur privé (entreprise, startup) ou de la société civile (association, mouvement)."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqTypesContentTool ->
-            { english = s "A digital tool is either a computer program (software, application) or an online service (website, platform, resource)."
-            , french = s "Un outil numérique est un programme informatique (logiciel, application) ou un service en ligne (site Internet, plateforme, ressource)."
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "A digital tool is either a computer program (software, application) or an online service (website, platform, resource)."
+            , estonian = todo
+            , finnish = todo
+            , french = s "Un outil numérique est un programme informatique (logiciel, application) ou un service en ligne (site Internet, plateforme, ressource)."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqTypesContentUseCase ->
-            { english = s "A use case is a concrete example showing how one or multiple tools were used by an organization."
-            , french = s "Un cas d'usage est un exemple concret d'utilisation d'un ou plusieurs outils par une organisation."
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "A use case is a concrete example showing how one or multiple tools were used by an organization."
+            , estonian = todo
+            , finnish = todo
+            , french = s "Un cas d'usage est un exemple concret d'utilisation d'un ou plusieurs outils par une organisation."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqWhat ->
-            { english = s "What is the OGP Toolbox?"
-            , french = s "Qu'est ce que l'OGP Toolbox ?"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Wat is de OGP Toolbox?"
+            , english = s "What is the OGP Toolbox?"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Qu'est ce que l'OGP Toolbox ?"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqWhatContent1 ->
-            { english = s "The OGP Toolbox is a collaborative platform that gathers digital tools developed and used throughout the world by organizations to improve democracy and promote transparency, participation and collaboration."
-            , french = s "L'OGP Toolbox est une plateforme collaborative qui recense les outils numériques développés et utilisés dans le monde entier par des organisations pour renforcer la démocratie et promouvoir la transparence, la participation et la collaboration dans l'action publique."
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "The OGP Toolbox is a collaborative platform that gathers digital tools developed and used throughout the world by organizations to improve democracy and promote transparency, participation and collaboration."
+            , estonian = todo
+            , finnish = todo
+            , french = s "L'OGP Toolbox est une plateforme collaborative qui recense les outils numériques développés et utilisés dans le monde entier par des organisations pour renforcer la démocratie et promouvoir la transparence, la participation et la collaboration dans l'action publique."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqWhatContent2 ->
-            { english = s "The OGP Toolbox is designed as a social network: concrete use cases, technical criteria informed by the community and recommendations in the form of tool collections allow to benefit from the experience of users that have already implemented existing solutions."
-            , french = s "L'OGP Toolbox est conçue comme un réseau social : des cas d'usages concrets, des critères techniques expertisés par la communauté et des recommandations sous forme de collections d'outils permettent de profiter du savoir-faire des acteurs ayant déjà utilisé les solutions disponibles. "
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "The OGP Toolbox is designed as a social network: concrete use cases, technical criteria informed by the community and recommendations in the form of tool collections allow to benefit from the experience of users that have already implemented existing solutions."
+            , estonian = todo
+            , finnish = todo
+            , french = s "L'OGP Toolbox est conçue comme un réseau social : des cas d'usages concrets, des critères techniques expertisés par la communauté et des recommandations sous forme de collections d'outils permettent de profiter du savoir-faire des acteurs ayant déjà utilisé les solutions disponibles. "
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqWhy ->
-            { english = s "Why do we need an OGP Toolbox?"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Waarom de OGP Toolbox?"
+            , english = s "Why do we need an OGP Toolbox?"
+            , estonian = todo
+            , finnish = todo
             , french = s "À quoi sert l'OGP Toolbox ? "
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         FaqWhyContent1 ->
-            { english = s "The OGP Toolbox aims at empowering organizations by sharing resources and experiences. The objective is to facilitate cooperation and the implementation of concrete engagements related to the open government through the appropriation of digital tools."
-            , french = s "L'OGP Toolbox vise à renforcer le pouvoir d'agir des acteurs publics, privés et de la société civile à travers le partage de ressources et d'expériences. L'objectif est de faciliter la mise en oeuvre concrète d'engagements et de coopérations liées au gouvernement ouvert grâce à la maîtrise des outils numériques."
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "The OGP Toolbox aims at empowering organizations by sharing resources and experiences. The objective is to facilitate cooperation and the implementation of concrete engagements related to the open government through the appropriation of digital tools."
+            , estonian = todo
+            , finnish = todo
+            , french = s "L'OGP Toolbox vise à renforcer le pouvoir d'agir des acteurs publics, privés et de la société civile à travers le partage de ressources et d'expériences. L'objectif est de faciliter la mise en oeuvre concrète d'engagements et de coopérations liées au gouvernement ouvert grâce à la maîtrise des outils numériques."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FaqWhyContent2 ->
-            { english = s "The platform enables to find the most adapted tool to each project or initiative through search and comparison functionalities by category, use case, organization or technical criterion. The idea is to simplify access and manipulation of digital tools for everyone."
-            , french = s "La plateforme permet de trouver l'outil le mieux adapté à chaque projet ou initiative à travers des recherches et des comparaisons par catégorie, cas d'usage, organisation ou critère technique, ainsi que d'en simplifier l'accès et la prise en main."
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "The platform enables to find the most adapted tool to each project or initiative through search and comparison functionalities by category, use case, organization or technical criterion. The idea is to simplify access and manipulation of digital tools for everyone."
+            , estonian = todo
+            , finnish = todo
+            , french = s "La plateforme permet de trouver l'outil le mieux adapté à chaque projet ou initiative à travers des recherches et des comparaisons par catégorie, cas d'usage, organisation ou critère technique, ainsi que d'en simplifier l'accès et la prise en main."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FieldTypeBoolean ->
-            { english = s "Yes / No"
-            , french = s "Oui / Non"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Ja / Nee"
+            , english = s "Yes / No"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Oui / Non"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         FieldTypeEmail ->
-            { english = s "Email address"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Emailadres"
+            , english = s "Email address"
+            , estonian = todo
+            , finnish = todo
             , french = s "Adresse email"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         FieldTypeImage ->
-            { english = s "Image"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Afbeelding"
+            , english = s "Image"
+            , estonian = todo
+            , finnish = todo
             , french = s "Image"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         FieldTypeInternalLink ->
-            { english = s "OGP Toolbox internal link"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "OGP Toolbox interne link"
+            , english = s "OGP Toolbox internal link"
+            , estonian = todo
+            , finnish = todo
             , french = s "Lien interne à l'OGP Toolbox"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         FieldTypeInteger ->
-            { english = s "Number"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Nummer"
+            , english = s "Number"
+            , estonian = todo
+            , finnish = todo
             , french = s "Nombre"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         FieldTypeMultiLine ->
-            { english = s "Multi-line text"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Meerdere regels tekst"
+            , english = s "Multi-line text"
+            , estonian = todo
+            , finnish = todo
             , french = s "Texte sur plusieurs lignes"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         FieldTypeSingleLine ->
-            { english = s "Single line text"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Een regel tekst"
+            , english = s "Single line text"
+            , estonian = todo
+            , finnish = todo
             , french = s "Texte sur une seule ligne"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         FieldTypeURL ->
-            { english = s "Web address (URL)"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Internetadres (URL)"
+            , english = s "Web address (URL)"
+            , estonian = todo
+            , finnish = todo
             , french = s "Adresse web (URL)"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         FindAnotherCard ->
-            { english = s "Find another card"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Zoek een andere kaart"
+            , english = s "Find another card"
+            , estonian = todo
+            , finnish = todo
             , french = s "Rechercher une autre fiche"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         FindCard ->
-            { english = s "Find a card"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Zoek een kaart"
+            , english = s "Find a card"
+            , estonian = todo
+            , finnish = todo
             , french = s "Rechercher fiche"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         FooterAbout ->
-            { english = s "About"
-            , french = s "À propos"
-            , spanish = s "Acerca"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Over"
+            , english = s "About"
+            , estonian = todo
+            , finnish = todo
+            , french = s "À propos"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Acerca"
+            , swedish = todo
             }
 
         FooterDiscover ->
-            { english = s "Content"
-            , french = s "Découvrir"
-            , spanish = s "Descubrir"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Inhoud"
+            , english = s "Content"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Découvrir"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Descubrir"
+            , swedish = todo
             }
 
         GenericError ->
-            { english = s "Something wrong happened!"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Er is iets misgegaan."
+            , english = s "Something went wrong."
+            , estonian = todo
+            , finnish = todo
             , french = s "Quelque chose s'est mal passé !"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         HaveAnAccount ->
-            { english = s "I already have an account"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Ik heb al een account"
+            , english = s "I already have an account"
+            , estonian = todo
+            , finnish = todo
             , french = s "J'ai déjà un compte"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         HeaderTitle ->
-            { english = s "digital solutions to improve democracy"
-            , french = s "solutions numériques pour la démocratie"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Software voor de digitale democratie"
+            , english = s "digital solutions to improve democracy"
+            , estonian = todo
+            , finnish = todo
+            , french = s "solutions numériques pour la démocratie"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         Help ->
-            { english = s "FAQ"
-            , french = s "Aide"
-            , spanish = s "Ayuda"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Veelgestelde vragen"
+            , english = s "FAQ"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Aide"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Ayuda"
+            , swedish = todo
             }
 
         Home ->
-            { english = s "Home"
-            , french = s "Accueil"
-            , spanish = s "Inicio"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Home"
-
+            , english = s "Home"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Accueil"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Inicio"
+            , swedish = todo
             }
 
         HomeDescription ->
-            { english = s "Digital solutions to improve democracy"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Digitale oplossingen voor het verbeteren van de democratie"
+            , english = s "Digital solutions to improve democracy"
+            , estonian = todo
+            , finnish = todo
             , french = s "Solutions numériques pour la démocratie"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         HomeResults ->
-            { english = s "See results"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Resultaten bekijken"
+            , english = s "See results"
+            , estonian = todo
+            , finnish = todo
             , french = s "Afficher les résultats"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = s "Overzicht tonen"
+            , swedish = todo
             }
 
         HomeStart ->
-            { english = s "Click on a bubble to start"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Klik op een term om deze te selecteren"
+            , english = s "Click on a bubble to start"
+            , estonian = todo
+            , finnish = todo
             , french = s "Cliquez sur une bulle pour commencer"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         HomeTitle ->
-            { english = s "OGP Toolbox"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "OGP Toolbox"
+            , english = s "OGP Toolbox"
+            , estonian = todo
+            , finnish = todo
             , french = s "OGP Toolbox"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         Image ->
-            { english = s "Image"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Afbeeldingen"
+            , english = s "Image"
+            , estonian = todo
+            , finnish = todo
             , french = s "Image"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         ImageAlt ->
-            { english = s "The uploaded image"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Geuploade Afbeelding"
+            , english = s "The uploaded image"
+            , estonian = todo
+            , finnish = todo
             , french = s "L'image ajoutée"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         ImageField ->
             getTranslationSet Image
 
         ImageUploadError message ->
-            { english = s ("Image upload error: " ++ message)
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s ("Fout bij het uploaden van: " ++ message)
+            , english = s ("Image upload error: " ++ message)
+            , estonian = todo
+            , finnish = todo
             , french = s ("Échec du téléversement de l'image :" ++ message)
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         ImproveExistingContent ->
-            { english = s "Improve existing content"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Inhoud verbeteren"
+            , english = s "Improve existing content"
+            , estonian = todo
+            , finnish = todo
             , french = s "Améliorez le contenu existant"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         InputEmailField ->
@@ -1519,323 +4923,1668 @@ getTranslationSet translationId =
             getTranslationSet Url
 
         InvalidNumber ->
-            { english = s "Not a valid number"
-            , french = s "Ce n'est pas un nombre valide."
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Geen geldig nummer"
+            , english = s "Not a valid number"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Ce n'est pas un nombre valide."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         Language language ->
             case language of
-                English ->
-                    { english = s "English"
-                    , french = s "Anglais"
-                    , spanish = s "Inglés"
-                    , dutch = s "Engels"
+                Bulgarian ->
+                    { bulgarian = todo
+                    , croatian = todo
+                    , czech = todo
+                    , danish = todo
+                    , dutch = s "Bulgaars"
+                    , english = s "Bulgarian"
+                    , estonian = todo
+                    , finnish = todo
+                    , french = todo
+                    , german = todo
+                    , greek = todo
+                    , hungarian = todo
+                    , irish = todo
+                    , italian = todo
+                    , latvian = todo
+                    , lithuanian = todo
+                    , maltese = todo
+                    , polish = todo
+                    , portuguese = todo
+                    , romanian = todo
+                    , slovak = todo
+                    , slovenian = todo
+                    , spanish = todo
+                    , swedish = todo
                     }
-
-                French ->
-                    { english = s "French"
-                    , french = s "Français"
-                    , spanish = s "Francés"
-                    , dutch = s "Frans"
+                Croatian ->
+                    { bulgarian = todo
+                    , croatian = todo
+                    , czech = todo
+                    , danish = todo
+                    , dutch = s "Kroatisch"
+                    , english = s "Croatian"
+                    , estonian = todo
+                    , finnish = todo
+                    , french = todo
+                    , german = todo
+                    , greek = todo
+                    , hungarian = todo
+                    , irish = todo
+                    , italian = todo
+                    , latvian = todo
+                    , lithuanian = todo
+                    , maltese = todo
+                    , polish = todo
+                    , portuguese = todo
+                    , romanian = todo
+                    , slovak = todo
+                    , slovenian = todo
+                    , spanish = todo
+                    , swedish = todo
                     }
-
-                Spanish ->
-                    { english = s "Spanish"
-                    , french = s "Espagnol"
-                    , spanish = s "Español"
-                    , dutch = s "Spaans"
+                Czech ->
+                    { bulgarian = todo
+                    , croatian = todo
+                    , czech = todo
+                    , danish = todo
+                    , dutch = s "Tsjechisch"
+                    , english = s "Czech"
+                    , estonian = todo
+                    , finnish = todo
+                    , french = todo
+                    , german = todo
+                    , greek = todo
+                    , hungarian = todo
+                    , irish = todo
+                    , italian = todo
+                    , latvian = todo
+                    , lithuanian = todo
+                    , maltese = todo
+                    , polish = todo
+                    , portuguese = todo
+                    , romanian = todo
+                    , slovak = todo
+                    , slovenian = todo
+                    , spanish = todo
+                    , swedish = todo
                     }
-
+                Danish ->
+                    { bulgarian = todo
+                    , croatian = todo
+                    , czech = todo
+                    , danish = todo
+                    , dutch = s "Deens"
+                    , english = s "Danish"
+                    , estonian = todo
+                    , finnish = todo
+                    , french = todo
+                    , german = todo
+                    , greek = todo
+                    , hungarian = todo
+                    , irish = todo
+                    , italian = todo
+                    , latvian = todo
+                    , lithuanian = todo
+                    , maltese = todo
+                    , polish = todo
+                    , portuguese = todo
+                    , romanian = todo
+                    , slovak = todo
+                    , slovenian = todo
+                    , spanish = todo
+                    , swedish = todo
+                    }
                 Dutch ->
-                    { english = s "Dutch"
-                    , french = s "Néerlandais"
-                    , spanish = s "Holandés"
+                    { bulgarian = todo
+                    , croatian = todo
+                    , czech = todo
+                    , danish = todo
                     , dutch = s "Nederlands"
+                    , english = s "Dutch"
+                    , estonian = todo
+                    , finnish = todo
+                    , french = s "Néerlandais"
+                    , german = todo
+                    , greek = todo
+                    , hungarian = todo
+                    , irish = todo
+                    , italian = todo
+                    , latvian = todo
+                    , lithuanian = todo
+                    , maltese = todo
+                    , polish = todo
+                    , portuguese = todo
+                    , romanian = todo
+                    , slovak = todo
+                    , slovenian = todo
+                    , spanish = s "Holandés"
+                    , swedish = todo
                     }
+                English ->
+                    { bulgarian = todo
+                    , croatian = todo
+                    , czech = todo
+                    , danish = todo
+                    , dutch = s "Engels"
+                    , english = s "English"
+                    , estonian = todo
+                    , finnish = todo
+                    , french = s "Anglais"
+                    , german = todo
+                    , greek = todo
+                    , hungarian = todo
+                    , irish = todo
+                    , italian = todo
+                    , latvian = todo
+                    , lithuanian = todo
+                    , maltese = todo
+                    , polish = todo
+                    , portuguese = todo
+                    , romanian = todo
+                    , slovak = todo
+                    , slovenian = todo
+                    , spanish = todo
+                    , swedish = todo
+                    }
+                Estonian ->
+                    { bulgarian = todo
+                    , croatian = todo
+                    , czech = todo
+                    , danish = todo
+                    , dutch = s "Estisch"
+                    , english = s "Estonian"
+                    , estonian = todo
+                    , finnish = todo
+                    , french = todo
+                    , german = todo
+                    , greek = todo
+                    , hungarian = todo
+                    , irish = todo
+                    , italian = todo
+                    , latvian = todo
+                    , lithuanian = todo
+                    , maltese = todo
+                    , polish = todo
+                    , portuguese = todo
+                    , romanian = todo
+                    , slovak = todo
+                    , slovenian = todo
+                    , spanish = todo
+                    , swedish = todo
+                    }
+                Finnish ->
+                    { bulgarian = todo
+                    , croatian = todo
+                    , czech = todo
+                    , danish = todo
+                    , dutch = s "Fins"
+                    , english = s "Finnish"
+                    , estonian = todo
+                    , finnish = todo
+                    , french = todo
+                    , german = todo
+                    , greek = todo
+                    , hungarian = todo
+                    , irish = todo
+                    , italian = todo
+                    , latvian = todo
+                    , lithuanian = todo
+                    , maltese = todo
+                    , polish = todo
+                    , portuguese = todo
+                    , romanian = todo
+                    , slovak = todo
+                    , slovenian = todo
+                    , spanish = todo
+                    , swedish = todo
+                    }
+                French ->
+                    { bulgarian = todo
+                    , croatian = todo
+                    , czech = todo
+                    , danish = todo
+                    , dutch = s "Frans"
+                    , english = s "French"
+                    , estonian = todo
+                    , finnish = todo
+                    , french = s "Français"
+                    , german = todo
+                    , greek = todo
+                    , hungarian = todo
+                    , irish = todo
+                    , italian = todo
+                    , latvian = todo
+                    , lithuanian = todo
+                    , maltese = todo
+                    , polish = todo
+                    , portuguese = todo
+                    , romanian = todo
+                    , slovak = todo
+                    , slovenian = todo
+                    , spanish = s "Francés"
+                    , swedish = todo
+                    }
+                German ->
+                    { bulgarian = todo
+                    , croatian = todo
+                    , czech = todo
+                    , danish = todo
+                    , dutch = s "Duits"
+                    , english = s "German"
+                    , estonian = todo
+                    , finnish = todo
+                    , french = todo
+                    , german = todo
+                    , greek = todo
+                    , hungarian = todo
+                    , irish = todo
+                    , italian = todo
+                    , latvian = todo
+                    , lithuanian = todo
+                    , maltese = todo
+                    , polish = todo
+                    , portuguese = todo
+                    , romanian = todo
+                    , slovak = todo
+                    , slovenian = todo
+                    , spanish = todo
+                    , swedish = todo
+                    }
+                Greek ->
+                    { bulgarian = todo
+                    , croatian = todo
+                    , czech = todo
+                    , danish = todo
+                    , dutch = s "Grieks"
+                    , english = s "Greek"
+                    , estonian = todo
+                    , finnish = todo
+                    , french = todo
+                    , german = todo
+                    , greek = todo
+                    , hungarian = todo
+                    , irish = todo
+                    , italian = todo
+                    , latvian = todo
+                    , lithuanian = todo
+                    , maltese = todo
+                    , polish = todo
+                    , portuguese = todo
+                    , romanian = todo
+                    , slovak = todo
+                    , slovenian = todo
+                    , spanish = todo
+                    , swedish = todo
+                    }
+                Hungarian ->
+                    { bulgarian = todo
+                    , croatian = todo
+                    , czech = todo
+                    , danish = todo
+                    , dutch = s "Hongaars"
+                    , english = s "Hungarian"
+                    , estonian = todo
+                    , finnish = todo
+                    , french = todo
+                    , german = todo
+                    , greek = todo
+                    , hungarian = todo
+                    , irish = todo
+                    , italian = todo
+                    , latvian = todo
+                    , lithuanian = todo
+                    , maltese = todo
+                    , polish = todo
+                    , portuguese = todo
+                    , romanian = todo
+                    , slovak = todo
+                    , slovenian = todo
+                    , spanish = todo
+                    , swedish = todo
+                    }
+                Irish ->
+                    { bulgarian = todo
+                    , croatian = todo
+                    , czech = todo
+                    , danish = todo
+                    , dutch = s "Iers"
+                    , english = s "Irish"
+                    , estonian = todo
+                    , finnish = todo
+                    , french = todo
+                    , german = todo
+                    , greek = todo
+                    , hungarian = todo
+                    , irish = todo
+                    , italian = todo
+                    , latvian = todo
+                    , lithuanian = todo
+                    , maltese = todo
+                    , polish = todo
+                    , portuguese = todo
+                    , romanian = todo
+                    , slovak = todo
+                    , slovenian = todo
+                    , spanish = todo
+                    , swedish = todo
+                    }
+                Italian ->
+                    { bulgarian = todo
+                    , croatian = todo
+                    , czech = todo
+                    , danish = todo
+                    , dutch = s "Italiaans"
+                    , english = s "Italian"
+                    , estonian = todo
+                    , finnish = todo
+                    , french = todo
+                    , german = todo
+                    , greek = todo
+                    , hungarian = todo
+                    , irish = todo
+                    , italian = todo
+                    , latvian = todo
+                    , lithuanian = todo
+                    , maltese = todo
+                    , polish = todo
+                    , portuguese = todo
+                    , romanian = todo
+                    , slovak = todo
+                    , slovenian = todo
+                    , spanish = todo
+                    , swedish = todo
+                    }
+                Latvian ->
+                    { bulgarian = todo
+                    , croatian = todo
+                    , czech = todo
+                    , danish = todo
+                    , dutch = s "Lets"
+                    , english = s "Latvian"
+                    , estonian = todo
+                    , finnish = todo
+                    , french = todo
+                    , german = todo
+                    , greek = todo
+                    , hungarian = todo
+                    , irish = todo
+                    , italian = todo
+                    , latvian = todo
+                    , lithuanian = todo
+                    , maltese = todo
+                    , polish = todo
+                    , portuguese = todo
+                    , romanian = todo
+                    , slovak = todo
+                    , slovenian = todo
+                    , spanish = todo
+                    , swedish = todo
+                    }
+                Lithuanian ->
+                    { bulgarian = todo
+                    , croatian = todo
+                    , czech = todo
+                    , danish = todo
+                    , dutch = s "Litouws"
+                    , english = s "Lithuanian"
+                    , estonian = todo
+                    , finnish = todo
+                    , french = todo
+                    , german = todo
+                    , greek = todo
+                    , hungarian = todo
+                    , irish = todo
+                    , italian = todo
+                    , latvian = todo
+                    , lithuanian = todo
+                    , maltese = todo
+                    , polish = todo
+                    , portuguese = todo
+                    , romanian = todo
+                    , slovak = todo
+                    , slovenian = todo
+                    , spanish = todo
+                    , swedish = todo
+                    }
+                Maltese ->
+                    { bulgarian = todo
+                    , croatian = todo
+                    , czech = todo
+                    , danish = todo
+                    , dutch = s "Maltees"
+                    , english = s "Maltese"
+                    , estonian = todo
+                    , finnish = todo
+                    , french = todo
+                    , german = todo
+                    , greek = todo
+                    , hungarian = todo
+                    , irish = todo
+                    , italian = todo
+                    , latvian = todo
+                    , lithuanian = todo
+                    , maltese = todo
+                    , polish = todo
+                    , portuguese = todo
+                    , romanian = todo
+                    , slovak = todo
+                    , slovenian = todo
+                    , spanish = todo
+                    , swedish = todo
+                    }
+                Polish ->
+                    { bulgarian = todo
+                    , croatian = todo
+                    , czech = todo
+                    , danish = todo
+                    , dutch = s "Pools"
+                    , english = s "Polish"
+                    , estonian = todo
+                    , finnish = todo
+                    , french = todo
+                    , german = todo
+                    , greek = todo
+                    , hungarian = todo
+                    , irish = todo
+                    , italian = todo
+                    , latvian = todo
+                    , lithuanian = todo
+                    , maltese = todo
+                    , polish = todo
+                    , portuguese = todo
+                    , romanian = todo
+                    , slovak = todo
+                    , slovenian = todo
+                    , spanish = todo
+                    , swedish = todo
+                    }
+                Portuguese ->
+                    { bulgarian = todo
+                    , croatian = todo
+                    , czech = todo
+                    , danish = todo
+                    , dutch = s "Portugees"
+                    , english = s "Portuguese"
+                    , estonian = todo
+                    , finnish = todo
+                    , french = todo
+                    , german = todo
+                    , greek = todo
+                    , hungarian = todo
+                    , irish = todo
+                    , italian = todo
+                    , latvian = todo
+                    , lithuanian = todo
+                    , maltese = todo
+                    , polish = todo
+                    , portuguese = todo
+                    , romanian = todo
+                    , slovak = todo
+                    , slovenian = todo
+                    , spanish = todo
+                    , swedish = todo
+                    }
+                Romanian ->
+                    { bulgarian = todo
+                    , croatian = todo
+                    , czech = todo
+                    , danish = todo
+                    , dutch = s "Roemeens"
+                    , english = s "Romanian"
+                    , estonian = todo
+                    , finnish = todo
+                    , french = todo
+                    , german = todo
+                    , greek = todo
+                    , hungarian = todo
+                    , irish = todo
+                    , italian = todo
+                    , latvian = todo
+                    , lithuanian = todo
+                    , maltese = todo
+                    , polish = todo
+                    , portuguese = todo
+                    , romanian = todo
+                    , slovak = todo
+                    , slovenian = todo
+                    , spanish = todo
+                    , swedish = todo
+                    }
+                Slovak ->
+                    { bulgarian = todo
+                    , croatian = todo
+                    , czech = todo
+                    , danish = todo
+                    , dutch = s "Slovaaks"
+                    , english = s "Slovak"
+                    , estonian = todo
+                    , finnish = todo
+                    , french = todo
+                    , german = todo
+                    , greek = todo
+                    , hungarian = todo
+                    , irish = todo
+                    , italian = todo
+                    , latvian = todo
+                    , lithuanian = todo
+                    , maltese = todo
+                    , polish = todo
+                    , portuguese = todo
+                    , romanian = todo
+                    , slovak = todo
+                    , slovenian = todo
+                    , spanish = todo
+                    , swedish = todo
+                    }
+                Slovenian ->
+                    { bulgarian = todo
+                    , croatian = todo
+                    , czech = todo
+                    , danish = todo
+                    , dutch = s "Sloveens"
+                    , english = s "Slovenian"
+                    , estonian = todo
+                    , finnish = todo
+                    , french = todo
+                    , german = todo
+                    , greek = todo
+                    , hungarian = todo
+                    , irish = todo
+                    , italian = todo
+                    , latvian = todo
+                    , lithuanian = todo
+                    , maltese = todo
+                    , polish = todo
+                    , portuguese = todo
+                    , romanian = todo
+                    , slovak = todo
+                    , slovenian = todo
+                    , spanish = todo
+                    , swedish = todo
+                    }
+                Spanish ->
+                    { bulgarian = todo
+                    , croatian = todo
+                    , czech = todo
+                    , danish = todo
+                    , dutch = s "Spaans"
+                    , english = s "Spanish"
+                    , estonian = todo
+                    , finnish = todo
+                    , french = s "Espagnol"
+                    , german = todo
+                    , greek = todo
+                    , hungarian = todo
+                    , irish = todo
+                    , italian = todo
+                    , latvian = todo
+                    , lithuanian = todo
+                    , maltese = todo
+                    , polish = todo
+                    , portuguese = todo
+                    , romanian = todo
+                    , slovak = todo
+                    , slovenian = todo
+                    , spanish = s "Español"
+                    , swedish = todo
+                    }
+                Swedish ->
+                    { bulgarian = todo
+                    , croatian = todo
+                    , czech = todo
+                    , danish = todo
+                    , dutch = s "Zweeds"
+                    , english = s "Swedish"
+                    , estonian = todo
+                    , finnish = todo
+                    , french = todo
+                    , german = todo
+                    , greek = todo
+                    , hungarian = todo
+                    , irish = todo
+                    , italian = todo
+                    , latvian = todo
+                    , lithuanian = todo
+                    , maltese = todo
+                    , polish = todo
+                    , portuguese = todo
+                    , romanian = todo
+                    , slovak = todo
+                    , slovenian = todo
+                    , spanish = todo
+                    , swedish = todo
+                    }
+
         LanguageWord ->
-            { english = s "Language"
-            , french = s "Langue"
-            , spanish = s "Idioma"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Taal"
+            , english = s "Language"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Langue"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Idioma"
+            , swedish = todo
             }
 
         License ->
-            { english = s "License"
-            , french = s "Licence"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Licentie"
+            , english = s "License"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Licence"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Idioma"
+            , swedish = todo
             }
 
         LoadingMenu ->
-            { english = s "Loading menu..."
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Menu wordt geladen..."
+            , english = s "Loading menu..."
+            , estonian = todo
+            , finnish = todo
             , french = s "Chargement du menu..."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         LocalizedString ->
-            { english = s "Localized string"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Vertaalde tekenreeks"
+            , english = s "Localized string"
+            , estonian = todo
+            , finnish = todo
             , french = s "Chaîne de caractères localisée"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         Logo ->
-            { english = s "Logo"
-            , french = s "Logo"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Logo"
+            , english = s "Logo"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Logo"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         MissingDescription ->
-            { english = s "Missing description"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Omschrijving ontbreekt"
+            , english = s "Missing description"
+            , estonian = todo
+            , finnish = todo
             , french = s "Description manquante"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         MissingValue ->
-            { english = s "Missing value"
-            , french = s "Valeur manquante"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Verplicht veld"
+            , english = s "Missing value"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Valeur manquante"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         Name ->
-            { english = s "Name"
-            , french = s "Nom"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Naam"
+            , english = s "Name"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Nom"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         NetworkErrorExplanation ->
-            { english = s "There was a network error."
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Er is een netwerkfout opgetreden."
+            , english = s "There was a network error."
+            , estonian = todo
+            , finnish = todo
             , french = todo
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         New ->
-            { english = s "New"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Nieuw"
+            , english = s "New"
+            , estonian = todo
+            , finnish = todo
             , french = s "Nouveau"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         NewCard ->
-            { english = s "Add new"
-            , french = s "Ajouter"
-            , spanish = s "Añadir nuevo"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Nieuw"
+            , english = s "Add new"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Ajouter"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Añadir nuevo"
+            , swedish = todo
             }
 
         NewCardCollectionCatchPhrase ->
-            { english = s "A simple way to recommend your favorite tools."
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Een eenvoudige manier om je favoriete platform aan te bevelen."
+            , english = s "A simple way to recommend your favorite tools."
+            , estonian = todo
+            , finnish = todo
             , french = s "Une façon simple de recommander vos outils favoris."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = s "Een eenvoudige manier om je favoriete software aan te bevelen."
+            , swedish = todo
             }
 
         NewCardItemBox ->
-            { english = s "Add a new item"
-            , french = s "Ajouter un nouvel élément"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Nieuw onderdeel"
+            , english = s "Add a new item"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Ajouter un nouvel élément"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         NewCardOrganization ->
-            { english = s "Add a new organization"
-            , french = s "Ajouter une nouvelle organisation"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Nieuwe organisatie"
+            , english = s "Add a new organization"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Ajouter une nouvelle organisation"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         NewCardOrganizationCatchPhrase ->
-            { english = s "A developer or user of tools."
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Een organisatie die platformen gebruikt of maakt"
+            , english = s "A developer or user of tools."
+            , estonian = todo
+            , finnish = todo
             , french = s "Un développeur ou utilisateur d'outil."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = s "Een organisatie die software gebruikt of maakt"
+            , swedish = todo
             }
 
         NewCardOrganizationDescription ->
-            { english = s "Create a new organization by giving some generic information"
-            , french = s "Création d'une nouvelle organisation en fournissant quelques informations générales"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Voeg een organisatie toe door algemene informatie op te geven"
+            , english = s "Create a new organization by giving some generic information"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Création d'une nouvelle organisation en fournissant quelques informations générales"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         NewCardOrganizationDescriptionPlaceholder ->
-            { english = s "Presentation of the organization"
-            , french = s "Présentation de l'organisation"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Presentatie van de organisatie"
+            , english = s "Presentation of the organization"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Présentation de l'organisation"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         NewCardOrganizationName ->
-            { english = s "Offical name of the organization (e.g. \"Open Knowledge International\")"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Officiële naam van de organisatie (b.v. \"Open Knowledge International\")"
+            , english = s "Offical name of the organization (e.g. \"Open Knowledge International\")"
+            , estonian = todo
+            , finnish = todo
             , french = s "Nom officiel de l'organisation (par ex : \"Open Knowledge International\")"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         NewCardTool ->
-            { english = s "Add a new tool"
-            , french = s "Ajouter un nouvel outil"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Nieuw platform"
+            , english = s "Add a new tool"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Ajouter un nouvel outil"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         NewCardToolCatchPhrase ->
-            { english = s "Software or a website."
-            , french = s "Un logiciel ou un site Internet."
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Software of een internet platform"
+            , english = s "Software or a website."
+            , estonian = todo
+            , finnish = todo
+            , french = s "Un logiciel ou un site Internet."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         NewCardToolDescription ->
-            { english = s "Creating a new tool by giving a few generic informations."
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Registreer een platform door algemene informatie in te vullen"
+            , english = s "Creating a new tool by giving a few generic informations."
+            , estonian = todo
+            , finnish = todo
             , french = s "Création d'un nouvel outil en fournissant quelques informations générales"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         NewCardToolDescriptionPlaceholder ->
-            { english = s "Presentation of the tool"
-            , french = s "Présentation de l'outil"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Presentatie van het platform"
+            , english = s "Presentation of the tool"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Présentation de l'outil"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         NewCardToolName ->
-            { english = s "Official name of the tool (e.g. \"Loomio\")"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Officiële naam van het platform (b.v. \"Loomio\")"
+            , english = s "Official name of the tool (e.g. \"Loomio\")"
+            , estonian = todo
+            , finnish = todo
             , french = s "Nom officiel de l'outil (par ex : \"Loomio\")"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         NewCardUseCase ->
-            { english = s "Add a new use case"
-            , french = s "Ajouter un nouveau cas d'usage"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Voeg een toepassing toe"
+            , english = s "Add a new use case"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Ajouter un nouveau cas d'usage"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         NewCardUseCaseCatchPhrase ->
-            { english = s "A concrete example showing how a tool was used."
-            , french = s "Un exemple concret d'utilisation d'un ou plusieurs outils."
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Een platform toegepast in de praktijk"
+            , english = s "A concrete example showing how a tool was used."
+            , estonian = todo
+            , finnish = todo
+            , french = s "Un exemple concret d'utilisation d'un ou plusieurs outils."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         NewCardUseCaseDescription ->
-            { english = s "Creating a new use case by giving a few generic informations"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Registreer een toepassing door het opgeven van algemene informatie"
+            , english = s "Creating a new use case by giving a few generic informations"
+            , estonian = todo
+            , finnish = todo
             , french = s "Création d'un nouveau cas d'usage en fournissant quelques informations générales"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         NewCardUseCaseDescriptionPlaceholder ->
-            { english = s "Presentation of the use case"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Presentatie van de toepassing"
+            , english = s "Presentation of the use case"
+            , estonian = todo
+            , finnish = todo
             , french = s "Présentation du cas d'usage"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         NewCardUseCaseName ->
-            { english = s "Name of the use case (e.g. \"Open Knowledge Forums\")"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Naam van de toepassing (b.v. \"data.overheid.nl\")"
+            , english = s "Name of the use case (e.g. \"Open Knowledge Forums\")"
+            , estonian = todo
+            , finnish = todo
             , french = s "Nom du cas d'usage (par ex : \"Forums d'Open Knowledge\")"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         NewValue ->
-            { english = s "New Value"
-            , french = s "Nouvelle valeur"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Nieuwe waarde"
+            , english = s "New Value"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Nouvelle valeur"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         NewValueDescription ->
-            { english = s "Form to enter a new value"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Formulier voor het toevoegen van een waarde"
+            , english = s "Form to enter a new value"
+            , estonian = todo
+            , finnish = todo
             , french = s "Formulaire de création d'une nouvelle valeur"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         Number ->
-            { english = s "Number"
-            , french = s "Nombre"
-            , spanish = s "Número"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Nummer"
+            , english = s "Number"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Nombre"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Número"
+            , swedish = todo
             }
 
         NumberPlaceholder ->
-            { english = s "3.1415927"
-            , french = s "3.1415927"
-            , spanish = s "3.1415927"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "3.1415927"
+            , english = s "3.1415927"
+            , estonian = todo
+            , finnish = todo
+            , french = s "3.1415927"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "3.1415927"
+            , swedish = todo
             }
 
         OGPsummitLink ->
-            { english = s "https://en.ogpsummit.org/osem/conference/ogp-summit"
-            , french = s "https://fr.ogpsummit.org/osem/conference/ogp-summit"
-            , spanish = s "https://es.ogpsummit.org/osem/conference/ogp-summit"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "https://nl.ogpsummit.org/osem/conference/ogp-summit"
+            , english = s "https://en.ogpsummit.org/osem/conference/ogp-summit"
+            , estonian = todo
+            , finnish = todo
+            , french = s "https://fr.ogpsummit.org/osem/conference/ogp-summit"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "https://es.ogpsummit.org/osem/conference/ogp-summit"
+            , swedish = todo
             }
 
         OpenGovernmentPartnership ->
-            { english = s "Open Government Partnership"
-            , french = s "Partenariat pour un gouvernement ouvert"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Open Government Partnership"
+            , english = s "Open Government Partnership"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Partenariat pour un gouvernement ouvert"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         OpenGovernmentPartnershipLogo ->
-            { english = s "Open Government Partnership logo"
-            , french = s "logo du Partenariat pour un gouvernement ouvert"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Logo van Open Government Partnership"
+            , english = s "Open Government Partnership logo"
+            , estonian = todo
+            , finnish = todo
+            , french = s "logo du Partenariat pour un gouvernement ouvert"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         OpenGovParagraph ->
-            { english = s """
-The Open Government Partnership is a multilateral initiative that aims to secure concrete commitments
-from governments to promote transparency, empower citizens, fight corruption, and harness new technologies
-to strengthen governance.
-"""
-            , french = s "Le Partenariat pour un gouvernement ouvert est une initiative multilatérale créée en 2011 par huit pays fondateurs, qui s’attache à promouvoir la transparence et l’intégrité du gouvernement ainsi que l’utilisation des nouvelles technologies pour faciliter son ouverture."
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s """
 Open Government Partnership is een initiatief dat streeft naar samenwerking tussen overheden bij het streven naar
 transparantie, vergroten van burgerparticipatie, voorkomen van onduidelijkheid en het omarmen van technologie voor het
 verbeteren van de dienstverlening door overheden.
 """
+            , english = s """
+The Open Government Partnership is a multilateral initiative that aims to secure concrete commitments
+from governments to promote transparency, empower citizens, fight corruption, and harness new technologies
+to strengthen governance.
+"""
+            , estonian = todo
+            , finnish = todo
+            , french = s "Le Partenariat pour un gouvernement ouvert est une initiative multilatérale créée en 2011 par huit pays fondateurs, qui s’attache à promouvoir la transparence et l’intégrité du gouvernement ainsi que l’utilisation des nouvelles technologies pour faciliter son ouverture."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         Organization number ->
-            { english =
+            { bulgarian =
                 case number of
                     Singular ->
-                        s "Organization"
+                        todo
 
                     Plural ->
-                        s "Organizations"
-            , french =
+                        todo
+            , croatian =
                 case number of
                     Singular ->
-                        s "Organisation"
+                        todo
 
                     Plural ->
-                        s "Organisations"
-            , spanish =
+                        todo
+            , czech =
                 case number of
                     Singular ->
-                        s "Organización"
+                        todo
 
                     Plural ->
-                        s "Organizaciones"
+                        todo
+            , danish =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
             , dutch =
                 case number of
                     Singular ->
@@ -1843,431 +6592,1717 @@ verbeteren van de dienstverlening door overheden.
 
                     Plural ->
                         s "Organisaties"
+            , english =
+                case number of
+                    Singular ->
+                        s "Organization"
+
+                    Plural ->
+                        s "Organizations"
+            , estonian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , finnish =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , french =
+                case number of
+                    Singular ->
+                        s "Organisation"
+
+                    Plural ->
+                        s "Organisations"
+            , german =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , greek =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , hungarian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , irish =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , italian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , latvian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , lithuanian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , maltese =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , polish =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , portuguese =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , romanian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , slovak =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , slovenian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , spanish =
+                case number of
+                    Singular ->
+                        s "Organización"
+
+                    Plural ->
+                        s "Organizaciones"
+            , swedish =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
             }
+
+
+
         OpenData ->
-            { english = s "Open Data"
-            , french = todo
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Open data"
-            }
-        OpenSource ->
-            { english = s "Free Open Source Software"
-            , french = s "Logiciel Libre Open Source"
+            , english = s "Open Data"
+            , estonian = todo
+            , finnish = todo
+            , french = todo
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
+            , swedish = todo
+            }
+
+        OpenSource ->
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Open Source Software"
+            , english = s "Free Open Source Software"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Logiciel Libre Open Source"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         OrganizationId ->
-            { english = s "Organization"
-            , french = s "Organisation"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Organisatie"
+            , english = s "Organization"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Organisation"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         OrganizationIdField ->
             getTranslationSet OrganizationId
 
         OrganizationPlaceholder ->
-            { english = s "Name of an organization"
-            , french = s "Nom d'une organisation"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Naam van een organisatie"
+            , english = s "Name of an organization"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Nom d'une organisation"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         OrganizationsDescription ->
-            { english = s "List of organizations"
-            , french = s "Liste d'organisations"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Lijst van organisaties"
+            , english = s "List of organizations"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Liste d'organisations"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         PageLoading ->
-            { english = s "Page is loading"
-            , french = s "Chargement en cours"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "De pagina wordt geladen"
+            , english = s "Page is loading"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Chargement en cours"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         PageLoadingExplanation ->
-            { english = s "Data is loading and should be displayed quite soon."
-            , french = todo
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "De gegevens worden geladen. Ogenblik geduld."
+            , english = s "Data is loading and should be displayed quite soon."
+            , estonian = todo
+            , finnish = todo
+            , french = todo
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         PageNotFound ->
-            { english = s "Page Not Found"
-            , french = s "Page non trouvée"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Pagina niet gevonden"
+            , english = s "Page Not Found"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Page non trouvée"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         PageNotFoundDescription ->
-            { english = s "The requested page doesn't exist."
-            , french = s "La page demandée n'existe pas."
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "De gevraagde pagina bestaat niet"
+            , english = s "The requested page doesn't exist."
+            , estonian = todo
+            , finnish = todo
+            , french = s "La page demandée n'existe pas."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         PageNotFoundExplanation ->
-            { english = s "Sorry, but the page you were trying to view does not exist."
-            , french = s "Désolé mais la page que vous avez demandé n'est pas disponible"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "De pagina die je probeert op te vragen bestaat niet."
+            , english = s "Sorry, but the page you were trying to view does not exist."
+            , estonian = todo
+            , finnish = todo
+            , french = s "Désolé mais la page que vous avez demandé n'est pas disponible"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         Password ->
-            { english = s "Password"
-            , french = s "Mot de passe"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Wachtwoord"
+            , english = s "Password"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Mot de passe"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         PasswordChangeFailed ->
-            { english = s "Password change failed"
-            , french = s "Échec du changement de mot de passe"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Wachtwoord wijzigen mislukt"
+            , english = s "Password change failed"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Échec du changement de mot de passe"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         PasswordLost ->
-            { english = s "Password lost?"
-            , french = s "Mot de passe oublié ?"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Wachtwoord vergeten?"
+            , english = s "Password lost?"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Mot de passe oublié ?"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         PasswordPlaceholder ->
-            { english = s "Your secret password"
-            , french = s "Votre mot de passe secret"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Je wachtwoord"
+            , english = s "Your secret password"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Votre mot de passe secret"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         Platform ->
-            { english = s "Online service (website, platform, resource)"
-            , french = s "Service en ligne (site Internet, plateforme, ressource)"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Internetdienst (website, platform, bron)"
+            , english = s "Online service (website, platform, resource)"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Service en ligne (site Internet, plateforme, ressource)"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         Press ->
-            { english = s "Press"
-            , french = s "Presse"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "In het nieuws"
+            , english = s "Press"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Presse"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         PressDescription ->
             getTranslationSet PressLead
 
         PressLead ->
-            { english = s "What the press says of the OGP Toolbox"
-            , french = s "La presse parle de la boite à outils de l'OGP"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Diverse nieuwsberichten over de OGP Toolbox"
+            , english = s "What the press says of the OGP Toolbox"
+            , estonian = todo
+            , finnish = todo
+            , french = s "La presse parle de la boite à outils de l'OGP"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         ProfileMyCollections ->
-            { english = s "My collections"
-            , french = s "Mes collections"
-            , spanish = s "Mis colecciones"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Mijn collecties"
+            , english = s "My collections"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Mes collections"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Mis colecciones"
+            , swedish = todo
             }
 
         Proprietary ->
-            { english = s "Closed Proprietary Software"
-            , french = s "Logiciel propriétaire fermé"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Commercieel"
+            , english = s "Closed Proprietary Software"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Logiciel propriétaire fermé"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         Publish ->
-            { english = s "Publish"
-            , french = s "Publier"
-            , spanish = s "Publicar"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Publiceren"
+            , english = s "Publish"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Publier"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Publicar"
+            , swedish = todo
             }
 
         PublishCollection ->
-            { english = s "Publish your collection"
-            , french = s "Publier votre collection"
-            , spanish = s "Publicar sus colecciones"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Publiceer je collectie"
+            , english = s "Publish your collection"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Publier votre collection"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Publicar sus colecciones"
+            , swedish = todo
             }
 
         PublishOrganization ->
-            { english = s "Publish organization"
-            , french = s "Publier cette organisation"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Publiceer organisatie"
+            , english = s "Publish organization"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Publier cette organisation"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         PublishUseCase ->
-            { english = s "Publish use case"
-            , french = s "Publier ce cas d'usage"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Publiceer toepassing"
+            , english = s "Publish use case"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Publier ce cas d'usage"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         PublishTool ->
-            { english = s "Publish tool"
-            , french = s "Publier cet outil"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Publiceer platform"
+            , english = s "Publish tool"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Publier cet outil"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         ReadingSelectedImage ->
-            { english = s "Reading selected image..."
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Geselecteerde afbeelding wordt geladen..."
+            , english = s "Reading selected image..."
+            , estonian = todo
+            , finnish = todo
             , french = s "Lecture de l'image sélectionnée..."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         ReadMore ->
-            { english = s "Read more"
-            , french = s "En savoir plus"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Meer..."
+            , english = s "Read more"
+            , estonian = todo
+            , finnish = todo
+            , french = s "En savoir plus"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         ReleaseDate ->
-            { english = s "Release date"
-            , french = s "Date de sortie"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Datum van uitgave"
+            , english = s "Release date"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Date de sortie"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         ReleaseDatePlaceholder ->
-            { english = s "Launch date of the last stable version"
-            , french = s "Date de lancement de la dernière version stable"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Datum waarop de stabiele versie is uitgegeven"
+            , english = s "Launch date of the last stable version"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Date de lancement de la dernière version stable"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         Register ->
-            { english = s "Register"
-            , french = s "Créer le compte"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Registreren"
+            , english = s "Register"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Créer le compte"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         RegisterNow ->
-            { english = s "Register now!"
-            , french = s "Inscrivez vous maintenant !"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Registreer nu"
+            , english = s "Register now!"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Inscrivez vous maintenant !"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         Remove ->
-            { english = s "Remove"
-            , french = s "Enlever"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Verwijder"
+            , english = s "Remove"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Enlever"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         ResetPassword ->
-            { english = s "Reset Password"
-            , french = s "Changer de mot de passe"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Wachtwoord herstellen"
+            , english = s "Reset Password"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Changer de mot de passe"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         ResetPasswordExplanation ->
-            { english = s "Enter your email. We will send you the instructions to create a new password."
-            , french = s "Entrez votre courriel. Nous vous enverrons les instructions pour changer de mot de passe."
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = todo
+            , english = s "Enter your email. We will send you the instructions to create a new password."
+            , estonian = todo
+            , finnish = todo
+            , french = s "Entrez votre courriel. Nous vous enverrons les instructions pour changer de mot de passe."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         ResetPasswordLink ->
-            { english = s "I forgot my password"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Wachtwoord vergeten"
+            , english = s "I forgot my password"
+            , estonian = todo
+            , finnish = todo
             , french = s "J'ai oublié mon mot de passe"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         Save ->
-            { english = s "Save"
-            , french = s "Enregistrer"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Opslaan"
+            , english = s "Save"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Enregistrer"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         SelectCardOrTypeMoreCharacters ->
-            { english = s "Select a card or type more characters"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Selecteer een kaart of begin met typen"
+            , english = s "Select a card or type more characters"
+            , estonian = todo
+            , finnish = todo
             , french = s "Sélectionner une fiche ou tapez plus de caractères"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         Score ->
-            { english = s "Score"
-            , french = s "Score"
-            , spanish = s "Score"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Score"
+            , english = s "Score"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Score"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Score"
+            , swedish = todo
             }
 
         SearchInputPlaceholder ->
-            { english = s "Search for a tool, use case or organization"
-            , french = s "Rechercher un outil, un cas d'usage ou une organisation"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Zoeken..."
+            , english = s "Search for a tool, use case or organization"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Rechercher un outil, un cas d'usage ou une organisation"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         SeeAllAndCompare ->
-            { english = s "See all and compare"
-            , french = s "Voir tous et comparer"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Alles bekijken en vergelijken"
+            , english = s "See all and compare"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Voir tous et comparer"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         Send ->
-            { english = s "Send"
-            , french = s "Envoyer"
-            , spanish = s "Enviar"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Verzenden"
+            , english = s "Send"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Envoyer"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Enviar"
+            , swedish = todo
             }
 
         SendEmailAgain ->
-            { english = s "Send email again"
-            , french = s "Réenvoyer le courriel"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Email opnieuw versturen"
+            , english = s "Send email again"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Réenvoyer le courriel"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         ServiceDisclaimer ->
-            { english = s "Online service"
-            , french = s "Service en ligne"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Internetdienst"
+            , english = s "Online service"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Service en ligne"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         Share ->
-            { english = s "Share"
-            , french = s "Partager"
-            , spanish = s "Compartir"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Delen"
+            , english = s "Share"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Partager"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Compartir"
+            , swedish = todo
             }
 
         ShowAll count ->
-            { english = s ("Show all " ++ (toString count))
-            , french = s ("Voir tous (" ++ (toString count) ++ ")")
-            , spanish = s ("Ver todo (" ++ (toString count) ++ ")")
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s ("Toon alles (" ++ (toString count) ++ ")")
+            , english = s ("Show all " ++ (toString count))
+            , estonian = todo
+            , finnish = todo
+            , french = s ("Voir tous (" ++ (toString count) ++ ")")
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s ("Ver todo (" ++ (toString count) ++ ")")
+            , swedish = todo
             }
 
         ShowMore ->
-            { english = s "Show more"
-            , french = s "Voir plus"
-            , spanish = s "Mostrar más"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Meer..."
+            , english = s "Show more"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Voir plus"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Mostrar más"
+            , swedish = todo
             }
+
         ShowMoreCount count ->
-            { english = s ("Show " ++ (toString count) ++ " more")
-            , french = s ("Voir " ++ (toString count) ++ " plus")
-            , spanish = s ("Mostrar " ++ (toString count) ++ " más")
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s ("Toon " ++ (toString count) ++ " meer")
+            , english = s ("Show " ++ (toString count) ++ " more")
+            , estonian = todo
+            , finnish = todo
+            , french = s ("Voir " ++ (toString count) ++ " plus")
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s ("Mostrar " ++ (toString count) ++ " más")
+            , swedish = todo
             }
+
         SignIn ->
-            { english = s "Sign In"
-            , french = s "Identification"
-            , spanish = s "Acceder"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Aanmelden"
+            , english = s "Sign In"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Identification"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Acceder"
+            , swedish = todo
             }
 
         SignInToContribute ->
-            { english = s "Sign in to contribute"
-            , french = s "Identifiez-vous pour contribuer"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Meld je aan om deel te nemen"
+            , english = s "Sign in to contribute"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Identifiez-vous pour contribuer"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         SignOut ->
-            { english = s "Sign Out"
-            , french = s "Me déconnecter"
-            , spanish = s "Salir"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Afmelden"
+            , english = s "Sign Out"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Me déconnecter"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Salir"
+            , swedish = todo
             }
 
         SignOutAndContributeLater ->
-            { english = s "Sign out and contribute later"
-            , french = s "Déconnectez-vous et contribuez plus tard"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Afmelden en een andere keer deelnemen"
+            , english = s "Sign out and contribute later"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Déconnectez-vous et contribuez plus tard"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         SignUp ->
-            { english = s "Sign Up"
-            , french = s "M'inscrire"
-            , spanish = s "Registrarse"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Registreren"
+            , english = s "Sign Up"
+            , estonian = todo
+            , finnish = todo
+            , french = s "M'inscrire"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Registrarse"
+            , swedish = todo
             }
 
         SimilarTools ->
-            { english = s "Similar tools"
-            , french = s "Outils similaires"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Overeenkomstige platformen"
+            , english = s "Similar tools"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Outils similaires"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         Software ->
-            { english = s "Computer program (software, application)"
-            , french = s "Programme informatique (logiciel, application)"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Computer programma (software, applicatie)"
+            , english = s "Computer program (software, application)"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Programme informatique (logiciel, application)"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         String ->
-            { english = s "String"
-            , french = s "Chaîne de caractères"
-            , spanish = s "Cadena"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Tekenreeks"
+            , english = s "String"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Chaîne de caractères"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Cadena"
+            , swedish = todo
             }
 
         Tags ->
-            { english = s "Tags"
-            , french = s "Étiquettes"
-            , spanish = s "Etiquetas"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Termen"
+            , english = s "Tags"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Étiquettes"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Etiquetas"
+            , swedish = todo
             }
 
         TextField ->
-            { english = s "Text"
-            , french = s "Texte"
-            , spanish = s "Texto"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Tekst"
+            , english = s "Text"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Texte"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Texto"
+            , swedish = todo
             }
 
         TimeoutExplanation ->
-            { english = s "The server was too slow to respond (timeout)."
-            , french = s "Le servert a mis trop de temps à repondre (timeout)"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Er is een timeout opgetreden"
+            , english = s "The server was too slow to respond (timeout)."
+            , estonian = todo
+            , finnish = todo
+            , french = s "Le servert a mis trop de temps à repondre (timeout)"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         Tool number ->
-            { english =
+            { bulgarian =
                 case number of
                     Singular ->
-                        s "Tool"
+                        todo
 
                     Plural ->
-                        s "Tools"
-            , french =
+                        todo
+            , croatian =
                 case number of
                     Singular ->
-                        s "Outil"
+                        todo
 
                     Plural ->
-                        s "Outils"
-            , spanish =
+                        todo
+            , czech =
                 case number of
                     Singular ->
-                        s "Herramienta"
+                        todo
 
                     Plural ->
-                        s "Herramientas"
+                        todo
+            , danish =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
             , dutch =
                 case number of
                     Singular ->
@@ -2275,138 +8310,578 @@ verbeteren van de dienstverlening door overheden.
 
                     Plural ->
                         s "Platformen"
+            , english =
+                case number of
+                    Singular ->
+                        s "Tool"
+
+                    Plural ->
+                        s "Tools"
+            , estonian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , finnish =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , french =
+                case number of
+                    Singular ->
+                        s "Outil"
+
+                    Plural ->
+                        s "Outils"
+            , german =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , greek =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , hungarian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , irish =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , italian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , latvian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , lithuanian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , maltese =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , polish =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , portuguese =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , romanian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , slovak =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , slovenian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , spanish =
+                case number of
+                    Singular ->
+                        s "Herramienta"
+
+                    Plural ->
+                        s "Herramientas"
+            , swedish =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
             }
 
         ToolId ->
-            { english = s "Tool"
-            , french = s "Outil"
-            , spanish = s "Herramienta"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Platform"
+            , english = s "Tool"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Outil"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Herramienta"
+            , swedish = todo
             }
 
         ToolIdField ->
             getTranslationSet ToolId
 
         ToolPlaceholder ->
-            { english = s "Name of a tool"
-            , french = s "Nom d'un outil"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch =  s "Naam van het hulmiddel"
+            , english = s "Name of a tool"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Nom d'un outil"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         ToolsDescription ->
-            { english = s "List of tools"
-            , french = s "Liste d'outils"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Lijst van hulpmiddelen"
+            , english = s "List of tools"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Liste d'outils"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         TrueWord ->
-            { english = s "True"
-            , french = s "Vrai"
-            , spanish = s "Cierto"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Waar"
+            , english = s "True"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Vrai"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Cierto"
+            , swedish = todo
             }
 
         TweetMessage name url ->
-            { english = s ("Discover " ++ name ++ " on OGPToolbox.org: " ++ url)
-            , french = s ("Découvrez " ++ name ++ " dans OGPToolbox.org : " ++ url)
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s ("Ontdek " ++ name ++ " op OGPToolbox.org : " ++ url)
+            , english = s ("Discover " ++ name ++ " on OGPToolbox.org: " ++ url)
+            , estonian = todo
+            , finnish = todo
+            , french = s ("Découvrez " ++ name ++ " dans OGPToolbox.org : " ++ url)
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         Type ->
-            { english = s "Type"
-            , french = s "Type"
-            , spanish = s "Tipo"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Type"
+            , english = s "Type"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Type"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Tipo"
+            , swedish = todo
             }
 
         UnknownLanguage ->
-            { english = s "Unsupported language"
-            , french = s "Langue inconnue"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch =  s "Taal niet ondersteund"
+            , english = s "Unsupported language"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Langue inconnue"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         UnknownSchemaId schemaId ->
-            { english = s ("Reference to an unknown schema: " ++ schemaId)
-            , french = s ("Référence à un schema inconnu: " ++ schemaId)
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s ("Rerentie naar een onbekend schema: " ++ schemaId)
+            , english = s ("Reference to an unknown schema: " ++ schemaId)
+            , estonian = todo
+            , finnish = todo
+            , french = s ("Référence à un schema inconnu: " ++ schemaId)
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         UnknownUser ->
-            { english = s "User is unknown."
-            , french = s "L'utilisateur est inconnu."
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Gebruiker onbekend"
+            , english = s "User is unknown."
+            , estonian = todo
+            , finnish = todo
+            , french = s "L'utilisateur est inconnu."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         UnknownValue ->
-            { english = s "Unknown value"
-            , french = s "Valeur inconnue"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Onbekende waarde"
+            , english = s "Unknown value"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Valeur inconnue"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         UntitledCard ->
-            { english = s "Untitled Card"
-            , french = s "Fiche sans titre"
-            , spanish = s "Tipo"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Kaart zonder titel"
+            , english = s "Untitled Card"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Fiche sans titre"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         UploadImage ->
-            { english = s "Upload an image"
-            , french = s "Ajouter une image"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Afbeelding uploaden"
+            , english = s "Upload an image"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Ajouter une image"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         UploadingImage filename ->
-            { english = s ("Uploading image \"" ++ filename ++ "\"...")
-            , french = s ("Ajout de l'image \"" ++ filename ++ "\"...")
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s ("Afbeelding \"" ++ filename ++ "\" wordt geupload...")
+            , english = s ("Uploading image \"" ++ filename ++ "\"...")
+            , estonian = todo
+            , finnish = todo
+            , french = s ("Ajout de l'image \"" ++ filename ++ "\"...")
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         Url ->
-            { english = s "Link (URL)"
-            , french = s "Lien (URL)"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Link (URL)"
+            , english = s "Link (URL)"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Lien (URL)"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         UrlPlaceholder ->
-            { english = s "https://www.example.com/sample-page"
-            , french = s "https://www.exemple.fr/exemple-de-page"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "https://www.voorbeeldnl/voorbeeld-pagina"
+            , english = s "https://www.example.com/sample-page"
+            , estonian = todo
+            , finnish = todo
+            , french = s "https://www.exemple.fr/exemple-de-page"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         UseCase number ->
-            { english =
+            { bulgarian =
                 case number of
                     Singular ->
-                        s "Use case"
+                        todo
 
                     Plural ->
-                        s "Use cases"
-            , french =
+                        todo
+            , croatian =
                 case number of
                     Singular ->
-                        s "Cas d'usage"
+                        todo
 
                     Plural ->
-                        s "Cas d'usage"
-            , spanish =
+                        todo
+            , czech =
                 case number of
                     Singular ->
-                        s "Caso de uso"
+                        todo
 
                     Plural ->
-                        s "Casos de uso"
+                        todo
+            , danish =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
             , dutch =
                 case number of
                     Singular ->
@@ -2414,156 +8889,709 @@ verbeteren van de dienstverlening door overheden.
 
                     Plural ->
                         s "Toepassingen"
+            , english =
+                case number of
+                    Singular ->
+                        s "Use case"
+
+                    Plural ->
+                        s "Use cases"
+            , estonian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , finnish =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , french =
+                case number of
+                    Singular ->
+                        s "Cas d'usage"
+
+                    Plural ->
+                        s "Cas d'usage"
+            , german =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , greek =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , hungarian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , irish =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , italian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , latvian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , lithuanian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , maltese =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , polish =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , portuguese =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , romanian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , slovak =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , slovenian =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
+            , spanish =
+                case number of
+                    Singular ->
+                        s "Caso de uso"
+
+                    Plural ->
+                        s "Casos de uso"
+            , swedish =
+                case number of
+                    Singular ->
+                        todo
+
+                    Plural ->
+                        todo
             }
 
         UseCaseId ->
-            { english = s "Use case"
-            , french = s "Cas d'usage"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Toepassing"
+            , english = s "Use case"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Cas d'usage"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         UseCaseIdField ->
             getTranslationSet UseCaseId
 
         UseCasePlaceholder ->
-            { english = s "Name of a use case"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Naam van de toepassing"
+            , english = s "Name of a use case"
+            , estonian = todo
+            , finnish = todo
             , french = s "Nom d'un cas d'usage"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         UseCases ->
-            { english = s "Use cases"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Toepassingen"
+            , english = s "Use cases"
+            , estonian = todo
+            , finnish = todo
             , french = s "Cas d'usage"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = s "Casos de uso"
-            , dutch = todo
+            , swedish = todo
             }
 
         UseCasesDescription ->
-            { english = s "List of use cases"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Lijst van toepassingen"
+            , english = s "List of use cases"
+            , estonian = todo
+            , finnish = todo
             , french = s "Liste de cas d'usage"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         UsedBy ->
-            { english = s "Used by"
-            , french = s "Utilisé par"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Gebruikt door"
+            , english = s "Used by"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Utilisé par"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         UsedFor ->
-            { english = s "Used for"
-            , french = s "Utilisé pour"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Gebruikt voor"
+            , english = s "Used for"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Utilisé pour"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         Username ->
-            { english = s "Username"
-            , french = s "Nom d'utilisateur"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Gebruikersnaam"
+            , english = s "Username"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Nom d'utilisateur"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         UsernameOrEmailAlreadyExist ->
-            { english = s "Username or email are already used."
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Gebruikersnaam of email is al in gebruik."
+            , english = s "Username or email are already used."
+            , estonian = todo
+            , finnish = todo
             , french = s "Le nom d'utilisateur ou le mot de passe sont déjà utilisés."
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         UsernamePlaceholder ->
-            { english = s "John Doe"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Jan Jansen"
+            , english = s "John Doe"
+            , estonian = todo
+            , finnish = todo
             , french = s "Françoise Martin"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         UserProfileDescription ->
-            { english = s "The profile of user and its favorite collections"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = s "Het profiel van de gebruiker en zijn collecties"
+            , english = s "The profile of user and its favorite collections"
+            , estonian = todo
+            , finnish = todo
             , french = s "Le profil de l'utilisation et ses collections favorites"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
             , spanish = todo
-            , dutch = todo
+            , swedish = todo
             }
 
         Uses ->
-            { english = s "Uses"
-            , french = s "Utilise"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Maakt gebruik van"
+            , english = s "Uses"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Utilise"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         UseIt ->
-            { english = s "Use it"
-            , french = s "Utiliser"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Gebruik"
+            , english = s "Use it"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Utiliser"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         UseTool ->
-            { english = s "Use this tool"
-            , french = s "Utiliser cet outil"
-            , spanish = s "Utilice esta herramienta"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Gebruik deze software"
+            , english = s "Use this tool"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Utiliser cet outil"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Utilice esta herramienta"
+            , swedish = todo
             }
 
         Value ->
-            { english = s "Value"
-            , french = s "Valeur"
-            , spanish = s "Valor"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Waarde"
+            , english = s "Value"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Valeur"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Valor"
+            , swedish = todo
             }
 
         ValueCreationFailed ->
-            { english = s "Value creation failed"
-            , french = s "Échec de la création de la valeur"
-            , spanish = s "Falló la creación de valor"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Maken van de waarde mislukt"
+            , english = s "Value creation failed"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Échec de la création de la valeur"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Falló la creación de valor"
+            , swedish = todo
             }
 
         ValueId ->
-            { english = s "Link to a value"
-            , french = s "Lien vers une valeur"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Koppel aan een waarde"
+            , english = s "Link to a value"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Lien vers une valeur"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         ValueIdArray ->
-            { english = s "Array of links to values"
-            , french = s "Tableau de liens vers des valeurs"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "lijst met koppelingen naar waarden"
+            , english = s "Array of links to values"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Tableau de liens vers des valeurs"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         ValuePlaceholder ->
-            { english = s "The value..."
-            , french = s "La valeur"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "De waarde..."
+            , english = s "The value..."
+            , estonian = todo
+            , finnish = todo
+            , french = s "La valeur"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
         VoteBestContributions ->
-            { english = s "Vote for the best contributions"
-            , french = s "Votez pour les meilleurs contributions"
-            , spanish = s "Vote por las mejores contribuciones"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Stem op de beste bijdragen"
+            , english = s "Vote for the best contributions"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Votez pour les meilleurs contributions"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Vote por las mejores contribuciones"
+            , swedish = todo
             }
 
         Website ->
-            { english = s "Website"
-            , french = s "Site web"
-            , spanish = s "Sitio web"
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Website"
+            , english = s "Website"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Site web"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = s "Sitio web"
+            , swedish = todo
             }
 
         WebsiteDescription ->
-            { english = s "Address of the official website (URL)"
-            , french = s "Adresse du site officiel (URL)"
-            , spanish = todo
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
             , dutch = s "Adres van de officiële website (URL)"
+            , english = s "Address of the official website (URL)"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Adresse du site officiel (URL)"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
             }
 
 
@@ -2572,20 +9600,58 @@ verbeteren van de dienstverlening door overheden.
 
 
 type Language
-    = English
-    | French
-    | Spanish
+    = Bulgarian
+    | Croatian
+    | Czech
+    | Danish
     | Dutch
+    | English
+    | Estonian
+    | Finnish
+    | French
+    | German
+    | Greek
+    | Hungarian
+    | Irish
+    | Italian
+    | Latvian
+    | Lithuanian
+    | Maltese
+    | Polish
+    | Portuguese
+    | Romanian
+    | Slovak
+    | Slovenian
+    | Spanish
+    | Swedish
 
 
 type alias TranslationSet =
-    { english : Maybe String
+    { bulgarian : Maybe String
+    , croatian : Maybe String
+    , czech : Maybe String
+    , danish : Maybe String
+    , dutch : Maybe String
+    , english : Maybe String
+    , estonian : Maybe String
+    , finnish : Maybe String
     , french : Maybe String
+    , german : Maybe String
+    , greek : Maybe String
+    , hungarian : Maybe String
+    , irish : Maybe String
+    , italian : Maybe String
+    , latvian : Maybe String
+    , lithuanian : Maybe String
+    , maltese : Maybe String
+    , polish : Maybe String
+    , portuguese : Maybe String
+    , romanian : Maybe String
+    , slovak : Maybe String
+    , slovenian : Maybe String
     , spanish : Maybe String
-    , dutch: Maybe String
+    , swedish : Maybe String
     }
-
-
 
 {-
    This type is opinionated: it satifies only the needs of this application.
@@ -2600,10 +9666,30 @@ type GrammaticalNumber
 
 languages : List Language
 languages =
-    [ English
-    , French
-    , Spanish
+    [ Bulgarian
+    , Croatian
+    , Czech
+    , Danish
     , Dutch
+    , English
+    , Estonian
+    , Finnish
+    , French
+    , German
+    , Greek
+    , Hungarian
+    , Irish
+    , Italian
+    , Latvian
+    , Lithuanian
+    , Maltese
+    , Polish
+    , Portuguese
+    , Romanian
+    , Slovak
+    , Slovenian
+    , Spanish
+    , Swedish
     ]
 
 
@@ -2832,37 +9918,108 @@ getValueByPreferredLanguage language valueByLanguage =
 languageFromIso639_1 : String -> Maybe Language
 languageFromIso639_1 str =
     case str of
-        "en" ->
-            Just English
-
-        "es" ->
-            Just Spanish
-
-        "fr" ->
-            Just French
-
+        "bg" ->
+            Just Bulgarian
+        "hr" ->
+            Just Croatian
+        "cs" ->
+            Just Czech
+        "da" ->
+            Just Danish
         "nl" ->
             Just Dutch
-
+        "en" ->
+            Just English
+        "et" ->
+            Just Estonian
+        "fi" ->
+            Just Finnish
+        "fr" ->
+            Just French
+        "de" ->
+            Just German
+        "el" ->
+            Just Greek
+        "hu" ->
+            Just Hungarian
+        "ga" ->
+            Just Irish
+        "it" ->
+            Just Italian
+        "lv" ->
+            Just Latvian
+        "lt" ->
+            Just Lithuanian
+        "mt" ->
+            Just Maltese
+        "pl" ->
+            Just Polish
+        "pt" ->
+            Just Portuguese
+        "ro" ->
+            Just Romanian
+        "sk" ->
+            Just Slovak
+        "sl" ->
+            Just Slovenian
+        "es" ->
+            Just Spanish
+        "sv" ->
+            Just Swedish
         _ ->
             Nothing
-
 
 iso639_1FromLanguage : Language -> String
 iso639_1FromLanguage language =
     case language of
-        English ->
-            "en"
-
-        Spanish ->
-            "es"
-
-        French ->
-            "fr"
-
+        Bulgarian ->
+            "bg"
+        Croatian ->
+            "hr"
+        Czech ->
+            "cs"
+        Danish ->
+            "da"
         Dutch ->
             "nl"
-
+        English ->
+            "en"
+        Estonian ->
+            "et"
+        Finnish ->
+            "fi"
+        French ->
+            "fr"
+        German ->
+            "de"
+        Greek ->
+            "el"
+        Hungarian ->
+            "hu"
+        Irish ->
+            "ga"
+        Italian ->
+            "it"
+        Latvian ->
+            "lv"
+        Lithuanian ->
+            "lt"
+        Maltese ->
+            "mt"
+        Polish ->
+            "pl"
+        Portuguese ->
+            "pt"
+        Romanian ->
+            "ro"
+        Slovak ->
+            "sk"
+        Slovenian ->
+            "sl"
+        Spanish ->
+            "es"
+        Swedish ->
+            "sv"
 
 {-| Pick the first `Maybe` that actually has a value. Useful when you want to
 try a couple different things, but there is no default value.
@@ -2894,17 +10051,54 @@ translate language translationId =
 
         translateHelp language =
             case language of
-                English ->
-                    translationSet.english
-
-                French ->
-                    translationSet.french
-
-                Spanish ->
-                    translationSet.spanish
-
+                Bulgarian ->
+                    translationSet.bulgarian
+                Croatian ->
+                    translationSet.croatian
+                Czech ->
+                    translationSet.czech
+                Danish ->
+                    translationSet.danish
                 Dutch ->
                     translationSet.dutch
+                English ->
+                    translationSet.english
+                Estonian ->
+                    translationSet.estonian
+                Finnish ->
+                    translationSet.finnish
+                French ->
+                    translationSet.french
+                German ->
+                    translationSet.german
+                Greek ->
+                    translationSet.greek
+                Hungarian ->
+                    translationSet.hungarian
+                Irish ->
+                    translationSet.irish
+                Italian ->
+                    translationSet.italian
+                Latvian ->
+                    translationSet.latvian
+                Lithuanian ->
+                    translationSet.lithuanian
+                Maltese ->
+                    translationSet.maltese
+                Polish ->
+                    translationSet.polish
+                Portuguese ->
+                    translationSet.portuguese
+                Romanian ->
+                    translationSet.romanian
+                Slovak ->
+                    translationSet.slovak
+                Slovenian ->
+                    translationSet.slovenian
+                Spanish ->
+                    translationSet.spanish
+                Swedish ->
+                    translationSet.swedish
     in
         oneOfMaybes
             [ translateHelp language
