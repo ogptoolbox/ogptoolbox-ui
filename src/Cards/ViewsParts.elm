@@ -13,8 +13,8 @@ import Types exposing (..)
 import Urls
 
 
-viewCardOpenSourceStatus : I18n.Language -> Dict String TypedValue -> Card -> Html msg
-viewCardOpenSourceStatus language values card =
+isOpenSource : I18n.Language -> Dict String TypedValue -> Card -> Bool
+isOpenSource language values card =
     let
         repo =
             (case I18n.getOneString language repoKeys card values of
@@ -62,10 +62,15 @@ viewCardOpenSourceStatus language values card =
                 && not (String.contains license "non-free")
             )
     in
-        if repo || sourceCode || openSource || openLicense then
-            img [ src "/img/open.png", title (I18n.translate language I18n.OpenSource) ] []
-        else
-            img [ src "/img/closed.png", title (I18n.translate language I18n.Proprietary) ] []
+        repo || sourceCode || openSource || openLicense
+
+
+viewCardOpenSourceStatus : I18n.Language -> Dict String TypedValue -> Card -> Html msg
+viewCardOpenSourceStatus language values card =
+    if isOpenSource language values card then
+        img [ src "/img/open.png", title (I18n.translate language I18n.OpenSource) ] []
+    else
+        img [ src "/img/closed.png", title (I18n.translate language I18n.Proprietary) ] []
 
 
 viewCardThumbnail :
