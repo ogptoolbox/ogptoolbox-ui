@@ -791,7 +791,7 @@ getTranslationSet translationId =
             }
 
         CountVersionsAvailable count ->
-            { dutch = dutch =
+            { dutch =
                 case count of
                     0 ->
                         s "geen informatie"
@@ -1845,12 +1845,14 @@ to strengthen governance.
                     Plural ->
                         s "Organizaciones"
             }
+
         OpenData ->
             { english = s "Open Data"
             , french = todo
             , spanish = todo
             , dutch = s "Open data"
             }
+
         OpenSource ->
             { dutch = s "Open Source Software"
             , english = s "Free Open Source Software"
@@ -2164,12 +2166,14 @@ to strengthen governance.
             , french = s "Voir plus"
             , spanish = s "Mostrar más"
             }
+
         ShowMoreCount count ->
             { english = s ("Show " ++ (toString count) ++ " more")
             , french = s ("Voir " ++ (toString count) ++ " plus")
             , spanish = s ("Mostrar " ++ (toString count) ++ " más")
             , dutch = s ("Toon " ++ (toString count) ++ " meer")
             }
+
         SignIn ->
             { dutch = s "Aanmelden"
             , english = s "Sign In"
