@@ -13,8 +13,8 @@ import Types exposing (..)
 import Urls
 
 
-viewCardOpenSourceStatus : I18n.Language -> Dict String TypedValue -> Card -> Html msg
-viewCardOpenSourceStatus language values card =
+isOpenSource : I18n.Language -> Dict String TypedValue -> Card -> Bool
+isOpenSource language values card =
     let
         repo =
             (case I18n.getOneString language repoKeys card values of
@@ -62,10 +62,15 @@ viewCardOpenSourceStatus language values card =
                 && not (String.contains license "non-free")
             )
     in
-        if repo || sourceCode || openSource || openLicense then
-            img [ src "/img/open.png", title (I18n.translate language I18n.OpenSource) ] []
-        else
-            img [ src "/img/closed.png", title (I18n.translate language I18n.Proprietary) ] []
+        repo || sourceCode || openSource || openLicense
+
+
+viewCardOpenSourceStatus : I18n.Language -> Dict String TypedValue -> Card -> Html msg
+viewCardOpenSourceStatus language values card =
+    if isOpenSource language values card then
+        img [ src "/img/open.png", title (I18n.translate language I18n.OpenSource) ] []
+    else
+        img [ src "/img/closed.png", title (I18n.translate language I18n.Proprietary) ] []
 
 
 viewCardThumbnail :
@@ -89,19 +94,25 @@ viewCardThumbnail language navigate onRemoveCard extraClass data card =
     in
         div [ class "col-xs-12 col-sm-6 col-md-4 col-lg-3" ]
             [ let
-                element =
+                ( element, elementAttributes ) =
                     case onRemoveCard of
                         Just onRemoveCard ->
-                            div
+                            ( a
+                            , [ href <| Urls.languagePath language path
+                              , target "_blank"
+                              ]
+                            )
 
                         Nothing ->
-                            aForPath
+                            ( aForPath
                                 navigate
                                 language
                                 path
+                            , []
+                            )
               in
                 element
-                    [ class ("thumbnail " ++ extraClass) ]
+                    ([ class ("thumbnail " ++ extraClass) ] ++ elementAttributes)
                     [ (case cardType of
                         ToolCard ->
                             div [ class "opensource-home" ]
