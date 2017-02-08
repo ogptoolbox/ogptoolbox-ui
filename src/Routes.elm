@@ -107,10 +107,30 @@ routeParser =
             (\language ->
                 map (I18nRouteWithLanguage language) (s (I18n.iso639_1FromLanguage language) </> localizedRouteParser)
             )
-            [ I18n.Dutch
+            [ I18n.Bulgarian
+            , I18n.Croatian
+            , I18n.Czech
+            , I18n.Danish
+            , I18n.Dutch
             , I18n.English
+            , I18n.Estonian
+            , I18n.Finnish
             , I18n.French
+            , I18n.German
+            , I18n.Greek
+            , I18n.Hungarian
+            , I18n.Irish
+            , I18n.Italian
+            , I18n.Latvian
+            , I18n.Lithuanian
+            , I18n.Maltese
+            , I18n.Polish
+            , I18n.Portuguese
+            , I18n.Romanian
+            , I18n.Slovak
+            , I18n.Slovenian
             , I18n.Spanish
+            , I18n.Swedish
             ]
         )
 
