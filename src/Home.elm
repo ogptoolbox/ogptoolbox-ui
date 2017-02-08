@@ -16,7 +16,7 @@ import WebData exposing (..)
 
 view : Model -> I18n.Language -> Navigation.Location -> Html Msg
 view model language location =
-    div [ class "container-fluid"]
+    div [ class "container-fluid" ]
         ([ viewBanner
          , viewMetrics language location model
          ]

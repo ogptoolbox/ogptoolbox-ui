@@ -1548,6 +1548,7 @@ getTranslationSet translationId =
 
                     OrganizationCard ->
                         todo
+
                     ToolCard ->
                         todo
             , swedish =
@@ -4977,6 +4978,7 @@ getTranslationSet translationId =
                     , spanish = todo
                     , swedish = todo
                     }
+
                 Croatian ->
                     { bulgarian = todo
                     , croatian = todo
@@ -5003,6 +5005,7 @@ getTranslationSet translationId =
                     , spanish = todo
                     , swedish = todo
                     }
+
                 Czech ->
                     { bulgarian = todo
                     , croatian = todo
@@ -5029,6 +5032,7 @@ getTranslationSet translationId =
                     , spanish = todo
                     , swedish = todo
                     }
+
                 Danish ->
                     { bulgarian = todo
                     , croatian = todo
@@ -5055,6 +5059,7 @@ getTranslationSet translationId =
                     , spanish = todo
                     , swedish = todo
                     }
+
                 Dutch ->
                     { bulgarian = todo
                     , croatian = todo
@@ -5081,6 +5086,7 @@ getTranslationSet translationId =
                     , spanish = s "Holandés"
                     , swedish = todo
                     }
+
                 English ->
                     { bulgarian = todo
                     , croatian = todo
@@ -5107,6 +5113,7 @@ getTranslationSet translationId =
                     , spanish = todo
                     , swedish = todo
                     }
+
                 Estonian ->
                     { bulgarian = todo
                     , croatian = todo
@@ -5133,6 +5140,7 @@ getTranslationSet translationId =
                     , spanish = todo
                     , swedish = todo
                     }
+
                 Finnish ->
                     { bulgarian = todo
                     , croatian = todo
@@ -5159,6 +5167,7 @@ getTranslationSet translationId =
                     , spanish = todo
                     , swedish = todo
                     }
+
                 French ->
                     { bulgarian = todo
                     , croatian = todo
@@ -5185,6 +5194,7 @@ getTranslationSet translationId =
                     , spanish = s "Francés"
                     , swedish = todo
                     }
+
                 German ->
                     { bulgarian = todo
                     , croatian = todo
@@ -5211,6 +5221,7 @@ getTranslationSet translationId =
                     , spanish = todo
                     , swedish = todo
                     }
+
                 Greek ->
                     { bulgarian = todo
                     , croatian = todo
@@ -5237,6 +5248,7 @@ getTranslationSet translationId =
                     , spanish = todo
                     , swedish = todo
                     }
+
                 Hungarian ->
                     { bulgarian = todo
                     , croatian = todo
@@ -5263,6 +5275,7 @@ getTranslationSet translationId =
                     , spanish = todo
                     , swedish = todo
                     }
+
                 Irish ->
                     { bulgarian = todo
                     , croatian = todo
@@ -5289,6 +5302,7 @@ getTranslationSet translationId =
                     , spanish = todo
                     , swedish = todo
                     }
+
                 Italian ->
                     { bulgarian = todo
                     , croatian = todo
@@ -5315,6 +5329,7 @@ getTranslationSet translationId =
                     , spanish = todo
                     , swedish = todo
                     }
+
                 Latvian ->
                     { bulgarian = todo
                     , croatian = todo
@@ -5341,6 +5356,7 @@ getTranslationSet translationId =
                     , spanish = todo
                     , swedish = todo
                     }
+
                 Lithuanian ->
                     { bulgarian = todo
                     , croatian = todo
@@ -5367,6 +5383,7 @@ getTranslationSet translationId =
                     , spanish = todo
                     , swedish = todo
                     }
+
                 Maltese ->
                     { bulgarian = todo
                     , croatian = todo
@@ -5393,6 +5410,7 @@ getTranslationSet translationId =
                     , spanish = todo
                     , swedish = todo
                     }
+
                 Polish ->
                     { bulgarian = todo
                     , croatian = todo
@@ -5419,6 +5437,7 @@ getTranslationSet translationId =
                     , spanish = todo
                     , swedish = todo
                     }
+
                 Portuguese ->
                     { bulgarian = todo
                     , croatian = todo
@@ -5445,6 +5464,7 @@ getTranslationSet translationId =
                     , spanish = todo
                     , swedish = todo
                     }
+
                 Romanian ->
                     { bulgarian = todo
                     , croatian = todo
@@ -5471,6 +5491,7 @@ getTranslationSet translationId =
                     , spanish = todo
                     , swedish = todo
                     }
+
                 Slovak ->
                     { bulgarian = todo
                     , croatian = todo
@@ -5497,6 +5518,7 @@ getTranslationSet translationId =
                     , spanish = todo
                     , swedish = todo
                     }
+
                 Slovenian ->
                     { bulgarian = todo
                     , croatian = todo
@@ -5523,6 +5545,7 @@ getTranslationSet translationId =
                     , spanish = todo
                     , swedish = todo
                     }
+
                 Spanish ->
                     { bulgarian = todo
                     , croatian = todo
@@ -5549,6 +5572,7 @@ getTranslationSet translationId =
                     , spanish = s "Español"
                     , swedish = todo
                     }
+
                 Swedish ->
                     { bulgarian = todo
                     , croatian = todo
@@ -6726,8 +6750,6 @@ to strengthen governance.
                     Plural ->
                         todo
             }
-
-
 
         OpenData ->
             { bulgarian = todo
@@ -8480,7 +8502,7 @@ to strengthen governance.
             , croatian = todo
             , czech = todo
             , danish = todo
-            , dutch =  s "Naam van het hulmiddel"
+            , dutch = s "Naam van het hulmiddel"
             , english = s "Name of a tool"
             , estonian = todo
             , finnish = todo
@@ -8615,7 +8637,7 @@ to strengthen governance.
             , croatian = todo
             , czech = todo
             , danish = todo
-            , dutch =  s "Taal niet ondersteund"
+            , dutch = s "Taal niet ondersteund"
             , english = s "Unsupported language"
             , estonian = todo
             , finnish = todo
@@ -9653,6 +9675,8 @@ type alias TranslationSet =
     , swedish : Maybe String
     }
 
+
+
 {-
    This type is opinionated: it satifies only the needs of this application.
    See also: https://en.wikipedia.org/wiki/Grammatical_number
@@ -9920,106 +9944,155 @@ languageFromIso639_1 str =
     case str of
         "bg" ->
             Just Bulgarian
+
         "hr" ->
             Just Croatian
+
         "cs" ->
             Just Czech
+
         "da" ->
             Just Danish
+
         "nl" ->
             Just Dutch
+
         "en" ->
             Just English
+
         "et" ->
             Just Estonian
+
         "fi" ->
             Just Finnish
+
         "fr" ->
             Just French
+
         "de" ->
             Just German
+
         "el" ->
             Just Greek
+
         "hu" ->
             Just Hungarian
+
         "ga" ->
             Just Irish
+
         "it" ->
             Just Italian
+
         "lv" ->
             Just Latvian
+
         "lt" ->
             Just Lithuanian
+
         "mt" ->
             Just Maltese
+
         "pl" ->
             Just Polish
+
         "pt" ->
             Just Portuguese
+
         "ro" ->
             Just Romanian
+
         "sk" ->
             Just Slovak
+
         "sl" ->
             Just Slovenian
+
         "es" ->
             Just Spanish
+
         "sv" ->
             Just Swedish
+
         _ ->
             Nothing
+
 
 iso639_1FromLanguage : Language -> String
 iso639_1FromLanguage language =
     case language of
         Bulgarian ->
             "bg"
+
         Croatian ->
             "hr"
+
         Czech ->
             "cs"
+
         Danish ->
             "da"
+
         Dutch ->
             "nl"
+
         English ->
             "en"
+
         Estonian ->
             "et"
+
         Finnish ->
             "fi"
+
         French ->
             "fr"
+
         German ->
             "de"
+
         Greek ->
             "el"
+
         Hungarian ->
             "hu"
+
         Irish ->
             "ga"
+
         Italian ->
             "it"
+
         Latvian ->
             "lv"
+
         Lithuanian ->
             "lt"
+
         Maltese ->
             "mt"
+
         Polish ->
             "pl"
+
         Portuguese ->
             "pt"
+
         Romanian ->
             "ro"
+
         Slovak ->
             "sk"
+
         Slovenian ->
             "sl"
+
         Spanish ->
             "es"
+
         Swedish ->
             "sv"
+
 
 {-| Pick the first `Maybe` that actually has a value. Useful when you want to
 try a couple different things, but there is no default value.
@@ -10053,50 +10126,73 @@ translate language translationId =
             case language of
                 Bulgarian ->
                     translationSet.bulgarian
+
                 Croatian ->
                     translationSet.croatian
+
                 Czech ->
                     translationSet.czech
+
                 Danish ->
                     translationSet.danish
+
                 Dutch ->
                     translationSet.dutch
+
                 English ->
                     translationSet.english
+
                 Estonian ->
                     translationSet.estonian
+
                 Finnish ->
                     translationSet.finnish
+
                 French ->
                     translationSet.french
+
                 German ->
                     translationSet.german
+
                 Greek ->
                     translationSet.greek
+
                 Hungarian ->
                     translationSet.hungarian
+
                 Irish ->
                     translationSet.irish
+
                 Italian ->
                     translationSet.italian
+
                 Latvian ->
                     translationSet.latvian
+
                 Lithuanian ->
                     translationSet.lithuanian
+
                 Maltese ->
                     translationSet.maltese
+
                 Polish ->
                     translationSet.polish
+
                 Portuguese ->
                     translationSet.portuguese
+
                 Romanian ->
                     translationSet.romanian
+
                 Slovak ->
                     translationSet.slovak
+
                 Slovenian ->
                     translationSet.slovenian
+
                 Spanish ->
                     translationSet.spanish
+
                 Swedish ->
                     translationSet.swedish
     in
