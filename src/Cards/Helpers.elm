@@ -50,8 +50,8 @@ isOpenSource language values card =
 
         openLicense =
             ((String.length license > 1)
-                && not (String.contains license "proprieta")
-                && not (String.contains license "non-free")
+                && not (String.contains "proprieta" license)
+                && not (String.contains "non-free" license)
             )
     in
         repo || sourceCode || openSource || openLicense
