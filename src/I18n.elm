@@ -2251,6 +2251,7 @@ getTranslationSet translationId =
             , spanish = todo
             , swedish = todo
             }
+
         ContactContent ->
             { bulgarian = todo
             , croatian = todo
