@@ -70,6 +70,8 @@ type TranslationId
     | CollectionsTitle
     | Colon
     | Compare
+    | Contact
+    | ContactContent
     | Copyright
     | CountVersionsAvailable Int
     | Create
@@ -2206,6 +2208,59 @@ getTranslationSet translationId =
             , estonian = todo
             , finnish = todo
             , french = s "Comparer"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
+            }
+
+        Contact ->
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = todo
+            , english = s "How can I contact the team behind the OGP Toolbox?"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Comment puis-je contacter l'équipe derrière l'OGP Toolbox ?"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
+            }
+        ContactContent ->
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = todo
+            , english = s "For all questions, please send us an email:"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Pour toute question, vous pouvez nous envoyer un email à cette adresse :"
             , german = todo
             , greek = todo
             , hungarian = todo
