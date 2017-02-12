@@ -165,24 +165,20 @@ update msg language fieldId model =
             )
 
         MenuLoaded (Err httpError) ->
-            let
-                _ =
-                    Debug.log "Cards.Autocomplete.State update MenuLoaded Err" httpError
-            in
-                case model.autocompleteMenuState of
-                    AutocompleteMenuSleeping ->
-                        ( { model | autocompleteMenuState = AutocompleteMenuLoading }
-                        , Requests.autocompleteCards
-                            Nothing
-                            language
-                            model.cardTypes
-                            model.autocomplete
-                            autocompleterSize
-                            |> Http.send (ForSelf << MenuLoaded)
-                        )
+            case model.autocompleteMenuState of
+                AutocompleteMenuSleeping ->
+                    ( { model | autocompleteMenuState = AutocompleteMenuLoading }
+                    , Requests.autocompleteCards
+                        Nothing
+                        language
+                        model.cardTypes
+                        model.autocomplete
+                        autocompleterSize
+                        |> Http.send (ForSelf << MenuLoaded)
+                    )
 
-                    _ ->
-                        ( { model | autocompleteMenuState = AutocompleteMenuHidden }, Cmd.none )
+                _ ->
+                    ( { model | autocompleteMenuState = AutocompleteMenuHidden }, Cmd.none )
 
         MenuLoaded (Ok cardsAutocompletionBody) ->
             ( { model
