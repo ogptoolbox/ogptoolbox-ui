@@ -76,6 +76,44 @@ autocompleteCards authentication language cardTypes term limit =
         }
 
 
+autocompletePropertiesKeys :
+    Maybe Authentication
+    -> I18n.Language
+    -> List String
+    -> String
+    -> Int
+    -> Http.Request TypedValuesAutocompletionBody
+autocompletePropertiesKeys authentication language cardTypes term limit =
+    Http.request
+        { method = "GET"
+        , headers = authenticationHeaders authentication
+        , url =
+            apiUrl
+                ++ "properties/keys/autocomplete"
+                ++ Urls.paramsToQuery
+                    ([ ( "class", Just "Card" )
+                     , ( "language", Just (I18n.iso639_1FromLanguage language) )
+                     , ( "limit", Just (toString limit) )
+                     , ( "term"
+                       , let
+                            cleanTerm =
+                                String.trim term
+                         in
+                            if String.isEmpty cleanTerm then
+                                Nothing
+                            else
+                                Just cleanTerm
+                       )
+                     ]
+                        ++ List.map (\cardType -> ( "type", Just cardType )) cardTypes
+                    )
+        , body = Http.emptyBody
+        , expect = Http.expectJson typedValuesAutocompletionBodyDecoder
+        , timeout = Nothing
+        , withCredentials = False
+        }
+
+
 getCard : Maybe Authentication -> String -> Http.Request DataIdBody
 getCard authentication cardId =
     Http.request

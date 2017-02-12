@@ -28,6 +28,7 @@ type TranslationId
     | AddALogo
     | AddCard
     | AddCollection
+    | AddPropertyKey
     | AdditionalInformations
     | AddOrganization
     | AddTool
@@ -100,6 +101,7 @@ type TranslationId
     | EnterName
     | EnterNumber
     | EnterPassword
+    | EnterPropertyKey
     | EnterUrl
     | EnterUsername
     | EnterValue
@@ -154,7 +156,9 @@ type TranslationId
     | FieldTypeInternalLink
     | FieldTypeURL
     | FindAnotherCard
+    | FindAnotherPropertyKey
     | FindCard
+    | FindPropertyKey
     | FooterAbout
     | FooterDiscover
     | GenericError
@@ -233,6 +237,7 @@ type TranslationId
     | PressDescription
     | PressLead
     | ProfileMyCollections
+    | PropertyKeyPlaceholder
     | Proprietary
     | Publish
     | PublishCollection
@@ -254,6 +259,7 @@ type TranslationId
     | SearchInputPlaceholder
     | SeeAllAndCompare
     | SelectCardOrTypeMoreCharacters
+    | SelectPropertyKeyOrTypeMoreCharacters
     | Send
     | SendEmailAgain
     | ServiceDisclaimer
@@ -762,6 +768,33 @@ getTranslationSet translationId =
             , estonian = todo
             , finnish = todo
             , french = s "Ajouter votre collection"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
+            }
+
+        AddPropertyKey ->
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = todo
+            , english = s "Add property"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Ajouter une propriété"
             , german = todo
             , greek = todo
             , hungarian = todo
@@ -3077,6 +3110,33 @@ getTranslationSet translationId =
             , swedish = todo
             }
 
+        EnterPropertyKey ->
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = todo
+            , english = s "Please enter the name or the ID of a property"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Veuillez entrer le nom ou l'identifiant d'une propriété"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
+            }
+
         EnterUrl ->
             { bulgarian = todo
             , croatian = todo
@@ -4535,6 +4595,33 @@ getTranslationSet translationId =
             , swedish = todo
             }
 
+        FindAnotherPropertyKey ->
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = todo
+            , english = s "Find another property"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Rechercher une autre propriété"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
+            }
+
         FindCard ->
             { bulgarian = todo
             , croatian = todo
@@ -4544,7 +4631,34 @@ getTranslationSet translationId =
             , english = s "Find a card"
             , estonian = todo
             , finnish = todo
-            , french = s "Rechercher fiche"
+            , french = s "Rechercher une fiche"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
+            }
+
+        FindPropertyKey ->
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = todo
+            , english = s "Find a property"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Rechercher une propriété"
             , german = todo
             , greek = todo
             , hungarian = todo
@@ -7299,6 +7413,33 @@ to strengthen governance.
             , swedish = todo
             }
 
+        PropertyKeyPlaceholder ->
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = todo
+            , english = s "Name of a property"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Nom d'une propriété"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
+            }
+
         Proprietary ->
             { bulgarian = todo
             , croatian = todo
@@ -7767,7 +7908,34 @@ to strengthen governance.
             , english = s "Select a card or type more characters"
             , estonian = todo
             , finnish = todo
-            , french = s "Sélectionner une fiche ou tapez plus de caractères"
+            , french = s "Sélectionner une fiche ou taper plus de caractères"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
+            }
+
+        SelectPropertyKeyOrTypeMoreCharacters ->
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = todo
+            , english = s "Select a property or type more characters"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Sélectionner une propriété ou taper plus de caractères"
             , german = todo
             , greek = todo
             , hungarian = todo

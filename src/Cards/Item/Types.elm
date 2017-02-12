@@ -3,6 +3,7 @@ module Cards.Item.Types exposing (..)
 import Authenticator.Types exposing (Authentication)
 import Http
 import I18n
+import Properties.KeysAutocomplete.Types
 import Types exposing (..)
 import Values.New.Types
 
@@ -13,13 +14,17 @@ type ExternalMsg
 
 
 type InternalMsg
-    = CloseEditPropertiesModal
+    = AddKey TypedValue
+    | CloseEditPropertiesModal
+    | CreateKey String
     | DisplayUseItModal Bool
     | GotCard (Result Http.Error DataIdBody)
     | GotProperties (Result Http.Error DataIdsBody)
+    | KeyUpserted (Result Http.Error DataIdBody)
     | LoadCard String
     | NewValueMsg Values.New.Types.InternalMsg
     | LoadProperties String
+    | KeysAutocompleteMsg Properties.KeysAutocomplete.Types.InternalMsg
     | PropertyUpserted (Result Http.Error DataIdBody)
     | RatingPosted (Result Http.Error DataIdBody)
     | ShareOnFacebook String
@@ -38,6 +43,7 @@ type alias Model =
     , displayUseItModal : Bool
     , editedKeyId : Maybe String
     , httpError : Maybe Http.Error
+    , keysAutocompleteModel : Properties.KeysAutocomplete.Types.Model
     , language : I18n.Language
     , newValueModel : Values.New.Types.Model
     , sameKeyPropertyIds : List String
@@ -63,6 +69,15 @@ type alias MsgTranslator parentMsg =
 navigate : String -> Msg
 navigate path =
     ForParent (Navigate path)
+
+
+translateKeysAutocompleteMsg : Properties.KeysAutocomplete.Types.MsgTranslator Msg
+translateKeysAutocompleteMsg =
+    Properties.KeysAutocomplete.Types.translateMsg
+        { onAdd = ForSelf << AddKey
+        , onCreate = ForSelf << CreateKey
+        , onInternalMsg = ForSelf << KeysAutocompleteMsg
+        }
 
 
 translateMsg : MsgTranslation parentMsg -> MsgTranslator parentMsg

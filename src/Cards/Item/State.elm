@@ -5,6 +5,7 @@ import Cards.Item.Types exposing (..)
 import Http
 import I18n
 import Ports
+import Properties.KeysAutocomplete.State
 import Requests
 import Task
 import Types exposing (..)
@@ -20,6 +21,7 @@ init =
     , displayUseItModal = False
     , editedKeyId = Nothing
     , httpError = Nothing
+    , keysAutocompleteModel = Properties.KeysAutocomplete.State.init [] True
     , language = I18n.English
     , newValueModel = Values.New.State.init []
     , sameKeyPropertyIds = []
@@ -85,12 +87,18 @@ setAuthentication authentication model =
 
 subscriptions : Model -> Sub InternalMsg
 subscriptions model =
-    Sub.map NewValueMsg (Values.New.State.subscriptions model.newValueModel)
+    Sub.batch
+        [ Sub.map KeysAutocompleteMsg (Properties.KeysAutocomplete.State.subscriptions model.keysAutocompleteModel)
+        , Sub.map NewValueMsg (Values.New.State.subscriptions model.newValueModel)
+        ]
 
 
 update : InternalMsg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        AddKey typedValue ->
+            update (LoadProperties typedValue.id) model
+
         CloseEditPropertiesModal ->
             ( { model
                 | editedKeyId = Nothing
@@ -101,13 +109,35 @@ update msg model =
                 |> Http.send (ForSelf << GotCard)
             )
 
+        CreateKey keyName ->
+            case model.authentication of
+                Just _ ->
+                    ( model
+                    , Requests.postValue
+                        model.authentication
+                        (LocalizedInputTextField (I18n.iso639_1FromLanguage model.language) keyName)
+                        |> Http.send (ForSelf << KeyUpserted)
+                    )
+
+                Nothing ->
+                    ( model
+                    , Task.perform
+                        (\_ -> ForParent <| RequireSignIn <| CreateKey keyName)
+                        (Task.succeed ())
+                    )
+
         DisplayUseItModal displayUseItModal ->
             ( { model | displayUseItModal = displayUseItModal }
             , Cmd.none
             )
 
         GotCard (Err httpError) ->
-            ( { model | httpError = Just httpError }, Cmd.none )
+            ( { model
+                | httpError = Just httpError
+                , keysAutocompleteModel = Properties.KeysAutocomplete.State.init [] True
+              }
+            , Cmd.none
+            )
 
         GotCard (Ok body) ->
             let
@@ -134,7 +164,12 @@ update msg model =
                         , title = I18n.getName language card data.values
                         }
             in
-                ( { model | data = data }, cmd )
+                ( { model
+                    | data = data
+                    , keysAutocompleteModel = Properties.KeysAutocomplete.State.init card.subTypeIds True
+                  }
+                , cmd
+                )
 
         GotProperties (Err httpError) ->
             ( { model | httpError = Just httpError }, Cmd.none )
@@ -146,6 +181,25 @@ update msg model =
               }
             , Cmd.none
             )
+
+        KeysAutocompleteMsg childMsg ->
+            let
+                ( keysAutocompleteModel, childCmd ) =
+                    Properties.KeysAutocomplete.State.update childMsg
+                        model.language
+                        "keyId"
+                        model.keysAutocompleteModel
+            in
+                ( { model | keysAutocompleteModel = keysAutocompleteModel }
+                , Cmd.map translateKeysAutocompleteMsg childCmd
+                )
+
+        KeyUpserted (Err httpError) ->
+            ( { model | httpError = Just httpError }, Cmd.none )
+
+        KeyUpserted (Ok { data }) ->
+            { model | data = mergeData data model.data }
+                |> update (LoadProperties data.id)
 
         LoadCard cardId ->
             ( { model

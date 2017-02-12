@@ -179,6 +179,18 @@ type alias TypedValue =
     }
 
 
+type alias TypedValueAutocompletion =
+    { autocomplete : String
+    , distance : Float
+    , value : TypedValue
+    }
+
+
+type alias TypedValuesAutocompletionBody =
+    { data : List TypedValueAutocompletion
+    }
+
+
 type alias User =
     { activated : Bool
     , apiKey : String

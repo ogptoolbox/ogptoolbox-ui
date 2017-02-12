@@ -11,6 +11,7 @@ import Html.Helpers exposing (aExternal, aForPath, aIfIsUrl)
 import Http
 import I18n
 import Json.Decode as Decode
+import Properties.KeysAutocomplete.View
 import Set
 import String
 import Types exposing (..)
@@ -314,9 +315,27 @@ viewCardContent model card =
                                     [ div [ class "panel-body nomargin" ]
                                         [ table [ class "table table-striped" ]
                                             [ tbody []
-                                                (card.properties
+                                                ((card.properties
                                                     |> Dict.map viewAdditionalInformation
                                                     |> Dict.values
+                                                 )
+                                                    ++ [ tr []
+                                                            [ td [ colspan 3 ]
+                                                                [ let
+                                                                    controlId =
+                                                                        "keysAutocomplete"
+                                                                  in
+                                                                    Properties.KeysAutocomplete.View.viewAutocomplete
+                                                                        language
+                                                                        controlId
+                                                                        I18n.AddPropertyKey
+                                                                        I18n.PropertyKeyPlaceholder
+                                                                        Nothing
+                                                                        model.keysAutocompleteModel
+                                                                        |> Html.map translateKeysAutocompleteMsg
+                                                                ]
+                                                            ]
+                                                       ]
                                                 )
                                             ]
                                         ]
