@@ -15,17 +15,24 @@ import Values.New.State
 
 init : Model
 init =
-    { authentication = Nothing
-    , cardId = ""
-    , data = initData
-    , displayUseItModal = False
-    , editedKeyId = Nothing
-    , httpError = Nothing
-    , keysAutocompleteModel = Properties.KeysAutocomplete.State.init [] True
-    , language = I18n.English
-    , newValueModel = Values.New.State.init []
-    , sameKeyPropertyIds = []
-    }
+    let
+        authentication =
+            Nothing
+
+        language =
+            I18n.English
+    in
+        { authentication = authentication
+        , cardId = ""
+        , data = initData
+        , displayUseItModal = False
+        , editedKeyId = Nothing
+        , httpError = Nothing
+        , keysAutocompleteModel = Properties.KeysAutocomplete.State.init [] True
+        , language = language
+        , newValueModel = Values.New.State.init authentication language "" []
+        , sameKeyPropertyIds = []
+        }
 
 
 validFieldTypes : String -> List String
@@ -216,7 +223,12 @@ update msg model =
                     ( { model
                         | editedKeyId = Just keyId
                         , httpError = Nothing
-                        , newValueModel = Values.New.State.init <| validFieldTypes keyId
+                        , newValueModel =
+                            Values.New.State.init
+                                model.authentication
+                                model.language
+                                (I18n.iso639_1FromLanguage model.language)
+                                (validFieldTypes keyId)
                         , sameKeyPropertyIds = []
                       }
                     , Requests.getObjectProperties model.authentication model.cardId keyId
