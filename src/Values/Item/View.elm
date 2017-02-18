@@ -3,7 +3,7 @@ module Values.Item.View exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Values.Item.Types exposing (..)
-import Values.ViewsParts exposing (..)
+import Values.ViewsHelpers exposing (..)
 import Views
 import WebData
 

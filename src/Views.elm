@@ -10,7 +10,7 @@ import Http exposing (Error(..))
 import Http.Error
 import I18n
 import String
-import Tags.ViewsParts exposing (..)
+import Tags.ViewsHelpers exposing (..)
 import Types exposing (..)
 import Urls
 import WebData exposing (LoadingStatus, WebData(..))

@@ -1,4 +1,4 @@
-module Authenticator.ViewsParts exposing (..)
+module Authenticator.ViewsHelpers exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)

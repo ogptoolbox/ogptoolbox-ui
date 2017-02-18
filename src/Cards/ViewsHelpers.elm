@@ -1,4 +1,4 @@
-module Cards.ViewsParts exposing (..)
+module Cards.ViewsHelpers exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -7,7 +7,7 @@ import Html.Events exposing (..)
 import Html.Helpers exposing (aForPath)
 import I18n
 import Json.Decode
-import Tags.ViewsParts exposing (..)
+import Tags.ViewsHelpers exposing (..)
 import Types exposing (..)
 import Urls
 

@@ -1,4 +1,4 @@
-module Tags.ViewsParts exposing (..)
+module Tags.ViewsHelpers exposing (..)
 
 import Dict exposing (Dict)
 import Html exposing (..)

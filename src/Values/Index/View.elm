@@ -9,7 +9,7 @@ import Html.Helpers exposing (aForPath, aIfIsUrl)
 import I18n
 import Json.Decode
 import Values.Index.Types exposing (..)
-import Values.ViewsParts exposing (..)
+import Values.ViewsHelpers exposing (..)
 import Views
 import WebData
 

@@ -1,6 +1,6 @@
 module Home exposing (..)
 
-import Cards.ViewsParts exposing (..)
+import Cards.ViewsHelpers exposing (..)
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)

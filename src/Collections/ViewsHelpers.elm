@@ -1,6 +1,6 @@
-module Collections.ViewsParts exposing (..)
+module Collections.ViewsHelpers exposing (..)
 
-import Cards.ViewsParts exposing (..)
+import Cards.ViewsHelpers exposing (..)
 import Html exposing (Html)
 import I18n
 import Types exposing (..)

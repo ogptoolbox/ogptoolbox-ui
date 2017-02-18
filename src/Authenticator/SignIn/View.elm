@@ -2,7 +2,7 @@ module Authenticator.SignIn.View exposing (..)
 
 import Authenticator.Routes
 import Authenticator.SignIn.Types exposing (..)
-import Authenticator.ViewsParts exposing (..)
+import Authenticator.ViewsHelpers exposing (..)
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)

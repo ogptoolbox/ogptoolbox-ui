@@ -1,4 +1,4 @@
-module Values.ViewsParts exposing (..)
+module Values.ViewsHelpers exposing (..)
 
 import Dict exposing (Dict)
 import Html exposing (..)

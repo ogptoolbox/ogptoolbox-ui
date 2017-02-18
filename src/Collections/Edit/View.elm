@@ -2,7 +2,7 @@ module Collections.Edit.View exposing (..)
 
 import Cards.Autocomplete.View
 import Collections.Edit.Types exposing (..)
-import Collections.ViewsParts exposing (..)
+import Collections.ViewsHelpers exposing (..)
 import Dict exposing (Dict)
 import Json.Decode as Decode
 import Html exposing (..)

@@ -17,7 +17,7 @@ import String
 import Types exposing (..)
 import Urls
 import Values.New.View
-import Values.ViewsParts exposing (viewValueTypeLine)
+import Values.ViewsHelpers exposing (viewValueTypeLine)
 import Views exposing (viewCardListItem, viewLoading)
 
 

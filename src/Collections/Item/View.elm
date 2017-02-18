@@ -1,7 +1,7 @@
 module Collections.Item.View exposing (..)
 
 import Authenticator.Types exposing (Authentication, canEditUserResource)
-import Cards.ViewsParts exposing (..)
+import Cards.ViewsHelpers exposing (..)
 import Collections.Item.Types exposing (..)
 import Dict exposing (Dict)
 import Html exposing (..)
