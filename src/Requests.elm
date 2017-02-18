@@ -136,7 +136,7 @@ getCards authentication term limit offset tagIds cardTypes =
             apiUrl
                 ++ "cards"
                 ++ Urls.paramsToQuery
-                    ([ ( "depth", Just "1" )
+                    ([ ( "depth", Just "2" )
                      , ( "limit", Just (toString limit) )
                      , ( "offset", Just (toString offset) )
                      , ( "show", Just "values" )
