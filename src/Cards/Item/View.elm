@@ -1008,8 +1008,11 @@ viewSidebar model card =
                                         [ div [ class "row" ] [ panelTitle ] ]
                                     , div [ class "panel-body" ]
                                         [ div [ class "call-container" ]
-                                            [ button [ class "button call-add" ]
-                                                [ text "+ Add a tag" ]
+                                            [ button
+                                                [ class "button call-add"
+                                                , onClick (ForSelf (LoadProperties "tags"))
+                                                ]
+                                                [ text (I18n.translate language (I18n.AddATag)) ]
                                             ]
                                         ]
                                     ]

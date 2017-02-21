@@ -26,6 +26,7 @@ type TranslationId
     | ActivationTitle
     | Add
     | AddALogo
+    | AddATag
     | AddCard
     | AddCollection
     | AddPropertyKey
@@ -714,6 +715,33 @@ getTranslationSet translationId =
             , estonian = todo
             , finnish = todo
             , french = s "+ Ajouter un logo"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
+            }
+
+        AddATag ->
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = todo
+            , english = s "+ Add a tag"
+            , estonian = todo
+            , finnish = todo
+            , french = s "+ Ajouter un tag"
             , german = todo
             , greek = todo
             , hungarian = todo
