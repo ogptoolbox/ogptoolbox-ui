@@ -1,5 +1,6 @@
 port module Ports exposing (..)
 
+import Analytics
 import Configuration
 import Types exposing (DocumentMetadata, PopularTag, User)
 import Urls
@@ -74,6 +75,13 @@ port fileSelected : String -> Cmd msg
 
 
 port fileContentRead : (ImagePortData -> msg) -> Sub msg
+
+
+
+-- PIWIK
+
+
+port initPiwikAnalytics : Analytics.PiwikConfiguration -> Cmd msg
 
 
 

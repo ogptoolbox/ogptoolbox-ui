@@ -75,6 +75,21 @@ main.ports.fileSelected.subscribe(function (id) {
 });
 
 
+main.ports.initPiwikAnalytics.subscribe(function (configuration) {
+    var _paq = _paq || [];
+    // Tracker methods like "setCustomDimension" should be called before "trackPageView".
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+    (function() {
+        var u="//"+configuration.piwikDomain+"/";
+        _paq.push(['setTrackerUrl', u+'piwik.php']);
+        _paq.push(['setSiteId', configuration.siteId]);
+        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+        g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+    })();
+});
+
+
 main.ports.mountd3bubbles.subscribe(function (data) {
     // Remove previous D3 bubbles instances if present in the DOM.
     Array.prototype.forEach.call( document.querySelectorAll("svg.D3Bubbles"), function (node) {

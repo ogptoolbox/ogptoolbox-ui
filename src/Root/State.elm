@@ -9,6 +9,7 @@ import Collections.Item.State
 import Collections.Edit.State
 import Collections.Index.State
 import Collections.Index.Types
+import Configuration
 import Decoders
 import Dict exposing (Dict)
 import Dom.Scroll
@@ -30,32 +31,41 @@ import Urls
 
 init : Flags -> Navigation.Location -> ( Model, Cmd Msg )
 init flags location =
-    { authentication =
-        Json.Decode.decodeValue Decoders.userDecoder flags.authentication
-            |> Result.toMaybe
-    , authenticatorCancelMsg = Nothing
-    , authenticatorCompletionMsg = Nothing
-    , authenticatorModel = Authenticator.State.init
-    , authenticatorRoute = Nothing
-    , cardModel = Cards.Item.State.init
-    , cardNewModel = Cards.New.State.init
-    , collectionEditModel = Collections.Edit.State.init
-    , collectionModel = Collections.Item.State.init
-    , collectionsModel = Collections.Index.State.init
-    , displayNewCardModal = False
-    , location = location
-    , navigatorLanguage =
-        flags.language
-            |> String.left 2
-            |> String.toLower
-            |> I18n.languageFromIso639_1
-    , route = I18nRouteWithoutLanguage ""
-    , searchInputValue = ""
-    , searchModel = Search.State.init
-    , signOutMsg = Nothing
-    , userProfileModel = UserProfile.State.init
-    }
-        |> update (LocationChanged location)
+    let
+        ( model, cmd ) =
+            { authentication =
+                Json.Decode.decodeValue Decoders.userDecoder flags.authentication
+                    |> Result.toMaybe
+            , authenticatorCancelMsg = Nothing
+            , authenticatorCompletionMsg = Nothing
+            , authenticatorModel = Authenticator.State.init
+            , authenticatorRoute = Nothing
+            , cardModel = Cards.Item.State.init
+            , cardNewModel = Cards.New.State.init
+            , collectionEditModel = Collections.Edit.State.init
+            , collectionModel = Collections.Item.State.init
+            , collectionsModel = Collections.Index.State.init
+            , displayNewCardModal = False
+            , location = location
+            , navigatorLanguage =
+                flags.language
+                    |> String.left 2
+                    |> String.toLower
+                    |> I18n.languageFromIso639_1
+            , route = I18nRouteWithoutLanguage ""
+            , searchInputValue = ""
+            , searchModel = Search.State.init
+            , signOutMsg = Nothing
+            , userProfileModel = UserProfile.State.init
+            }
+                |> update (LocationChanged location)
+    in
+        case Configuration.piwik of
+            Just piwik ->
+                model ! [ cmd, Ports.initPiwikAnalytics piwik ]
+
+            Nothing ->
+                ( model, cmd )
 
 
 navigate : String -> String -> Cmd msg

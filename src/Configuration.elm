@@ -1,5 +1,6 @@
 module Configuration exposing (..)
 
+import Analytics
 import Dict exposing (Dict)
 
 
@@ -12,6 +13,11 @@ apiUrl =
 appUrl : String
 appUrl =
     "http://localhost:3011/"
+
+
+piwik : Maybe Analytics.PiwikConfiguration
+piwik =
+    Nothing
 
 
 twitterName : String
