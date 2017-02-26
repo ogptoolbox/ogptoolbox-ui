@@ -13,7 +13,7 @@ import Types exposing (..)
 
 appLogoFullUrl : String
 appLogoFullUrl =
-    Configuration.appUrl ++ "img/ogptoolbox-logo.png"
+    Configuration.appUrl ++ "img/ogptoolbox-logo-line-beta.png"
 
 
 idRegex : Regex.Regex

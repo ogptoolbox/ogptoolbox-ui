@@ -1,22 +1,31 @@
-> OGPToolbox-UI -- Web interface for OGP Toolbox
-> By: Christophe Benz <christophe.benz@data.gouv.fr>
->     Angelo Chiacchio <angelo@nodesign.net>
->     Paula Fortez <paula.forteza@data.gouv.fr>
->     Emmanuel Raviart <emmanuel.raviart@data.gouv.fr>
->     Johan Richer <johan.richer@data.gouv.fr>
->
-> Copyright (C) 2016 Etalab
-> https://framagit.org/ogptoolbox/ogptoolbox-ui
->
-> OGPToolbox-UI is free software; you can redistribute it and/or modify
-> it under the terms of the GNU Affero General Public License as
-> published by the Free Software Foundation, either version 3 of the
-> License, or (at your option) any later version.
->
-> OGPToolbox-UI is distributed in the hope that it will be useful,
-> but WITHOUT ANY WARRANTY; without even the implied warranty of
-> MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> GNU Affero General Public License for more details.
->
-> You should have received a copy of the GNU Affero General Public License
-> along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# OGPToolbox-UI
+
+Web interface for the [OGP Toolbox](https://ogptoolbox.org/)
+
+### Authors
+
+See [CONTRIBUTORS file](CONTRIBUTORS.md)
+
+### Copyright
+
+* Copyright (C) 2016 [Etalab](http://www.etalab.gouv.fr/)
+* Copyright (C) 2017 [OGP Toolbox contributors](CONTRIBUTORS.md)
+
+### Source Code
+
+https://framagit.org/ogptoolbox/ogptoolbox-ui
+
+### License
+
+OGPToolbox-UI is free software; you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+OGPToolbox-UI is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.

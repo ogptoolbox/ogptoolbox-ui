@@ -1,15 +1,16 @@
 # OGPToolbox-UI
 
-Web user interface for the OGP toolbox.  
-![OGP Toolbox Logo](https://fr.ogpsummit.org/app/uploads/2016/06/Picto-toolbox.png)  
+Web user interface for the OGP toolbox.
 
-### **[The OGP Toolbox](https://ogptoolbox.org/) is a collaborative platform to find and share digital tools used throughout the world for open government initiatives.**
+![OGP Toolbox Logo](static/img/ogptoolbox-logo-line.png)
+
+**[The OGP Toolbox](https://ogptoolbox.org/) is a collaborative platform to find and share digital tools used throughout the world for open government initiatives.**
 
 
-It's an open source and open data project with complementary resources published here:
+It is both a free open source software and an open data project with complementary resources published here:
 
-* https://github.com/retruco/retruco-api
-* https://git.framasoft.org/codegouv/merge-open-software-base-yaml
+* https://framagit.org/retruco/retruco-api
+* https://framagit.org/codegouv/merge-open-software-base-yaml
 
 ---
 
@@ -30,7 +31,7 @@ Start the hot-reloading webpack dev server:
 
     npm start
 
-Navigate to <http://localhost:3011>.  
+Navigate to <http://localhost:3011>.
 Any changes you make to your files (.elm, .js, .css, etc.) will trigger
 a hot reload.
 
@@ -61,5 +62,5 @@ Navigate to <http://localhost:3012>.
 
 ## License
 
-[AGPL v3](https://framagit.org/ogptoolbox/ogptoolbox-ui/blob/master/LICENSE.md)  
+[AGPL v3](https://framagit.org/ogptoolbox/ogptoolbox-ui/blob/master/LICENSE.md)
 Copyright (C) 2016 Etalab & contributors
