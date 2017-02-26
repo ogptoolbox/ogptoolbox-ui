@@ -1,6 +1,6 @@
 # OGPToolbox-UI
 
-Web user interface for the OGP toolbox.
+Web user interface for the [OGP Toolbox](https://ogptoolbox.org/)
 
 ![OGP Toolbox Logo](static/img/ogptoolbox-logo-line.png)
 
@@ -11,6 +11,10 @@ It is both a free open source software and an open data project with complementa
 
 * https://framagit.org/retruco/retruco-api
 * https://framagit.org/codegouv/merge-open-software-base-yaml
+
+## Authors, Copyright & License
+
+See [LICENSE file](LICENSE.md)
 
 ---
 

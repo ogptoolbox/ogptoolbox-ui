@@ -1,6 +1,6 @@
 # OGPToolbox-UI
 
-Web interface for the [OGP Toolbox](https://ogptoolbox.org/)
+Web user interface for the [OGP Toolbox](https://ogptoolbox.org/)
 
 ### Authors
 
