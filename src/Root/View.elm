@@ -587,7 +587,7 @@ viewHeader model language containerClass =
                                 language
                                 "/faq"
                                 []
-                                [ text (I18n.translate language I18n.Help) ]
+                                [ text (I18n.translate language I18n.Faq) ]
                             ]
                         , li []
                             [ aForPath
