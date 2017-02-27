@@ -74,7 +74,6 @@ type TranslationId
     | Compare
     | Contact
     | ContactContent
-    | Copyright
     | CountVersionsAvailable Int
     | Create
     | CreateAccountNow
@@ -2325,33 +2324,6 @@ getTranslationSet translationId =
             , estonian = todo
             , finnish = todo
             , french = s "Pour toute question, vous pouvez nous envoyer un email à cette adresse :"
-            , german = todo
-            , greek = todo
-            , hungarian = todo
-            , irish = todo
-            , italian = todo
-            , latvian = todo
-            , lithuanian = todo
-            , maltese = todo
-            , polish = todo
-            , portuguese = todo
-            , romanian = todo
-            , slovak = todo
-            , slovenian = todo
-            , spanish = todo
-            , swedish = todo
-            }
-
-        Copyright ->
-            { bulgarian = todo
-            , croatian = todo
-            , czech = todo
-            , danish = todo
-            , dutch = s "© 2016 Etalab. Ontworpen door Nodesign.net"
-            , english = s "© 2016 Etalab. Design by Nodesign.net"
-            , estonian = todo
-            , finnish = todo
-            , french = s "© 2016 Etalab. Design par Nodesign.net"
             , german = todo
             , greek = todo
             , hungarian = todo

@@ -17,6 +17,7 @@ import Html.Attributes.Aria exposing (ariaHidden, ariaLabelledby, role)
 import Html.Events exposing (onClick, onInput, onSubmit, onWithOptions)
 import Html.Helpers exposing (aForPath)
 import I18n
+import I18nHtml
 import Json.Decode
 import Press
 import Root.Types exposing (..)
@@ -52,8 +53,7 @@ view model =
                     ]
                  ]
                     ++ [ content
-                       , div [ class "fixed-footer" ]
-                            [ text (I18n.translate language I18n.Copyright) ]
+                       , div [ class "fixed-footer" ] [ I18nHtml.translate language I18nHtml.CopyrightLine ]
                        , viewAuthenticatorModal model language
                        , viewNewCardModal model language
                        , viewBackdrop model
@@ -529,9 +529,7 @@ viewFooter model language =
                         ]
                     ]
                 , div [ class "row copyright" ]
-                    [ div [ class "col-md-12" ]
-                        [ text (I18n.translate language I18n.Copyright) ]
-                    ]
+                    [ div [ class "col-md-12" ] [ I18nHtml.translate language I18nHtml.CopyrightLine ] ]
                 ]
             ]
         ]

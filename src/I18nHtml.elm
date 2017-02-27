@@ -1,12 +1,13 @@
 module I18nHtml exposing (..)
 
-import Html exposing (a, div, Html, li, p, text, ul)
+import Html exposing (a, div, Html, li, p, span, text, ul)
 import Html.Attributes exposing (class, href, target)
 import I18n exposing (Language(..), oneOfMaybes, s, todo)
 
 
 type TranslationId
-    = TheProjectPresentationParagraphs
+    = CopyrightLine
+    | TheProjectPresentationParagraphs
 
 
 type alias TranslationSet msg =
@@ -40,6 +41,72 @@ type alias TranslationSet msg =
 getTranslationSet : TranslationId -> TranslationSet msg
 getTranslationSet translationId =
     case translationId of
+        CopyrightLine ->
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch =
+                s <|
+                    span []
+                        [ text "© 2016 "
+                        , a [ href "http://www.etalab.gouv.fr/", target "_blank" ] [ text "Etalab" ]
+                        , text " — © 2017 "
+                        , a
+                            [ href "https://framagit.org/ogptoolbox/ogptoolbox-ui/blob/master/CONTRIBUTORS.md"
+                            , target "_blank"
+                            ]
+                            [ text "OGP Toolbox contributors" ]
+                        , text " — Ontworpen door "
+                        , a [ href "http://www.nodesign.net/", target "_blank" ] [ text "Nodesign.net" ]
+                        ]
+            , english =
+                s <|
+                    p []
+                        [ text "© 2016 "
+                        , a [ href "http://www.etalab.gouv.fr/", target "_blank" ] [ text "Etalab" ]
+                        , text " — © 2017 "
+                        , a
+                            [ href "https://framagit.org/ogptoolbox/ogptoolbox-ui/blob/master/CONTRIBUTORS.md"
+                            , target "_blank"
+                            ]
+                            [ text "OGP Toolbox contributors" ]
+                        , text " — Design by "
+                        , a [ href "http://www.nodesign.net/", target "_blank" ] [ text "Nodesign.net" ]
+                        ]
+            , estonian = todo
+            , finnish = todo
+            , french =
+                s <|
+                    p []
+                        [ text "© 2016 "
+                        , a [ href "http://www.etalab.gouv.fr/", target "_blank" ] [ text "Etalab" ]
+                        , text " — © 2017 "
+                        , a
+                            [ href "https://framagit.org/ogptoolbox/ogptoolbox-ui/blob/master/CONTRIBUTORS.md"
+                            , target "_blank"
+                            ]
+                            [ text "Contributeurs OGP Toolbox" ]
+                        , text " — Design par "
+                        , a [ href "http://www.nodesign.net/", target "_blank" ] [ text "Nodesign.net" ]
+                        ]
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
+            }
+
         TheProjectPresentationParagraphs ->
             { bulgarian = todo
             , croatian = todo
