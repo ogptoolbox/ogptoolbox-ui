@@ -7,13 +7,13 @@ contributed from an organization can be listed under the organization
 that actually holds the copyright for their contributions. Those
 individuals should have their names indented and be marked with a '-'
 
-* Etalab <http://www.etalab.gouv.fr/>
+* [Etalab](http://www.etalab.gouv.fr/)
   - Christophe Benz
   - Angelo Chiacchio
   - Paula Forteza
   - Emmanuel Raviart
   - Johan Richer
-* OGPToolbox.org <https://ogptoolbox.org/>
+* [OGPToolbox.org](https://ogptoolbox.org/)
   - Paula Forteza
   - Emmanuel Raviart
   - Johan Richer
