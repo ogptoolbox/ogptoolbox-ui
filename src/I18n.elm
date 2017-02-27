@@ -161,6 +161,7 @@ type TranslationId
     | FindCard
     | FindPropertyKey
     | FooterAbout
+    | FooterContact
     | FooterDiscover
     | GenericError
     | HaveAnAccount
@@ -278,6 +279,7 @@ type TranslationId
     | Software
     | Tags
     | TextField
+    | TheProject
     | TimeoutExplanation
     | Tool GrammaticalNumber
     | ToolId
@@ -329,8 +331,8 @@ getTranslationSet translationId =
             , croatian = todo
             , czech = todo
             , danish = todo
-            , dutch = s "Algemeen"
-            , english = s "General"
+            , dutch = todo
+            , english = s "About"
             , estonian = todo
             , finnish = todo
             , french = s "À propos"
@@ -4731,6 +4733,33 @@ getTranslationSet translationId =
             , swedish = todo
             }
 
+        FooterContact ->
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = todo
+            , english = s "Contact"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Contact"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
+            }
+
         FooterDiscover ->
             { bulgarian = todo
             , croatian = todo
@@ -8518,6 +8547,33 @@ to strengthen governance.
             , slovak = todo
             , slovenian = todo
             , spanish = s "Texto"
+            , swedish = todo
+            }
+
+        TheProject ->
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = todo
+            , english = s "The Project"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Le projet"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
             , swedish = todo
             }
 

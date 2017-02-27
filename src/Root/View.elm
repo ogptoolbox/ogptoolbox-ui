@@ -488,7 +488,7 @@ viewFooter model language =
                                     language
                                     "/about"
                                     []
-                                    [ text (I18n.translate language I18n.About) ]
+                                    [ text (I18n.translate language I18n.TheProject) ]
                                 ]
                             , li []
                                 [ aForPath
@@ -506,9 +506,24 @@ viewFooter model language =
                                     []
                                     [ text (I18n.translate language I18n.Press) ]
                                 ]
-                            , li []
+                            ]
+                        , br [] []
+                        , h4 []
+                            [ text (I18n.translate language I18n.FooterContact) ]
+                        , ul [ class "footer-menu" ]
+                            [ li []
                                 [ a [ href "mailto:info@ogptpoolbox.org" ]
-                                    [ text (I18n.translate language I18n.Email) ]
+                                    [ i [ attribute "aria-hidden" "true", class "fa fa-envelope" ] []
+                                    , text " "
+                                    , text (I18n.translate language I18n.Email)
+                                    ]
+                                ]
+                            , li []
+                                [ a [ href "https://twitter.com/ogptoolbox", target "_blank" ]
+                                    [ i [ attribute "aria-hidden" "true", class "fa fa-twitter" ] []
+                                    , text " "
+                                    , text "Twitter"
+                                    ]
                                 ]
                             ]
                         ]
@@ -525,6 +540,81 @@ viewFooter model language =
 viewHeader : Model -> I18n.Language -> String -> Html Msg
 viewHeader model language containerClass =
     let
+        aboutDropdown =
+            let
+                -- A variant of aForPath with stopPropagation = False, to close menu after click
+                aForPath navigate language path attributes children =
+                    let
+                        pathWithLanguage =
+                            Urls.languagePath language path
+                    in
+                        a
+                            ([ href pathWithLanguage
+                             , onWithOptions
+                                "click"
+                                { stopPropagation = False, preventDefault = True }
+                                (Json.Decode.succeed (navigate pathWithLanguage))
+                             ]
+                                ++ attributes
+                            )
+                            children
+            in
+                li [ class "dropdown" ]
+                    [ a
+                        [ attribute "aria-expanded" "false"
+                        , attribute "aria-haspopup" "true"
+                        , attribute "data-toggle" "dropdown"
+                        , class "dropdown-toggle"
+                        , href "#"
+                        , role "button"
+                        ]
+                        [ text (I18n.translate language I18n.About)
+                        , text " "
+                        , span [ class "caret" ] []
+                        ]
+                    , ul [ class "dropdown-menu" ]
+                        [ li []
+                            [ aForPath
+                                Navigate
+                                language
+                                "/about"
+                                []
+                                [ text (I18n.translate language I18n.TheProject) ]
+                            ]
+                        , li []
+                            [ aForPath
+                                Navigate
+                                language
+                                "/faq"
+                                []
+                                [ text (I18n.translate language I18n.Help) ]
+                            ]
+                        , li []
+                            [ aForPath
+                                Navigate
+                                language
+                                "/press"
+                                []
+                                [ text (I18n.translate language I18n.Press) ]
+                            ]
+                        , li [ class "divider", role "separator" ] []
+                        , li []
+                            [ a [ href "mailto:info@ogptpoolbox.org" ]
+                                [ i [ attribute "aria-hidden" "true", class "fa fa-envelope" ] []
+                                , text " "
+                                , text (I18n.translate language I18n.Email)
+                                ]
+                            ]
+                        , li []
+                            [ a [ href "https://twitter.com/ogptoolbox", target "_blank" ]
+                                [ i [ attribute "aria-hidden" "true", class "fa fa-twitter" ] []
+                                , text " "
+                                , text "Twitter"
+                                ]
+                            ]
+                        ]
+                    ]
+
         profileNavItem =
             case model.authentication of
                 Just authentication ->
@@ -665,14 +755,7 @@ viewHeader model language containerClass =
                                     []
                                     [ text (I18n.translate language (I18n.Collection I18n.Plural)) ]
                                 ]
-                            , li []
-                                [ aForPath
-                                    Navigate
-                                    language
-                                    "/faq"
-                                    []
-                                    [ text (I18n.translate language I18n.Help) ]
-                                ]
+                            , aboutDropdown
                             ]
                         , Html.form
                             [ class "navbar-form navbar-right"
@@ -732,14 +815,7 @@ viewHeader model language containerClass =
                                     []
                                     [ text (I18n.translate language (I18n.Collection I18n.Plural)) ]
                                 ]
-                            , li []
-                                [ aForPath
-                                    Navigate
-                                    language
-                                    "/faq"
-                                    []
-                                    [ text (I18n.translate language I18n.Help) ]
-                                ]
+                            , aboutDropdown
                             , profileNavItem
                             , signInOrOutNavItem
                             ]
