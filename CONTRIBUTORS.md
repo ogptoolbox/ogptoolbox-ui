@@ -14,9 +14,8 @@ individuals should have their names indented and be marked with a '-'
   - Emmanuel Raviart
   - Johan Richer
 * OGPToolbox.org <https://ogptoolbox.org/>
-  - Jailbreak <https://jailbreak.paris/>
-    - Paula Forteza
-    - Emmanuel Raviart
+  - Paula Forteza
+  - Emmanuel Raviart
   - Johan Richer
 * Milo van der Linden
 * Benjamin Ooghe Tabanou
