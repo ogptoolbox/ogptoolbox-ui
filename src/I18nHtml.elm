@@ -61,7 +61,7 @@ getTranslationSet translationId =
                             , text " (7, 8 and 9 December 2016)."
                             ]
                         , p [ class "lead" ]
-                            [ text "In order to guarantee the sustainability, the independence and the capacity to associate various actors at the international level in the long term, the governance of the project has, since, evolved. In February 2017, the "
+                            [ text "In order to guarantee sustainability, independence and the capacity to associate various actors at the international level in the long term, the governance of the project has, since, evolved. In February 2017, the "
                             , a [ href "https://forum.ogptoolbox.org/t/association-launch-meeting-minutes/42", target "_blank" ] [ text "OGPToolbox.org" ]
                             , text " association was created to fulfill the mission associated to the platform."
                             ]
