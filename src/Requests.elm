@@ -181,7 +181,7 @@ getCollection authentication collectionId =
     Http.request
         { method = "GET"
         , headers = authenticationHeaders authentication
-        , url = apiUrl ++ "collections/" ++ collectionId ++ "?show=values&depth=3"
+        , url = apiUrl ++ "collections/" ++ collectionId ++ "?show=values&depth=4"
         , body = Http.emptyBody
         , expect = Http.expectJson dataIdBodyDecoder
         , timeout = Nothing
