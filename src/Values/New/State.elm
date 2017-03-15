@@ -29,10 +29,24 @@ init authentication language languageIso639_1 validFieldTypes =
 
                 Nothing ->
                     "TextField"
+
+        cardTypes =
+            case fieldType of
+                "OrganizationIdField" ->
+                    cardTypesForOrganization
+
+                "ToolIdField" ->
+                    cardTypesForTool
+
+                "UseCaseIdField" ->
+                    cardTypesForUseCase
+
+                _ ->
+                    cardTypesForTool
     in
         { authentication = authentication
         , booleanValue = False
-        , cardsAutocompleteModel = Cards.Autocomplete.State.init cardTypesForTool False
+        , cardsAutocompleteModel = Cards.Autocomplete.State.init cardTypes False
         , errors = Dict.empty
         , field = Nothing
         , fieldType = fieldType
