@@ -348,7 +348,9 @@ update msg model =
         ToolsAutocompleteMsg childMsg ->
             let
                 ( toolsAutocompleteModel, childCmd ) =
-                    Cards.Autocomplete.State.update childMsg
+                    Cards.Autocomplete.State.update
+                        childMsg
+                        model.authentication
                         model.language
                         "toolsAutocomplete"
                         model.toolsAutocompleteModel
@@ -360,7 +362,9 @@ update msg model =
         UseCasesAutocompleteMsg childMsg ->
             let
                 ( useCasesAutocompleteModel, childCmd ) =
-                    Cards.Autocomplete.State.update childMsg
+                    Cards.Autocomplete.State.update
+                        childMsg
+                        model.authentication
                         model.language
                         "useCasesAutocomplete"
                         model.useCasesAutocompleteModel

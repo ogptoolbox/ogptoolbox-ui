@@ -288,7 +288,9 @@ update msg model =
         CardsAutocompleteMsg childMsg ->
             let
                 ( cardsAutocompleteModel, childCmd ) =
-                    Cards.Autocomplete.State.update childMsg
+                    Cards.Autocomplete.State.update
+                        childMsg
+                        model.authentication
                         model.language
                         "cardId"
                         model.cardsAutocompleteModel

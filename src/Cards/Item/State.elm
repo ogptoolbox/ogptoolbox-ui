@@ -192,7 +192,9 @@ update msg model =
         KeysAutocompleteMsg childMsg ->
             let
                 ( keysAutocompleteModel, childCmd ) =
-                    Properties.KeysAutocomplete.State.update childMsg
+                    Properties.KeysAutocomplete.State.update
+                        childMsg
+                        model.authentication
                         model.language
                         "keyId"
                         model.keysAutocompleteModel
