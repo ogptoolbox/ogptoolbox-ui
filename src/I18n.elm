@@ -213,7 +213,9 @@ type TranslationId
     | NewValueDescription
     | Number
     | NumberPlaceholder
-    | OGPsummitLink
+    | Ogp
+    | OgpDescription
+    | OgpTitle
     | OpenGovernmentPartnership
     | OpenGovernmentPartnershipLogo
     | OpenGovParagraph
@@ -6663,16 +6665,16 @@ getTranslationSet translationId =
             , swedish = todo
             }
 
-        OGPsummitLink ->
+        Ogp ->
             { bulgarian = todo
             , croatian = todo
             , czech = todo
             , danish = todo
-            , dutch = s "https://nl.ogpsummit.org/osem/conference/ogp-summit"
-            , english = s "https://en.ogpsummit.org/osem/conference/ogp-summit"
+            , dutch = todo
+            , english = s "OGP"
             , estonian = todo
             , finnish = todo
-            , french = s "https://fr.ogpsummit.org/osem/conference/ogp-summit"
+            , french = s "PGO"
             , german = todo
             , greek = todo
             , hungarian = todo
@@ -6686,7 +6688,61 @@ getTranslationSet translationId =
             , romanian = todo
             , slovak = todo
             , slovenian = todo
-            , spanish = s "https://es.ogpsummit.org/osem/conference/ogp-summit"
+            , spanish = todo
+            , swedish = todo
+            }
+
+        OgpDescription ->
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = todo
+            , english = s "Digital solutions to improve open governments"
+            , estonian = todo
+            , finnish = todo
+            , french = s "Solutions numériques pour gouvernements ouverts"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
+            , swedish = todo
+            }
+
+        OgpTitle ->
+            { bulgarian = todo
+            , croatian = todo
+            , czech = todo
+            , danish = todo
+            , dutch = todo
+            , english = s "OGP Toolbox (OGP version)"
+            , estonian = todo
+            , finnish = todo
+            , french = s "OGP Toolbox (version OGP)"
+            , german = todo
+            , greek = todo
+            , hungarian = todo
+            , irish = todo
+            , italian = todo
+            , latvian = todo
+            , lithuanian = todo
+            , maltese = todo
+            , polish = todo
+            , portuguese = todo
+            , romanian = todo
+            , slovak = todo
+            , slovenian = todo
+            , spanish = todo
             , swedish = todo
             }
 

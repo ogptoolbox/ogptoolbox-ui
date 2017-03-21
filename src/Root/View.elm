@@ -111,6 +111,11 @@ view model =
                             ]
                             |> standardLayout language
 
+                    OgpRoute ->
+                        Home.view model.searchModel language model.location
+                            |> Html.map translateSearchMsg
+                            |> standardLayout language
+
                     OrganizationsRoute childRoute ->
                         case childRoute of
                             OrganizationRoute _ ->
@@ -752,6 +757,14 @@ viewHeader model language containerClass =
                                     "/collections"
                                     []
                                     [ text (I18n.translate language (I18n.Collection I18n.Plural)) ]
+                                ]
+                            , li []
+                                [ aForPath
+                                    Navigate
+                                    language
+                                    "/ogp"
+                                    [ title (I18n.translate language I18n.OpenGovernmentPartnership) ]
+                                    [ text (I18n.translate language I18n.Ogp) ]
                                 ]
                             , aboutDropdown
                             ]

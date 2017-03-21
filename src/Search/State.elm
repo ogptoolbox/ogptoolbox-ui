@@ -35,6 +35,7 @@ remove x xs =
 init : Model
 init =
     { collections = NotAsked
+    , ogpMode = False
     , organizations = NotAsked
     , popularTagsData = NotAsked
     , selectedTags = []
@@ -374,7 +375,7 @@ update msg model authentication language location =
                             selectedTagIds
                             cardTypesForUseCase
                             |> Http.send (ForSelf << GotUseCases)
-                        , Requests.getTagsPopularity authentication selectedTagIds
+                        , Requests.getTagsPopularity authentication model.ogpMode selectedTagIds
                             |> Http.send (ForSelf << GotTagsPopularity)
                         ]
                 in

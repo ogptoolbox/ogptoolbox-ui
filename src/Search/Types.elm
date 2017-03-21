@@ -8,6 +8,7 @@ import WebData exposing (..)
 
 type alias Model =
     { collections : WebData DataIdsBody
+    , ogpMode : Bool
     , organizations : WebData DataIdsBody
     , popularTagsData : WebData PopularTagsData
     , selectedTags : List Ports.D3BubblesPopularTag

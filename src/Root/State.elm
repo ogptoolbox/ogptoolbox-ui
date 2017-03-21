@@ -338,7 +338,7 @@ urlUpdate location model =
             case parseLocation location of
                 Just ((I18nRouteWithLanguage language localizedRoute) as route) ->
                     let
-                        indexRoute titleSymbol descriptionSymbol =
+                        indexRoute titleSymbol descriptionSymbol ogpMode =
                             let
                                 getLocalizedString value =
                                     case value.value of
@@ -373,7 +373,10 @@ urlUpdate location model =
                                     model.searchModel
 
                                 newSearchModel =
-                                    { searchModel | selectedTags = selectedTags }
+                                    { searchModel
+                                        | ogpMode = ogpMode
+                                        , selectedTags = selectedTags
+                                    }
 
                                 ( newSearchModel2, searchCmd ) =
                                     Search.State.update
@@ -486,7 +489,7 @@ urlUpdate location model =
                                     )
 
                                 HomeRoute ->
-                                    indexRoute I18n.HomeTitle I18n.HomeDescription
+                                    indexRoute I18n.HomeTitle I18n.HomeDescription False
 
                                 NotFoundRoute _ ->
                                     ( model
@@ -496,6 +499,9 @@ urlUpdate location model =
                                         , title = I18n.translate language I18n.PageNotFound
                                         }
                                     )
+
+                                OgpRoute ->
+                                    indexRoute I18n.OgpTitle I18n.OgpDescription True
 
                                 OrganizationsRoute childRoute ->
                                     case childRoute of
@@ -513,7 +519,10 @@ urlUpdate location model =
                                                 )
 
                                         OrganizationsIndexRoute ->
-                                            indexRoute (I18n.Organization I18n.Plural) I18n.OrganizationsDescription
+                                            indexRoute
+                                                (I18n.Organization I18n.Plural)
+                                                I18n.OrganizationsDescription
+                                                False
 
                                         NewOrganizationRoute ->
                                             let
@@ -567,7 +576,7 @@ urlUpdate location model =
                                                 )
 
                                         ToolsIndexRoute ->
-                                            indexRoute (I18n.Tool I18n.Plural) I18n.ToolsDescription
+                                            indexRoute (I18n.Tool I18n.Plural) I18n.ToolsDescription False
 
                                         NewToolRoute ->
                                             let
@@ -610,7 +619,7 @@ urlUpdate location model =
                                                 )
 
                                         UseCasesIndexRoute ->
-                                            indexRoute (I18n.UseCase I18n.Plural) I18n.UseCasesDescription
+                                            indexRoute (I18n.UseCase I18n.Plural) I18n.UseCasesDescription False
 
                                         NewUseCaseRoute ->
                                             let

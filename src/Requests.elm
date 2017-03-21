@@ -237,14 +237,20 @@ getObjectProperties authentication objectId keyId =
         }
 
 
-getTagsPopularity : Maybe Authentication -> List String -> Http.Request PopularTagsData
-getTagsPopularity authentication tagIds =
+getTagsPopularity : Maybe Authentication -> Bool -> List String -> Http.Request PopularTagsData
+getTagsPopularity authentication ogpMode tagIds =
     Http.request
         { method = "GET"
         , headers = authenticationHeaders authentication
         , url =
             apiUrl
-                ++ "cards/tags-popularity?type=use-case&"
+                ++ "cards/tags-popularity"
+                ++ (if ogpMode then
+                        "-ogp"
+                    else
+                        ""
+                   )
+                ++ "?type=use-case&"
                 ++ (tagIds
                         |> List.filter (\s -> not (String.isEmpty s))
                         |> List.map (\tagId -> "tag=" ++ tagId)
