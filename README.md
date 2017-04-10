@@ -16,16 +16,18 @@ It is both a free open source software and an open data project with complementa
 
 See [LICENSE file](LICENSE.md)
 
----
-
 ## Installation
 
-    git clone https://github.com/ogptoolbox/ogptoolbox-ui
-    cd ogptoolbox-ui
+```bash
+git clone https://github.com/ogptoolbox/ogptoolbox-ui
+cd ogptoolbox-ui
+```
 
 ### Install dependencies
 
-    npm install
+```bash
+npm install
+```
 
 This will install npm dependencies in `node_modules` and Elm dependencies in `elm-stuff`.
 
@@ -33,7 +35,9 @@ This will install npm dependencies in `node_modules` and Elm dependencies in `el
 
 Start the hot-reloading webpack dev server:
 
-    npm start
+```bash
+npm start
+```
 
 Navigate to <http://localhost:3011>.
 Any changes you make to your files (.elm, .js, .css, etc.) will trigger
@@ -43,7 +47,9 @@ a hot reload.
 
 When you're ready to deploy:
 
-    npm run build
+```bash
+npm run build
+```
 
 This will create a `dist` folder (after removing the old one if present):
 
@@ -55,16 +61,13 @@ This will create a `dist` folder (after removing the old one if present):
 
 To test the production build locally:
 
-    npm run serve
+```bash
+npm run serve
     > ogptoolbox-ui@0.0.1 serve /home/cbenz/Dev/ogptoolbox/ogptoolbox-ui
     > static --spa dist
 
     serving "." at http://127.0.0.1:3012
     serving as a single page app (all non-file requests redirect to index.html)
+```
 
 Navigate to <http://localhost:3012>.
-
-## License
-
-[AGPL v3](https://framagit.org/ogptoolbox/ogptoolbox-ui/blob/master/LICENSE.md)
-Copyright (C) 2016 Etalab & contributors
