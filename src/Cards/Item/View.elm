@@ -705,8 +705,14 @@ viewDebateModal model card debatedIds =
 
         viewProperty index property =
             let
+                keyIdLabelCouples : List ( String, I18n.TranslationId )
+                keyIdLabelCouples =
+                    [ ( "pros", I18n.DebateArgumentFor )
+                    , ( "cons", I18n.DebateArgumentAgainst )
+                    ]
+
                 keyLabel =
-                    Dict.get property.keyId (Dict.fromList Properties.New.View.keyIdLabelCouples)
+                    Dict.get property.keyId (Dict.fromList keyIdLabelCouples)
                         |> Maybe.map (I18n.translate language)
                         |> Maybe.withDefault property.keyId
 
@@ -717,27 +723,50 @@ viewDebateModal model card debatedIds =
                     Dict.get property.ballotId data.ballots
             in
                 li [ classList [ ( "media", True ), ( "best", index == 0 ) ] ]
-                    [ div [ class "media-body" ]
+                    [ div [ class "media-left" ]
+                        [ span
+                            [ attribute "aria-hidden" "true"
+                            , class
+                                ("glyphicon "
+                                    ++ if property.keyId == "cons" then
+                                        "glyphicon-minus"
+                                       else if property.keyId == "pros" then
+                                        "glyphicon-plus"
+                                       else
+                                        "glyphicon-triangle-right"
+                                )
+                            , style [ ( "margin-top", "16px" ) ]
+                            ]
+                            []
+                        ]
+                    , div [ class "media-body" ]
                         (case value of
                             Nothing ->
                                 []
 
                             Just value ->
-                                [ div []
-                                    [ h4 [ class "media-heading" ] [ text keyLabel ]
-                                    , viewValueTypeLine language (Just navigate) data False value.value
-                                    ]
-                                , button
+                                [ button
                                     [ attribute "data-target" "#debate-content"
                                     , attribute "data-toggle" "modal"
-                                    , class "btn btn-default btn-xs btn-action"
+                                    , class "btn btn-default btn-xs pull-right"
                                     , onClick
                                         (ForSelf
                                             (LoadDebateProperties (property.valueId :: debatedIds))
                                         )
+                                    , style
+                                        [ ( "margin-top", "4px" )
+                                        , ( "border", "2px solid #25b5ff" )
+                                        , ( "color", "#25b5ff" )
+                                        , ( "background", "none" )
+                                        , ( "text-shadow", "none" )
+                                        ]
                                     , type_ "button"
                                     ]
                                     [ text (I18n.translate language (I18n.Debate)) ]
+                                , div []
+                                    [ h4 [ class "media-heading" ] [ text keyLabel ]
+                                    , viewValueTypeLine language (Just navigate) data False value.value
+                                    ]
                                 ]
                         )
                     , div [ class "media-right" ]

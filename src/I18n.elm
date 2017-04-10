@@ -82,6 +82,8 @@ type TranslationId
     | CreateOrganizationPage
     | CreateYourAccount
     | Debate
+    | DebateArgumentAgainst
+    | DebateArgumentFor
     | DebateConsLabel
     | DebateProsLabel
     | DebateTitle
@@ -1064,6 +1066,22 @@ getTranslationSet translationId =
                 | dutch = todo
                 , english = s "Debate"
                 , french = s "Débattre"
+                , spanish = todo
+            }
+
+        DebateArgumentAgainst ->
+            { emptyTranslationSet
+                | dutch = todo
+                , english = s "Argument Against"
+                , french = s "Argument contre"
+                , spanish = todo
+            }
+
+        DebateArgumentFor ->
+            { emptyTranslationSet
+                | dutch = todo
+                , english = s "Argument For"
+                , french = s "Argument pour"
                 , spanish = todo
             }
 
