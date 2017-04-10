@@ -703,14 +703,19 @@ viewDebateModal model card debatedIds =
                     button
                         [ attribute "data-target" "#debate-content"
                         , attribute "data-toggle" "modal"
-                        , class "btn btn-default"
+                        , class "btn btn-default bt-sm"
                         , onClick
                             (ForSelf
                                 (LoadDebateProperties parentDebatedIds)
                             )
                         , type_ "button"
                         ]
-                        [ text "<" ]
+                        [ span
+                            [ attribute "aria-hidden" "true"
+                            , class "glyphicon glyphicon-arrow-left"
+                            ]
+                            []
+                        ]
 
         viewProperty index property =
             let
