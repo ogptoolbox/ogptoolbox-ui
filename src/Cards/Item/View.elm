@@ -703,7 +703,7 @@ viewDebateModal model card debatedIds =
                     button
                         [ attribute "data-target" "#debate-content"
                         , attribute "data-toggle" "modal"
-                        , class "btn btn-default bt-sm"
+                        , class "btn btn-default btn-sm"
                         , onClick
                             (ForSelf
                                 (LoadDebateProperties parentDebatedIds)
