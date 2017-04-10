@@ -735,7 +735,6 @@ viewDebateModal model card debatedIds =
                                        else
                                         "glyphicon-triangle-right"
                                 )
-                            , style [ ( "margin-top", "16px" ) ]
                             ]
                             []
                         ]
