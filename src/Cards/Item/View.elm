@@ -341,45 +341,43 @@ viewCardContent model card =
                                         [ ul [ class "list-unstyled" ]
                                             (List.map
                                                 (\argument ->
-                                                    li []
-                                                        [ div []
-                                                            [ span
-                                                                [ attribute "aria-hidden" "true"
-                                                                , class
-                                                                    ("glyphicon "
-                                                                        ++ if argument.keyId == "cons" then
-                                                                            "glyphicon-minus"
-                                                                           else if argument.keyId == "pros" then
-                                                                            "glyphicon-plus"
-                                                                           else
-                                                                            "glyphicon-triangle-right"
-                                                                    )
-                                                                ]
-                                                                []
-                                                            , text " "
-                                                            , div [ style [ ( "display", "inline-block" ) ] ]
-                                                                [ viewValueIdLine
-                                                                    language
-                                                                    (Just navigate)
-                                                                    data
-                                                                    False
-                                                                    argument.valueId
-                                                                ]
-                                                            , text " "
-                                                            , button
-                                                                [ attribute "data-target" "#debate-content"
-                                                                , attribute "data-toggle" "modal"
-                                                                , class "btn btn-default btn-xs btn-action"
-                                                                , onClick
-                                                                    (ForSelf
-                                                                        (LoadDebateProperties
-                                                                            [ argument.valueId ]
-                                                                        )
-                                                                    )
-                                                                , type_ "button"
-                                                                ]
-                                                                [ text (I18n.translate language (I18n.Debate)) ]
+                                                    li [ style [ ( "margin-bottom", "4px" ), ( "margin-top", "4px" ) ] ]
+                                                        [ span
+                                                            [ attribute "aria-hidden" "true"
+                                                            , class
+                                                                ("glyphicon "
+                                                                    ++ if argument.keyId == "cons" then
+                                                                        "glyphicon-minus"
+                                                                       else if argument.keyId == "pros" then
+                                                                        "glyphicon-plus"
+                                                                       else
+                                                                        "glyphicon-triangle-right"
+                                                                )
                                                             ]
+                                                            []
+                                                        , text " "
+                                                        , div [ style [ ( "display", "inline-block" ) ] ]
+                                                            [ viewValueIdLine
+                                                                language
+                                                                (Just navigate)
+                                                                data
+                                                                False
+                                                                argument.valueId
+                                                            ]
+                                                        , text " "
+                                                        , button
+                                                            [ attribute "data-target" "#debate-content"
+                                                            , attribute "data-toggle" "modal"
+                                                            , class "btn btn-default btn-xs btn-action"
+                                                            , onClick
+                                                                (ForSelf
+                                                                    (LoadDebateProperties
+                                                                        [ argument.valueId ]
+                                                                    )
+                                                                )
+                                                            , type_ "button"
+                                                            ]
+                                                            [ text (I18n.translate language (I18n.Debate)) ]
                                                         ]
                                                 )
                                                 card.arguments
