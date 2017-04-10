@@ -27,7 +27,6 @@ init =
         , cardId = ""
         , data = initData
         , debatedIds = Nothing
-        , debateKeyId = "pros"
         , debatePropertyIds = []
         , displayUseItModal = False
         , editedKeyId = Nothing
@@ -115,7 +114,6 @@ update msg model =
         CloseDebateModal ->
             ( { model
                 | debatedIds = Nothing
-                , debateKeyId = "pros"
                 , httpError = Nothing
                 , debatePropertyIds = []
               }

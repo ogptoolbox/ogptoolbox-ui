@@ -47,7 +47,6 @@ type alias Model =
     , cardId : String
     , data : DataProxy {}
     , debatedIds : Maybe (List String)
-    , debateKeyId : String
     , debatePropertyIds : List String
     , displayUseItModal : Bool
     , editedKeyId : Maybe String
