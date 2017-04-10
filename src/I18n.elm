@@ -1088,16 +1088,16 @@ getTranslationSet translationId =
         DebateConsLabel ->
             { emptyTranslationSet
                 | dutch = todo
-                , english = s "- Against"
-                , french = s "- Contre"
+                , english = s "- Argument Against"
+                , french = s "- Argument contre"
                 , spanish = todo
             }
 
         DebateProsLabel ->
             { emptyTranslationSet
                 | dutch = todo
-                , english = s "+ For"
-                , french = s "+ Pour"
+                , english = s "+ Argument For"
+                , french = s "+ Argument pour"
                 , spanish = todo
             }
 
