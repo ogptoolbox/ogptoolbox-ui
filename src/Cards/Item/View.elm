@@ -324,9 +324,7 @@ viewCardContent model card =
                                         [ div [ class "row" ]
                                             [ panelTitle
                                             , div [ class "col-xs-4 text-right up7" ]
-                                                [ a [ class "show-more" ]
-                                                    [ bestOf descriptionKeys ]
-                                                , button
+                                                [ button
                                                     [ attribute "data-target" "#debate-content"
                                                     , attribute "data-toggle" "modal"
                                                     , class "btn btn-default btn-xs btn-action"
