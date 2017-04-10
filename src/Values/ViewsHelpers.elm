@@ -97,19 +97,22 @@ viewValueTypeLineContent language navigate data showDetails valueType =
                 ]
 
         LocalizedStringValue values ->
-            let
-                viewString languageCode string =
-                    if showDetails || Dict.size values > 1 then
-                        [ dt [] [ text languageCode ]
-                        , dd [] [ aIfIsUrl [] string ]
-                        ]
-                    else
-                        [ aIfIsUrl [] string ]
-            in
+            if showDetails || Dict.size values > 1 then
                 dl []
                     (values
                         |> Dict.toList
-                        |> List.concatMap (\( languageCode, childValue ) -> viewString languageCode childValue)
+                        |> List.concatMap
+                            (\( languageCode, childValue ) ->
+                                [ dt [] [ text languageCode ]
+                                , dd [] [ aIfIsUrl [] childValue ]
+                                ]
+                            )
+                    )
+            else
+                div []
+                    (values
+                        |> Dict.toList
+                        |> List.map (\( languageCode, childValue ) -> aIfIsUrl [] childValue)
                     )
 
         NumberValue float ->

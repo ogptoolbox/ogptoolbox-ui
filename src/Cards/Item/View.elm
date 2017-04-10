@@ -22,6 +22,13 @@ import Values.ViewsHelpers exposing (viewValueIdLine, viewValueTypeLine)
 import Views exposing (viewCardListItem, viewLoading)
 
 
+keyIdLabelCouples : List ( String, I18n.TranslationId )
+keyIdLabelCouples =
+    [ ( "pros", I18n.DebateArgumentFor )
+    , ( "cons", I18n.DebateArgumentAgainst )
+    ]
+
+
 view : Model -> Html Msg
 view model =
     case Dict.get model.cardId model.data.cards of
@@ -331,28 +338,33 @@ viewCardContent model card =
                                             ]
                                         ]
                                     , div [ class "panel-body" ]
-                                        [ ul []
+                                        [ ul [ class "list-unstyled" ]
                                             (List.map
                                                 (\argument ->
-                                                    let
-                                                        keyLabel =
-                                                            Dict.get
-                                                                argument.keyId
-                                                                (Dict.fromList Properties.New.View.keyIdLabelCouples)
-                                                                |> Maybe.map (I18n.translate language)
-                                                                |> Maybe.withDefault argument.keyId
-                                                    in
-                                                        li []
-                                                            [ text keyLabel
+                                                    li []
+                                                        [ div []
+                                                            [ span
+                                                                [ attribute "aria-hidden" "true"
+                                                                , class
+                                                                    ("glyphicon "
+                                                                        ++ if argument.keyId == "cons" then
+                                                                            "glyphicon-minus"
+                                                                           else if argument.keyId == "pros" then
+                                                                            "glyphicon-plus"
+                                                                           else
+                                                                            "glyphicon-triangle-right"
+                                                                    )
+                                                                ]
+                                                                []
                                                             , text " "
-                                                            , text (toString argument.ratingSum)
-                                                            , text " "
-                                                            , viewValueIdLine
-                                                                language
-                                                                (Just navigate)
-                                                                data
-                                                                False
-                                                                argument.valueId
+                                                            , div [ style [ ( "display", "inline-block" ) ] ]
+                                                                [ viewValueIdLine
+                                                                    language
+                                                                    (Just navigate)
+                                                                    data
+                                                                    False
+                                                                    argument.valueId
+                                                                ]
                                                             , text " "
                                                             , button
                                                                 [ attribute "data-target" "#debate-content"
@@ -368,6 +380,7 @@ viewCardContent model card =
                                                                 ]
                                                                 [ text (I18n.translate language (I18n.Debate)) ]
                                                             ]
+                                                        ]
                                                 )
                                                 card.arguments
                                             )
@@ -705,12 +718,6 @@ viewDebateModal model card debatedIds =
 
         viewProperty index property =
             let
-                keyIdLabelCouples : List ( String, I18n.TranslationId )
-                keyIdLabelCouples =
-                    [ ( "pros", I18n.DebateArgumentFor )
-                    , ( "cons", I18n.DebateArgumentAgainst )
-                    ]
-
                 keyLabel =
                     Dict.get property.keyId (Dict.fromList keyIdLabelCouples)
                         |> Maybe.map (I18n.translate language)
@@ -754,8 +761,8 @@ viewDebateModal model card debatedIds =
                                         )
                                     , style
                                         [ ( "margin-top", "4px" )
-                                        , ( "border", "2px solid #25b5ff" )
-                                        , ( "color", "#25b5ff" )
+                                        , ( "border", "2px solid #a7a7a7" )
+                                        , ( "color", "grey" )
                                         , ( "background", "none" )
                                         , ( "text-shadow", "none" )
                                         ]
