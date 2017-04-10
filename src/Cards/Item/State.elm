@@ -6,6 +6,7 @@ import Http
 import I18n
 import Ports
 import Properties.KeysAutocomplete.State
+import Properties.New.State
 import Requests
 import Task
 import Types exposing (..)
@@ -25,11 +26,15 @@ init =
         { authentication = authentication
         , cardId = ""
         , data = initData
+        , debatedIds = Nothing
+        , debateKeyId = "pros"
+        , debatePropertyIds = []
         , displayUseItModal = False
         , editedKeyId = Nothing
         , httpError = Nothing
         , keysAutocompleteModel = Properties.KeysAutocomplete.State.init [] True
         , language = language
+        , newDebatePropertyModel = Properties.New.State.init authentication language "" "" []
         , newValueModel = Values.New.State.init authentication language "" []
         , sameKeyPropertyIds = []
         }
@@ -96,6 +101,7 @@ subscriptions : Model -> Sub InternalMsg
 subscriptions model =
     Sub.batch
         [ Sub.map KeysAutocompleteMsg (Properties.KeysAutocomplete.State.subscriptions model.keysAutocompleteModel)
+        , Sub.map NewDebatePropertyMsg (Properties.New.State.subscriptions model.newDebatePropertyModel)
         , Sub.map NewValueMsg (Values.New.State.subscriptions model.newValueModel)
         ]
 
@@ -105,6 +111,17 @@ update msg model =
     case msg of
         AddKey typedValue ->
             update (LoadProperties typedValue.id) model
+
+        CloseDebateModal ->
+            ( { model
+                | debatedIds = Nothing
+                , debateKeyId = "pros"
+                , httpError = Nothing
+                , debatePropertyIds = []
+              }
+            , Requests.getCard model.authentication model.cardId
+                |> Http.send (ForSelf << GotCard)
+            )
 
         CloseEditPropertiesModal ->
             ( { model
@@ -132,6 +149,18 @@ update msg model =
                         (\_ -> ForParent <| RequireSignIn <| CreateKey keyName)
                         (Task.succeed ())
                     )
+
+        DebatePropertyUpserted data ->
+            ( { model
+                | data = mergeData data model.data
+                , debatePropertyIds =
+                    if List.member data.id model.debatePropertyIds then
+                        model.debatePropertyIds
+                    else
+                        data.id :: model.debatePropertyIds
+              }
+            , Cmd.none
+            )
 
         DisplayUseItModal displayUseItModal ->
             ( { model | displayUseItModal = displayUseItModal }
@@ -178,6 +207,17 @@ update msg model =
                 , cmd
                 )
 
+        GotDebateProperties (Err httpError) ->
+            ( { model | httpError = Just httpError }, Cmd.none )
+
+        GotDebateProperties (Ok body) ->
+            ( { model
+                | data = mergeData body.data model.data
+                , debatePropertyIds = body.data.ids
+              }
+            , Cmd.none
+            )
+
         GotProperties (Err httpError) ->
             ( { model | httpError = Just httpError }, Cmd.none )
 
@@ -219,6 +259,36 @@ update msg model =
                 |> Http.send (ForSelf << GotCard)
             )
 
+        LoadDebateProperties debatedIds ->
+            case model.authentication of
+                Just _ ->
+                    let
+                        debatedId =
+                            List.head debatedIds |> Maybe.withDefault model.cardId
+                    in
+                        ( { model
+                            | debatedIds = Just debatedIds
+                            , debatePropertyIds = []
+                            , httpError = Nothing
+                            , newDebatePropertyModel =
+                                Properties.New.State.init
+                                    model.authentication
+                                    model.language
+                                    (I18n.iso639_1FromLanguage model.language)
+                                    debatedId
+                                    [ "TextField" ]
+                          }
+                        , Requests.getDebateProperties model.authentication debatedId
+                            |> Http.send (ForSelf << GotDebateProperties)
+                        )
+
+                Nothing ->
+                    ( model
+                    , Task.perform
+                        (\_ -> ForParent <| RequireSignIn <| LoadDebateProperties debatedIds)
+                        (Task.succeed ())
+                    )
+
         LoadProperties keyId ->
             case model.authentication of
                 Just _ ->
@@ -243,6 +313,17 @@ update msg model =
                         (\_ -> ForParent <| RequireSignIn <| LoadProperties keyId)
                         (Task.succeed ())
                     )
+
+        NewDebatePropertyMsg childMsg ->
+            let
+                ( newDebatePropertyModel, childCmd ) =
+                    model.newDebatePropertyModel
+                        |> Properties.New.State.setContext model.authentication model.language
+                        |> Properties.New.State.update childMsg
+            in
+                ( { model | newDebatePropertyModel = newDebatePropertyModel }
+                , Cmd.map translateNewDebatePropertyMsg childCmd
+                )
 
         NewValueMsg childMsg ->
             let
@@ -300,7 +381,7 @@ update msg model =
                             editedKeyId
 
                         Nothing ->
-                            Debug.crash "Cards.Item.State update ValuePosted: model.editedKeyId == Nothing"
+                            Debug.crash "Cards.Item.State update ValueUpserted: model.editedKeyId == Nothing"
             in
                 ( { model | data = mergeData data model.data }
                 , Requests.postProperty model.authentication model.cardId editedKeyId data.id

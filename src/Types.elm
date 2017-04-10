@@ -4,6 +4,15 @@ import Dict exposing (Dict)
 import Json.Decode
 
 
+type alias Argument =
+    { keyId : String
+    , rating : Int
+    , ratingCount : Int
+    , ratingSum : Int
+    , valueId : String
+    }
+
+
 type alias Ballot =
     { deleted : Bool
     , id : String
@@ -21,7 +30,8 @@ type alias BijectiveCardReference =
 
 
 type alias Card =
-    { createdAt : String
+    { arguments : List Argument
+    , createdAt : String
     , deleted : Bool
     , id : String
     , properties : Dict String String
@@ -149,7 +159,8 @@ type alias PopularTagsData =
 
 
 type alias Property =
-    { ballotId :
+    { arguments : List Argument
+    , ballotId :
         String
         -- TODO Use Maybe
     , createdAt : String

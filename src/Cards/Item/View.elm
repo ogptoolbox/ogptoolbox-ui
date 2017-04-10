@@ -12,12 +12,13 @@ import Http
 import I18n
 import Json.Decode as Decode
 import Properties.KeysAutocomplete.View
+import Properties.New.View
 import Set
 import String
 import Types exposing (..)
 import Urls
 import Values.New.View
-import Values.ViewsHelpers exposing (viewValueTypeLine)
+import Values.ViewsHelpers exposing (viewValueIdLine, viewValueTypeLine)
 import Views exposing (viewCardListItem, viewLoading)
 
 
@@ -55,6 +56,13 @@ viewCard model card =
                         ([ viewSidebar model card
                          , viewCardContent model card
                          ]
+                            ++ (case model.debatedIds of
+                                    Just debatedIds ->
+                                        [ viewDebateModal model card debatedIds ]
+
+                                    Nothing ->
+                                        []
+                               )
                             ++ (case model.editedKeyId of
                                     Just editedKeyId ->
                                         [ viewEditPropertyModal model card editedKeyId ]
@@ -276,6 +284,95 @@ viewCardContent model card =
                                                 [ text description ]
                                             ]
                                         ]
+                            )
+                      , div [ class "panel panel-default" ]
+                            (let
+                                panelTitle =
+                                    div [ class "col-xs-8 text-left" ]
+                                        [ h3 [ class "panel-title" ]
+                                            [ text (I18n.translate language I18n.ProsAndCons) ]
+                                        ]
+
+                                cardType =
+                                    getCardType card
+                             in
+                                if List.isEmpty card.arguments then
+                                    [ div [ class "panel-heading" ]
+                                        [ div [ class "row" ]
+                                            [ panelTitle ]
+                                        ]
+                                    , div [ class "panel-body" ]
+                                        [ div [ class "call-container" ]
+                                            [ p [] [ text (I18n.translate language (I18n.MissingArguments)) ]
+                                            , button
+                                                [ class "button call-add"
+                                                , onClick (ForSelf (LoadDebateProperties []))
+                                                ]
+                                                [ text (I18n.translate language (I18n.CallToActionForArguments cardType)) ]
+                                            ]
+                                        ]
+                                    ]
+                                else
+                                    [ div [ class "panel-heading" ]
+                                        [ div [ class "row" ]
+                                            [ panelTitle
+                                            , div [ class "col-xs-4 text-right up7" ]
+                                                [ a [ class "show-more" ]
+                                                    [ bestOf descriptionKeys ]
+                                                , button
+                                                    [ attribute "data-target" "#debate-content"
+                                                    , attribute "data-toggle" "modal"
+                                                    , class "btn btn-default btn-xs btn-action"
+                                                    , onClick (ForSelf (LoadDebateProperties []))
+                                                    , type_ "button"
+                                                    ]
+                                                    [ text (I18n.translate language (I18n.Debate)) ]
+                                                ]
+                                            ]
+                                        ]
+                                    , div [ class "panel-body" ]
+                                        [ ul []
+                                            (List.map
+                                                (\argument ->
+                                                    let
+                                                        keyLabel =
+                                                            Dict.get
+                                                                argument.keyId
+                                                                (Dict.fromList Properties.New.View.keyIdLabelCouples)
+                                                                |> Maybe.map (I18n.translate language)
+                                                                |> Maybe.withDefault argument.keyId
+                                                    in
+                                                        li []
+                                                            [ text keyLabel
+                                                            , text " "
+                                                            , text (toString argument.ratingSum)
+                                                            , text " "
+                                                            , viewValueIdLine
+                                                                language
+                                                                (Just navigate)
+                                                                data
+                                                                False
+                                                                argument.valueId
+                                                            , text " "
+                                                            , button
+                                                                [ attribute "data-target" "#debate-content"
+                                                                , attribute "data-toggle" "modal"
+                                                                , class "btn btn-default btn-xs btn-action"
+                                                                , onClick
+                                                                    (ForSelf
+                                                                        (LoadDebateProperties
+                                                                            [ argument.valueId ]
+                                                                        )
+                                                                    )
+                                                                , type_ "button"
+                                                                ]
+                                                                [ text (I18n.translate language (I18n.Debate)) ]
+                                                            ]
+                                                )
+                                                card.arguments
+                                            )
+                                        ]
+                                    ]
                             )
                       ]
                      )
@@ -568,6 +665,211 @@ viewCardContent model card =
                            ]
                     )
                 ]
+            ]
+
+
+viewDebateModal : Model -> Card -> List String -> Html Msg
+viewDebateModal model card debatedIds =
+    -- The first item of debatedIds is the currently debated value, the next id is its parent value, etc.
+    -- When debatedIds is empty, the subject of the debate is the card.
+    let
+        data =
+            model.data
+
+        cards =
+            data.cards
+
+        language =
+            model.language
+
+        values =
+            data.values
+
+        viewParentDebateButton =
+            case debatedIds of
+                [] ->
+                    text ""
+
+                _ :: parentDebatedIds ->
+                    button
+                        [ attribute "data-target" "#debate-content"
+                        , attribute "data-toggle" "modal"
+                        , class "btn btn-default"
+                        , onClick
+                            (ForSelf
+                                (LoadDebateProperties parentDebatedIds)
+                            )
+                        , type_ "button"
+                        ]
+                        [ text "<" ]
+
+        viewProperty index property =
+            let
+                keyLabel =
+                    Dict.get property.keyId (Dict.fromList Properties.New.View.keyIdLabelCouples)
+                        |> Maybe.map (I18n.translate language)
+                        |> Maybe.withDefault property.keyId
+
+                value =
+                    Dict.get property.valueId values
+
+                ballot =
+                    Dict.get property.ballotId data.ballots
+            in
+                li [ classList [ ( "media", True ), ( "best", index == 0 ) ] ]
+                    [ div [ class "media-body" ]
+                        (case value of
+                            Nothing ->
+                                []
+
+                            Just value ->
+                                [ div []
+                                    [ h4 [ class "media-heading" ] [ text keyLabel ]
+                                    , viewValueTypeLine language (Just navigate) data False value.value
+                                    ]
+                                , button
+                                    [ attribute "data-target" "#debate-content"
+                                    , attribute "data-toggle" "modal"
+                                    , class "btn btn-default btn-xs btn-action"
+                                    , onClick
+                                        (ForSelf
+                                            (LoadDebateProperties (property.valueId :: debatedIds))
+                                        )
+                                    , type_ "button"
+                                    ]
+                                    [ text (I18n.translate language (I18n.Debate)) ]
+                                ]
+                        )
+                    , div [ class "media-right" ]
+                        [ a [ class "btn-vote" ]
+                            [ span
+                                [ attribute "aria-hidden" "true"
+                                , class "glyphicon glyphicon-arrow-up"
+                                , onClick (ForSelf (VotePropertyUp property.id))
+                                , style
+                                    (case ballot of
+                                        Nothing ->
+                                            []
+
+                                        Just ballot ->
+                                            if ballot.rating == 1 then
+                                                [ ( "color", "blue" ) ]
+                                            else
+                                                []
+                                    )
+                                  -- TODO replace with "active" class
+                                ]
+                                []
+                            ]
+                        , div [ class "count" ]
+                            [ text (toString property.ratingSum) ]
+                        , a [ class "btn-vote" ]
+                            [ span
+                                [ attribute "aria-hidden" "true"
+                                , class "glyphicon glyphicon-arrow-down"
+                                , onClick (ForSelf (VotePropertyDown property.id))
+                                , style
+                                    (case ballot of
+                                        Nothing ->
+                                            []
+
+                                        Just ballot ->
+                                            if ballot.rating == -1 then
+                                                [ ( "color", "blue" ) ]
+                                            else
+                                                []
+                                    )
+                                  -- TODO replace with "active" class
+                                ]
+                                []
+                            ]
+                        ]
+                    ]
+    in
+        div []
+            [ div
+                [ attribute "aria-labelledby" "myModalLabel"
+                , class "modal fade in"
+                , id "edit-content"
+                , attribute "role" "dialog"
+                , attribute "tabindex" "-1"
+                , style [ ( "display", "block" ) ]
+                ]
+                [ div [ class "modal-dialog", id "edit-overlay" ]
+                    [ div [ class "modal-content" ]
+                        [ div [ class "modal-header" ]
+                            [ button
+                                [ attribute "data-dismiss" "modal"
+                                , class "close"
+                                , onClick (ForSelf CloseDebateModal)
+                                , type_ "button"
+                                ]
+                                [ span [ attribute "aria-hidden" "true" ]
+                                    [ text "×" ]
+                                , span [ class "sr-only" ]
+                                    [ text "Close" ]
+                                ]
+                            , h4 [ class "modal-title", id "myModalLabel" ]
+                                ([ viewParentDebateButton
+                                 , text " "
+                                 , text (I18n.translate language I18n.DebateTitle)
+                                 , text " — "
+                                 ]
+                                    ++ (case List.head debatedIds of
+                                            Just debatedValueId ->
+                                                case Dict.get debatedValueId values of
+                                                    Just debatedTypedValue ->
+                                                        [ case I18n.getOneStringFromValueType language values debatedTypedValue.value of
+                                                            Just str ->
+                                                                text str
+
+                                                            Nothing ->
+                                                                Debug.crash "viewDebateModal: value should have a string value"
+                                                        ]
+
+                                                    Nothing ->
+                                                        [ text ("Missing value for id " ++ debatedValueId) ]
+
+                                            Nothing ->
+                                                case Dict.get model.cardId cards of
+                                                    Just card ->
+                                                        [ text (I18n.getName language card values) ]
+
+                                                    Nothing ->
+                                                        [ text ("Missing card for id " ++ model.cardId) ]
+                                       )
+                                 -- ++ [ span []
+                                 --         [ text
+                                 --             (I18n.translate language
+                                 --                 (I18n.CountArgumentsAvailable (List.length model.debatePropertyIds))
+                                 --             )
+                                 --         ]
+                                 --    ]
+                                )
+                            ]
+                        , div [ class "modal-body", style [ ( "min-height", "35em" ) ] ]
+                            [ div [ class "row" ]
+                                [ div [ class "col-xs-8" ]
+                                    [ ul [ class "media-list" ]
+                                        (model.debatePropertyIds
+                                            |> List.map (getProperty data.properties)
+                                            |> List.indexedMap viewProperty
+                                        )
+                                    ]
+                                , div [ class "col-xs-4 grey fullheight-right" ]
+                                    [ div []
+                                        [ h5 [ attribute "aria-hidden" "true" ]
+                                            [ text (I18n.translate language I18n.AddYourArguments) ]
+                                        , Properties.New.View.viewForm I18n.Add model.newDebatePropertyModel
+                                            |> Html.map translateNewDebatePropertyMsg
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            , div [ class "modal-backdrop in" ] []
             ]
 
 

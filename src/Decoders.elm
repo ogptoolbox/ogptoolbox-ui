@@ -7,6 +7,16 @@ import String
 import Types exposing (..)
 
 
+argumentDecoder : Decoder Argument
+argumentDecoder =
+    succeed Argument
+        |: (field "keyId" string)
+        |: oneOf [ (field "rating" int), succeed 0 ]
+        |: oneOf [ (field "ratingCount" int), succeed 0 ]
+        |: oneOf [ (field "ratingSum" int), succeed 0 ]
+        |: (field "valueId" string)
+
+
 ballotDecoder : Decoder Ballot
 ballotDecoder =
     succeed Ballot
@@ -53,6 +63,7 @@ cardAutocompletionDecoder =
 cardDecoder : Decoder Card
 cardDecoder =
     succeed Card
+        |: oneOf [ (field "arguments" (list argumentDecoder)), succeed [] ]
         |: (field "createdAt" string)
         |: oneOf [ (field "deleted" bool), succeed False ]
         |: (field "id" string)
@@ -155,6 +166,7 @@ messageBodyDecoder =
 propertyDecoder : Decoder Property
 propertyDecoder =
     succeed Property
+        |: oneOf [ (field "arguments" (list argumentDecoder)), succeed [] ]
         |: oneOf [ (field "ballotId" string), succeed "" ]
         |: (field "createdAt" string)
         |: oneOf [ (field "deleted" bool), succeed False ]

@@ -224,6 +224,19 @@ getCollectionsForAuthor authentication =
         }
 
 
+getDebateProperties : Maybe Authentication -> String -> Http.Request DataIdsBody
+getDebateProperties authentication objectId =
+    Http.request
+        { method = "GET"
+        , headers = authenticationHeaders authentication
+        , url = apiUrl ++ "objects/" ++ objectId ++ "/debate-properties" ++ "?show=ballots&show=values&depth=1"
+        , body = Http.emptyBody
+        , expect = Http.expectJson dataIdsBodyDecoder
+        , timeout = Nothing
+        , withCredentials = False
+        }
+
+
 getObjectProperties : Maybe Authentication -> String -> String -> Http.Request DataIdsBody
 getObjectProperties authentication objectId keyId =
     Http.request
