@@ -15,6 +15,11 @@ appUrl =
     "http://localhost:3011/"
 
 
+deepDebate : Bool
+deepDebate =
+    False
+
+
 ogp : Bool
 ogp =
     False

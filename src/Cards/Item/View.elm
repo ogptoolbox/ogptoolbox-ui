@@ -363,19 +363,22 @@ viewCardContent model card =
                                                                 argument.valueId
                                                             ]
                                                         , text " "
-                                                        , button
-                                                            [ attribute "data-target" "#debate-content"
-                                                            , attribute "data-toggle" "modal"
-                                                            , class "btn btn-default btn-xs btn-action"
-                                                            , onClick
-                                                                (ForSelf
-                                                                    (LoadDebateProperties
-                                                                        [ argument.valueId ]
+                                                        , if Configuration.deepDebate then
+                                                            button
+                                                                [ attribute "data-target" "#debate-content"
+                                                                , attribute "data-toggle" "modal"
+                                                                , class "btn btn-default btn-xs btn-action"
+                                                                , onClick
+                                                                    (ForSelf
+                                                                        (LoadDebateProperties
+                                                                            [ argument.valueId ]
+                                                                        )
                                                                     )
-                                                                )
-                                                            , type_ "button"
-                                                            ]
-                                                            [ text (I18n.translate language (I18n.Debate)) ]
+                                                                , type_ "button"
+                                                                ]
+                                                                [ text (I18n.translate language (I18n.Debate)) ]
+                                                          else
+                                                            text ""
                                                         ]
                                                 )
                                                 card.arguments
@@ -752,24 +755,27 @@ viewDebateModal model card debatedIds =
                                 []
 
                             Just value ->
-                                [ button
-                                    [ attribute "data-target" "#debate-content"
-                                    , attribute "data-toggle" "modal"
-                                    , class "btn btn-default btn-xs pull-right"
-                                    , onClick
-                                        (ForSelf
-                                            (LoadDebateProperties (property.valueId :: debatedIds))
-                                        )
-                                    , style
-                                        [ ( "margin-top", "4px" )
-                                        , ( "border", "2px solid #a7a7a7" )
-                                        , ( "color", "grey" )
-                                        , ( "background", "none" )
-                                        , ( "text-shadow", "none" )
+                                [ if Configuration.deepDebate then
+                                    button
+                                        [ attribute "data-target" "#debate-content"
+                                        , attribute "data-toggle" "modal"
+                                        , class "btn btn-default btn-xs pull-right"
+                                        , onClick
+                                            (ForSelf
+                                                (LoadDebateProperties (property.valueId :: debatedIds))
+                                            )
+                                        , style
+                                            [ ( "margin-top", "4px" )
+                                            , ( "border", "2px solid #a7a7a7" )
+                                            , ( "color", "grey" )
+                                            , ( "background", "none" )
+                                            , ( "text-shadow", "none" )
+                                            ]
+                                        , type_ "button"
                                         ]
-                                    , type_ "button"
-                                    ]
-                                    [ text (I18n.translate language (I18n.Debate)) ]
+                                        [ text (I18n.translate language (I18n.Debate)) ]
+                                  else
+                                    text ""
                                 , div []
                                     [ h4 [ class "media-heading" ] [ text keyLabel ]
                                     , viewValueTypeLine language (Just navigate) data False value.value
