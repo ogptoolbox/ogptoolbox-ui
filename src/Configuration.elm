@@ -15,6 +15,11 @@ appUrl =
     "http://localhost:3011/"
 
 
+ogp : Bool
+ogp =
+    False
+
+
 piwik : Maybe Analytics.PiwikConfiguration
 piwik =
     Nothing

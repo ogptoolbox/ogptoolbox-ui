@@ -9,6 +9,7 @@ import Cards.Item.View
 import Collections.Item.View
 import Collections.Edit.View
 import Collections.Index.View
+import Configuration
 import Faq
 import Home
 import Html exposing (..)
@@ -758,14 +759,17 @@ viewHeader model language containerClass =
                                     []
                                     [ text (I18n.translate language (I18n.Collection I18n.Plural)) ]
                                 ]
-                            , li []
-                                [ aForPath
-                                    Navigate
-                                    language
-                                    "/ogp"
-                                    [ title (I18n.translate language I18n.OpenGovernmentPartnership) ]
-                                    [ text (I18n.translate language I18n.Ogp) ]
-                                ]
+                            , if Configuration.ogp then
+                                li []
+                                    [ aForPath
+                                        Navigate
+                                        language
+                                        "/ogp"
+                                        [ title (I18n.translate language I18n.OpenGovernmentPartnership) ]
+                                        [ text (I18n.translate language I18n.Ogp) ]
+                                    ]
+                              else
+                                text ""
                             , aboutDropdown
                             ]
                         , Html.form
