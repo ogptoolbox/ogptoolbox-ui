@@ -265,7 +265,11 @@ getCardType card =
             else if List.member subTypeId cardTypesForTool then
                 ToolCard
             else
-                Debug.crash "getCardType: unhandled case"
+                let
+                    _ =
+                        Debug.log "Types.getCardType: unhandled case: " subTypeId
+                in
+                    ToolCard
 
 
 getOrderedCards : DataIds -> List Card
