@@ -307,8 +307,8 @@ view language =
                         [ p []
                             [ text (I18n.translate language (I18n.ContactContent))
                             , p []
-                                [ a [ href "mailto:info@ogptpoolbox.org", target "_blank" ]
-                                    [ text "info@ogptpoolbox.org" ]
+                                [ a [ href "mailto:info@ogptoolbox.org", target "_blank" ]
+                                    [ text "info@ogptoolbox.org" ]
                                 ]
                             ]
                         ]
