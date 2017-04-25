@@ -35,23 +35,6 @@ bijectiveCardReferenceDecoder =
         |: (field "reverseKeyId" string)
 
 
-popularTagDecoder : Decoder PopularTag
-popularTagDecoder =
-    succeed PopularTag
-        |: (field "count" float)
-        |: (field "tagId" string)
-
-
-popularTagsDataDecoder : Decoder PopularTagsData
-popularTagsDataDecoder =
-    (field "data"
-        (succeed PopularTagsData
-            |: (field "popularity" (list popularTagDecoder))
-            |: (oneOf [ (field "values" (dict typedValueDecoder)), succeed Dict.empty ])
-        )
-    )
-
-
 cardAutocompletionDecoder : Decoder CardAutocompletion
 cardAutocompletionDecoder =
     succeed CardAutocompletion
@@ -107,6 +90,12 @@ collectionDecoder =
         |: (field "name" string)
 
 
+dataIdBodyDecoder : Decoder DataIdBody
+dataIdBodyDecoder =
+    succeed DataIdBody
+        |: (field "data" dataIdDecoder)
+
+
 dataIdDecoder : Decoder DataId
 dataIdDecoder =
     succeed DataId
@@ -119,10 +108,13 @@ dataIdDecoder =
         |: oneOf [ (field "values" (dict typedValueDecoder)), succeed Dict.empty ]
 
 
-dataIdBodyDecoder : Decoder DataIdBody
-dataIdBodyDecoder =
-    succeed DataIdBody
-        |: (field "data" dataIdDecoder)
+dataIdsBodyDecoder : Decoder DataIdsBody
+dataIdsBodyDecoder =
+    succeed DataIdsBody
+        |: oneOf [ (field "count" int), succeed 0 ]
+        |: (field "data" dataIdsDecoder)
+        |: oneOf [ (field "limit" int), succeed 0 ]
+        |: oneOf [ (field "offset" int), succeed 0 ]
 
 
 dataIdsDecoder : Decoder DataIds
@@ -149,18 +141,26 @@ dataIdsDecoder =
             )
 
 
-dataIdsBodyDecoder : Decoder DataIdsBody
-dataIdsBodyDecoder =
-    succeed DataIdsBody
-        |: oneOf [ (field "count" int), succeed 0 ]
-        |: (field "data" dataIdsDecoder)
-        |: oneOf [ (field "limit" int), succeed 0 ]
-        |: oneOf [ (field "offset" int), succeed 0 ]
-
-
 messageBodyDecoder : Decoder String
 messageBodyDecoder =
     (field "data" string)
+
+
+popularTagDecoder : Decoder PopularTag
+popularTagDecoder =
+    succeed PopularTag
+        |: (field "count" float)
+        |: (field "tagId" string)
+
+
+popularTagsDataDecoder : Decoder PopularTagsData
+popularTagsDataDecoder =
+    (field "data"
+        (succeed PopularTagsData
+            |: (field "popularity" (list popularTagDecoder))
+            |: (oneOf [ (field "values" (dict typedValueDecoder)), succeed Dict.empty ])
+        )
+    )
 
 
 propertyDecoder : Decoder Property
