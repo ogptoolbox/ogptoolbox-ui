@@ -288,7 +288,7 @@ postCard authentication fields language =
         body =
             Encode.object
                 -- Always use en(glish) language because this is the language of the labels below.
-                -- [ ( "language", Encode.string (I18n.iso639_1FromLanguage language) )
+                -- [ ( "language", Encode.string languageCode )
                 [ ( "language", Encode.string "en" )
                 , ( "schemas"
                   , Encode.object
