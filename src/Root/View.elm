@@ -518,7 +518,7 @@ viewFooter model language =
                             [ text (I18n.translate language I18n.FooterContact) ]
                         , ul [ class "footer-menu" ]
                             [ li []
-                                [ a [ href "mailto:info@ogptpoolbox.org" ]
+                                [ a [ href "mailto:info@ogptoolbox.org" ]
                                     [ i [ attribute "aria-hidden" "true", class "fa fa-envelope" ] []
                                     , text " "
                                     , text (I18n.translate language I18n.Email)
@@ -603,7 +603,7 @@ viewHeader model language containerClass =
                             ]
                         , li [ class "divider", role "separator" ] []
                         , li []
-                            [ a [ href "mailto:info@ogptpoolbox.org" ]
+                            [ a [ href "mailto:info@ogptoolbox.org" ]
                                 [ i [ attribute "aria-hidden" "true", class "fa fa-envelope" ] []
                                 , text " "
                                 , text (I18n.translate language I18n.Email)
