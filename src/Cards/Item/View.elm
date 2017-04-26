@@ -6,9 +6,11 @@ import Configuration
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Attributes.Aria exposing (..)
 import Html.Events exposing (..)
 import Html.Helpers exposing (aExternal, aForPath, aIfIsUrl)
 import Http
+import Http.Error
 import I18n
 import Json.Decode as Decode
 import Properties.KeysAutocomplete.View
@@ -36,8 +38,27 @@ view model =
             viewCard model card
 
         Nothing ->
-            div [ class "text-center" ]
-                [ viewLoading model.language ]
+            let
+                language =
+                    model.language
+            in
+                case model.httpError of
+                    Just httpError ->
+                        div
+                            [ class "alert alert-danger"
+                            , role "alert"
+                            ]
+                            [ strong []
+                                [ text <|
+                                    I18n.translate language I18n.CardLoadingFailed
+                                        ++ I18n.translate language I18n.Colon
+                                ]
+                            , text <| Http.Error.toString language httpError
+                            ]
+
+                    Nothing ->
+                        div [ class "text-center" ]
+                            [ viewLoading language ]
 
 
 viewCard : Model -> Card -> Html Msg

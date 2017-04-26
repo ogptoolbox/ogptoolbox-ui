@@ -58,6 +58,7 @@ type TranslationId
     | CardId
     | CardIdArray
     | CardIdField
+    | CardLoadingFailed
     | CardPlaceholder
     | ChangePassword
     | ChangePasswordExplanation
@@ -806,6 +807,14 @@ getTranslationSet translationId =
 
         CardIdField ->
             getTranslationSet CardId
+
+        CardLoadingFailed ->
+            { emptyTranslationSet
+                | dutch = todo
+                , english = s "Card retrieval failed"
+                , french = s "Échec de la récupération de la fiche"
+                , spanish = todo
+            }
 
         CardPlaceholder ->
             { emptyTranslationSet
