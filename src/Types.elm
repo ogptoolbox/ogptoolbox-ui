@@ -162,7 +162,8 @@ type alias Property =
     { arguments : List Argument
     , ballotId :
         String
-        -- TODO Use Maybe
+
+    -- TODO Use Maybe
     , createdAt : String
     , deleted : Bool
     , id : String

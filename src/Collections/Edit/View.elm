@@ -141,12 +141,13 @@ view model =
                                                 ]
                                             ]
                                         ]
-                                      -- , div [ class "row" ]
-                                      --     [ div [ class "col-xs-12" ]
-                                      --         [ i []
-                                      --             [ text "Maecenas " ]
-                                      --         ]
-                                      --     ]
+
+                                    -- , div [ class "row" ]
+                                    --     [ div [ class "col-xs-12" ]
+                                    --         [ i []
+                                    --             [ text "Maecenas " ]
+                                    --         ]
+                                    --     ]
                                     ]
                                 ]
                             ]
@@ -160,7 +161,8 @@ view model =
                                     , type_ "submit"
                                     ]
                                     [ text (I18n.translate language (I18n.PublishCollection))
-                                      -- TODO i18n
+
+                                    -- TODO i18n
                                     ]
                                 ]
                             ]

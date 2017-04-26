@@ -814,14 +814,15 @@ viewHeader model language containerClass =
                                     []
                                     [ text (I18n.translate language (I18n.UseCase I18n.Plural)) ]
                                 ]
-                              --   , li []
-                              --       [ aForPath
-                              --           Navigate
-                              --           language
-                              --           "/organizations"
-                              --           []
-                              --           [ text (I18n.translate language (I18n.Organization I18n.Plural)) ]
-                              --       ]
+
+                            --   , li []
+                            --       [ aForPath
+                            --           Navigate
+                            --           language
+                            --           "/organizations"
+                            --           []
+                            --           [ text (I18n.translate language (I18n.Organization I18n.Plural)) ]
+                            --       ]
                             , li []
                                 [ aForPath
                                     Navigate

@@ -32,7 +32,8 @@ authenticationHeaders authentication =
         Just authentication ->
             [ Http.header "Retruco-API-Key" authentication.apiKey
             , Http.header "Cache-Control" "no-cache"
-              -- Don't cache API requests when user is logged.
+
+            -- Don't cache API requests when user is logged.
             ]
 
         Nothing ->

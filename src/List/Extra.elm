@@ -1,10 +1,11 @@
 module List.Extra exposing (..)
 
 {-| Return all elements of the list except the last one.
-    init [1,2,3] == Just [1,2]
-    init [] == Nothing
+init [1,2,3] == Just [1,2]
+init [] == Nothing
 
     Function taken from https://github.com/elm-community/list-extra, because it was not yet ported to Elm 0.18.
+
 -}
 
 

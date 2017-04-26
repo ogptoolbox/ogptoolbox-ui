@@ -19,20 +19,26 @@ module UrlParser
         , parseHash
         )
 
-{-|
+{-| This file is a copy of UrlParser unpublished fork: <https://github.com/ogptoolbox/url-parser>.
 
-This file is a copy of UrlParser unpublished fork: https://github.com/ogptoolbox/url-parser.
 
 # Primitives
+
 @docs Parser, string, int, s
 
+
 # Path Parses
+
 @docs (</>), map, oneOf, top, custom
 
+
 # Query Parameter Parsers
+
 @docs QueryParser, (<?>), stringParam, intParam, customParam
 
+
 # Run a Parser
+
 @docs parsePath, parseHash
 
 -}
@@ -69,6 +75,7 @@ type alias State value =
     -- /alice/  ==>  Just "alice"
     -- /bob     ==>  Just "bob"
     -- /42/     ==>  Just "42"
+
 -}
 string : Parser (String -> a) a
 string =
@@ -81,6 +88,7 @@ string =
     -- /alice/  ==>  Nothing
     -- /bob     ==>  Nothing
     -- /42/     ==>  Just 42
+
 -}
 int : Parser (Int -> a) a
 int =
@@ -91,6 +99,7 @@ int =
 
     s "blog"  -- can parse /blog/
               -- but not /glob/ or /42/ or anything else
+
 -}
 s : String -> Parser a a
 s str =
@@ -111,20 +120,22 @@ s str =
 `int` and `string` parsers:
 
     int =
-      custom "NUMBER" String.toInt
+        custom "NUMBER" String.toInt
 
     string =
-      custom "STRING" Ok
+        custom "STRING" Ok
 
 You can use it to define something like “only CSS files” like this:
 
     css : Parser (String -> a) a
     css =
-      custom "CSS_FILE" <| \segment ->
-        if String.endsWith ".css" then
-          Ok segment
-        else
-          Err "Does not end with .css"
+        custom "CSS_FILE" <|
+            \segment ->
+                if String.endsWith ".css" then
+                    Ok segment
+                else
+                    Err "Does not end with .css"
+
 -}
 custom : String -> (String -> Result String a) -> Parser (a -> b) b
 custom tipe stringToSomething =
@@ -160,6 +171,7 @@ custom tipe stringToSomething =
     -- /search/frog   ==>  Just "frog"
     -- /search/       ==>  Nothing
     -- /cats/         ==>  Nothing
+
 -}
 (</>) : Parser a b -> Parser b c -> Parser a c
 (</>) (Parser parseBefore) (Parser parseAfter) =
@@ -185,6 +197,7 @@ infixr 7 </>
     -- /user/bob/comments/42  ==>  Just { author = "bob", id = 42 }
     -- /user/tom/comments/35  ==>  Just { author = "tom", id = 35 }
     -- /user/sam/             ==>  Nothing
+
 -}
 map : a -> Parser a b -> Parser (b -> c) c
 map subValue (Parser parse) =
@@ -262,6 +275,7 @@ oneOf parsers =
     -- /blog/post/42  ==>  Just (Post 42)
     -- /blog/post/forty-two  ==>  Just (NotFound ["post", "forty-two"])
     -- /blog/delete  ==>  Just (NotFound ["delete"])
+
 -}
 remaining : Parser (List String -> a) a
 remaining =
@@ -292,6 +306,7 @@ remaining =
     parsePath (s "blog" </> blogRoute) location
     -- /blog/         ==>  Just Overview
     -- /blog/post/42  ==>  Just (Post 42)
+
 -}
 top : Parser a a
 top =
@@ -323,6 +338,7 @@ type QueryParser a b
     -- /blog/              ==>  Just (BlogList Nothing)
     -- /blog/?search=cats  ==>  Just (BlogList (Just "cats"))
     -- /blog/42            ==>  Just (BlogPost 42)
+
 -}
 (<?>) : Parser a b -> QueryParser b c -> Parser a c
 (<?>) (Parser parser) (QueryParser queryParser) =
@@ -337,6 +353,7 @@ infixl 8 <?>
     parsePath (s "blog" <?> stringParam "search") location
     -- /blog/              ==>  Just (Overview Nothing)
     -- /blog/?search=cats  ==>  Just (Overview (Just "cats"))
+
 -}
 stringParam : String -> QueryParser (Maybe String -> a) a
 stringParam name =
@@ -350,6 +367,7 @@ should appear first.
     parsePath (s "results" <?> intParam "start") location
     -- /results           ==>  Just Nothing
     -- /results?start=10  ==>  Just (Just 10)
+
 -}
 intParam : String -> QueryParser (Maybe Int -> a) a
 intParam name =
@@ -369,13 +387,15 @@ intParamHelp maybeValue =
 {-| Create a custom query parser. You could create parsers like these:
 
     jsonParam : String -> Decoder a -> QueryParser (Maybe a -> b) b
+
     enumParam : String -> Dict String a -> QueryParser (Maybe a -> b) b
 
 It may be worthwhile to have these in this library directly. If you need
-either one in practice, please open an issue [here][] describing your exact
+either one in practice, please open an issue [here] describing your exact
 scenario. We can use that data to decide if they should be added.
 
 [here]: https://github.com/evancz/url-parser/issues
+
 -}
 customParam : String -> (Maybe String -> a) -> QueryParser (a -> b) b
 customParam key func =

@@ -121,11 +121,12 @@ viewCardListItem navigate language values card =
                     , small []
                         [ text (I18n.getSubTypes language card values |> String.join ", ") ]
                     ]
-                  -- , div [ class "example-author" ]
-                  --     [ img [ alt "screen", src "/img/TODO.png" ]
-                  --         []
-                  --     , text "TODO The White House"
-                  --     ]
+
+                -- , div [ class "example-author" ]
+                --     [ img [ alt "screen", src "/img/TODO.png" ]
+                --         []
+                --     , text "TODO The White House"
+                --     ]
                 , p []
                     (case I18n.getOneString language descriptionKeys card values of
                         Just description ->

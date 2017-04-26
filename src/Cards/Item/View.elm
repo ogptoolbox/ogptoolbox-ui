@@ -820,7 +820,8 @@ viewDebateModal model card debatedIds =
                                             else
                                                 []
                                     )
-                                  -- TODO replace with "active" class
+
+                                -- TODO replace with "active" class
                                 ]
                                 []
                             ]
@@ -842,7 +843,8 @@ viewDebateModal model card debatedIds =
                                             else
                                                 []
                                     )
-                                  -- TODO replace with "active" class
+
+                                -- TODO replace with "active" class
                                 ]
                                 []
                             ]
@@ -994,7 +996,8 @@ viewEditPropertyModal model card editedKeyId =
                                             else
                                                 []
                                     )
-                                  -- TODO replace with "active" class
+
+                                -- TODO replace with "active" class
                                 ]
                                 []
                             ]
@@ -1016,7 +1019,8 @@ viewEditPropertyModal model card editedKeyId =
                                             else
                                                 []
                                     )
-                                  -- TODO replace with "active" class
+
+                                -- TODO replace with "active" class
                                 ]
                                 []
                             ]
@@ -1161,10 +1165,11 @@ viewUseItModal language frenchGovDeployUrl =
                                                         ]
                                                     ]
                                                 ]
-                                              -- , li [ class "option" ]
-                                              --     [ text "Deployer avec Octo" ]
-                                              -- , li [ class "option" ]
-                                              --     [ text "Deployer avec Capgemini" ]
+
+                                            -- , li [ class "option" ]
+                                            --     [ text "Deployer avec Octo" ]
+                                            -- , li [ class "option" ]
+                                            --     [ text "Deployer avec Capgemini" ]
                                             ]
                                         ]
                                     ]
@@ -1416,7 +1421,8 @@ viewSidebar model card =
                         )
                     ]
                 ]
-              -- , viewSimilarTools -- TODO
+
+            -- , viewSimilarTools -- TODO
             , div
                 [ class "row" ]
                 [ div [ class "col-xs-12" ]
