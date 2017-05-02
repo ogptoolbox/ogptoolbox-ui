@@ -743,6 +743,9 @@ viewDebateModal model card debatedIds =
 
         viewProperty index property =
             let
+                ballot =
+                    Dict.get property.ballotId data.ballots
+
                 keyLabel =
                     Dict.get property.keyId (Dict.fromList keyIdLabelCouples)
                         |> Maybe.map (I18n.translate language)
@@ -750,9 +753,6 @@ viewDebateModal model card debatedIds =
 
                 value =
                     Dict.get property.valueId values
-
-                ballot =
-                    Dict.get property.ballotId data.ballots
             in
                 li [ classList [ ( "media", True ), ( "best", index == 0 ) ] ]
                     [ div [ class "media-left" ]

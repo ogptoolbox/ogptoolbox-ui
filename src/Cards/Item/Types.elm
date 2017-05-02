@@ -90,7 +90,7 @@ translateKeysAutocompleteMsg =
 
 
 translateMsg : MsgTranslation parentMsg -> MsgTranslator parentMsg
-translateMsg { onInternalMsg, onRequireSignIn, onNavigate } msg =
+translateMsg { onInternalMsg, onNavigate, onRequireSignIn } msg =
     case msg of
         ForParent (Navigate path) ->
             onNavigate path
