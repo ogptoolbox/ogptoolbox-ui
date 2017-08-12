@@ -349,8 +349,8 @@ postCollection authentication collectionId collectionJson =
         }
 
 
-postProperty : Maybe Authentication -> String -> String -> String -> Http.Request DataIdBody
-postProperty authentication objectId keyId valueId =
+postProperty : Maybe Authentication -> String -> String -> String -> Int -> Http.Request DataIdBody
+postProperty authentication objectId keyId valueId rating =
     Http.request
         { method = "POST"
         , headers = authenticationHeaders authentication
@@ -359,6 +359,7 @@ postProperty authentication objectId keyId valueId =
             Encode.object
                 [ ( "keyId", Encode.string keyId )
                 , ( "objectId", Encode.string objectId )
+                , ( "rating", Encode.int rating )
                 , ( "valueId", Encode.string valueId )
                 ]
                 |> Http.jsonBody
