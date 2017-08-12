@@ -111,7 +111,7 @@ update msg model =
 
         ValueUpserted data ->
             ( { model | data = mergeData data model.data }
-            , Requests.postProperty model.authentication model.objectId model.keyId data.id 1
+            , Requests.postProperty model.authentication model.objectId model.keyId data.id (Just 1)
                 |> Http.send (ForSelf << Upserted)
             )
 

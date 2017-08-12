@@ -382,7 +382,7 @@ update msg model =
                             Debug.crash "Cards.Item.State update ValueUpserted: model.editedKeyId == Nothing"
             in
                 ( { model | data = mergeData data model.data }
-                , Requests.postProperty model.authentication model.cardId editedKeyId data.id 1
+                , Requests.postProperty model.authentication model.cardId editedKeyId data.id (Just 1)
                     |> Http.send (ForSelf << PropertyUpserted)
                 )
 
