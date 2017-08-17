@@ -1,5 +1,6 @@
 module Types exposing (..)
 
+import Constants exposing (..)
 import Dict exposing (Dict)
 import Json.Decode
 
@@ -374,86 +375,3 @@ mergeDataIds new old =
         { mergedData
             | ids = List.append old.ids new.ids
         }
-
-
-
--- KEYS
-
-
-descriptionKeys : List String
-descriptionKeys =
-    [ "description" ]
-
-
-imageLogoPathKeys : List String
-imageLogoPathKeys =
-    [ "logo" ]
-
-
-imageScreenshotPathKeys : List String
-imageScreenshotPathKeys =
-    [ "screenshot" ]
-
-
-imagePathKeys : List String
-imagePathKeys =
-    imageLogoPathKeys ++ imageScreenshotPathKeys
-
-
-licenseKeys : List String
-licenseKeys =
-    [ "license" ]
-
-
-openSourceKeys : List String
-openSourceKeys =
-    [ "9647" ]
-
-
-repoKeys : List String
-repoKeys =
-    [ "12795" ]
-
-
-sourceCodeKeys : List String
-sourceCodeKeys =
-    [ "source-code" ]
-
-
-nameKeys : List String
-nameKeys =
-    [ "name" ]
-
-
-urlKeys : List String
-urlKeys =
-    [ "website" ]
-
-
-usedByKeys : List String
-usedByKeys =
-    [ "used-by" ]
-
-
-
--- CARD TYPES
-
-
-cardTypesForOrganization : List String
-cardTypesForOrganization =
-    [ "organization" ]
-
-
-cardTypesForSoftware : List String
-cardTypesForSoftware =
-    [ "software" ]
-
-
-cardTypesForTool : List String
-cardTypesForTool =
-    [ "software", "platform" ]
-
-
-cardTypesForUseCase : List String
-cardTypesForUseCase =
-    [ "use-case" ]

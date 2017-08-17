@@ -1,6 +1,7 @@
 module Search.State exposing (..)
 
 import Authenticator.Types
+import Constants exposing (cardTypesForOrganization, cardTypesForTool, cardTypesForUseCase)
 import Dict exposing (Dict)
 import Erl
 import Http

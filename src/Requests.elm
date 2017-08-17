@@ -225,25 +225,30 @@ getCollectionsForAuthor authentication =
         }
 
 
-getDebateProperties : Maybe Authentication -> String -> Http.Request DataIdsBody
-getDebateProperties authentication objectId =
+getObjectProperties : Maybe Authentication -> Bool -> String -> List String -> List String -> Http.Request DataIdsBody
+getObjectProperties authentication showTrashed objectId keyIds valueIds =
     Http.request
         { method = "GET"
         , headers = authenticationHeaders authentication
-        , url = apiUrl ++ "objects/" ++ objectId ++ "/debate-properties" ++ "?show=ballots&show=values&depth=1"
-        , body = Http.emptyBody
-        , expect = Http.expectJson dataIdsBodyDecoder
-        , timeout = Nothing
-        , withCredentials = False
-        }
-
-
-getObjectProperties : Maybe Authentication -> String -> String -> Http.Request DataIdsBody
-getObjectProperties authentication objectId keyId =
-    Http.request
-        { method = "GET"
-        , headers = authenticationHeaders authentication
-        , url = apiUrl ++ "objects/" ++ objectId ++ "/properties/" ++ keyId ++ "?show=ballots&show=values&depth=1"
+        , url =
+            apiUrl
+                ++ "objects/"
+                ++ objectId
+                ++ "/properties"
+                ++ Urls.paramsToQuery
+                    ([ ( "depth", Just "1" )
+                     , ( "show", Just "ballots" )
+                     , ( "show"
+                       , if showTrashed then
+                            Just "trashed"
+                         else
+                            Nothing
+                       )
+                     , ( "show", Just "values" )
+                     ]
+                        ++ (List.map (\keyId -> ( "keyId", Just keyId )) keyIds)
+                        ++ (List.map (\valueId -> ( "valueId", Just valueId )) valueIds)
+                    )
         , body = Http.emptyBody
         , expect = Http.expectJson dataIdsBodyDecoder
         , timeout = Nothing

@@ -1,5 +1,6 @@
 module Collections.ViewsHelpers exposing (..)
 
+import Constants exposing (cardTypesForTool, cardTypesForUseCase)
 import Cards.ViewsHelpers exposing (..)
 import Html exposing (Html)
 import I18n

@@ -2,6 +2,7 @@ module Values.New.State exposing (..)
 
 import Authenticator.Types exposing (Authentication)
 import Cards.Autocomplete.State
+import Constants exposing (cardTypesForOrganization, cardTypesForTool, cardTypesForUseCase)
 import Dict exposing (Dict)
 import Http
 import Http.Error
@@ -11,7 +12,7 @@ import Navigation
 import Ports
 import Requests
 import Task
-import Types exposing (cardTypesForOrganization, cardTypesForTool, cardTypesForUseCase, Field(..))
+import Types exposing (Field(..))
 import Urls
 import Values.New.Types exposing (..)
 

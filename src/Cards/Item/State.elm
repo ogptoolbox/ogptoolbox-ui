@@ -2,6 +2,7 @@ module Cards.Item.State exposing (..)
 
 import Authenticator.Types exposing (Authentication)
 import Cards.Item.Types exposing (..)
+import Constants exposing (debateKeyIds, descriptionKeyIds)
 import Http
 import I18n
 import Ports
@@ -187,7 +188,7 @@ update msg model =
                 cmd =
                     Ports.setDocumentMetadata
                         { description =
-                            I18n.getOneString language descriptionKeys card data.values
+                            I18n.getOneString language descriptionKeyIds card data.values
                                 |> Maybe.withDefault (I18n.translate language I18n.MissingDescription)
                         , imageUrl =
                             Urls.imageOrAppLogoFullUrl
@@ -276,7 +277,7 @@ update msg model =
                                     debatedId
                                     [ "TextField" ]
                           }
-                        , Requests.getDebateProperties model.authentication debatedId
+                        , Requests.getObjectProperties model.authentication False debatedId debateKeyIds []
                             |> Http.send (ForSelf << GotDebateProperties)
                         )
 
@@ -301,7 +302,7 @@ update msg model =
                                 (validFieldTypes keyId)
                         , sameKeyPropertyIds = []
                       }
-                    , Requests.getObjectProperties model.authentication model.cardId keyId
+                    , Requests.getObjectProperties model.authentication False model.cardId [ keyId ] []
                         |> Http.send (ForSelf << GotProperties)
                     )
 

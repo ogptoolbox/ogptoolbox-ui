@@ -1,5 +1,6 @@
 module Cards.ViewsHelpers exposing (..)
 
+import Constants exposing (descriptionKeyIds)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Attributes.Aria exposing (..)
@@ -75,7 +76,7 @@ viewCardThumbnail language navigate onRemoveCard extraClass data card =
                     , div [ class "caption" ]
                         [ h4 []
                             [ text name ]
-                        , case I18n.getOneString language descriptionKeys card data.values of
+                        , case I18n.getOneString language descriptionKeyIds card data.values of
                             Just description ->
                                 p [] [ text description ]
 

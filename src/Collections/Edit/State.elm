@@ -3,6 +3,7 @@ module Collections.Edit.State exposing (..)
 import Authenticator.Types exposing (Authentication)
 import Cards.Autocomplete.State
 import Collections.Edit.Types exposing (..)
+import Constants exposing (cardTypesForTool, cardTypesForUseCase)
 import Dict exposing (Dict)
 import Http
 import Http.Error

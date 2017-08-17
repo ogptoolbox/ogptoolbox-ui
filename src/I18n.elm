@@ -1,5 +1,6 @@
 module I18n exposing (..)
 
+import Constants exposing (..)
 import Dict exposing (Dict)
 import String
 import Types exposing (..)
@@ -3579,7 +3580,7 @@ getOneStringFromValueType language values valueType =
 getName : Language -> Card -> Dict String TypedValue -> String
 getName language card values =
     -- Note: Name can be Nothing, if down-voted.
-    getOneString language nameKeys card values
+    getOneString language nameKeyIds card values
         |> Maybe.withDefault (translate language UntitledCard)
 
 

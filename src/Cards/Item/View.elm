@@ -3,6 +3,16 @@ module Cards.Item.View exposing (..)
 import Cards.Helpers exposing (..)
 import Cards.Item.Types exposing (..)
 import Configuration
+import Constants
+    exposing
+        ( cardTypesForOrganization
+        , cardTypesForSoftware
+        , cardTypesForTool
+        , descriptionKeyIds
+        , imagePathKeyIds
+        , licenseKeyIds
+        , urlKeyIds
+        )
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -271,7 +281,7 @@ viewCardContent model card =
                                 cardType =
                                     getCardType card
                              in
-                                case I18n.getOneString language descriptionKeys card values of
+                                case I18n.getOneString language descriptionKeyIds card values of
                                     Nothing ->
                                         [ div [ class "panel-heading" ]
                                             [ div [ class "row" ]
@@ -295,7 +305,7 @@ viewCardContent model card =
                                                 [ panelTitle
                                                 , div [ class "col-xs-4 text-right up7" ]
                                                     [ a [ class "show-more" ]
-                                                        [ bestOf descriptionKeys ]
+                                                        [ bestOf descriptionKeyIds ]
                                                     , button
                                                         [ attribute "data-target" "#edit-content"
                                                         , attribute "data-toggle" "modal"
@@ -652,7 +662,7 @@ viewCardContent model card =
                                                 ]
                                             , div [ class "col-xs-4 text-right up7" ]
                                                 -- [ a [ class "show-more" ]
-                                                --     [ bestOf usedByKeys ]
+                                                --     [ bestOf usedByKeyIds ]
                                                 [ button
                                                     [ class "btn btn-default btn-xs btn-action"
                                                     , onClick (ForSelf (LoadProperties "used-by"))
@@ -1291,7 +1301,7 @@ viewSidebar model card =
                                                     (List.concat
                                                         [ let
                                                             license =
-                                                                I18n.getOneString language licenseKeys card values
+                                                                I18n.getOneString language licenseKeyIds card values
                                                                     |> Maybe.withDefault ""
                                                           in
                                                             if String.isEmpty license then
@@ -1320,7 +1330,7 @@ viewSidebar model card =
                                                 td [ class "table-label" ]
                                                     [ text (I18n.translate language I18n.Website) ]
                                           in
-                                            case I18n.getOneString language urlKeys card values of
+                                            case I18n.getOneString language urlKeyIds card values of
                                                 Nothing ->
                                                     tr []
                                                         [ firstTd
@@ -1435,7 +1445,7 @@ viewSidebar model card =
                                     I18n.getName language card values
 
                                 imageUrl =
-                                    I18n.getOneString language imagePathKeys card values
+                                    I18n.getOneString language imagePathKeyIds card values
                                         |> Maybe.withDefault Urls.appLogoFullUrl
 
                                 url =

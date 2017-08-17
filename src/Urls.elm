@@ -1,6 +1,7 @@
 module Urls exposing (..)
 
 import Configuration
+import Constants exposing (..)
 import Dict exposing (Dict)
 import Erl
 import Http
@@ -96,7 +97,7 @@ imageOrAppLogoFullUrl language cardId cards values =
             appLogoFullUrl
 
         Just card ->
-            case I18n.getOneString language imagePathKeys card values of
+            case I18n.getOneString language imagePathKeyIds card values of
                 Nothing ->
                     appLogoFullUrl
 
@@ -111,7 +112,7 @@ languagePath language path =
 
 logoFullUrl : I18n.Language -> String -> Card -> Dict String TypedValue -> Maybe String
 logoFullUrl language dim card values =
-    I18n.getOneString language imageLogoPathKeys card values
+    I18n.getOneString language imageLogoPathKeyIds card values
         |> Maybe.map
             (\path -> fullApiUrl path ++ "?dim=" ++ dim)
 
@@ -208,7 +209,7 @@ replaceLanguageInLocation language location =
 
 screenshotFullUrl : I18n.Language -> String -> Card -> Dict String TypedValue -> Maybe String
 screenshotFullUrl language dim card values =
-    I18n.getOneString language imageScreenshotPathKeys card values
+    I18n.getOneString language imageScreenshotPathKeyIds card values
         |> Maybe.map
             (\path -> fullApiUrl path ++ "?dim=" ++ dim)
 

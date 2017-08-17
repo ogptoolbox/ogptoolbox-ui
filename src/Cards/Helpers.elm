@@ -1,5 +1,6 @@
 module Cards.Helpers exposing (..)
 
+import Constants exposing (licenseKeyIds, openSourceKeyIds, repoKeyIds, sourceCodeKeyIds)
 import Dict exposing (Dict)
 import I18n
 import Types exposing (..)
@@ -9,7 +10,7 @@ isOpenSource : I18n.Language -> Dict String TypedValue -> Card -> Bool
 isOpenSource language values card =
     let
         repo =
-            (case I18n.getOneString language repoKeys card values of
+            (case I18n.getOneString language repoKeyIds card values of
                 Just value ->
                     String.length value > 8
 
@@ -18,7 +19,7 @@ isOpenSource language values card =
             )
 
         sourceCode =
-            (case I18n.getOneString language sourceCodeKeys card values of
+            (case I18n.getOneString language sourceCodeKeyIds card values of
                 Just value ->
                     String.length value > 8
 
@@ -27,7 +28,7 @@ isOpenSource language values card =
             )
 
         openSource =
-            (case I18n.getOneString language openSourceKeys card values of
+            (case I18n.getOneString language openSourceKeyIds card values of
                 Just value ->
                     let
                         lowerValue =
@@ -40,7 +41,7 @@ isOpenSource language values card =
             )
 
         license =
-            (case I18n.getOneString language licenseKeys card values of
+            (case I18n.getOneString language licenseKeyIds card values of
                 Just value ->
                     String.toLower value
 

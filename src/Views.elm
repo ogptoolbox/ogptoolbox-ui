@@ -1,5 +1,6 @@
 module Views exposing (..)
 
+import Constants exposing (descriptionKeyIds)
 import Dict exposing (Dict)
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -128,7 +129,7 @@ viewCardListItem navigate language values card =
                 --     , text "TODO The White House"
                 --     ]
                 , p []
-                    (case I18n.getOneString language descriptionKeys card values of
+                    (case I18n.getOneString language descriptionKeyIds card values of
                         Just description ->
                             [ text description ]
 
